@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.InspectionApplicationMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.InspectionApplication">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
+    <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="is_done" jdbcType="BIT" property="isDone" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
+  </resultMap>
+</mapper>

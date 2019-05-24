@@ -1,0 +1,185 @@
+package cn.neuedu.his.model;
+
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.util.Date;
+
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String username;
+
+    @Column(name = "real_name")
+    private String realName;
+
+    private String password;
+
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "last_login_time")
+    private Date lastLoginTime;
+
+    @Column(name = "last_password_modify_time")
+    private Date lastPasswordModifyTime;
+
+    /**
+     * 记录医生类别，具体参考常量表
+     */
+    @Column(name = "type_id")
+    private Integer typeId;
+
+    @Column(name = "department_id")
+    private Integer departmentId;
+
+    @Column(name = "identify_card")
+    private String identifyCard;
+
+    /**
+     * @return id
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * @param id
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    /**
+     * @return username
+     */
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * @return real_name
+     */
+    public String getRealName() {
+        return realName;
+    }
+
+    /**
+     * @param realName
+     */
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
+    /**
+     * @return password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return create_time
+     */
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * @param createTime
+     */
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    /**
+     * @return last_login_time
+     */
+    public Date getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    /**
+     * @param lastLoginTime
+     */
+    public void setLastLoginTime(Date lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+    }
+
+    /**
+     * @return last_password_modify_time
+     */
+    public Date getLastPasswordModifyTime() {
+        return lastPasswordModifyTime;
+    }
+
+    /**
+     * @param lastPasswordModifyTime
+     */
+    public void setLastPasswordModifyTime(Date lastPasswordModifyTime) {
+        this.lastPasswordModifyTime = lastPasswordModifyTime;
+    }
+
+    /**
+     * 获取记录医生类别，具体参考常量表
+     *
+     * @return type_id - 记录医生类别，具体参考常量表
+     */
+    public Integer getTypeId() {
+        return typeId;
+    }
+
+    /**
+     * 设置记录医生类别，具体参考常量表
+     *
+     * @param typeId 记录医生类别，具体参考常量表
+     */
+    public void setTypeId(Integer typeId) {
+        this.typeId = typeId;
+    }
+
+    /**
+     * @return department_id
+     */
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    /**
+     * @param departmentId
+     */
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    /**
+     * @return identify_card
+     */
+    public String getIdentifyCard() {
+        return identifyCard;
+    }
+
+    /**
+     * @param identifyCard
+     */
+    public void setIdentifyCard(String identifyCard) {
+        this.identifyCard = identifyCard;
+    }
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.DiseaseSecondMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DiseaseSecond">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="icd_id" jdbcType="VARCHAR" property="icdId" />
+    <result column="disease_coding" jdbcType="VARCHAR" property="diseaseCoding" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="disease_first_id" jdbcType="INTEGER" property="diseaseFirstId" />
+  </resultMap>
+</mapper>

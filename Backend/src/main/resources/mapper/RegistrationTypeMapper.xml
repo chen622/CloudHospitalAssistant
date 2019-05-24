@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.RegistrationTypeMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.RegistrationType">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_default" jdbcType="BIT" property="isDefault" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="display_sequence_number" jdbcType="INTEGER" property="displaySequenceNumber" />
+  </resultMap>
+</mapper>

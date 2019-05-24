@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.MedicalRecordTemplateMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.MedicalRecordTemplate">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="self_description" jdbcType="VARCHAR" property="selfDescription" />
+    <result column="is_pregnant" jdbcType="BIT" property="isPregnant" />
+    <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom" />
+    <result column="history_symptom" jdbcType="VARCHAR" property="historySymptom" />
+    <result column="is_western_medicine" jdbcType="BIT" property="isWesternMedicine" />
+    <result column="allergy_history" jdbcType="VARCHAR" property="allergyHistory" />
+    <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
+    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="level_id" jdbcType="INTEGER" property="levelId" />
+    <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+  </resultMap>
+</mapper>

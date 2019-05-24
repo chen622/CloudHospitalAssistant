@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.ScheduleRuleMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.ScheduleRule">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="period" jdbcType="INTEGER" property="period" />
+    <result column="registration_quantity" jdbcType="INTEGER" property="registrationQuantity" />
+    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
+    <result column="day" jdbcType="TIMESTAMP" property="day" />
+  </resultMap>
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.DepartmentKindMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DepartmentKind">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+  </resultMap>
+</mapper>

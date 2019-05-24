@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.RegistrationMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Registration">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="need_book" jdbcType="BIT" property="needBook" />
+    <result column="patient_id" jdbcType="INTEGER" property="patientId" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="schedule_id" jdbcType="INTEGER" property="scheduleId" />
+  </resultMap>
+</mapper>

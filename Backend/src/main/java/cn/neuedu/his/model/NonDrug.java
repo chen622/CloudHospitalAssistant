@@ -1,0 +1,97 @@
+package cn.neuedu.his.model;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+
+@Table(name = "non_drug")
+public class NonDrug {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+
+    private BigDecimal price;
+
+    private String standard;
+
+    /**
+     * 非药物费用类别
+     */
+    @Column(name = "fee_type_id")
+    private Integer feeTypeId;
+
+    /**
+     * @return id
+     */
+    public Integer getId() {
+        return id;
+    }
+
+    /**
+     * @param id
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    /**
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return price
+     */
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    /**
+     * @param price
+     */
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    /**
+     * @return standard
+     */
+    public String getStandard() {
+        return standard;
+    }
+
+    /**
+     * @param standard
+     */
+    public void setStandard(String standard) {
+        this.standard = standard;
+    }
+
+    /**
+     * 获取非药物费用类别
+     *
+     * @return fee_type_id - 非药物费用类别
+     */
+    public Integer getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    /**
+     * 设置非药物费用类别
+     *
+     * @param feeTypeId 非药物费用类别
+     */
+    public void setFeeTypeId(Integer feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
+}

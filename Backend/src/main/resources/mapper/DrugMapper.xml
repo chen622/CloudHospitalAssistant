@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.DrugMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Drug">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="formulation" jdbcType="VARCHAR" property="formulation" />
+    <result column="factory" jdbcType="VARCHAR" property="factory" />
+    <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
+    <result column="spell" jdbcType="VARCHAR" property="spell" />
+    <result column="standard" jdbcType="VARCHAR" property="standard" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+</mapper>

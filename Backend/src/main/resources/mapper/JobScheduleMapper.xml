@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.JobScheduleMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.JobSchedule">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="current_registration_amount" jdbcType="INTEGER" property="currentRegistrationAmount" />
+    <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+    <result column="limit_registration_amount" jdbcType="INTEGER" property="limitRegistrationAmount" />
+    <result column="period" jdbcType="INTEGER" property="period" />
+    <result column="date" jdbcType="TIMESTAMP" property="date" />
+  </resultMap>
+</mapper>
