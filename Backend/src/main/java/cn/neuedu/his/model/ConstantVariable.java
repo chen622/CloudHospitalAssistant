@@ -1,5 +1,7 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
