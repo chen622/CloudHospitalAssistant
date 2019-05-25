@@ -19,7 +19,7 @@ public class User {
     private String password;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     @Column(name = "last_login_time")
     private Date lastLoginTime;
@@ -36,8 +36,8 @@ public class User {
     @Column(name = "department_id")
     private Integer departmentId;
 
-    @Column(name = "identify_card")
-    private String identifyCard;
+    @Column(name = "identify_id")
+    private String identifyId;
 
     /**
      * @return id
@@ -169,17 +169,11 @@ public class User {
         this.departmentId = departmentId;
     }
 
-    /**
-     * @return identify_card
-     */
-    public String getIdentifyCard() {
-        return identifyCard;
+    public String getIdentifyId() {
+        return identifyId;
     }
 
-    /**
-     * @param identifyCard
-     */
-    public void setIdentifyCard(String identifyCard) {
-        this.identifyCard = identifyCard;
+    public void setIdentifyId(String identifyId) {
+        this.identifyId = identifyId;
     }
 }

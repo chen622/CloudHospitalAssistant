@@ -5,6 +5,7 @@ import cn.neuedu.his.util.CommonUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,8 @@ public class ConstantVariableController {
     ConstantVariableService constantVariableService;
 
     @GetMapping("/get")
-    public JSONObject get() {
+    public JSONObject get(Authentication authentication) {
+        System.out.println(authentication);
         return CommonUtil.successJson(constantVariableService.findAll());
     }
 }

@@ -14,6 +14,10 @@
     <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="identify_card" jdbcType="VARCHAR" property="identifyCard" />
+    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
   </resultMap>
+
+  <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
+    select * from user where username = #{username}
+  </select>
 </mapper>

@@ -3,18 +3,22 @@ package cn.neuedu.his;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 
+
 @SpringBootApplication
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {
+    private static Logger logger = Logger.getLogger(CloudHospitalAssistantApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(CloudHospitalAssistantApplication.class, args);
+        logger.info("服务器启动！");
     }
 
     /**

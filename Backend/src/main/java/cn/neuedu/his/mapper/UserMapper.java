@@ -7,4 +7,5 @@ import org.springframework.stereotype.Component;
 @Component
 
 public interface UserMapper extends MyMapper<User> {
+    User getUserByUsername(String username);
 }
