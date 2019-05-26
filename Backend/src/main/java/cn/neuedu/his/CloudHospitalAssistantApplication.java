@@ -1,5 +1,8 @@
 package cn.neuedu.his;
 
+import cn.neuedu.his.controller.ConstantVariableController;
+import cn.neuedu.his.controller.RegistrationController;
+import cn.neuedu.his.model.Registration;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
@@ -10,6 +13,8 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 
+import java.util.List;
+
 
 @SpringBootApplication
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
@@ -19,6 +24,10 @@ public class CloudHospitalAssistantApplication {
     public static void main(String[] args) {
         SpringApplication.run(CloudHospitalAssistantApplication.class, args);
         logger.info("服务器启动！");
+//        ConstantVariableController controller=new ConstantVariableController();
+//        System.out.println(controller.getNamebyId(1).toString());
+
+
     }
 
     /**

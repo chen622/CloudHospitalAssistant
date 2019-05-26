@@ -12,4 +12,26 @@
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="schedule_id" jdbcType="INTEGER" property="scheduleId" />
   </resultMap>
+
+  <resultMap id="registrationWithPatient" type="cn.neuedu.his.model.Registration">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="patient_id" jdbcType="INTEGER" property="patientId" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <association property="patient" javaType="Patient">
+      <id property="id" column="id"></id>
+      <result property="real_name" column="real_name"></result>
+      <result property="identity_id" column="identity_id"></result>
+    </association>
+  </resultMap>
+
+  <select id="getAllWaitingRegistration" resultMap="registrationWithPatient">
+    select  * from registration,patient where  state=47 and registration.patient_id=patient.id order by id ASC
+  </select>
+
+  <select id="getRegistrationByPatientName" resultType="cregistrationWithPatient">
+     select  * from registration,patient where  state=47 and patient.id=registration.patient_id and patient.real_name=#{name}
+     order by id ASC
+  </select>
+
 </mapper>

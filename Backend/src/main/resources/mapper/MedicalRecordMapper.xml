@@ -16,4 +16,11 @@
     <result column="registration_id" jdbcType="INTEGER" property="registrationId" />
     <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
   </resultMap>
+
+  <select id="getAllByPatientId" resultMap="BaseResultMap">
+   select * from medical_record  where medical_record.registration_id in (
+    select registration_id from registration
+    where registration.patient_id=#{patient_id}
+) ;
+  </select>
 </mapper>

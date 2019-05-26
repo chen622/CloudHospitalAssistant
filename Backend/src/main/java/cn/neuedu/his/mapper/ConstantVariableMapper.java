@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface ConstantVariableMapper extends MyMapper<ConstantVariable> {
+
 }

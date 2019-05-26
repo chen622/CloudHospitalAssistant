@@ -27,4 +27,9 @@ public class ConstantVariableController {
         Integer userId = PermissionCheck.getIdByUser(authentication);
         return CommonUtil.successJson(constantVariableService.findAll());
     }
+
+    @PostMapping("/getName")
+    public  JSONObject getNamebyId(Integer id){
+        return CommonUtil.successJson(constantVariableService.findById(id).getName());
+    }
 }

@@ -30,6 +30,8 @@ public class Registration {
     @Column(name = "schedule_id")
     private Integer scheduleId;
 
+//    private Patient patient;
+
     /**
      * @return id
      */

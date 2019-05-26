@@ -17,4 +17,5 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
     @Autowired
     private ConstantVariableMapper constantVariableMapper;
 
+
 }

@@ -9,7 +9,7 @@
     <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
     <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="is_done" jdbcType="BIT" property="isDone" />
+    <result column="state" jdbcType="INTEGER" property="state" />
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
   </resultMap>

@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -17,4 +19,8 @@ public class MedicalRecordServiceImpl extends AbstractService<MedicalRecord> imp
     @Autowired
     private MedicalRecordMapper medicalRecordMapper;
 
+    @Override
+    public List<MedicalRecord> getAllByPatientId(Integer patient_id) {
+        return medicalRecordMapper.getAllByPatientId(patient_id);
+    }
 }

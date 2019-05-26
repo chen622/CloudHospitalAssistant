@@ -9,4 +9,6 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
+
+
 </mapper>
