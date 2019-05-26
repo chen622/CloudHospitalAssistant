@@ -21,6 +21,7 @@ public class CloudHospitalAssistantApplication {
         logger.info("服务器启动！");
     }
 
+
     /**
      * 使用@Bean注入fastJsonHttpMessageConvert
      * @return

@@ -1,5 +1,8 @@
 package cn.neuedu.his.util.constants;
 
+/**
+ * 错误信息枚举类
+ */
 public enum ErrorEnum {
     /*
      * 错误信息
