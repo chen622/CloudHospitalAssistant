@@ -77,6 +77,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", user.getId())
+                .claim("typeId",user.getTypeId())
                 .compact();
 
         response.addHeader(Constants.TOKEN_HEADER, Constants.TOKEN_PREFIX + token);

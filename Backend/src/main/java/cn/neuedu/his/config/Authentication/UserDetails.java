@@ -8,11 +8,13 @@ public class UserDetails implements org.springframework.security.core.userdetail
     private String username;
     private String password;
     private Integer id;
+    private Integer typeId;
 
-    public UserDetails(Integer id, String username, String password) {
+    public UserDetails(Integer id, String username, String password, Integer typeId) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.typeId = typeId;
     }
 
     @Override
@@ -32,6 +34,10 @@ public class UserDetails implements org.springframework.security.core.userdetail
 
     public Integer getId() {
         return id;
+    }
+
+    public Integer getTypeId() {
+        return typeId;
     }
 
     @Override

@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
@@ -23,7 +24,7 @@ public class ConstantVariableController {
 
     @GetMapping("/get")
     public JSONObject get(Authentication authentication) {
-        System.out.println(authentication);
+        Integer userId = PermissionCheck.getIdByUser(authentication);
         return CommonUtil.successJson(constantVariableService.findAll());
     }
 }

@@ -28,7 +28,6 @@ public class UserController {
 
     @PostMapping("/login")
     public JSONObject login(@RequestBody JSONObject jsonObject, Authentication authentication) {
-        System.out.println(authentication);
         return CommonUtil.successJson(authentication.getName());
     }
 

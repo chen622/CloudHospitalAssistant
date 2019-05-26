@@ -55,6 +55,7 @@ public class JwtCheckAuthorizationFilter extends BasicAuthenticationFilter {
                 String username = body.getSubject();
                 Map<String, Object> data = new HashMap<>();
                 data.put("id", body.get("id"));
+                data.put("typeId", body.get("typeId"));
 
 //                List<SimpleGrantedAuthority> authorities = ((List<?>) parsedToken.getBody()
 //                        .get("rol")).stream()
