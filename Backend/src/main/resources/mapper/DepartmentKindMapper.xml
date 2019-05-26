@@ -9,5 +9,4 @@
     <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
     <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
   </resultMap>
-  <select id=""></select>
 </mapper>
