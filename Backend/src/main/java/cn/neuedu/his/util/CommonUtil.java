@@ -10,9 +10,26 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
+ * @author ccm
  * @description: 本后台接口系统常用的json工具类
  */
 public class CommonUtil {
+
+    /**
+     * 返回一个返回码为100的json
+     *
+     * @return
+     */
+    public static JSONObject successJson() {
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("code", Constants.SUCCESS_CODE);
+        resultJson.put("msg", Constants.SUCCESS_MSG);
+        resultJson.put("data", null);
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        resultJson.put("token", Jwt.updateToken(request));
+        return resultJson;
+    }
 
 
     /**

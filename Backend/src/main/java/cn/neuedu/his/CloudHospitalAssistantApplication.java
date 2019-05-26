@@ -30,6 +30,7 @@ public class CloudHospitalAssistantApplication {
 
     }
 
+
     /**
      * 使用@Bean注入fastJsonHttpMessageConvert
      * @return

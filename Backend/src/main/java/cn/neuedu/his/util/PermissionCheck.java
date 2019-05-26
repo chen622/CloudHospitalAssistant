@@ -4,7 +4,16 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 
+/**
+ * 权限校验类
+ */
 public class PermissionCheck {
+    /**
+     * 通用的权限校验接口，所有类别都可通过
+     *
+     * @param authentication
+     * @return
+     */
     public static Integer getIdByUser(Authentication authentication) {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
