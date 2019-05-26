@@ -15,6 +15,22 @@ import java.util.*;
  */
 public class CommonUtil {
 
+    /**
+     * 返回一个返回码为100的json
+     *
+     * @return
+     */
+    public static JSONObject successJson() {
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("code", Constants.SUCCESS_CODE);
+        resultJson.put("msg", Constants.SUCCESS_MSG);
+        resultJson.put("data", null);
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+//        resultJson.put("token", Jwt.updateToken(request));
+        return resultJson;
+    }
+
 
     /**
      * 返回一个返回码为100的json
