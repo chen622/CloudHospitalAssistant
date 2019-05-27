@@ -7,6 +7,7 @@ import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,15 @@ public class UserController {
 
     @PostMapping("/login/{id}")
     public JSONObject login(@RequestBody JSONObject jsonObject, Authentication authentication) {
+
         return CommonUtil.successJson(authentication.getName());
     }
 
-
+    /**
+     * 注册用户信息
+     * @param jsonObject 用户信息
+     * @return 是否成功
+     */
     @PostMapping("/register")
     public JSONObject register(@RequestBody JSONObject jsonObject) {
 
@@ -85,6 +91,33 @@ public class UserController {
             doctorService.save(doctor);
         }
         return CommonUtil.successJson(user);
+    }
+
+    public JSONObject deleteUserInformation(String username, Authentication authentication){
+
+        //检查权限
+        if (userService.findById(PermissionCheck.getIdByUser(authentication)).getTypeId() != 606)
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+
+        //获取user
+        User user = userService.getUserByUsername("username");
+
+        //获取id
+        Integer userId = user.getId();
+
+        //判断被删除用户是否存在
+        if (userId == null)
+            return CommonUtil.errorJson(ErrorEnum.E_601);
+
+        //判断是否要先将doctor表中的数据删除
+        if(doctorTypeList.contains(user.getTypeId()) == true){
+            doctorService.deleteById(userId);
+        }
+
+        //删除用户表中的信息
+        userService.deleteById(userId);
+
+        return CommonUtil.errorJson(ErrorEnum.E_502);
     }
 
 }

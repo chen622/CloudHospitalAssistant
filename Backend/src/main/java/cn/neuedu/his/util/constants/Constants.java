@@ -1,5 +1,7 @@
 package cn.neuedu.his.util.constants;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,14 @@ public class Constants {
     public static final List<Integer> userTypeList = Arrays.asList(601,602,603,604,605,606);
     public static final List<Integer> doctorTypeList = Arrays.asList(602,603);
 
+    //医院管理员
+    public static final Integer HOSPITAL_ADMIN = 606;
+
+    //财务管理员
+    public static final Integer FINANCIAL_ADMIN=605;
+
+    //药物管理员
+    public static final Integer MEDINCINE_ADMIN = 604;
 
     //临床科室
     public static final  Integer CLINICAL_DEPARTMENTS=101;
