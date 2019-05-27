@@ -47,9 +47,9 @@ public class UserControllerTest {
     }
 
 
-    //插入用户信息
+    //插入医生信息
     @Test
-    public void insertProperUserInformation() throws Exception {
+    public void insertProperDoctorrInformation() throws Exception {
         //json数据
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("userName", "t");
@@ -74,4 +74,162 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    //插入普通用户信息
+    @Test
+    public void insertProperNormalUserInformation() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "ys");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 601);
+        jsonObject.put("departmentId", 1);
+        jsonObject.put("identifyId", "211002199709251979");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    //插入重复用户信息
+    @Test
+    public void insertSameUserInformation() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "t");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 602);
+        jsonObject.put("departmentId", 1);
+        jsonObject.put("identifyId", "211002199709251979");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("600"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    //插入错误身份证信息
+    @Test
+    public void insertUserInformationWithWrongID() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "y");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 602);
+        jsonObject.put("departmentId", 1);
+        jsonObject.put("identifyId", "2110");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        //测试小于18位的身份证信息
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andDo(MockMvcResultHandlers.print());
+
+        //测试大于18位的身份证信息
+        jsonObject.put("identifyId", "211022222222222222222222222222222222222");
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andDo(MockMvcResultHandlers.print());
+
+    }
+
+    //插入错误部门的用户信息
+    @Test
+    public void insertUserInformationWithWrongDepartment() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "y");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 602);
+        jsonObject.put("departmentId", 1000);
+        jsonObject.put("identifyId", "211002199709251979");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    //插入错误类型的用户信息
+    @Test
+    public void insertUserInformationWithWrongType() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "y");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 60200);
+        jsonObject.put("departmentId", 1000);
+        jsonObject.put("identifyId", "211002199709251979");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
+
+

@@ -85,7 +85,6 @@ public class UserController {
             doctorService.save(doctor);
         }
         return CommonUtil.successJson(user);
-
     }
 
 }
