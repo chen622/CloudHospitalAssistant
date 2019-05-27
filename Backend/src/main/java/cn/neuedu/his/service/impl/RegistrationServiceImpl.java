@@ -20,13 +20,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Autowired
     private RegistrationMapper registrationMapper;
 
-    public List<Registration> getAllWaitingRegistration(){
-        System.out.println("???"+registrationMapper.getAllWaitingRegistration());
-        System.out.println("*******");
-        return registrationMapper.getAllWaitingRegistration();
+    public List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state){
+        return registrationMapper.getAllWaitingRegistration(doctorID);
     }
 
-    public  List<Registration> getRegistrationByPatientName(String name){
-        return registrationMapper.getRegistrationByPatientName(name);
+    public  List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state){
+        return registrationMapper.getRegistrationByPatientName(name,doctorID);
     }
 }
