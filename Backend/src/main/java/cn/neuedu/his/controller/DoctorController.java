@@ -41,15 +41,28 @@ public class DoctorController {
         return CommonUtil.successJson(medicalRecordMapper.getAllByPatientId(patientID));
     }
 
-    @GetMapping("/getByName")
-    public JSONObject getRegistrationByPatientName(@RequestBody String name,Authentication authentication )
+    /**
+     * use patient name and doctor name to registration
+     * @param name
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    @GetMapping("/getByName/{name}")
+    public JSONObject getRegistrationByPatientName(@PathVariable("name") String name, Authentication authentication )
     throws AuthenticationServiceException{
-        CommonUtil.successJson(authentication);
-        List<Registration> list=registrationService.getRegistrationByPatientName(name);
+        Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+        List<Registration> list=registrationService.getRegistrationByPatientName(name,doctorID);
         if (list==null){
             list=new ArrayList<>();
         }
         return CommonUtil.successJson(list);
+    }
+
+    @GetMapping("/getAllWait")
+    public JSONObject getAllWaitingRegistration(Authentication authentication){
+        Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+        return CommonUtil.successJson(registrationService.getAllWaitingRegistration(doctorID));
     }
 
     /**

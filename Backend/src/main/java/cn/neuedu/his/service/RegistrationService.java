@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface RegistrationService extends Service<Registration> {
 
-     List<Registration> getAllWaitingRegistration();
-      List<Registration> getRegistrationByPatientName(String name);
+     List<Registration> getAllWaitingRegistration(Integer doctorID);
+      List<Registration> getRegistrationByPatientName(String name,Integer doctorID);
 
 }
