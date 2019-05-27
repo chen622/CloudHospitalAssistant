@@ -9,7 +9,8 @@ public enum ErrorEnum {
      * */
     E_500("500", "请求处理异常，请稍后再试"),
     E_501("501", "参数异常"),
-    E_502("502","权限检验异常");
+    E_502("502","权限检验异常"),
+    E_600("600","用户名已被使用");
 
 
     private String errorCode;
@@ -23,7 +24,6 @@ public enum ErrorEnum {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
-
 
     public String getErrorCode() {
         return errorCode;

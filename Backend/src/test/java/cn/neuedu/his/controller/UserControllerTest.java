@@ -1,7 +1,8 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.config.Authentication.JwtCheckAuthorizationFilter;
+import cn.neuedu.his.model.User;
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -11,24 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
-import java.util.HashMap;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ConstantVariableControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,10 +46,27 @@ public class ConstantVariableControllerTest {
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
+
+    //插入用户信息
     @Test
-    public void get() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/get/123")
+    public void insertProperUserInformation() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "t");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 602);
+        jsonObject.put("departmentId", 1);
+        jsonObject.put("identifyId", "211002199709251979");
+        jsonObject.put("titleId", 701);
+        jsonObject.put("canArrange", false);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

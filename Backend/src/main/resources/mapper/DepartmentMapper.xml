@@ -10,4 +10,5 @@
     <result column="kind_id" jdbcType="INTEGER" property="kindId" />
     <result column="code" jdbcType="VARCHAR" property="code" />
   </resultMap>
+
 </mapper>

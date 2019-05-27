@@ -5,6 +5,7 @@ import cn.neuedu.his.mapper.UserMapper;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.util.inter.AbstractService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,5 +19,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     @Autowired
     private UserMapper userMapper;
+
+    public User getUserByUsername(String username){
+        return userMapper.getUserByUsername(username);
+    }
 
 }

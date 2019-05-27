@@ -16,4 +16,8 @@ public class DoctorController {
     @Autowired
     DoctorService doctorService;
 
+    public void register(){
+
+    }
+
 }
