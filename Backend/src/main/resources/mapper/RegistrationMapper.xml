@@ -20,20 +20,20 @@
     <result column="patient_id" jdbcType="INTEGER" property="patientId" />
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
     <result column="state" jdbcType="INTEGER" property="state" />
-    <association property="patient" javaType="Patient">
+    <association property="patient" javaType="cn.neuedu.his.model.Patient">
       <id property="id" column="id"></id>
-      <result property="real_name" column="real_name"></result>
-      <result property="identity_id" column="identity_id"></result>
+      <result property="realName" column="real_name"></result>
+      <result property="identityId" column="identity_id"></result>
     </association>
   </resultMap>
 
   <select id="getAllWaitingRegistration" resultMap="registrationWithPatient">
-    select  * from registration,patient where  state==#{state} and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID} order by id ASC
+    select  * from registration,patient where  state=#{state} and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID} order by  registration.id ASC
   </select>
 
   <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
-     select  * from registration,patient where  state=#{state} and patient.id=registration.patient_id and patient.real_name=#{name} and  registration.doctor_id=#{doctorID}
-     order by id ASC
+     select  * from registration,patient where  registration.state=#{state} and patient.id=registration.patient_id and patient.real_name=#{name} and  registration.doctor_id=#{doctorID}
+     order by registration.id ASC
   </select>
 
 </mapper>
