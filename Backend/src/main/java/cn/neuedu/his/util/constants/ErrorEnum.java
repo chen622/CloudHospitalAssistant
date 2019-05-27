@@ -8,7 +8,8 @@ public enum ErrorEnum {
      * 错误信息
      * */
     E_500("500", "请求处理异常，请稍后再试"),
-    E_501("501", "参数异常");
+    E_501("501", "参数异常"),
+    E_502("502","权限检验异常");
 
 
     private String errorCode;
@@ -22,6 +23,7 @@ public enum ErrorEnum {
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
     }
+
 
     public String getErrorCode() {
         return errorCode;
@@ -37,5 +39,10 @@ public enum ErrorEnum {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public ErrorEnum addErrorParamName(String name){
+        this.errorMsg = name + " " +this.errorMsg;
+        return this;
     }
 }
