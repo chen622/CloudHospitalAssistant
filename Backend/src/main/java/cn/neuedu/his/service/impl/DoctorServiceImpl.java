@@ -31,9 +31,10 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     MedicalRecordService medicalRecordService;
 
-    @Transactional(propagation = Propagation.REQUIRED)
+
     @Override
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws  Exception {
+    @Transactional
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) {
         Registration registration = registrationService.findById(registrationID);
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
@@ -45,12 +46,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         String  check=cheakMedicalRecord(medicalRecord);
         if(!check.equals("")){
             System.out.println("********************");
-            throw new Exception();
+            throw new RuntimeException();
         }
         medicalRecordService.save(medicalRecord);
         return CommonUtil.successJson();
     }
-
 
 
     private String cheakMedicalRecord(MedicalRecord record){
