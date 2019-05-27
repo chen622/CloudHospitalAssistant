@@ -30,7 +30,10 @@ public class Registration {
     @Column(name = "schedule_id")
     private Integer scheduleId;
 
-//    private Patient patient;
+    @Column(name = "registrar_id")
+    private Integer registrarId;
+
+    private Integer age;
 
     /**
      * @return id
@@ -122,5 +125,21 @@ public class Registration {
      */
     public void setScheduleId(Integer scheduleId) {
         this.scheduleId = scheduleId;
+    }
+
+    public Integer getRegistrarId() {
+        return registrarId;
+    }
+
+    public void setRegistrarId(Integer registrarId) {
+        this.registrarId = registrarId;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }
