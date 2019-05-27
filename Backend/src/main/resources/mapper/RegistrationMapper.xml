@@ -11,6 +11,8 @@
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="schedule_id" jdbcType="INTEGER" property="scheduleId" />
+    <result column="registrar_id" jdbcType="INTEGER" property="registrarId" />
+    <result column="age" jdbcType="INTEGER" property="age" />
   </resultMap>
 
   <resultMap id="registrationWithPatient" type="cn.neuedu.his.model.Registration">

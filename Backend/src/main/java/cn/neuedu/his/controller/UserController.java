@@ -33,7 +33,7 @@ public class UserController {
     @PostMapping("/register")
     public JSONObject register(@RequestBody User user) {
 //        user.setId(1);
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 //        user.setIdentifyId("13020319980528000X");
 //        user.setTypeId(41);
         userService.save(user);

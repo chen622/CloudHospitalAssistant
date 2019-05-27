@@ -17,8 +17,6 @@ public class Patient {
     @Column(name = "identity_id")
     private String identityId;
 
-    private Integer age;
-
     private String password;
 
     private Boolean sex;
@@ -67,20 +65,6 @@ public class Patient {
      */
     public void setIdentityId(String identityId) {
         this.identityId = identityId;
-    }
-
-    /**
-     * @return age
-     */
-    public Integer getAge() {
-        return age;
-    }
-
-    /**
-     * @param age
-     */
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     /**
