@@ -129,12 +129,6 @@ public class RegistrationController {
 
         return age;
     }
-    @GetMapping("/getAllWait")
-    public JSONObject getAllWaitingRegistration(){
-        System.out.println("****====="+registrationService);
-        return CommonUtil.successJson(registrationService.getAllWaitingRegistration());
-//        return (registrationService.getAllWaitingRegistration());
-    }
 
 
 
