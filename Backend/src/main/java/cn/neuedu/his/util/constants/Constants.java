@@ -117,6 +117,9 @@ public class Constants {
     // 预约未至
     public static final  Integer ABSENSE=808;
 
+    //挂号费用类型
+    public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
+
 
 
 
