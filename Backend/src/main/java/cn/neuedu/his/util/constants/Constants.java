@@ -1,5 +1,9 @@
 package cn.neuedu.his.util.constants;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *  通用常量类
  */
@@ -19,96 +23,98 @@ public class Constants {
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
+    public static final List<Integer> userTypeList = Arrays.asList(601,602,603,604,605,606);
+    public static final List<Integer> doctorTypeList = Arrays.asList(602,603);
 
 
     //临床科室
-    public static final  Integer ClinicalDepartments=101;
+    public static final  Integer Clinical_Departments=101;
     //医技科室
-    public static final  Integer TechnicalDepartments=102;
+    public static final  Integer Technical_Departments=102;
 
     //结算类别
-    public static final  Integer TechnicalDept=2;
+    public static final  Integer Technical_Dept=2;
     //自费
-    public static final  Integer TaymentBySelf=201;
+    public static final  Integer Payment_By_Self=201;
     //医保
-    public static final  Integer paymentByInsurance=202;
+    public static final  Integer Payment_By_Insurance=202;
     //新农合
-    public static final  Integer paymentByNCMS=203;
+    public static final  Integer Payment_By_NCMS=203;
 
 
     //上午
-    public static final  Integer morning=301;
+    public static final  Integer Morning=301;
     //上午
-    public static final  Integer afternoon=302;
+    public static final  Integer Afternoon=302;
     //全午
-    public static final  Integer allDay=303;
+    public static final  Integer AllDay=303;
 
     //静脉滴注
-    public static final  Integer intravenousDrip=401;
+    public static final  Integer IntravenousDrip=401;
     //静脉可注
-    public static final  Integer intravenousInjection=402;
+    public static final  Integer IntravenousInjection=402;
     //肌肉注射
-    public static final  Integer intramuscularInjection=403;
+    public static final  Integer IntramuscularInjection=403;
     //口服
-    public static final  Integer oral=404;
+    public static final  Integer Oral=404;
     //皮下注射
-    public static final  Integer subcutaneousInjection=405;
+    public static final  Integer SubcutaneousInjection=405;
 
 
     //权限级别
-    public static final  Integer autenticationLevel=5;
+    public static final  Integer AutenticationLevel=5;
 
     //全级
-    public static final  Integer hospitalLevel=501;
+    public static final  Integer HospitalLevel=501;
     //科室
-    public static final  Integer deptLevel=502;
+    public static final  Integer DeptLevel=502;
     //个人
-    public static final  Integer personalLevel=503;
+    public static final  Integer PersonalLevel=503;
 
 
 
     //用户类别
-    public static final  Integer userType=6;
+    public static final  Integer User_Type=6;
     //挂号收费员
-    public static final  Integer registrationClek=601;
+    public static final  Integer Registration_Clerk=601;
     //门诊医生
-    public static final  Integer OutpatientDoctor=602;
+    public static final  Integer Out_Patient_Doctor=602;
     //医技医生
-    public static final  Integer technicalDoctor=603;
+    public static final  Integer Technical_Doctor=603;
     //药房操作员
-    public static final  Integer pharmacyOperator=604;
+    public static final  Integer Pharmacy_Operator=604;
     //财务管理员
-    public static final  Integer financialManager=605;
+    public static final  Integer Financial_Manager=605;
     //医院管理员
-    public static final  Integer hospitalAdministrator=606;
+    public static final  Integer Hospital_Administrator=606;
 
 
     //主任医师
-    public static final  Integer chiefDoctor=701;
+    public static final  Integer Chief_Doctor=701;
     //副主任医师
-    public static final  Integer deputyChiefDoctor=702;
+    public static final  Integer Deputy_Chief_Doctor=702;
     //主治医师
-    public static final  Integer attendingDoctor=703;
+    public static final  Integer Attending_Doctor=703;
     //住院医师
     public static final  Integer Resident=704;
 
 
 
     //预约
-    public static final  Integer reservation=801;
+    public static final  Integer Reservation=801;
 
     // 待诊
-    public static final  Integer WaitingForTreatment=802;
+    public static final  Integer Waiting_For_Treatment=802;
     //初诊
-    public static final  Integer firstDiagnosis=803;
+    public static final  Integer First_Diagnosis=803;
     // 疑诊
     public static final  Integer Suspect=804;
     //确诊
-    public static final  Integer finalDiagnosis=805;
+    public static final  Integer Final_Diagnosis=805;
     // 诊毕
-    public static final  Integer finshDiagnosis=806;
+    public static final  Integer Finsh_Diagnosis=806;
     //取消
-    public static final  Integer cancel=807;
+    public static final  Integer Cancel=807;
     // 预约未至
     public static final  Integer absense=808;
 
@@ -116,9 +122,9 @@ public class Constants {
 
 
     //职称
-    public static final  Integer title=7;
+    public static final  Integer Title=7;
     //看诊状态
-    public static final  Integer registrationState=8;
+    public static final  Integer RegistrationState=8;
 //    public enum USER_TYPE {
 //        CUSTOMER, RESTAURANT, COURIER;
 //

@@ -39,6 +39,7 @@ public class User {
     @Column(name = "identify_id")
     private String identifyId;
 
+
     /**
      * @return id
      */
