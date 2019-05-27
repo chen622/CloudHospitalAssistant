@@ -109,8 +109,7 @@ public class DoctorController {
      * @param object
      * @return
      */
-    @Transactional
-    @PostMapping("/firstDiagose")
+    @PostMapping("/firstDiagnose")
     public JSONObject setFirstDiagnose(@RequestBody JSONObject object, Authentication authentication) {
         try {
             PermissionCheck.isOutpatientDoctor(authentication);

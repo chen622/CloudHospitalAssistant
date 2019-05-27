@@ -14,6 +14,7 @@ import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -30,9 +31,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     MedicalRecordService medicalRecordService;
 
-
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws  Exception {
         Registration registration = registrationService.findById(registrationID);
         if(registration==null){
@@ -50,6 +50,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         medicalRecordService.save(medicalRecord);
         return CommonUtil.successJson();
     }
+
 
 
     private String cheakMedicalRecord(MedicalRecord record){

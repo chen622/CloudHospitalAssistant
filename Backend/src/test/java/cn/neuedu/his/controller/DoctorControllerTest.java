@@ -118,7 +118,7 @@ public class DoctorControllerTest {
         object.put("medicalRecord", medicalRecord);
         object.put("registrationID", 1);
         String requestJson=object.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagose")
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
