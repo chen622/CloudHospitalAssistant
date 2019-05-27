@@ -78,7 +78,7 @@ public class DoctorController {
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
         } else{
-            registration.setDoctorId(Constants.finalDiagnosis);
+            registration.setDoctorId(Constants.Final_Diagnosis);
             registrationService.update(registration);
             return CommonUtil.successJson();
         }
