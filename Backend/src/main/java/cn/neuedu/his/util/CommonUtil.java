@@ -82,7 +82,6 @@ public class CommonUtil {
 //        return resultJson;
 //    }
 
-
 //    /**
 //     * 将request参数值转为json
 //     *

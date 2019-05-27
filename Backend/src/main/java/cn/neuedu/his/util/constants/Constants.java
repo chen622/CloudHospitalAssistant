@@ -109,9 +109,9 @@ public class Constants {
     // 疑诊
     public static final  Integer SUSPECT=804;
     //确诊
-    public static final  Integer DIAGNOSIS=805;
+    public static final  Integer FINAL_DIAGNOSIS =805;
     // 诊毕
-    public static final  Integer FINSH_DIAGNOSIS=806;
+    public static final  Integer FINISH_DIAGNOSIS =806;
     //取消
     public static final  Integer CANCEL=807;
     // 预约未至

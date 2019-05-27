@@ -1,6 +1,8 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -32,7 +34,10 @@ public class DoctorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
+    @Autowired
+    RegistrationService registrationService;
+    @Autowired
+    MedicalRecordService medicalRecordService;
     private String token = "";
 
     @Before
@@ -89,12 +94,31 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Autowired
-    RegistrationService registrationService;
+
     @Test
     public void updateStateToOne() throws Exception, AuthenticationServiceException {
         String requestJson = JSONObject.toJSONString("1");
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/update")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
+        MedicalRecord medicalRecord = medicalRecordService.findById(1);
+        medicalRecord.setId(null);
+        medicalRecord.setSelfDescription(null);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecord", medicalRecord);
+        object.put("registrationID", 1);
+        String requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagose")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

@@ -12,10 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.List;
 
-
+@EnableTransactionManagement
 @SpringBootApplication
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {
