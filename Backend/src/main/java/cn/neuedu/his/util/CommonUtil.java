@@ -73,6 +73,7 @@ public class CommonUtil {
         return resultJson;
     }
 
+
 //    public static JSONObject errorJson(ErrorEnum errorEnum, Object object) {
 //        JSONObject resultJson = new JSONObject();
 //        resultJson.put("code", errorEnum.getErrorCode());

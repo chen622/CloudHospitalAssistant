@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.mapper.MedicalRecordMapper;
+import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.RegistrationService;
@@ -12,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,10 +39,12 @@ public class DoctorController {
     @GetMapping("/getAllRecord/{patientID}")
     public JSONObject getAllRecordByPatientId(@PathVariable("patientID") Integer patientID, Authentication authentication)
     throws AuthenticationServiceException {
-        System.out.println("*******");
         PermissionCheck.isOutpatientDoctor(authentication);
-        System.out.println("!!!!!!!!!");
-        return CommonUtil.successJson(medicalRecordMapper.getAllByPatientId(patientID));
+        List<MedicalRecord> list=medicalRecordMapper.getAllByPatientId(patientID);
+        if (list==null){
+            list=new ArrayList<>();
+        }
+        return CommonUtil.successJson(list);
     }
 
     /**
@@ -64,7 +68,11 @@ public class DoctorController {
     @GetMapping("/getAllWait")
     public JSONObject getAllWaitingRegistration(Authentication authentication){
         Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
-        return CommonUtil.successJson(registrationService.getAllWaitingRegistration(doctorID,Constants.WAITING_FOR_TREATMENT));
+        List<Registration> list=registrationService.getAllWaitingRegistration(doctorID,Constants.WAITING_FOR_TREATMENT);
+        if (list==null){
+            list=new ArrayList<>();
+        }
+        return CommonUtil.successJson(list);
     }
 
     /**
@@ -72,6 +80,7 @@ public class DoctorController {
      * @param id
      * @return
      */
+    @Transactional
     @PostMapping("/update")
     public JSONObject updateStateToOne(@RequestBody Integer id,Authentication authentication)
     throws  AuthenticationServiceException{
@@ -80,7 +89,7 @@ public class DoctorController {
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
         } else{
-            registration.setDoctorId(Constants.FINSH_DIAGNOSIS);
+            registration.setState(Constants.FIRST_DIAGNOSIS);
             registrationService.update(registration);
             return CommonUtil.successJson();
         }
