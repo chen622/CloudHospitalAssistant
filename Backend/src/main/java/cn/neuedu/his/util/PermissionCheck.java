@@ -1,5 +1,6 @@
 package cn.neuedu.his.util;
 
+import cn.neuedu.his.util.constants.Constants;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 
@@ -36,4 +37,21 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
+
+    /**
+     * 门诊医生权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId == Constants.OutpatientDoctor) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
 }

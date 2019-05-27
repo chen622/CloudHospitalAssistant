@@ -22,14 +22,14 @@ public class Constants {
 
 
     //临床科室
-    public static final  Integer clinicalDepartments=101;
+    public static final  Integer ClinicalDepartments=101;
     //医技科室
-    public static final  Integer technicalDepartments=102;
+    public static final  Integer TechnicalDepartments=102;
 
     //结算类别
-    public static final  Integer technicalDept=2;
+    public static final  Integer TechnicalDept=2;
     //自费
-    public static final  Integer paymentBySelf=201;
+    public static final  Integer TaymentBySelf=201;
     //医保
     public static final  Integer paymentByInsurance=202;
     //新农合
