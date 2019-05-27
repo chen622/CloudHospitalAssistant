@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.junit.Assert.*;
+
 import java.util.Date;
 
 @RunWith(SpringRunner.class)
@@ -26,48 +28,22 @@ import java.util.Date;
 public class UserControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
-    private String token = "";
-
-    @Before
-    public void setUp() throws Exception {
-        String token = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
-                .setHeaderParam("typ", Constants.TOKEN_TYPE)
-                .setIssuer(Constants.TOKEN_ISSUER)
-                .setAudience(Constants.TOKEN_AUDIENCE)
-                .setSubject("ccmccm")
-                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 1)
-                .claim("typeId", 1)
-                .compact();
-        this.token = Constants.TOKEN_PREFIX + token;
-//        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
-    }
-
-
-    //插入用户信息
     @Test
-    public void insertProperUserInformation() throws Exception {
-        //json数据
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", "t");
-        jsonObject.put("realName", "tys");
-        jsonObject.put("password", "123456");
-        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
-        jsonObject.put("typeId", 602);
-        jsonObject.put("departmentId", 1);
-        jsonObject.put("identifyId", "211002199709251979");
-        jsonObject.put("titleId", 701);
-        jsonObject.put("canArrange", false);
-
-        String request = jsonObject.toJSONString();
-
+    public void register() throws Exception {
+        User user = new User();
+        user.setIdentifyId("13020319982333424X");
+        user.setTypeId(801);
+        user.setPassword("123456");
+        user.setRealName("Amy");
+        user.setUsername("Alex");
+        user.setDepartmentId(1);
+        String requestJson = JSONObject.toJSONString(user);
         mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(request)
-                .header(Constants.TOKEN_HEADER, token)
+//                .header(Constants.TOKEN_HEADER, token)
+                .content(requestJson)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
