@@ -19,8 +19,4 @@ public class MedicalRecordController {
     @Autowired
     MedicalRecordService medicalRecordService;
 
-    @GetMapping("/getAllRecord")
-    public JSONObject getAllByPatientId(Integer patient_id){
-        return CommonUtil.successJson(medicalRecordService.getAllByPatientId(patient_id));
-    }
 }

@@ -37,7 +37,9 @@ public class DoctorController {
     @GetMapping("/getAllRecord/{patientID}")
     public JSONObject getAllRecordByPatientId(@PathVariable("patientID") Integer patientID, Authentication authentication)
     throws AuthenticationServiceException {
+        System.out.println("*******");
         PermissionCheck.isOutpatientDoctor(authentication);
+        System.out.println("!!!!!!!!!");
         return CommonUtil.successJson(medicalRecordMapper.getAllByPatientId(patientID));
     }
 
@@ -52,7 +54,7 @@ public class DoctorController {
     public JSONObject getRegistrationByPatientName(@PathVariable("name") String name, Authentication authentication )
     throws AuthenticationServiceException{
         Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
-        List<Registration> list=registrationService.getRegistrationByPatientName(name,doctorID);
+        List<Registration> list=registrationService.getRegistrationByPatientName(name,doctorID,Constants.WAITING_FOR_TREATMENT);
         if (list==null){
             list=new ArrayList<>();
         }
@@ -62,7 +64,7 @@ public class DoctorController {
     @GetMapping("/getAllWait")
     public JSONObject getAllWaitingRegistration(Authentication authentication){
         Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
-        return CommonUtil.successJson(registrationService.getAllWaitingRegistration(doctorID));
+        return CommonUtil.successJson(registrationService.getAllWaitingRegistration(doctorID,Constants.WAITING_FOR_TREATMENT));
     }
 
     /**
@@ -78,7 +80,7 @@ public class DoctorController {
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
         } else{
-            registration.setDoctorId(Constants.Final_Diagnosis);
+            registration.setDoctorId(Constants.FINSH_DIAGNOSIS);
             registrationService.update(registration);
             return CommonUtil.successJson();
         }
