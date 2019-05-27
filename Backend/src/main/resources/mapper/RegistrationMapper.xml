@@ -31,7 +31,7 @@
     select  * from registration,patient where  state=47 and registration.patient_id=patient.id order by id ASC
   </select>
 
-  <select id="getRegistrationByPatientName" resultType="cregistrationWithPatient">
+  <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
      select  * from registration,patient where  state=47 and patient.id=registration.patient_id and patient.real_name=#{name}
      order by id ASC
   </select>

@@ -26,7 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.Registration_Clerk;
+import static cn.neuedu.his.util.constants.Constants.REGISTRATION_CLERK;
 
 /**
  *
@@ -81,7 +81,7 @@ public class RegistrationController {
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
-        registration.setState(Registration_Clerk);
+        registration.setState(REGISTRATION_CLERK);
         registration.setNeedBook(jsonObject.getBoolean("needBook"));
 
         registrationService.save(registration);

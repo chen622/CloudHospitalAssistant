@@ -20,11 +20,6 @@
   <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
     select * from user where username = #{username}
   </select>
-  
-  <update id="deleteUserByUsername">
-    delete
-    from user
-    where username = #{username}
-  </update>
+
 
 </mapper>

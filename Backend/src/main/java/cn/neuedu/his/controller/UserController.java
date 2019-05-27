@@ -45,13 +45,11 @@ public class UserController {
     @PostMapping("/register")
     public JSONObject register(@RequestBody JSONObject jsonObject) {
 
-        User user = userService.getUserByUsername(jsonObject.getString("userName"));
+        User user = JSONObject.toJavaObject(jsonObject,User.class);
 
-        if ( user != null){
+        if ( userService.getUserByUsername(user.getUsername())!= null){
             return CommonUtil.errorJson(ErrorEnum.E_600);
         }
-
-        user = JSONObject.toJavaObject(jsonObject,User.class);
         //判断身份证信息长度
 
         if (user.getIdentifyId().length() != 18){
