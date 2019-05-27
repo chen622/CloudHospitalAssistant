@@ -7,7 +7,8 @@ public enum ErrorEnum {
     /*
      * 错误信息
      * */
-    E_400("500", "请求处理异常，请稍后再试");
+    E_500("500", "请求处理异常，请稍后再试"),
+    E_501("501", "参数异常");
 
 
     private String errorCode;
