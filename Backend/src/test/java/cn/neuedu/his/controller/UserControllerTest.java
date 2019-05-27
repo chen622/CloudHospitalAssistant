@@ -230,6 +230,39 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    //插入错误类型的用户信息（未完成）
+    @Test
+    public void deleteUserInformation() throws Exception {
+
+        String token = Jwts.builder()
+                .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
+                .setHeaderParam("typ", Constants.TOKEN_TYPE)
+                .setIssuer(Constants.TOKEN_ISSUER)
+                .setAudience(Constants.TOKEN_AUDIENCE)
+                .setSubject("ccmccm")
+                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
+                .claim("id", 1)
+                .claim("typeId", 606)
+                .compact();
+        this.token = Constants.TOKEN_PREFIX + token;
+
+
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .param("t")
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
 }
 
 
