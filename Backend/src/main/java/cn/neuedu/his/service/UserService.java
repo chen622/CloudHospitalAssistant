@@ -9,4 +9,7 @@ import cn.neuedu.his.util.inter.Service;
 public interface UserService extends Service<User> {
     User getUserByUsername(String username);
 
+    void insertUserOperation(User user);
+
+    User getUserAllInformationByName(String username);
 }
