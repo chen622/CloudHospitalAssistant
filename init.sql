@@ -198,7 +198,7 @@ create table if not exists inspection_template_relationship
     item_type   tinyint(1) not null comment '0是药品
 1是非药品',
     constraint inspection_template_relationship_Inspection_template_id_fk
-        foreign key (template_id) references Inspection_template (id)
+        foreign key (template_id) references inspection_template (id)
 )
     comment 'item_id-药或非药';
 

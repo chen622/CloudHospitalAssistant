@@ -1,6 +1,10 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.Doctor;
+import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -8,4 +12,6 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface DoctorService extends Service<Doctor> {
 
+    @Transactional
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws Exception;
 }

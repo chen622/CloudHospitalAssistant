@@ -2,7 +2,7 @@ package cn.neuedu.his.model;
 
 import javax.persistence.*;
 
-@Table(name = "Inspection_template")
+@Table(name = "inspection_template")
 public class InspectionTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

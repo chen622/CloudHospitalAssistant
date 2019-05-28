@@ -47,7 +47,7 @@ public class PermissionCheck {
     public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException{
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId == Constants.OUT_PATIENT_DOCTOR) {
+        if (typeId.equals(Constants.OUT_PATIENT_DOCTOR)) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");

@@ -1,5 +1,6 @@
 package cn.neuedu.his.util.inter;
 
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import java.util.List;
@@ -50,6 +51,7 @@ public interface Service<T> {
      * @param id
      * @return
      */
+    @Transactional
     T findById(Integer id);
 
 //    /**

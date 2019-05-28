@@ -1,12 +1,10 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.JobSchedule;
 import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.model.Registration;
-import cn.neuedu.his.service.JobScheduleService;
-import cn.neuedu.his.service.PatientService;
-import cn.neuedu.his.service.RegistrationService;
-import cn.neuedu.his.service.UserService;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,6 +41,12 @@ public class RegistrationController {
     PatientService patientService;
     @Autowired
     JobScheduleService jobScheduleService;
+    @Autowired
+    PaymentService paymentService;
+    @Autowired
+    RegistrationTypeService registrationTypeService;
+    @Autowired
+    InvoiceService invoiceService;
 
     /**
      * 现场挂号
@@ -85,6 +90,14 @@ public class RegistrationController {
         registration.setNeedBook(jsonObject.getBoolean("needBook"));
 
         registrationService.save(registration);
+
+        //生成缴费单
+        BigDecimal unitPrice = registrationTypeService.findById(schedule.getRegistrationTypeId()).getPrice();
+        Integer paymentId = paymentService.createRegistrationPayment(registration, jsonObject.getInteger("settlementType"), unitPrice);
+
+        //生成发票
+        invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
+
         return CommonUtil.successJson();
     }
 

@@ -3,6 +3,7 @@ package cn.neuedu.his.service.impl;
 import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,6 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     }
 
     public  List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state){
-        return registrationMapper.getRegistrationByPatientName(name,doctorID);
+        return registrationMapper.getRegistrationByPatientName(name,doctorID, Constants.WAITING_FOR_TREATMENT);
     }
 }

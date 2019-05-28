@@ -73,6 +73,7 @@ public class CommonUtil {
         return resultJson;
     }
 
+
 //    public static JSONObject errorJson(ErrorEnum errorEnum, Object object) {
 //        JSONObject resultJson = new JSONObject();
 //        resultJson.put("code", errorEnum.getErrorCode());
@@ -80,7 +81,6 @@ public class CommonUtil {
 //        resultJson.put("data", object);
 //        return resultJson;
 //    }
-
 
 //    /**
 //     * 将request参数值转为json
