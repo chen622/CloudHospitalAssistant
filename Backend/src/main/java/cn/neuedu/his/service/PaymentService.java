@@ -11,4 +11,6 @@ import java.math.BigDecimal;
  */
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
+    public Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException;
+    Payment findByRegistrationId(Integer registrationId);
 }

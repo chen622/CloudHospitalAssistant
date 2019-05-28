@@ -17,9 +17,9 @@
 
   <select id="getInvoiceAndPaymentByInvoiceId" resultMap="InvoiceAndPaymentMap">
         select  * from invoice where id = #{invoiceId} ;
-    </select>
+  </select>
 
-  <select id="getPaymentByPaymentId" resultType="cn.neuedu.his.model.Payment">
+  <select id="getPaymentByPaymentId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
         SELECT * FROM payment where id = #{payment_id} order by create_time asc
    </select>
 </mapper>

@@ -16,8 +16,12 @@
     <result column="have_registration_amount" jdbcType="INTEGER" property="haveRegistrationAmount" />
   </resultMap>
 
-  <update id="updateHaveRegistrationAmount" parameterType="Integer">
-    update job_schedule set have_registration_amount=have_registration_amount+1 where id = #{id}
+  <update id="updateHaveRegistrationAmountAdd" parameterType="Integer">
+    update job_schedule set have_registration_amount=have_registration_amount - 1 where id = #{id}
+  </update>
+
+  <update id="updateHaveRegistrationAmountReduce" parameterType="Integer">
+    update job_schedule set have_registration_amount=have_registration_amount - 1 where id = #{id}
   </update>
 </mapper>
 
