@@ -35,6 +35,7 @@ public class MedicalRecordTemplate {
     @Column(name = "department_id")
     private Integer departmentId;
 
+
     /**
      * 权限级别，参照常量表
      */

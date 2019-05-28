@@ -113,6 +113,7 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    //检查模板
     @Test
     public void getHospitalCheckTemps() throws  Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps")
@@ -137,7 +138,6 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
     @Test
     public void getPersonalCheckTemps() throws  Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalCheckTemps")
@@ -150,4 +150,40 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    //病例模板
+    @Test
+    public void getHospitalMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDeptMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDeptMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getPersonalMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
