@@ -37,7 +37,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) {
         Registration registration = registrationService.findById(registrationID);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.FIRST_DIAGNOSIS);
             registrationService.update(registration);
@@ -45,12 +45,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         //检查是否有必要的参数没有填写完
         String  check=cheakMedicalRecord(medicalRecord);
         if(!check.equals("")){
-            System.out.println("********************");
             throw new RuntimeException();
         }
         medicalRecordService.save(medicalRecord);
         return CommonUtil.successJson();
     }
+
 
 
     private String cheakMedicalRecord(MedicalRecord record){

@@ -124,7 +124,7 @@ public class DoctorController {
         try {
             object1=doctorService.setFirstDiagnose(registrationID, medicalRecord);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("medicalRecord"));
         }
         return object;
     }
@@ -144,7 +144,7 @@ public class DoctorController {
              }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.SUSPECT);
             registrationService.update(registration);
@@ -159,7 +159,7 @@ public class DoctorController {
      * @return
      */
     @Transactional
-    public JSONObject updateStateToFinalDiagnose(@RequestBody Integer id, Authentication authentication) {
+    public JSONObject updateStateToFinalDiagnose(@RequestBody Integer id, Authentication authentication)  {
         try {
             PermissionCheck.isOutpatientDoctor(authentication);
         }catch (AuthenticationServiceException a){
@@ -167,7 +167,7 @@ public class DoctorController {
         }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.FINAL_DIAGNOSIS);
             registrationService.update(registration);
@@ -190,7 +190,7 @@ public class DoctorController {
         }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.FINISH_DIAGNOSIS);
             registrationService.update(registration);
