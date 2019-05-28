@@ -29,9 +29,9 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
 
-//        System.out.println(invoice.getId() + " " + invoice.getCreatedDate());
+        System.out.println(invoice.getId() + " " + invoice.getCreatedDate());
 //        for (Payment payment : invoice.getPaymentList()) {
-//            System.out.println(payment.getId() + " " + payment.getUnitPrice().toString());
+            System.out.println(invoice.getPayment().getId() + " " + invoice.getPayment().getUnitPrice().toString());
 //        }
 
         //TODO 打印成文件

@@ -22,7 +22,7 @@ public class Invoice {
     @Column(name = "payment_id")
     private Integer paymentId;
 
-    private List<Payment> paymentList;
+    private Payment payment;
 
     /**
      * @return id
@@ -80,11 +80,11 @@ public class Invoice {
         this.paymentId = paymentId;
     }
 
-    public List<Payment> getPaymentList() {
-        return paymentList;
+    public Payment getPayment() {
+        return payment;
     }
 
-    public void setPaymentList(List<Payment> paymentList) {
-        this.paymentList = paymentList;
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

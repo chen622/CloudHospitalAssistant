@@ -12,7 +12,7 @@
   </resultMap>
 
   <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
-    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByPaymentId" column="payment_id"/>
+    <association property="payment" select="getPaymentByPaymentId" column="payment_id"/>
   </resultMap>
 
   <select id="getInvoiceAndPaymentByInvoiceId" resultMap="InvoiceAndPaymentMap">
