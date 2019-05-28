@@ -4,6 +4,8 @@ import cn.neuedu.his.mapper.InvoiceMapper;
 import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InvoiceService;
+import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,20 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     @Autowired
     private InvoiceMapper invoiceMapper;
+
+    @Override
+    public void printInvoice(Integer invoiceId) throws  IllegalArgumentException{
+        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
+        if (invoice == null)
+            throw new IllegalArgumentException("invoiceId");
+
+//        System.out.println(invoice.getId() + " " + invoice.getCreatedDate());
+//        for (Payment payment : invoice.getPaymentList()) {
+//            System.out.println(payment.getId() + " " + payment.getUnitPrice().toString());
+//        }
+
+        //TODO 打印成文件
+    }
 
     /**
      * 通过缴费信息，生成发票

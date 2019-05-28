@@ -47,4 +47,44 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         save(payment);
         return payment.getId();
     }
+
+    /**
+     * 形成冲红缴费单
+     * @param registrationId
+     * @param registrarId
+     * @param retreatQuantity -- 退回数量，主要针对drug，其余均设为1即可
+     * @return
+     */
+    @Override
+    public Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException{
+        Payment originalPayment = findByRegistrationId(registrationId);
+        if (originalPayment == null)
+            throw new IllegalArgumentException();
+
+        //填入新的信息
+        Payment newPayment = new Payment();
+        newPayment.setQuantity(retreatQuantity * (-1));
+        newPayment.setIsRetreat(true);
+        newPayment.setUnitPrice(originalPayment.getUnitPrice());
+        newPayment.setOperatorId(registrationId);
+        newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
+        newPayment.setPaymentTypeId(originalPayment.getPaymentTypeId());
+        newPayment.setItemId(originalPayment.getItemId());
+        newPayment.setCreateTime(new Date(System.currentTimeMillis()));
+        newPayment.setPatientId(originalPayment.getPatientId());
+        newPayment.setOperatorId(registrarId);
+
+
+        if (newPayment.getPaymentTypeId().equals(REGISTRATION_PAYMENT_TYPE))
+            newPayment.setHaveCompleted(true);
+
+        save(newPayment);
+
+        return newPayment.getId();
+    }
+
+    @Override
+    public Payment findByRegistrationId(Integer registrationId) {
+        return paymentMapper.selectByRegistrationId(registrationId, REGISTRATION_PAYMENT_TYPE);
+    }
 }

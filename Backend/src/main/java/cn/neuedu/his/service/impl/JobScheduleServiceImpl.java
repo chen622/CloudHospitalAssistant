@@ -17,8 +17,21 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     @Autowired
     private JobScheduleMapper jobScheduleMapper;
 
+    /**
+     * 增加某专家已挂号人数
+     * @param id
+     */
     @Override
-    public void changeHaveRegistrationAmount(Integer id) {
-        jobScheduleMapper.updateHaveRegistrationAmount(id);
+    public void addHaveRegistrationAmount(Integer id) {
+        jobScheduleMapper.updateHaveRegistrationAmountAdd(id);
+    }
+
+    /**
+     * 减少某专家已挂号人数
+     * @param id
+     */
+    @Override
+    public void reduceRegistrationAmount(Integer id) {
+        jobScheduleMapper.updateHaveRegistrationAmountReduce(id);
     }
 }
