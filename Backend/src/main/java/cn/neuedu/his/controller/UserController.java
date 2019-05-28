@@ -167,5 +167,18 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
+    //超级管理员修改信息???
+    @PostMapping("/adminDelete")
+    public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) {
+
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        //调用普通modify函数
+        return modifyUserInformation(jsonObject);
+    }
 
 }
