@@ -10,4 +10,5 @@ public interface UserMapper extends MyMapper<User> {
     User getUserByUsername(String username);
 
     User getUserAllInformationByUsername(String username);
+
 }

@@ -116,7 +116,7 @@ public class UserController {
         //获取user
         User user = userService.getUserByUsername("username");
 
-        //获取id
+        //获取id,因为可能要删除doctor中的数据，所以获取id是必要的
         Integer userId = user.getId();
 
         //判断被删除用户是否存在

@@ -17,4 +17,10 @@
     from  registration_type
     where name = #{name}
   </select>
+
+  <update id="deleteRegistrationType">
+    delete
+    from registration_type
+    where name = #{name}
+  </update>
 </mapper>
