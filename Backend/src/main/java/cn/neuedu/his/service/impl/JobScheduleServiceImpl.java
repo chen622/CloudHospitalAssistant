@@ -17,4 +17,8 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     @Autowired
     private JobScheduleMapper jobScheduleMapper;
 
+    @Override
+    public void changeHaveRegistrationAmount(Integer id) {
+        jobScheduleMapper.updateHaveRegistrationAmount(id);
+    }
 }

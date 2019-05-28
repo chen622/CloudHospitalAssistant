@@ -21,6 +21,11 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     @Autowired
     private InvoiceMapper invoiceMapper;
 
+    /**
+     * 通过缴费信息，生成发票
+     * @param payment
+     * @throws IllegalArgumentException
+     */
     @Override
     public void addInvoiceByPayment(Payment payment) throws IllegalArgumentException{
         if (payment.equals(null))
@@ -30,5 +35,10 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
         invoice.setPaymentId(payment.getId());
         save(invoice);
+    }
+
+    @Override
+    public Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId) {
+        return invoiceMapper.getInvoiceAndPaymentByInvoiceId(invoiceId);
     }
 }

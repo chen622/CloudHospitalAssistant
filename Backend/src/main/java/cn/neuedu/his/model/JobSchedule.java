@@ -24,6 +24,9 @@ public class JobSchedule {
     @Column(name = "limit_registration_amount")
     private Integer limitRegistrationAmount;
 
+    @Column(name = "have_registration_amount")
+    private Integer haveRegistrationAmount;
+
     /**
      * 午别，参照常量表
      */
@@ -145,5 +148,13 @@ public class JobSchedule {
      */
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Integer getHaveRegistrationAmount() {
+        return haveRegistrationAmount;
+    }
+
+    public void setHaveRegistrationAmount(Integer haveRegistrationAmount) {
+        this.haveRegistrationAmount = haveRegistrationAmount;
     }
 }

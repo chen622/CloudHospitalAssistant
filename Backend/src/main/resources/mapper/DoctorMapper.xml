@@ -9,4 +9,5 @@
     <result column="title_id" jdbcType="INTEGER" property="titleId" />
     <result column="can_arrange" jdbcType="BIT" property="canArrange" />
   </resultMap>
+
 </mapper>

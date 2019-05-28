@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public class Invoice {
     @Id
@@ -20,6 +21,8 @@ public class Invoice {
 
     @Column(name = "payment_id")
     private Integer paymentId;
+
+    private List<Payment> paymentList;
 
     /**
      * @return id
@@ -75,5 +78,13 @@ public class Invoice {
      */
     public void setPaymentId(Integer paymentId) {
         this.paymentId = paymentId;
+    }
+
+    public List<Payment> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(List<Payment> paymentList) {
+        this.paymentList = paymentList;
     }
 }

@@ -16,15 +16,13 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
   </resultMap>
+  
+  <resultMap id="UserAndDoctorInformation" type=""
 
   <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
     select * from user where username = #{username}
   </select>
-  
-  <update id="deleteUserByUsername">
-    delete
-    from user
-    where username = #{username}
-  </update>
+
+
 
 </mapper>
