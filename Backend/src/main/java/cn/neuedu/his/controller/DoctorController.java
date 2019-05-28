@@ -130,9 +130,54 @@ public class DoctorController {
         return object1;
     }
 
+    /**
+     * 门诊医生查看全院病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getHospitalMR")
+    public JSONObject getHospitalMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getHospitalMR(doctorID,Constants.HOSPITALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
 
     /**
-     * 门诊医生查看全院模板
+     * 门诊医生查看所在科室病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDeptMR")
+    public JSONObject getDeptMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getDeptMR(doctorID,Constants.DEPTLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看个人病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getPersonalMR")
+    public JSONObject getPersonalMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getPersonalMR(doctorID,Constants.PERSONALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+
+    /**
+     * 门诊医生查看全院检查模板
      * @param authentication
      * @return
      */
@@ -147,7 +192,7 @@ public class DoctorController {
     }
 
     /**
-     * 门诊医生查看所在科室模板
+     * 门诊医生查看所在科室检查模板
      * @param authentication
      * @return
      */
@@ -162,7 +207,7 @@ public class DoctorController {
     }
 
     /**
-     * 门诊医生查看个人模板
+     * 门诊医生查看个人检查模板
      * @param authentication
      * @return
      */

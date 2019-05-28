@@ -32,6 +32,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     MedicalRecordService medicalRecordService;
     @Autowired
+    MedicalRecordTemplateService medicalRecordTemplateService;
+    @Autowired
     InspectionTemplateService inspectionTemplateService;
     @Autowired
     InspectionTemplateRelationshipService relationshipService;
@@ -64,12 +66,13 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     /**
-     * 获得全院模板
+     * 获得全院检查模板
      * @param doctorID
      * @param level
      * @return
      */
     @Override
+    @Transactional
     public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level) {
         List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level,Constants.NON_DRUG);
         if(templates==null)
@@ -78,12 +81,13 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     /**
-     * 获得科室模板
+     * 获得科室检查模板
      * @param doctorID
      * @param level
      * @return
      */
     @Override
+    @Transactional
     public JSONObject getDeptCheckTemps(Integer doctorID,Integer level) {
 //        Registration registration = registrationService.findById(registrationId);
 //        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
@@ -96,18 +100,60 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     /**
-     * 获得个人模板
+     * 获得个人检查模板
      * @param doctorID
      * @param level
      * @return
      */
     @Override
+    @Transactional
     public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level) {
         List<InspectionTemplate> templates=inspectionTemplateService.getPersonalCheckTemps(doctorID,level,Constants.NON_DRUG);
         if(templates==null)
             templates=new ArrayList<>();
         return CommonUtil.successJson(templates);
     }
+
+
+    /**
+     * 获得全院病例模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
+    @Override
+    @Transactional
+    public JSONObject getHospitalMR(Integer doctorID,Integer level) {
+        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getHospitalMR(doctorID,level);
+        return CommonUtil.successJson(templates);
+    }
+
+    /**
+     * 获得科室病例模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
+    @Override
+    @Transactional
+    public JSONObject getDeptMR(Integer doctorID,Integer level) {
+        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getDeptMR(doctorID,level);
+        return CommonUtil.successJson(templates);
+    }
+
+    /**
+     * 获得个人病例模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
+    @Override
+    @Transactional
+    public JSONObject getPersonalMR(Integer doctorID,Integer level) {
+        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getPersonalMR(doctorID,level);
+        return CommonUtil.successJson(templates);
+    }
+
 
     private String cheakMedicalRecord(MedicalRecord record){
         if (registrationService.findById(record.getRegistrationId())==null)

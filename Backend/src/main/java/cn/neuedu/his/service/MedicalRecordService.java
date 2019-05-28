@@ -1,5 +1,6 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.MedicalRecord;
+import cn.neuedu.his.model.MedicalRecordTemplate;
 import cn.neuedu.his.util.inter.Service;
 
 import java.util.List;

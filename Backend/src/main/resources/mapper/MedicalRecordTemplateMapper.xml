@@ -18,4 +18,19 @@
     <result column="level_id" jdbcType="INTEGER" property="levelId" />
     <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
   </resultMap>
+
+  <select id="getHospitalMR" resultMap="BaseResultMap">
+    select  * from  medical_record_template WHERE   level_id=#{level}
+  </select>
+
+  <select id="getDeptMR" resultMap="BaseResultMap">
+    select *
+    from medical_record_template t where  t.level_id =#{level} and  t.department_id is (
+    select  tt.department_id from medical_record_template tt where tt.created_by_id=#{doctorID}
+    )
+  </select>
+
+  <select id="getPersonalMR" resultMap="BaseResultMap">
+    select  * from  medical_record_template WHERE  created_by_id=#{doctorID} and  level_id=#{level}
+  </select>
 </mapper>
