@@ -17,8 +17,33 @@
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
   </resultMap>
 
+  <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="title_id" jdbcType="INTEGER" property="titleId" />
+      <result column="can_arrange" jdbcType="BIT" property="canArrange" />
+    </association>
+  </resultMap>
+
   <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
     select * from user where username = #{username}
+  </select>
+
+  <!-- 选择用户和医生信息 -->
+  <select id="getUserAllInformationByUsername" parameterType="String" resultMap="UserAndDoctor">
+    SELECT *
+    FROM `user` JOIN doctor ON user.id = doctor.id
+    where username = #{username}
   </select>
 
 

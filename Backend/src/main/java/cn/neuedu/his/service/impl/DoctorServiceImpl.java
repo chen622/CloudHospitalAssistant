@@ -9,9 +9,11 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ import java.util.List;
 public class DoctorServiceImpl extends AbstractService<Doctor> implements DoctorService {
 
     @Autowired
-    private DoctorMapper doctorMapper;
+    private DoctorService doctorService;
     @Autowired
     RegistrationService registrationService;
     @Autowired
@@ -36,6 +38,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     DrugTemplateService drugTemplateService;
 
+    /**
+     * 提交初诊信息
+     * @param registrationID
+     * @param medicalRecord
+     * @return
+     */
     @Override
     @Transactional
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) {
@@ -55,27 +63,23 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson();
     }
 
+    /**
+     * 获得全院模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
     @Override
-    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level) {
+    public JSONObject getHospitalCheckTemps(Integer registrationId,Integer doctorID,Integer level) {
+        Registration registration = registrationService.findById(registrationId);
+        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
+            return  CommonUtil.errorJson(ErrorEnum.E_601.addErrorParamName("registration state"));
+        }
         List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level,Constants.NON_DRUG);
         if(templates==null)
             templates=new ArrayList<>();
-        else {
-            System.out.println("\n\n**********************************");
-            for (InspectionTemplate t:templates){
-                System.out.println(t.getId()+" "+t.getName());
-                for (InspectionTemplateRelationship relationship :t.getRelationships()){
-                    System.out.println(relationship.getId()+" "+relationship.getItemId());
-                    if (relationship.getNonDrug()!=null)
-                        System.out.println(relationship.getNonDrug().getName());
-                    else
-                        System.out.println(relationship.getDrug().getName());
-                }
-            }
-        }
-        return templates;
+        return CommonUtil.successJson(templates);
     }
-
 
     private String cheakMedicalRecord(MedicalRecord record){
         if (registrationService.findById(record.getRegistrationId())==null)

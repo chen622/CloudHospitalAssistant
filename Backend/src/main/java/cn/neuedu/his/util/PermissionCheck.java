@@ -91,11 +91,9 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isIndivual(Authentication authentication, String username) throws AuthenticationServiceException{
-        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer user_name = (Integer) data.get("username");
-        if (user_name.equals(username)) {
-            return (Integer) data.get("id");
+    public static String isIndivual(Authentication authentication, String username) throws AuthenticationServiceException{
+        if (authentication.getName().equals(username)) {
+            return (String) authentication.getName();
         } else {
             throw new AuthenticationServiceException("");
         }
@@ -110,4 +108,6 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
+
+
 }
