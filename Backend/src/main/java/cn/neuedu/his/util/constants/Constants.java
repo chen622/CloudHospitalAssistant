@@ -23,8 +23,9 @@ public class Constants {
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
-    public static final List<Integer> userTypeList = Arrays.asList(601,602,603,604,605,606);
-    public static final List<Integer> doctorTypeList = Arrays.asList(602,603);
+    public static final List<Integer> USERTYPELIST = Arrays.asList(601,602,603,604,605,606);
+    public static final List<Integer> DOCTORTYPELIST = Arrays.asList(602,603);
+    public static final List<Integer> DOCTORTITLETYPELIST = Arrays.asList(602,603);
 
     //医院管理员
     public static final Integer HOSPITAL_ADMIN = 606;
