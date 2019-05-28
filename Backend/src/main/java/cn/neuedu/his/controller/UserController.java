@@ -199,4 +199,22 @@ public class UserController {
     }
 
 
+    //医院管理员查询个人信息
+    @GetMapping("/adminAelectUser/{username}")
+    public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication){
+
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+        User user = userService.getUserByUsername(username);
+
+        if (user == null)
+            return CommonUtil.errorJson(ErrorEnum.E_601);
+
+        return CommonUtil.successJson(user);
+    }
+
+
 }
