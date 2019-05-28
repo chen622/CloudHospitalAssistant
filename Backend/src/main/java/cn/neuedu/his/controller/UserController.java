@@ -181,4 +181,22 @@ public class UserController {
         return modifyUserInformation(jsonObject);
     }
 
+    //单个用户查询
+    @GetMapping("/selectUser/{username}")
+    public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication){
+
+        try {
+            PermissionCheck.isIndivual(authentication, username);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+        User user = userService.getUserByUsername(username);
+
+        if (user == null)
+            return CommonUtil.errorJson(ErrorEnum.E_601);
+
+        return CommonUtil.successJson(user);
+    }
+
+
 }
