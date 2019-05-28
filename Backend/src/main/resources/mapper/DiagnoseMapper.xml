@@ -6,9 +6,10 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="disease_id" jdbcType="INTEGER" property="diseaseId" />
-    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_major" jdbcType="BIT" property="isMajor" />
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
   </resultMap>
 </mapper>

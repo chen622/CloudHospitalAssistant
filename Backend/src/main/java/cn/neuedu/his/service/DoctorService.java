@@ -1,4 +1,5 @@
 package cn.neuedu.his.service;
+import cn.neuedu.his.model.Diagnose;
 import cn.neuedu.his.model.Doctor;
 import cn.neuedu.his.model.InspectionTemplate;
 import cn.neuedu.his.model.MedicalRecord;
@@ -9,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
 public interface DoctorService extends Service<Doctor> {
 
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws Exception;
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, Diagnose diagnose) throws Exception;
 
     @Transactional
     public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level);
@@ -38,4 +40,8 @@ public interface DoctorService extends Service<Doctor> {
     @Transactional
     public JSONObject getPersonalMR(Integer doctorID,Integer level);
 
+    @Transactional
+    public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
+    Integer getDeptNo(Integer id);
 }

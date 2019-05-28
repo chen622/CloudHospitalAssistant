@@ -11,13 +11,34 @@ public class Diagnose {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "medical_record_id")
-    private Integer medicalRecordId;
+    @Column(name = "item_id")
+    private Integer itemId;
 
     @Column(name = "disease_id")
     private Integer diseaseId;
 
-    private Date date;
+    @Column(name = "create_time")
+    private Date createTime;
+
+    @Column(name = "is_template")
+    private Boolean isTemplate;
+
+
+    public Boolean getTemplate() {
+        return isTemplate;
+    }
+
+    public void setTemplate(Boolean template) {
+        isTemplate = template;
+    }
+
+    public Boolean getMajor() {
+        return isMajor;
+    }
+
+    public void setMajor(Boolean major) {
+        isMajor = major;
+    }
 
     /**
      * 是否为确诊
@@ -42,15 +63,15 @@ public class Diagnose {
     /**
      * @return medical_record_id
      */
-    public Integer getMedicalRecordId() {
-        return medicalRecordId;
+    public Integer getItemId() {
+        return itemId;
     }
 
     /**
      * @param medicalRecordId
      */
-    public void setMedicalRecordId(Integer medicalRecordId) {
-        this.medicalRecordId = medicalRecordId;
+    public void setItemId(Integer medicalRecordId) {
+        this.itemId = medicalRecordId;
     }
 
     /**
@@ -68,17 +89,17 @@ public class Diagnose {
     }
 
     /**
-     * @return date
+     * @return createTime
      */
-    public Date getDate() {
-        return date;
+    public Date getCreateTime() {
+        return createTime;
     }
 
     /**
-     * @param date
+     * @param createTime
      */
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     /**

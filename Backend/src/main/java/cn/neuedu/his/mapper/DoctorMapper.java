@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface DoctorMapper extends MyMapper<Doctor> {
-
+    public Integer getDeptNo(Integer id);
 }

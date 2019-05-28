@@ -103,7 +103,7 @@ public class RegistrationTypeController {
      * @param authentication
      * @return
      */
-    @PostMapping("/modifyRegisterType")
+    @PostMapping("/selectRegisterType")
     public JSONObject selectRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication){
         //检查权限
         try {
