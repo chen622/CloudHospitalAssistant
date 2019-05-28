@@ -202,11 +202,9 @@ public class UserController {
     @GetMapping("/selectUser/{username}")
     public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
-        try {
-            PermissionCheck.isIndivual(authentication, username);
-        }catch (Exception e){
+        if (!authentication.getName().equals(username))
             return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
+
         User user = userService.getUserByUsername(username);
 
         if (user == null)
@@ -220,7 +218,7 @@ public class UserController {
 
 
     //医院管理员查询个人信息
-    @GetMapping("/adminAelectUser/{username}")
+    @GetMapping("/adminSelectUser/{username}")
     public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
         try {
@@ -239,15 +237,4 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    @GetMapping("/select/{username}")
-    public JSONObject getAllInformation(@PathVariable("username") String username){
-        User user = userService.getUserAllInformationByName(username);
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName",user.getUsername());
-        jsonObject.put("typeId",user.getTypeId());
-        jsonObject.put("titleId",user.getDoctor().getTitleId());
-
-        return CommonUtil.successJson(jsonObject);
-    }
 }
