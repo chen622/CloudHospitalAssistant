@@ -8,4 +8,6 @@ import org.springframework.stereotype.Component;
 
 public interface RegistrationTypeMapper extends MyMapper<RegistrationType> {
     RegistrationType getRegistrationTypeByName(String name);
+
+    void deleteRegistrationTypeByName(String name);
 }
