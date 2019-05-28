@@ -10,6 +10,7 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
+import jdk.internal.jline.internal.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -92,7 +93,7 @@ public class UserController {
     }
 
     /**
-     * 、
+     * 管理员删除信息
      * @param username
      * @param authentication
      * @return
@@ -130,18 +131,10 @@ public class UserController {
 
     //个人修改个人信息
     @PostMapping("/modify")
-    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject){
+    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication){
 
         User user = jsonObject.toJavaObject(jsonObject,User.class);
-
-        String lastUserName = jsonObject.getString("lastUserName");
-
-        if (userService.getUserByUsername(lastUserName)==null)
-            return CommonUtil.errorJson(ErrorEnum.E_601);
-
-        //用户信息不存在？？？不知道有没有必要存在
-        if (userService.getUserByUsername(user.getUsername())==null)
-            return CommonUtil.errorJson(ErrorEnum.E_601);
+        user.setId(PermissionCheck.getIdByUser(authentication));
 
         //判断用户名是否重复
         if(userService.getUserByUsername(user.getUsername()) == null)
@@ -158,6 +151,8 @@ public class UserController {
         userService.update(user);
 
         user = userService.getUserByUsername(user.getUsername());
+
+        //修改医生信息
         if (doctorTypeList.contains(user.getTypeId())){
             Doctor doctor = jsonObject.toJavaObject(jsonObject,Doctor.class);
             doctor.setId(user.getId());
@@ -178,7 +173,7 @@ public class UserController {
         }
 
         //调用普通modify函数
-        return modifyUserInformation(jsonObject);
+        return modifyUserInformation(jsonObject,authentication);
     }
 
     //单个用户查询
