@@ -186,7 +186,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
             medicalRecordTemplateService.save(template);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_605.addErrorParamName("medicalRecoredTemplate"));
+            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName("medicalRecoredTemplate"));
         }
         template.setCreatedById(doctorID);
         try {
@@ -195,7 +195,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             List<Diagnose> finalD=record.getFinalDiagnose();
             saveDiagnose(firstD, template.getId());
         } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_605.addErrorParamName("diagnose"));
+            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName("diagnose"));
         }
         return CommonUtil.successJson();
     }
