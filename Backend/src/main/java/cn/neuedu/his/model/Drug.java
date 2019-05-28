@@ -32,6 +32,34 @@ public class Drug {
 
     private String name;
 
+    private String code;
+    private Integer stockAmount;
+    private Integer drugType;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getStockAmount() {
+        return stockAmount;
+    }
+
+    public void setStockAmount(Integer stockAmount) {
+        this.stockAmount = stockAmount;
+    }
+
+    public Integer getDrugType() {
+        return drugType;
+    }
+
+    public void setDrugType(Integer drugType) {
+        this.drugType = drugType;
+    }
+
     /**
      * @return id
      */

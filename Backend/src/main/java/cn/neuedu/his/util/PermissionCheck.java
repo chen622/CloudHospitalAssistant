@@ -26,6 +26,18 @@ public class PermissionCheck {
     }
 
     /**
+     * 通用的权限校验接口，所有类别都可通过
+     *
+     * @param authentication
+     * @return
+     */
+    public static Integer getNameByUser(Authentication authentication) {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("username");
+        return (Integer) data.get("username");
+    }
+
+    /**
      * 挂号员权限检验
      * @param authentication
      * @return

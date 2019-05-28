@@ -94,11 +94,15 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
     @Test
-    public void updateStateToOne() throws Exception, AuthenticationServiceException {
-        String requestJson = JSONObject.toJSONString("1");
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/update")
+    public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
+        MedicalRecord medicalRecord = medicalRecordService.findById(1);
+        medicalRecord.setId(null);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecord", medicalRecord);
+        object.put("registrationID", 1);
+        String requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
@@ -110,17 +114,9 @@ public class DoctorControllerTest {
     }
 
     @Test
-    public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
-        MedicalRecord medicalRecord = medicalRecordService.findById(1);
-        medicalRecord.setId(null);
-        medicalRecord.setSelfDescription(null);
-        JSONObject object=new JSONObject();
-        object.put("medicalRecord", medicalRecord);
-        object.put("registrationID", 1);
-        String requestJson=object.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
+    public void getHospitalCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps/")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

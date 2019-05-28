@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.mapper.MedicalRecordMapper;
+import cn.neuedu.his.model.InspectionTemplate;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.DoctorService;
@@ -126,8 +127,22 @@ public class DoctorController {
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("medicalRecord"));
         }
-        return object;
+        return object1;
     }
+
+
+    @GetMapping("/getHospitalCheckTemps")
+    public JSONObject getHospitalCheckTemps(Authentication authentication){
+        Integer doctorID;
+        try {
+            doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        List<InspectionTemplate> templates=doctorService.getHospitalCheckTemps(doctorID,Constants.HOSPITALLEVEL);
+        return CommonUtil.successJson(templates);
+    }
+
 
     /**
      * update the registration state as suspect diagnose which is 804

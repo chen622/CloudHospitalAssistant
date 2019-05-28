@@ -11,4 +11,27 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
   </resultMap>
+
+
+  <resultMap id="withRelationship" type="cn.neuedu.his.model.InspectionTemplate">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
+    <collection property="relationships" ofType="cn.neuedu.his.model.InspectionTemplateRelationship" select="getRelationship" column="{id=id,,nonDrugType=nonDrugType}">
+    </collection>
+  </resultMap>
+
+  <select id="getHospitalCheckTemps" resultMap="withRelationship">
+        select * ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType} end as nonDrugType from inspection_template i where i.created_by_id=#{doctorID} and  level=#{level }
+  </select>
+
+  <select id="getRelationship" resultMap="cn.neuedu.his.mapper.InspectionTemplateRelationshipMapper.Item" >
+        select *  ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType} end as nonDrugType from  inspection_template_relationship where template_id=#{id}
+  </select>
+
 </mapper>

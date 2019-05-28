@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "inspection_template")
 public class InspectionTemplate {
@@ -17,6 +18,18 @@ public class InspectionTemplate {
 
     @Column(name = "created_by_id")
     private Integer createdById;
+
+    //relationship
+    private List<InspectionTemplateRelationship> relationships;
+
+
+    public List<InspectionTemplateRelationship> getRelationships() {
+        return relationships;
+    }
+
+    public void setRelationships(List<InspectionTemplateRelationship> relationships) {
+        this.relationships = relationships;
+    }
 
     /**
      * @return id

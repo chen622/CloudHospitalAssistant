@@ -15,9 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
-import static cn.neuedu.his.util.constants.Constants.doctorTypeList;
-import static cn.neuedu.his.util.constants.Constants.userTypeList;
+import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -70,14 +68,14 @@ public class UserController {
 
         Integer typeId = user.getTypeId();
         //判断输入type_id是否正确
-        if (!userTypeList.contains(typeId))
+        if (!USERTYPELIST.contains(typeId))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
         //储存user数据
         userService.save(user);
 
         //类别属于医生
-        if (doctorTypeList.contains(typeId)) {
+        if (DOCTORTYPELIST.contains(typeId)) {
             //取得当前user的id
             Integer id = userService.getUserByUsername(user.getUsername()).getId();
 
@@ -92,7 +90,7 @@ public class UserController {
     }
 
     /**
-     * 、
+     * 管理员删除信息
      * @param username
      * @param authentication
      * @return
@@ -118,7 +116,7 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
         //判断是否要先将doctor表中的数据删除
-        if(doctorTypeList.contains(user.getTypeId()) == true){
+        if(DOCTORTYPELIST.contains(user.getTypeId()) == true){
             doctorService.deleteById(userId);
         }
 
@@ -130,25 +128,17 @@ public class UserController {
 
     //个人修改个人信息
     @PostMapping("/modify")
-    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject){
+    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication){
 
         User user = jsonObject.toJavaObject(jsonObject,User.class);
-
-        String lastUserName = jsonObject.getString("lastUserName");
-
-        if (userService.getUserByUsername(lastUserName)==null)
-            return CommonUtil.errorJson(ErrorEnum.E_601);
-
-        //用户信息不存在？？？不知道有没有必要存在
-        if (userService.getUserByUsername(user.getUsername())==null)
-            return CommonUtil.errorJson(ErrorEnum.E_601);
+        user.setId(PermissionCheck.getIdByUser(authentication));
 
         //判断用户名是否重复
         if(userService.getUserByUsername(user.getUsername()) == null)
             return CommonUtil.errorJson(ErrorEnum.E_600);
 
         //判断type_id是否正确
-        if(userTypeList.contains(user.getTypeId()))
+        if(USERTYPELIST.contains(user.getTypeId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
         //判断user的身份证号是否正确
@@ -158,7 +148,9 @@ public class UserController {
         userService.update(user);
 
         user = userService.getUserByUsername(user.getUsername());
-        if (doctorTypeList.contains(user.getTypeId())){
+
+        //修改医生信息
+        if (DOCTORTITLETYPELIST.contains(user.getTypeId())){
             Doctor doctor = jsonObject.toJavaObject(jsonObject,Doctor.class);
             doctor.setId(user.getId());
             doctorService.update(doctor);
@@ -178,7 +170,7 @@ public class UserController {
         }
 
         //调用普通modify函数
-        return modifyUserInformation(jsonObject);
+        return modifyUserInformation(jsonObject,authentication);
     }
 
     //单个用户查询
