@@ -24,11 +24,13 @@ public class Constants {
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
     //所有人员类型
-    public static final List<Integer> USERTYPELIST = Arrays.asList(601,602,603,604,605,606);
+    public static final List<Integer> USER_TYPE_LIST = Arrays.asList(601,602,603,604,605,606);
     //所有医生类型
-    public static final List<Integer> DOCTORTYPELIST = Arrays.asList(602,603);
+    public static final List<Integer> DOCTOR_TYPE_LIST = Arrays.asList(602,603);
     //所有医生职称
-    public static final List<Integer> DOCTORTITLETYPELIST = Arrays.asList(701,702,703,704);
+    public static final List<Integer> DOCTOR_TITLE_TYPE_LIST = Arrays.asList(701,702,703,704);
+    //所有结算类别
+    public static final List<Integer> PAYMENT_TYPE_LIST=Arrays.asList(201,202,203);
 
     //医院管理员
     public static final Integer HOSPITAL_ADMIN = 606;
