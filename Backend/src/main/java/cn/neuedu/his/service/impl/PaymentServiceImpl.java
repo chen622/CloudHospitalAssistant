@@ -44,6 +44,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setCreateTime(new Date(System.currentTimeMillis()));
         payment.setPaymentTypeId(REGISTRATION_PAYMENT_TYPE);
         payment.setHaveCompleted(true);
-        return save(payment);
+        save(payment);
+        return payment.getId();
     }
 }

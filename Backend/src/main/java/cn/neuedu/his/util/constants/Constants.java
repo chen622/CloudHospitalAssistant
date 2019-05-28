@@ -1,7 +1,5 @@
 package cn.neuedu.his.util.constants;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;

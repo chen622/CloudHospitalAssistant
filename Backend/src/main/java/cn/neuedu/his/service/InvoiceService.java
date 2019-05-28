@@ -9,5 +9,5 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface InvoiceService extends Service<Invoice> {
     void addInvoiceByPayment(Payment payment);
-
+    Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
 }
