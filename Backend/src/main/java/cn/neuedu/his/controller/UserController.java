@@ -134,19 +134,31 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    //个人修改个人信息
+    /**
+     * 修改个人信息（个人级别）
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
     @PostMapping("/modify")
     public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication){
 
+
         User user = jsonObject.toJavaObject(jsonObject,User.class);
+        //是否是个人账号
+        try {
+            PermissionCheck.isIndivual(authentication, user.getUsername());
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
         user.setId(PermissionCheck.getIdByUser(authentication));
-        //user.setId(3);
+
         return updateMessage(user,jsonObject);
     }
 
 
     /**
-     * 超级管理员修改信息???
+     * 超级管理员修改信息
      * @param jsonObject 传入的数据比个人传入多一个id
      * @param authentication
      * @return
@@ -165,7 +177,12 @@ public class UserController {
         return updateMessage(user,jsonObject);
     }
 
-    //更新操作
+    /**
+     * 更新消息（具体方法）
+     * @param user
+     * @param jsonObject
+     * @return
+     */
     private JSONObject updateMessage(User user, JSONObject jsonObject){
         //判断用户名是否重复
         if(userService.getUserByUsername(user.getUsername()) == null)
@@ -198,14 +215,19 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    //单个用户查询
+    /**
+     * 查询个人信息（个人级别）
+     * @param username
+     * @param authentication
+     * @return
+     */
     @GetMapping("/selectUser/{username}")
     public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
+        //是否是个人账号
         try {
             PermissionCheck.isIndivual(authentication, username);
         }catch (Exception e){
-
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -221,7 +243,12 @@ public class UserController {
     }
 
 
-    //医院管理员查询个人信息
+    /**
+     * 查询个人信息（管理员级别）
+     * @param username
+     * @param authentication
+     * @return
+     */
     @GetMapping("/adminSelectUser/{username}")
     public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication){
 

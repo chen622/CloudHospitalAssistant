@@ -12,4 +12,6 @@ public interface UserService extends Service<User> {
     void insertUserOperation(User user);
 
     User getUserAllInformationByName(String username);
+
+
 }

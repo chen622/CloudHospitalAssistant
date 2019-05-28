@@ -11,4 +11,10 @@
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="display_sequence_number" jdbcType="INTEGER" property="displaySequenceNumber" />
   </resultMap>
+
+  <select id="getRegistrationTypeByName" parameterType="String" resultMap="BaseResultMap">
+    select *
+    from  registration_type
+    where name = #{name}
+  </select>
 </mapper>
