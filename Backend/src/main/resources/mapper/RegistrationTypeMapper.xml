@@ -18,7 +18,7 @@
     where name = #{name}
   </select>
 
-  <update id="deleteRegistrationType">
+  <update id="deleteRegistrationTypeByName">
     delete
     from registration_type
     where name = #{name}

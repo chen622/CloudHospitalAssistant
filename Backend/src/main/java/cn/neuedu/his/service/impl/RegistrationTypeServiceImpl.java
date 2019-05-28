@@ -18,6 +18,7 @@ public class RegistrationTypeServiceImpl extends AbstractService<RegistrationTyp
 
     @Autowired
     RegistrationTypeMapper registrationTypeMapper;
+
     public RegistrationType getRegistrationTypeByName(String name){
         return registrationTypeMapper.getRegistrationTypeByName(name);
     }
