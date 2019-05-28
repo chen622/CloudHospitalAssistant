@@ -103,8 +103,8 @@ public class RegistrationTypeController {
      * @param authentication
      * @return
      */
-    @PostMapping("/modifyRegisterType")
-    public JSONObject selectRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    @PostMapping("/selectRegisterType")
+    public JSONObject selectRegisterType(String name, Authentication authentication){
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -112,13 +112,10 @@ public class RegistrationTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        RegistrationType registrationType = jsonObject.toJavaObject(jsonObject,RegistrationType.class);
+        RegistrationType registrationType = registrationTypeService.getRegistrationTypeByName(name);
         //判断挂号类型是否存在
-        if (registrationTypeService.getRegistrationTypeByName(registrationType.getName())== null)
+        if (registrationType== null)
             return CommonUtil.errorJson(ErrorEnum.E_604);
-
-        registrationType.setId(registrationTypeService.getRegistrationTypeByName(registrationType.getName()).getId());
-        registrationTypeService.update(registrationType);
 
         return CommonUtil.successJson(registrationType);
     }
