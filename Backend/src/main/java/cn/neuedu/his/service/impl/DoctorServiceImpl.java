@@ -70,12 +70,40 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      */
     @Override
-    public JSONObject getHospitalCheckTemps(Integer registrationId,Integer doctorID,Integer level) {
-        Registration registration = registrationService.findById(registrationId);
-        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
-            return  CommonUtil.errorJson(ErrorEnum.E_601.addErrorParamName("registration state"));
-        }
+    public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level) {
         List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level,Constants.NON_DRUG);
+        if(templates==null)
+            templates=new ArrayList<>();
+        return CommonUtil.successJson(templates);
+    }
+
+    /**
+     * 获得科室模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
+    @Override
+    public JSONObject getDeptCheckTemps(Integer doctorID,Integer level) {
+//        Registration registration = registrationService.findById(registrationId);
+//        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
+//            return  CommonUtil.errorJson(ErrorEnum.E_601.addErrorParamName("registration state"));
+//        }
+        List<InspectionTemplate> templates=inspectionTemplateService.getDeptCheckTemps(doctorID,level,Constants.NON_DRUG);
+        if(templates==null)
+            templates=new ArrayList<>();
+        return CommonUtil.successJson(templates);
+    }
+
+    /**
+     * 获得个人模板
+     * @param doctorID
+     * @param level
+     * @return
+     */
+    @Override
+    public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level) {
+        List<InspectionTemplate> templates=inspectionTemplateService.getPersonalCheckTemps(doctorID,level,Constants.NON_DRUG);
         if(templates==null)
             templates=new ArrayList<>();
         return CommonUtil.successJson(templates);

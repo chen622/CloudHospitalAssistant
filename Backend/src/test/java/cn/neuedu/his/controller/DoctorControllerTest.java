@@ -115,7 +115,32 @@ public class DoctorControllerTest {
 
     @Test
     public void getHospitalCheckTemps() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDeptCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDeptCheckTemps")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    public void getPersonalCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalCheckTemps")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

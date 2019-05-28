@@ -21,6 +21,12 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws Exception;
 
     @Transactional
-    public JSONObject getHospitalCheckTemps(Integer registrationId,Integer doctorID,Integer level);
+    public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level);
+
+    @Transactional
+    public JSONObject getDeptCheckTemps(Integer doctorID,Integer level);
+
+    @Transactional
+    public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level);
 
 }
