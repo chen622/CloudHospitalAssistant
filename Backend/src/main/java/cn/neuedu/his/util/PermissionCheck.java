@@ -54,4 +54,35 @@ public class PermissionCheck {
         }
     }
 
+    /**
+     * 医院管理员权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId == Constants.HOSPITAL_ADMIN) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
+    /**
+     * 个人权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isIndivual(Authentication authentication, String username) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer user_name = (Integer) data.get("username");
+        if (user_name.equals(username)) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
 }
