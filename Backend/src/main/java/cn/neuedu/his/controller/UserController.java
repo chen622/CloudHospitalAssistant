@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
@@ -49,16 +51,16 @@ public class UserController {
 
         User user = JSONObject.toJavaObject(jsonObject,User.class);
 
-        if ( userService.getUserByUsername(user.getUsername())!= null){
-            return CommonUtil.errorJson(ErrorEnum.E_600);
-        }
-
         //判断身份证信息长度
         if (user.getIdentifyId().length() != 18){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));}
 
         //创建用户对象
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        //
+        if(userService.getUserByUsername(user.getUsername()) != null)
+            return CommonUtil.errorJson(ErrorEnum.E_600);
 
         //判断部门是否存在
         Department department = departmentService.findById(user.getDepartmentId());
@@ -71,9 +73,6 @@ public class UserController {
         if (!USERTYPELIST.contains(typeId))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
-        //储存user数据
-        userService.save(user);
-
         //类别属于医生
         if (DOCTORTYPELIST.contains(typeId)) {
             //取得当前user的id
@@ -81,11 +80,20 @@ public class UserController {
 
             //创立医生对象
             Doctor doctor = JSONObject.toJavaObject(jsonObject,Doctor.class);
-            doctor.setId(id);
+            //判断医生职称类型是否正确
 
+            if (!DOCTORTITLETYPELIST.contains(doctor.getTitleId())) {
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+            }
+
+            doctor.setId(id);
             //储存doctor数据
             doctorService.save(doctor);
         }
+
+        //储存user数据
+        userService.save(user);
+
         return CommonUtil.successJson(user);
     }
 
@@ -126,19 +134,62 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    //个人修改个人信息
+    /**
+     * 修改个人信息（个人级别）
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
     @PostMapping("/modify")
     public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication){
 
+
         User user = jsonObject.toJavaObject(jsonObject,User.class);
+        //是否是个人账号
+        try {
+            PermissionCheck.isIndivual(authentication, user.getUsername());
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
         user.setId(PermissionCheck.getIdByUser(authentication));
 
+        return updateMessage(user,jsonObject);
+    }
+
+
+    /**
+     * 超级管理员修改信息
+     * @param jsonObject 传入的数据比个人传入多一个id
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/adminModify")
+    public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) {
+
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        User user = jsonObject.toJavaObject(jsonObject,User.class);
+
+        return updateMessage(user,jsonObject);
+    }
+
+    /**
+     * 更新消息（具体方法）
+     * @param user
+     * @param jsonObject
+     * @return
+     */
+    private JSONObject updateMessage(User user, JSONObject jsonObject){
         //判断用户名是否重复
         if(userService.getUserByUsername(user.getUsername()) == null)
             return CommonUtil.errorJson(ErrorEnum.E_600);
 
         //判断type_id是否正确
-        if(USERTYPELIST.contains(user.getTypeId()))
+        if(!USERTYPELIST.contains(user.getTypeId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
         //判断user的身份证号是否正确
@@ -150,8 +201,13 @@ public class UserController {
         user = userService.getUserByUsername(user.getUsername());
 
         //修改医生信息
-        if (DOCTORTITLETYPELIST.contains(user.getTypeId())){
+        if (DOCTORTYPELIST.contains(user.getTypeId())){
             Doctor doctor = jsonObject.toJavaObject(jsonObject,Doctor.class);
+
+            //判断医生职称是否正确
+            if (!DOCTORTITLETYPELIST.contains(doctor.getTitleId())) {
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+            }
             doctor.setId(user.getId());
             doctorService.update(doctor);
         }
@@ -159,40 +215,41 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    //超级管理员修改信息???
-    @PostMapping("/adminDelete")
-    public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) {
-
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-
-        //调用普通modify函数
-        return modifyUserInformation(jsonObject,authentication);
-    }
-
-    //单个用户查询
+    /**
+     * 查询个人信息（个人级别）
+     * @param username
+     * @param authentication
+     * @return
+     */
     @GetMapping("/selectUser/{username}")
     public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
+        //是否是个人账号
         try {
             PermissionCheck.isIndivual(authentication, username);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
+
         User user = userService.getUserByUsername(username);
 
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
+        if (DOCTORTYPELIST.contains(user.getTypeId()))
+            user = userService.getUserAllInformationByName(username);
+
         return CommonUtil.successJson(user);
     }
 
 
-    //医院管理员查询个人信息
-    @GetMapping("/adminAelectUser/{username}")
+    /**
+     * 查询个人信息（管理员级别）
+     * @param username
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/adminSelectUser/{username}")
     public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
         try {
@@ -205,8 +262,10 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
+        if (DOCTORTYPELIST.contains(user.getTypeId()))
+            user = userService.getUserAllInformationByName(username);
+
         return CommonUtil.successJson(user);
     }
-
 
 }

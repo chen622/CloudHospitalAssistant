@@ -20,4 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         else
             return new cn.neuedu.his.config.Authentication.UserDetails(user.getId(), user.getUsername(), user.getPassword(),user.getTypeId());
     }
+
+
 }
