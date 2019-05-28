@@ -127,7 +127,7 @@ public class DoctorController {
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("medicalRecord"));
         }
-        return object;
+        return object1;
     }
 
 

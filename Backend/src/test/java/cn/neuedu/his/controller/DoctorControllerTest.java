@@ -94,26 +94,10 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
-    @Test
-    public void updateStateToOne() throws Exception, AuthenticationServiceException {
-        String requestJson = JSONObject.toJSONString("1");
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
     @Test
     public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
         MedicalRecord medicalRecord = medicalRecordService.findById(1);
         medicalRecord.setId(null);
-        medicalRecord.setSelfDescription(null);
         JSONObject object=new JSONObject();
         object.put("medicalRecord", medicalRecord);
         object.put("registrationID", 1);
