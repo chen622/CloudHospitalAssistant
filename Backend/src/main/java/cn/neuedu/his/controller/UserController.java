@@ -202,8 +202,12 @@ public class UserController {
     @GetMapping("/selectUser/{username}")
     public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication){
 
-        if (!authentication.getName().equals(username))
+        try {
+            PermissionCheck.isIndivual(authentication, username);
+        }catch (Exception e){
+
             return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
 
         User user = userService.getUserByUsername(username);
 
