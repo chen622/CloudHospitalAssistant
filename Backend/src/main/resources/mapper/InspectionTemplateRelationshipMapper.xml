@@ -5,8 +5,35 @@
     <!--
       WARNING - @mbg.generated
     -->
+    <id property="id" jdbcType="INTEGER" column="id"/>
+    <result column="amount" jdbcType="INTEGER" property="amount"/>
     <result column="template_id" jdbcType="INTEGER" property="templateId" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="item_type" jdbcType="BIT" property="itemType" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
   </resultMap>
+
+  <resultMap id="Item" type="cn.neuedu.his.model.InspectionTemplateRelationship">
+    <id property="id" jdbcType="INTEGER" column="id"/>
+    <result column="amount" jdbcType="INTEGER" property="amount"/>
+    <result column="template_id" jdbcType="INTEGER" property="templateId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <association property="drug" javaType="cn.neuedu.his.model.Drug" select="getDrug" column="{itemID=item_id} ,itemType=item_type"></association>
+    <association property="nonDrug" javaType="cn.neuedu.his.model.Drug" select="getNonDrug" column="{itemID=item_id ,itemType=item_type,nonDrugType=nonDrugType}"></association>
+  </resultMap>
+
+  <select id="getItem" resultMap="Item">
+    select  * ,
+    case when (${nonDrugType} > 0) then 10 else ${nonDrugType} end as nonDrugType
+    from  inspection_template_relationship where template_id=#{templateID}
+  </select>
+
+  <select id="getDrug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap">
+    select  * from  drug where drug_type=#{itemType ,jdbcType=NUMERIC } and  id=#{itemID,jdbcType=NUMERIC}
+  </select>
+
+  <select id="getNonDrug" resultMap="cn.neuedu.his.mapper.NonDrugMapper.BaseResultMap">
+    select  * from  non_drug where #{itemType,jdbcType=NUMERIC}=#{nonDrugType,jdbcType=NUMERIC} and  id=#{itemID,jdbcType=NUMERIC}
+  </select>
+
 </mapper>

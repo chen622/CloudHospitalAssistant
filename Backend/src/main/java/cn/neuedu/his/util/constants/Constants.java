@@ -121,6 +121,14 @@ public class Constants {
     public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
 
 
+    // 非药
+    public static final  Integer NON_DRUG =10;
+    // 中成药
+    public static final  Integer FINISH_TRADITIONAL_DRUG =1101;
+    //中草药
+    public static final  Integer TRADITIONAL_DRUG=1102;
+    // 西药
+    public static final  Integer WESTEN_DRUG=1103;
 
 
     //职称

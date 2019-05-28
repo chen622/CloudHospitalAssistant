@@ -1,12 +1,8 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DoctorMapper;
-import cn.neuedu.his.model.Doctor;
-import cn.neuedu.his.model.MedicalRecord;
-import cn.neuedu.his.model.Registration;
-import cn.neuedu.his.service.DoctorService;
-import cn.neuedu.his.service.MedicalRecordService;
-import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.model.*;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -16,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -30,7 +29,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     RegistrationService registrationService;
     @Autowired
     MedicalRecordService medicalRecordService;
-
+    @Autowired
+    InspectionTemplateService inspectionTemplateService;
+    @Autowired
+    InspectionTemplateRelationshipService relationshipService;
+    @Autowired
+    DrugTemplateService drugTemplateService;
 
     @Override
     @Transactional
@@ -51,6 +55,26 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson();
     }
 
+    @Override
+    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level) {
+        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level,Constants.NON_DRUG);
+        if(templates==null)
+            templates=new ArrayList<>();
+        else {
+            System.out.println("\n\n**********************************");
+            for (InspectionTemplate t:templates){
+                System.out.println(t.getId()+" "+t.getName());
+                for (InspectionTemplateRelationship relationship :t.getRelationships()){
+                    System.out.println(relationship.getId()+" "+relationship.getItemId());
+                    if (relationship.getNonDrug()!=null)
+                        System.out.println(relationship.getNonDrug().getName());
+                    else
+                        System.out.println(relationship.getDrug().getName());
+                }
+            }
+        }
+        return templates;
+    }
 
 
     private String cheakMedicalRecord(MedicalRecord record){

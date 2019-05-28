@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "drug_template")
 public class DrugTemplate {
@@ -17,6 +18,7 @@ public class DrugTemplate {
 
     @Column(name = "created_by_id")
     private Integer createdById;
+
 
     /**
      * @return id

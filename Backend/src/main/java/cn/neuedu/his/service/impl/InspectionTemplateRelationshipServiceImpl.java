@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -17,4 +19,8 @@ public class InspectionTemplateRelationshipServiceImpl extends AbstractService<I
     @Autowired
     private InspectionTemplateRelationshipMapper inspectionTemplateRelationshipMapper;
 
+    @Override
+    public List<InspectionTemplateRelationship> getItem(Integer templateID, Integer nonDrugType) {
+        return inspectionTemplateRelationshipMapper.getItem(templateID, nonDrugType);
+    }
 }
