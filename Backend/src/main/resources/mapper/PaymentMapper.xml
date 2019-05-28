@@ -18,4 +18,8 @@
     <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
   </resultMap>
+
+  <select id="selectByRegistrationId" resultMap="BaseResultMap">
+    select * from payment where payment_type_id = #{paymentTypeId} and item_id = #{registrationId}
+  </select>
 </mapper>

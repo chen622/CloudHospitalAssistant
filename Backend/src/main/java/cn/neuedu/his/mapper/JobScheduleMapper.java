@@ -8,5 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 
 public interface JobScheduleMapper extends MyMapper<JobSchedule> {
-    void updateHaveRegistrationAmount(Integer id);
+    void updateHaveRegistrationAmountAdd(Integer id);
+    void updateHaveRegistrationAmountReduce(Integer id);
 }

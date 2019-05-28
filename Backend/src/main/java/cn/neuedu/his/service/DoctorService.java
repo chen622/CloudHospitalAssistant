@@ -5,7 +5,9 @@ import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -19,5 +21,6 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) throws Exception;
 
     @Transactional
-    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level);
+    public JSONObject getHospitalCheckTemps(Integer registrationId,Integer doctorID,Integer level);
+
 }

@@ -115,7 +115,7 @@ public class DoctorControllerTest {
 
     @Test
     public void getHospitalCheckTemps() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps/")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
