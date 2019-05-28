@@ -15,8 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.util.Arrays;
 
 import static cn.neuedu.his.util.constants.Constants.doctorTypeList;
 import static cn.neuedu.his.util.constants.Constants.userTypeList;
@@ -56,8 +54,8 @@ public class UserController {
         if ( userService.getUserByUsername(user.getUsername())!= null){
             return CommonUtil.errorJson(ErrorEnum.E_600);
         }
-        //判断身份证信息长度
 
+        //判断身份证信息长度
         if (user.getIdentifyId().length() != 18){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));}
 
@@ -93,11 +91,21 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
+    /**
+     * 、
+     * @param username
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/delete")
     public JSONObject deleteUserInformation(String username, Authentication authentication){
 
         //检查权限
-        if (userService.findById(PermissionCheck.getIdByUser(authentication)).getTypeId() != 606)
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
         //获取user
         User user = userService.getUserByUsername("username");
@@ -117,7 +125,47 @@ public class UserController {
         //删除用户表中的信息
         userService.deleteById(userId);
 
-        return CommonUtil.errorJson(ErrorEnum.E_502);
+        return CommonUtil.successJson(user);
     }
+
+    //个人修改个人信息
+    @PostMapping("/modify")
+    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject){
+
+        User user = jsonObject.toJavaObject(jsonObject,User.class);
+
+        String lastUserName = jsonObject.getString("lastUserName");
+
+        if (userService.getUserByUsername(lastUserName)==null)
+            return CommonUtil.errorJson(ErrorEnum.E_601);
+
+        //用户信息不存在？？？不知道有没有必要存在
+        if (userService.getUserByUsername(user.getUsername())==null)
+            return CommonUtil.errorJson(ErrorEnum.E_601);
+
+        //判断用户名是否重复
+        if(userService.getUserByUsername(user.getUsername()) == null)
+            return CommonUtil.errorJson(ErrorEnum.E_600);
+
+        //判断type_id是否正确
+        if(userTypeList.contains(user.getTypeId()))
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
+
+        //判断user的身份证号是否正确
+        if (user.getIdentifyId().length() != 18)
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+
+        userService.update(user);
+
+        user = userService.getUserByUsername(user.getUsername());
+        if (doctorTypeList.contains(user.getTypeId())){
+            Doctor doctor = jsonObject.toJavaObject(jsonObject,Doctor.class);
+            doctor.setId(user.getId());
+            doctorService.update(doctor);
+        }
+
+        return CommonUtil.successJson(user);
+    }
+
 
 }
