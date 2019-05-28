@@ -131,16 +131,14 @@ public class DoctorController {
     }
 
 
-    @GetMapping("/getHospitalCheckTemps")
-    public JSONObject getHospitalCheckTemps(Authentication authentication){
-        Integer doctorID;
+    @GetMapping("/getHospitalCheckTemps/{registrationID}")
+    public JSONObject getHospitalCheckTemps(@PathVariable("registrationID") Integer registrationID ,Authentication authentication){
         try {
-            doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+           Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getHospitalCheckTemps(registrationID,doctorID,Constants.HOSPITALLEVEL);
         }catch (AuthenticationServiceException a){
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
-        List<InspectionTemplate> templates=doctorService.getHospitalCheckTemps(doctorID,Constants.HOSPITALLEVEL);
-        return CommonUtil.successJson(templates);
     }
 
 
