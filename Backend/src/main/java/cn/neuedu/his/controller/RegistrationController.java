@@ -25,7 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.REGISTRATION_CLERK;
+import static cn.neuedu.his.util.constants.Constants.WAITING_FOR_TREATMENT;
 
 /**
  *
@@ -86,10 +86,13 @@ public class RegistrationController {
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
-        registration.setState(REGISTRATION_CLERK);
+        registration.setState(WAITING_FOR_TREATMENT);
         registration.setNeedBook(jsonObject.getBoolean("needBook"));
 
         registrationService.save(registration);
+
+        //改变已挂号人数
+        jobScheduleService.changeHaveRegistrationAmount(schedule.getId());
 
         //生成缴费单
         BigDecimal unitPrice = registrationTypeService.findById(schedule.getRegistrationTypeId()).getPrice();
@@ -142,8 +145,5 @@ public class RegistrationController {
 
         return age;
     }
-
-
-
 
 }

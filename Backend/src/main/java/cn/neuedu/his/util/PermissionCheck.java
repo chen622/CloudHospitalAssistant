@@ -6,6 +6,9 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 
+import static cn.neuedu.his.util.constants.Constants.FINANCIAL_MANAGER;
+import static cn.neuedu.his.util.constants.Constants.REGISTRATION_CLERK;
+
 /**
  * 权限校验类
  */
@@ -31,7 +34,7 @@ public class PermissionCheck {
     public static Integer getIdByRegistrar(Authentication authentication) throws AuthenticationServiceException{
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId == 601) {
+        if (typeId.equals(REGISTRATION_CLERK)) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -80,6 +83,16 @@ public class PermissionCheck {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer user_name = (Integer) data.get("username");
         if (user_name.equals(username)) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
+    public static Integer canPrintInvoice(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId.equals(REGISTRATION_CLERK)|| typeId.equals(FINANCIAL_MANAGER)) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");

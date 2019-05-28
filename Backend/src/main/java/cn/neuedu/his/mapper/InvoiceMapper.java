@@ -5,4 +5,5 @@ import cn.neuedu.his.util.inter.MyMapper;
 
 
 public interface InvoiceMapper extends MyMapper<Invoice> {
+    Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
 }
