@@ -63,8 +63,8 @@ public class DoctorController {
     }
 
     /**
-     * use patient name to registration
      * 通过患者名字找到所有挂在该医生的待诊挂号
+     * use patient name to registration
      * @param name
      * @param authentication
      * @return
@@ -105,8 +105,8 @@ public class DoctorController {
     }
 
     /**
+     * 医生初诊提交，更新该挂号状态
      * update the registration state as first diagnose which is 803
-     * 当医生开始初诊提交，应该更新该挂号状态
      * @param object
      * @return
      */
@@ -131,16 +131,50 @@ public class DoctorController {
     }
 
 
-    @GetMapping("/getHospitalCheckTemps/{registrationID}")
-    public JSONObject getHospitalCheckTemps(@PathVariable("registrationID") Integer registrationID ,Authentication authentication){
+    /**
+     * 门诊医生查看全院模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getHospitalCheckTemps")
+    public JSONObject getHospitalCheckTemps(Authentication authentication){
         try {
            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
-            return  doctorService.getHospitalCheckTemps(registrationID,doctorID,Constants.HOSPITALLEVEL);
+            return  doctorService.getHospitalCheckTemps(doctorID,Constants.HOSPITALLEVEL);
         }catch (AuthenticationServiceException a){
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
     }
 
+    /**
+     * 门诊医生查看所在科室模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDeptCheckTemps")
+    public JSONObject getDeptCheckTemps(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getDeptCheckTemps(doctorID,Constants.DEPTLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看个人模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getPersonalCheckTemps")
+    public JSONObject getPersonalCheckTemps(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getPersonalCheckTemps(doctorID,Constants.PERSONALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
 
     /**
      * update the registration state as suspect diagnose which is 804

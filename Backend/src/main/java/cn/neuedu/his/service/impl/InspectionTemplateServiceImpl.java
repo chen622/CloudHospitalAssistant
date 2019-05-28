@@ -29,4 +29,14 @@ public class InspectionTemplateServiceImpl extends AbstractService<InspectionTem
         return inspectionTemplateMapper.getHospitalCheckTemps(doctorID,level,nonDrugType);
     }
 
+    @Override
+    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID, Integer level, Integer nonDrugType) {
+        return inspectionTemplateMapper.getDeptCheckTemps(doctorID, level,nonDrugType);
+    }
+
+    @Override
+    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID, Integer level, Integer nonDrugType) {
+        return inspectionTemplateMapper.getPersonalCheckTemps(doctorID, level,nonDrugType);
+    }
+
 }

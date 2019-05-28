@@ -12,5 +12,7 @@ import java.util.List;
  */
 public interface InspectionTemplateService extends Service<InspectionTemplate> {
     public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
+    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
+    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
 
 }
