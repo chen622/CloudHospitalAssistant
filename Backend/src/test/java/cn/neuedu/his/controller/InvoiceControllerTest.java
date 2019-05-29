@@ -52,7 +52,7 @@ public class InvoiceControllerTest {
 
     @Test
     public void printVoice() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.post("/invoice/print/2")
+        mockMvc.perform(MockMvcRequestBuilders.post("/invoice/print/7")
                 .contentType(MediaType.APPLICATION_JSON)
                 //.content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

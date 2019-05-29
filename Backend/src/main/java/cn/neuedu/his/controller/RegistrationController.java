@@ -75,12 +75,7 @@ public class RegistrationController {
         try {
             registrationService.retreatRegistrationInfo(registrationId, registrarId);
         }catch (UnsupportedOperationException e) {
-            if (e.getMessage().equals("503"))
-                return CommonUtil.errorJson(ErrorEnum.E_503);
-            else if (e.getMessage().equals("504"))
-                return CommonUtil.errorJson(ErrorEnum.E_504);
-            else if (e.getMessage().equals("505"))
-                return CommonUtil.errorJson(ErrorEnum.E_505);
+            return CommonUtil.errorJson(ErrorEnum.E_503);
         }catch (IllegalArgumentException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
         }

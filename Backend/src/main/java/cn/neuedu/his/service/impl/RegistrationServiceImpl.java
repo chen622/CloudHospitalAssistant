@@ -88,12 +88,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         Integer paymentId = paymentService.createRegistrationPayment(registration, jsonObject.getInteger("settlementType"), unitPrice);
 
         //生成发票
-        Payment payment = paymentService.findById(paymentId);
-        Integer invoiceId = invoiceService.addInvoiceByPayment(payment);
-        payment.setInvoiceId(invoiceId);
-
-        //更改缴费单发票id字段
-        paymentService.update(payment);
+        invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
     }
 
     /**
@@ -161,24 +156,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         jobScheduleService.reduceRegistrationAmount(registration.getScheduleId());
 
         //形成冲红缴费单
-        Integer newPaymentId;
-        try {
-            newPaymentId = paymentService.retreatPayment(registrationId, registrarId, 1);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("504");
-        }
-
-        //形成冲红发票
-        Payment payment = paymentService.findById(newPaymentId);
-        Integer invoiceId;
-        try {
-            invoiceId = invoiceService.addInvoiceByPayment(payment);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("505");
-        }
-
-        payment.setInvoiceId(invoiceId);
-        paymentService.update(payment);
+        Integer newPaymentId = paymentService.retreatPayment(registrationId, registrarId, 1);
+        invoiceService.addInvoiceByPayment(paymentService.findById(newPaymentId));
     }
 
     /**

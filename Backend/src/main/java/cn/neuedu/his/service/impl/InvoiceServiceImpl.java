@@ -4,6 +4,7 @@ import cn.neuedu.his.mapper.InvoiceMapper;
 import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InvoiceService;
+import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
@@ -22,6 +23,8 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     @Autowired
     private InvoiceMapper invoiceMapper;
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public void printInvoice(Integer invoiceId) throws  IllegalArgumentException{
@@ -46,6 +49,10 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
         save(invoice);
+
+        //更改缴费单发票id字段
+        payment.setInvoiceId(invoice.getId());
+        paymentService.update(payment);
 
         return invoice.getId();
     }

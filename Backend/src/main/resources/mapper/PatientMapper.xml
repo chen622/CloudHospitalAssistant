@@ -27,5 +27,6 @@
   <select id="selectNotFrozenPaymentByPatientId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
     select * from payment
     where patient_id = #{id} and payment_type_id != 0 and is_frozen = false
+    order by create_time desc
   </select>
 </mapper>

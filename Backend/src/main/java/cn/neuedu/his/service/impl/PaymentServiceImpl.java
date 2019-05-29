@@ -1,9 +1,14 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.PaymentMapper;
+import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.service.DrugService;
+import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     @Autowired
     private PaymentMapper paymentMapper;
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+    @Autowired
+    private RegistrationService registrationService;
+    @Autowired
+    private DrugService drugService;
 
     /**
      * 生成挂号缴费单
@@ -84,6 +95,34 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         return newPayment.getId();
     }
+
+    /**
+     * 通过处方创建缴费单
+     * @param prescription
+     * @return
+     */
+    @Override
+    public Integer createDrugPayment(Prescription prescription) {
+        Payment payment = new Payment();
+        payment.setState(PRODUCE_PAYMENT);
+        Registration registration = registrationService.findById(medicalRecordService.findById(prescription.getId()).getRegistrationId());
+        payment.setOperatorId(registration.getDoctorId());
+        payment.setPatientId(registration.getPatientId());
+        payment.setCreateTime(new Date(System.currentTimeMillis()));
+        payment.setItemId(prescription.getId());
+        payment.setPaymentTypeId(DRUG_PAYMENT_TYPE);
+        Drug drug = drugService.findById(prescription.getDrugId());
+        payment.setPaymentTypeId(drug.getDrugType());
+        payment.setUnitPrice(drug.getPrice());
+        payment.setQuantity(prescription.getAmount());
+
+        save(payment);
+        return payment.getId();
+    }
+
+
+
+
 
     @Override
     public Payment findByRegistrationId(Integer registrationId) {

@@ -1,5 +1,7 @@
 package cn.neuedu.his.service;
+import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
 
@@ -13,6 +15,9 @@ import java.util.ArrayList;
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
     Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException;
+    Integer createDrugPayment(Prescription prescription);
+
+
     Payment findByRegistrationId(Integer registrationId);
     void updateInvoiceId(Integer invoiceId, Integer id);
 }
