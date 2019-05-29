@@ -5,11 +5,9 @@ import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
-import cn.neuedu.his.service.DrugService;
-import cn.neuedu.his.service.MedicalRecordService;
-import cn.neuedu.his.service.PaymentService;
-import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.inter.AbstractService;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +32,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     private RegistrationService registrationService;
     @Autowired
     private DrugService drugService;
+    @Autowired
+    private InvoiceService invoiceService;
 
     /**
      * 生成挂号缴费单
@@ -94,6 +94,45 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         save(newPayment);
 
         return newPayment.getId();
+    }
+
+    /**
+     * 缴费（包括检查项目和药费）
+     * @param paymentIdList
+     * @param settlementTypeId
+     * @param tollKeeperId
+     * @return
+     */
+    @Override
+    public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) {
+        ArrayList successId = new ArrayList(); //成功的缴费单号
+        ArrayList failId = new ArrayList(); //失败的缴费单号
+
+        //更新所有缴费单
+        for(Integer paymentId: paymentIdList) {
+            Payment payment = findById(paymentId);
+            if (payment == null || !payment.getState().equals(PRODUCE_PAYMENT)) {
+                failId.add(paymentId);
+                continue;
+            }
+
+            payment.setOperatorId(tollKeeperId);
+            payment.setState(HAVE_PAID);
+            payment.setSettlementTypeId(settlementTypeId);
+
+            update(payment);
+            successId.add(paymentId);
+        }
+
+        if (!successId.isEmpty())
+            //生成发票
+            invoiceService.addInvoiceByPaymentList(successId);
+
+        JSONObject result = new JSONObject();
+        result.put("successId", successId);
+        result.put("failId", failId);
+
+        return result;
     }
 
     /**
