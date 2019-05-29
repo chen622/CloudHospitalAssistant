@@ -8,6 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 
 public interface PaymentMapper extends MyMapper<Payment> {
-    Payment selectByRegistrationId(@Param("registrationId") Integer registrationId, @Param("paymentTypeId") Integer paymentTypeId);
+    Payment selectByItemId(@Param("registrationId") Integer registrationId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId);
     void updateInvoiceId(@Param("invoiceId") Integer invoiceId, @Param("id") Integer id);
 }

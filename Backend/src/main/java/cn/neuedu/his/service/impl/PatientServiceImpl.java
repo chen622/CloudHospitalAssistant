@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static cn.neuedu.his.util.constants.Constants.*;
+
 /**
  *
  * Created by ccm on 2019/05/26.
@@ -18,7 +20,11 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     private PatientMapper patientMapper;
 
     @Override
-    public Patient findPatientAndPaymentInfo(Integer patientId) {
-        return patientMapper.searchPatientAndFrozenPayment(patientId);
+    public Patient findPatientAndPaymentInfo(Integer patientId) throws IllegalArgumentException{
+        Patient patient = patientMapper.searchPatientAndFrozenPayment(patientId, REGISTRATION_PAYMENT_TYPE, PRODUCE_PAYMENT);
+        if (patient == null)
+             throw new IllegalArgumentException("patientId");
+
+        return patient;
     }
 }

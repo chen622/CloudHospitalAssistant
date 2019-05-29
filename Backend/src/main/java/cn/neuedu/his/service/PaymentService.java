@@ -15,6 +15,9 @@ import java.util.ArrayList;
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
     Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException;
+    //Integer
+
+
     Integer createDrugPayment(Prescription prescription);
 
 

@@ -27,12 +27,12 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     PaymentService paymentService;
 
     @Override
-    public void printInvoice(Integer invoiceId) throws  IllegalArgumentException{
+    public Invoice printInvoice(Integer invoiceId) throws  IllegalArgumentException{
         Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
 
-        //TODO 打印成文件
+        return invoice;
     }
 
     /**

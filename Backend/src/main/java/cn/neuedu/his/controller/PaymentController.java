@@ -24,29 +24,4 @@ public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
-    @Autowired
-    PatientService patientService;
-
-    /**
-     * 查询病患个人信息及所有未冻结信息
-     * @param patient_id
-     * @return
-     */
-    @GetMapping("/getFrozenPayment/{patient_id}")
-    public JSONObject getFrozenPaymentAndPatient(@PathVariable("patient_id") Integer patient_id) {
-        JSONObject result = new JSONObject();
-        Patient patient = patientService.findPatientAndPaymentInfo(patient_id);
-
-        result.put("patient", patient);
-        JSONArray paymentArray = new JSONArray();
-        BigDecimal totalAmount = new BigDecimal(0);
-        for(Payment payment: patient.getPaymentList()) {
-            totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
-            paymentArray.add(payment);
-        }
-        result.put("payment", paymentArray);
-        result.put("totalAmount", totalAmount);
-        return result;
-    }
-
 }

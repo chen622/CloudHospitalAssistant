@@ -43,7 +43,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByRegistrar(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer getIdByPaymentAdmin(Authentication authentication) throws AuthenticationServiceException{
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         if (typeId.equals(REGISTRATION_CLERK)) {
@@ -109,6 +109,4 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
-
-
 }
