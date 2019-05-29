@@ -70,11 +70,11 @@ public class UserController {
 
         Integer typeId = user.getTypeId();
         //判断输入type_id是否正确
-        if (!USERTYPELIST.contains(typeId))
+        if (!USER_TYPE_LIST.contains(typeId))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
         //类别属于医生
-        if (DOCTORTYPELIST.contains(typeId)) {
+        if (DOCTOR_TYPE_LIST.contains(typeId)) {
             //取得当前user的id
             Integer id = userService.getUserByUsername(user.getUsername()).getId();
 
@@ -82,7 +82,7 @@ public class UserController {
             Doctor doctor = JSONObject.toJavaObject(jsonObject,Doctor.class);
             //判断医生职称类型是否正确
 
-            if (!DOCTORTITLETYPELIST.contains(doctor.getTitleId())) {
+            if (!DOCTOR_TITLE_TYPE_LIST.contains(doctor.getTitleId())) {
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
             }
 
@@ -103,8 +103,8 @@ public class UserController {
      * @param authentication
      * @return
      */
-    @PostMapping("/delete")
-    public JSONObject deleteUserInformation(String username, Authentication authentication){
+    @PostMapping("/delete/{username}")
+    public JSONObject deleteUserInformation(@PathVariable("username") String username, Authentication authentication){
 
         //检查权限
         try {
@@ -124,7 +124,7 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
         //判断是否要先将doctor表中的数据删除
-        if(DOCTORTYPELIST.contains(user.getTypeId()) == true){
+        if(DOCTOR_TYPE_LIST.contains(user.getTypeId()) == true){
             doctorService.deleteById(userId);
         }
 
@@ -189,7 +189,7 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_600);
 
         //判断type_id是否正确
-        if(!USERTYPELIST.contains(user.getTypeId()))
+        if(!USER_TYPE_LIST.contains(user.getTypeId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
         //判断user的身份证号是否正确
@@ -201,11 +201,11 @@ public class UserController {
         user = userService.getUserByUsername(user.getUsername());
 
         //修改医生信息
-        if (DOCTORTYPELIST.contains(user.getTypeId())){
+        if (DOCTOR_TYPE_LIST.contains(user.getTypeId())){
             Doctor doctor = jsonObject.toJavaObject(jsonObject,Doctor.class);
 
             //判断医生职称是否正确
-            if (!DOCTORTITLETYPELIST.contains(doctor.getTitleId())) {
+            if (!DOCTOR_TITLE_TYPE_LIST.contains(doctor.getTitleId())) {
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
             }
             doctor.setId(user.getId());
@@ -236,7 +236,7 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        if (DOCTORTYPELIST.contains(user.getTypeId()))
+        if (DOCTOR_TYPE_LIST.contains(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);
@@ -262,7 +262,7 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        if (DOCTORTYPELIST.contains(user.getTypeId()))
+        if (DOCTOR_TYPE_LIST.contains(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);

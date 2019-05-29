@@ -1,19 +1,14 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.UserMapper;
-import cn.neuedu.his.model.Department;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.UserService;
-import cn.neuedu.his.util.CommonUtil;
-import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.sql.rowset.spi.SyncResolver;
 
-import static cn.neuedu.his.util.constants.Constants.USERTYPELIST;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -57,7 +52,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     }
 
-
+    @Override
     public User getUserAllInformationByName(String username){
         return userMapper.getUserAllInformationByUsername(username);
     }
