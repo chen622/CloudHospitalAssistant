@@ -32,7 +32,6 @@ public class NonDrugController {
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-
-
+        return jsonObject;
     }
 }
