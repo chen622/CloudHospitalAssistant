@@ -1,17 +1,23 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.PaymentMapper;
+import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.service.DrugService;
+import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.REGISTRATION_PAYMENT_TYPE;
+import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  *
@@ -22,9 +28,15 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     @Autowired
     private PaymentMapper paymentMapper;
+    @Autowired
+    private MedicalRecordService medicalRecordService;
+    @Autowired
+    private RegistrationService registrationService;
+    @Autowired
+    private DrugService drugService;
 
     /**
-     * 生成缴费单
+     * 生成挂号缴费单
      * @param registration
      * @param settlementTypeId
      * @param unitPrice
@@ -43,7 +55,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setSettlementTypeId(settlementTypeId);
         payment.setCreateTime(new Date(System.currentTimeMillis()));
         payment.setPaymentTypeId(REGISTRATION_PAYMENT_TYPE);
-        payment.setHaveCompleted(true);
+        payment.setState(HAVE_PAID);
         save(payment);
         return payment.getId();
     }
@@ -64,7 +76,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         //填入新的信息
         Payment newPayment = new Payment();
         newPayment.setQuantity(retreatQuantity * (-1));
-        newPayment.setIsRetreat(true);
         newPayment.setUnitPrice(originalPayment.getUnitPrice());
         newPayment.setOperatorId(registrationId);
         newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
@@ -75,16 +86,51 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setOperatorId(registrarId);
 
 
-        if (newPayment.getPaymentTypeId().equals(REGISTRATION_PAYMENT_TYPE))
-            newPayment.setHaveCompleted(true);
+        if (newPayment.getPaymentTypeId().equals(DRUG_PAYMENT_TYPE))
+            newPayment.setState(HAVE_RETURN_DRUG);
+        else
+            newPayment.setState(HAVE_RETREAT);
 
         save(newPayment);
 
         return newPayment.getId();
     }
 
+    /**
+     * 通过处方创建缴费单
+     * @param prescription
+     * @return
+     */
+    @Override
+    public Integer createDrugPayment(Prescription prescription) {
+        Payment payment = new Payment();
+        payment.setState(PRODUCE_PAYMENT);
+        Registration registration = registrationService.findById(medicalRecordService.findById(prescription.getId()).getRegistrationId());
+        payment.setOperatorId(registration.getDoctorId());
+        payment.setPatientId(registration.getPatientId());
+        payment.setCreateTime(new Date(System.currentTimeMillis()));
+        payment.setItemId(prescription.getId());
+        payment.setPaymentTypeId(DRUG_PAYMENT_TYPE);
+        Drug drug = drugService.findById(prescription.getDrugId());
+        payment.setPaymentTypeId(drug.getDrugType());
+        payment.setUnitPrice(drug.getPrice());
+        payment.setQuantity(prescription.getAmount());
+
+        save(payment);
+        return payment.getId();
+    }
+
+
+
+
+
     @Override
     public Payment findByRegistrationId(Integer registrationId) {
         return paymentMapper.selectByRegistrationId(registrationId, REGISTRATION_PAYMENT_TYPE);
+    }
+
+    @Override
+    public void updateInvoiceId(Integer invoiceId, Integer id) {
+        paymentMapper.updateInvoiceId(invoiceId, id);
     }
 }

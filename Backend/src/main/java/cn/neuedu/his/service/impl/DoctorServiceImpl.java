@@ -9,17 +9,12 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.tomcat.util.bcel.Const;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +45,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     InspectionTemplateRelationshipService relationshipService;
     @Autowired
     DrugTemplateService drugTemplateService;
+    @Autowired
+    DiseaseSecondService diseaseSecondService;
 
     /**
      * 获得全院检查模板
@@ -141,6 +138,36 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
+    @Override
+    public Integer getDeptNo(Integer id) {
+        return doctorMapper.getDeptNo(id);
+    }
+
+    /**
+     * 通过部分连续的字段获得所有疾病
+     * @param name
+     * @return
+     */
+    @Override
+    public JSONObject findByName(String name) {
+        List<DiseaseSecond> list=diseaseSecondService.findByName(name);
+        if(list==null)
+            list=new ArrayList<>();
+        return CommonUtil.successJson(list);
+    }
+
+    /**
+     * 获得所有疾病
+     * @return
+     */
+    @Override
+    public JSONObject getAll() {
+        List<DiseaseSecond> list=diseaseSecondService.getAll();
+        if(list==null)
+            list=new ArrayList<>();
+        return CommonUtil.successJson(list);
+    }
+
     /**
      * 提交初诊信息
      * @param registrationID
@@ -177,32 +204,57 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Transactional
     public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         MedicalRecordTemplate template=copyMedicalRecord(record);
+        template=setImportantInfo(template, doctorID, name, Constants.HOSPITALLEVEL);
+        return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
+    }
+
+    //存为科室病历模板
+    @Override
+    @Transactional
+    public JSONObject saveDeptMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        MedicalRecordTemplate template=copyMedicalRecord(record);
+        template=setImportantInfo(template, doctorID, name, Constants.DEPTLEVEL);
+        try {
+            return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName(e.getMessage()));
+        }
+    }
+
+    //存为个人病历模板
+    @Override
+    @Transactional
+    public JSONObject savePersonalMRTemplate(MedicalRecord record, Integer doctorID, String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        MedicalRecordTemplate template=copyMedicalRecord(record);
+        template=setImportantInfo(template, doctorID, name, Constants.PERSONALLEVEL);
+        return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
+    }
+
+    private MedicalRecordTemplate setImportantInfo(MedicalRecordTemplate template,Integer doctorID,String  name,Integer level){
         template.setId(null);
         template.setCreatedById(doctorID);
         template.setName(name);
         template.setDepartmentId(getDeptNo(doctorID));
-        template.setLevelId(Constants.HOSPITALLEVEL);
-        try{
-
-            medicalRecordTemplateService.save(template);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName("medicalRecoredTemplate"));
-        }
-        template.setCreatedById(doctorID);
-        try {
-            List<Diagnose> firstD=record.getFirstDiagnose();
-            saveDiagnose(firstD, template.getId());
-            List<Diagnose> finalD=record.getFinalDiagnose();
-            saveDiagnose(firstD, template.getId());
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName(" diagnose"));
-        }
-        return CommonUtil.successJson();
+        template.setLevelId(level);
+        return template;
     }
 
-    @Override
-    public Integer getDeptNo(Integer id) {
-        return doctorMapper.getDeptNo(id);
+    @Transactional
+    public JSONObject saveRecordAndDiagnoseAsTemp(MedicalRecord record, MedicalRecordTemplate template, Integer doctorID) throws RuntimeException {
+        try{
+            medicalRecordTemplateService.save(template);
+        }catch (Exception e){
+            throw new  RuntimeException("medicalRecoredTemplate");
+        }
+        try {
+            List<Diagnose> firstD=record.getFirstDiagnose();
+            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(firstD, template.getId());
+            List<Diagnose> finalD=record.getFinalDiagnose();
+            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(finalD, template.getId());
+        } catch (Exception e) {
+            throw new  RuntimeException("diagnose");
+        }
+        return CommonUtil.successJson();
     }
 
     private String cheakMedicalRecord(MedicalRecord record){

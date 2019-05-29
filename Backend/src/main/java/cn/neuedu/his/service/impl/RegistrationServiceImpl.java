@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +89,6 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         //生成发票
         invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
-
     }
 
     /**
@@ -141,8 +141,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public void retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException{
+    public void retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException{
         Registration registration = findById(registrationId);
+        if (registration == null)
+            throw new IllegalArgumentException("registrationId");
         Integer state = registration.getState();
         if (!state.equals(RESERVATION) && !state.equals(WAITING_FOR_TREATMENT))
             throw new UnsupportedOperationException("503");
@@ -154,20 +156,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         jobScheduleService.reduceRegistrationAmount(registration.getScheduleId());
 
         //形成冲红缴费单
-        Integer newPaymentId;
-        try {
-            newPaymentId = paymentService.retreatPayment(registrationId, registrarId, 1);
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("504");
-        }
-
-        //形成冲红发票
-        try {
-            invoiceService.addInvoiceByPayment(paymentService.findById(newPaymentId));
-        } catch (IllegalArgumentException e) {
-            throw new UnsupportedOperationException("505");
-        }
-
+        Integer newPaymentId = paymentService.retreatPayment(registrationId, registrarId, 1);
+        invoiceService.addInvoiceByPayment(paymentService.findById(newPaymentId));
     }
 
     /**
@@ -190,4 +180,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     public  List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state){
         return registrationMapper.getRegistrationByPatientName(name,doctorID, Constants.WAITING_FOR_TREATMENT);
     }
+
+    @Override
+    public ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId) {
+        return registrationMapper.getAllRegistrationWaitingByPatientId(patientId, RESERVATION, WAITING_FOR_TREATMENT);
+    }
+
+
 }

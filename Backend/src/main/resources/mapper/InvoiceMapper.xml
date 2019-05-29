@@ -8,18 +8,20 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
-    <result column="payment_id" jdbcType="INTEGER" property="paymentId" />
   </resultMap>
 
   <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
-    <association property="payment" select="getPaymentByPaymentId" column="payment_id"/>
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
+      <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+      <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByInvoiceId" column="id"/>
   </resultMap>
 
   <select id="getInvoiceAndPaymentByInvoiceId" resultMap="InvoiceAndPaymentMap">
         select  * from invoice where id = #{invoiceId} ;
   </select>
 
-  <select id="getPaymentByPaymentId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-        SELECT * FROM payment where id = #{payment_id} order by create_time asc
+  <select id="getPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+        SELECT * FROM payment where id = #{id} order by create_time asc
    </select>
 </mapper>

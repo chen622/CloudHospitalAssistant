@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -17,4 +19,13 @@ public class DiseaseSecondServiceImpl extends AbstractService<DiseaseSecond> imp
     @Autowired
     private DiseaseSecondMapper diseaseSecondMapper;
 
+    @Override
+    public List<DiseaseSecond> findByName(String name) {
+        return diseaseSecondMapper.findByName(name);
+    }
+
+    @Override
+    public List<DiseaseSecond> getAll() {
+        return diseaseSecondMapper.getAll();
+    }
 }

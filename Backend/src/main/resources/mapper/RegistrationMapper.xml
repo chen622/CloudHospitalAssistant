@@ -36,4 +36,8 @@
      order by registration.id ASC
   </select>
 
+  <select id="getAllRegistrationWaitingByPatientId" resultType="cn.neuedu.his.model.Registration">
+    select * from registration where patient_id = #{patientId} and (state = #{state1} or state = #{state2})
+  </select>
+
 </mapper>
