@@ -3,8 +3,10 @@ import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,4 +18,5 @@ public interface RegistrationService extends Service<Registration> {
     void retreatRegistrationInfo(Integer registrationId, Integer registrarId);
     List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state);
     List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
+    ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId);
 }

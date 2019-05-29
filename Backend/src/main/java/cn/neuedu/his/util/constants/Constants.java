@@ -135,8 +135,14 @@ public class Constants {
     // 预约未至
     public static final  Integer ABSENSE=808;
 
+
+    //费用类型
     //挂号费用类型
     public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
+    //处方项目费用类型
+    public static final Integer NON_DRUG_PAYMENT_TYPE = 1;
+    //检验费用类型
+    public static final Integer DRUG_PAYMENT_TYPE = 2;
 
 
     // 非药
@@ -147,6 +153,20 @@ public class Constants {
     public static final  Integer TRADITIONAL_DRUG=1102;
     // 西药
     public static final  Integer WESTEN_DRUG=1103;
+
+    //缴费状态
+    public static final  Integer PAYMENT_STATE =12;
+    //形成订单
+    public static final  Integer PRODUCE_PAYMENT =1201;
+    //缴费未取药
+    public static final  Integer HAVE_PAID =1202;
+    //缴费完成
+    public static final  Integer HAVE_COMPLETED_PAID=1203;
+    //退药未退费
+    public static final  Integer HAVE_RETURN_DRUG =1204;
+    //已退费
+    public static final  Integer HAVE_RETREAT=1205;
+
 
 
 

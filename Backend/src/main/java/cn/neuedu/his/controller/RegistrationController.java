@@ -5,6 +5,7 @@ import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -73,14 +75,30 @@ public class RegistrationController {
         try {
             registrationService.retreatRegistrationInfo(registrationId, registrarId);
         }catch (UnsupportedOperationException e) {
-            if (e.getMessage().equals("503"))
-                return CommonUtil.errorJson(ErrorEnum.E_503);
-            else if (e.getMessage().equals("504"))
-                return CommonUtil.errorJson(ErrorEnum.E_504);
-            else if (e.getMessage().equals("505"))
-                return CommonUtil.errorJson(ErrorEnum.E_505);
+            return CommonUtil.errorJson(ErrorEnum.E_503);
+        }catch (IllegalArgumentException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
         }
         return CommonUtil.successJson();
+    }
+
+    /**
+     * 通过病历号查询未就诊或已预约挂号信息
+     * @param patientId
+     * @return
+     */
+    @GetMapping("/getWaitingRegistration/{patientId}")
+    public JSONObject getWaitingRegistration(@PathVariable("patientId") Integer patientId) {
+        JSONArray result = new JSONArray();
+        ArrayList<Registration> registrationArrayList = registrationService.findAllRegistrationWaitingByPatientId(patientId);
+        if (registrationArrayList.isEmpty())
+            return CommonUtil.successJson(null);
+
+        for (Registration registration: registrationArrayList) {
+            result.add(registration);
+        }
+
+        return CommonUtil.successJson(result);
     }
 
 }
