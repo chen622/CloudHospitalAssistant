@@ -1,8 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.mapper.MedicalRecordMapper;
-import cn.neuedu.his.model.MedicalRecord;
-import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.RegistrationService;
@@ -10,6 +9,7 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,8 +63,8 @@ public class DoctorController {
     }
 
     /**
-     * use patient name to registration
      * 通过患者名字找到所有挂在该医生的待诊挂号
+     * use patient name to registration
      * @param name
      * @param authentication
      * @return
@@ -103,9 +104,100 @@ public class DoctorController {
         return CommonUtil.successJson(list);
     }
 
+
     /**
+     * 门诊医生查看全院病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getHospitalMR")
+    public JSONObject getHospitalMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getHospitalMR(doctorID,Constants.HOSPITALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看所在科室病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDeptMR")
+    public JSONObject getDeptMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getDeptMR(doctorID,Constants.DEPTLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看个人病例模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getPersonalMR")
+    public JSONObject getPersonalMR(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getPersonalMR(doctorID,Constants.PERSONALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看全院检查模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getHospitalCheckTemps")
+    public JSONObject getHospitalCheckTemps(Authentication authentication){
+        try {
+           Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getHospitalCheckTemps(doctorID,Constants.HOSPITALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看所在科室检查模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDeptCheckTemps")
+    public JSONObject getDeptCheckTemps(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getDeptCheckTemps(doctorID,Constants.DEPTLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 门诊医生查看个人检查模板
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getPersonalCheckTemps")
+    public JSONObject getPersonalCheckTemps(Authentication authentication){
+        try {
+            Integer doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            return  doctorService.getPersonalCheckTemps(doctorID,Constants.PERSONALLEVEL);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+    }
+
+    /**
+     * 医生初诊提交，更新该挂号状态
      * update the registration state as first diagnose which is 803
-     * 当医生开始初诊提交，应该更新该挂号状态
      * @param object
      * @return
      */
@@ -116,18 +208,65 @@ public class DoctorController {
         }catch (AuthenticationServiceException a){
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
-        //更新该挂号状态为初诊
-        Integer registrationID=Integer.parseInt(object.get("registrationID").toString());
+        Integer registrationID=null;
+        try{
+            registrationID=Integer.parseInt(object.get("registrationID").toString());
+            if (registrationID==null)
+                throw new NumberFormatException();
+        }catch (NumberFormatException n){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
         MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
+        Diagnose diagnose=JSONObject.parseObject(object.get("diagnose").toString(),Diagnose.class);
+        if (diagnose.getDiseaseId()==null)
+            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diseaseId"));
         JSONObject object1;
         try {
-            object1=doctorService.setFirstDiagnose(registrationID, medicalRecord);
+            object1=doctorService.setFirstDiagnose(registrationID, medicalRecord,diagnose);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
         }
-        return object;
+        return object1;
     }
+
+    /**
+     * 存为全院病历模板
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/saveHospitalMRTemplate")
+    public JSONObject saveHospitalMRTemplate(@RequestBody JSONObject object,Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Integer doctorID=null;
+        try {
+            doctorID=PermissionCheck.isOutpatientDoctor(authentication);
+            isChiefDoctor(doctorID);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        }
+        String name=(String) object.get("name");
+        if (name==null || name.equals("") )
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("name"));
+        MedicalRecord record=JSONObject.parseObject(object.get("medicalRecord").toString(),MedicalRecord.class);
+        return  doctorService.saveHospitalMRTemplate(record, doctorID, name);
+    }
+
+    /**
+     * 主任医师权限检验
+     * @param  id 医生
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public void  isChiefDoctor(Integer id) throws AuthenticationServiceException{
+        Doctor doctor=doctorService.findById(id);
+        if (doctor.getTitleId().equals(Constants.CHIEF_DOCTOR)) {
+            return ;
+        } else {
+            throw new AuthenticationServiceException("is not ChiefDoctor");
+        }
+    }
+
 
     /**
      * update the registration state as suspect diagnose which is 804
@@ -144,7 +283,7 @@ public class DoctorController {
              }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.SUSPECT);
             registrationService.update(registration);
@@ -159,7 +298,7 @@ public class DoctorController {
      * @return
      */
     @Transactional
-    public JSONObject updateStateToFinalDiagnose(@RequestBody Integer id, Authentication authentication) {
+    public JSONObject updateStateToFinalDiagnose(@RequestBody Integer id, Authentication authentication)  {
         try {
             PermissionCheck.isOutpatientDoctor(authentication);
         }catch (AuthenticationServiceException a){
@@ -167,7 +306,7 @@ public class DoctorController {
         }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.FINAL_DIAGNOSIS);
             registrationService.update(registration);
@@ -190,7 +329,7 @@ public class DoctorController {
         }
         Registration registration = registrationService.findById(id);
         if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registration id"));
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         } else{
             registration.setState(Constants.FINISH_DIAGNOSIS);
             registrationService.update(registration);

@@ -5,17 +5,25 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="INTEGER" property="id"/>
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="have_completed" jdbcType="BIT" property="haveCompleted" />
-    <result column="is_retreat" jdbcType="BIT" property="isRetreat" />
     <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
     <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
     <result column="patient_id" jdbcType="INTEGER" property="patientId" />
     <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId" />
     <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
+
+  <select id="selectByRegistrationId" resultMap="BaseResultMap">
+    select * from payment where payment_type_id = #{paymentTypeId} and item_id = #{registrationId}
+  </select>
+
+  <update id="updateInvoiceId">
+    update payment set invoice_id = #{invoiceId} where id = #{id}
+  </update>
 </mapper>

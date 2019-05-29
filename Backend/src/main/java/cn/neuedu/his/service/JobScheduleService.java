@@ -7,5 +7,6 @@ import cn.neuedu.his.util.inter.Service;
  * Created by ccm on 2019/05/24.
  */
 public interface JobScheduleService extends Service<JobSchedule> {
-
+    void addHaveRegistrationAmount(Integer id);
+    void reduceRegistrationAmount(Integer id);
 }

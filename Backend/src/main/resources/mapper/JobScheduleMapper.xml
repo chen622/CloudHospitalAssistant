@@ -12,6 +12,16 @@
     <result column="is_valid" jdbcType="BIT" property="isValid" />
     <result column="limit_registration_amount" jdbcType="INTEGER" property="limitRegistrationAmount" />
     <result column="period" jdbcType="INTEGER" property="period" />
-    <result column="date" jdbcType="TIMESTAMP" property="date" />
+    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="have_registration_amount" jdbcType="INTEGER" property="haveRegistrationAmount" />
   </resultMap>
+
+  <update id="updateHaveRegistrationAmountAdd" parameterType="Integer">
+    update job_schedule set have_registration_amount=have_registration_amount + 1 where id = #{id}
+  </update>
+
+  <update id="updateHaveRegistrationAmountReduce" parameterType="Integer">
+    update job_schedule set have_registration_amount=have_registration_amount - 1 where id = #{id}
+  </update>
 </mapper>
+

@@ -1,7 +1,6 @@
 package cn.neuedu.his.service.impl;
 
-import cn.neuedu.his.mapper.RegistrationMapper;
-import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.mapper.RegistrationTypeMapper;
 import cn.neuedu.his.model.RegistrationType;
 import cn.neuedu.his.service.RegistrationTypeService;
 import cn.neuedu.his.util.inter.AbstractService;
@@ -17,4 +16,16 @@ import java.util.List;
 @Service
 public class RegistrationTypeServiceImpl extends AbstractService<RegistrationType> implements RegistrationTypeService {
 
+    @Autowired
+    RegistrationTypeMapper registrationTypeMapper;
+
+    @Override
+    public RegistrationType getRegistrationTypeByName(String name){
+        return registrationTypeMapper.getRegistrationTypeByName(name);
+    }
+
+    @Override
+    public void deleteRegistrationTypeByName(String name){
+        registrationTypeMapper.deleteRegistrationTypeByName(name);
+    }
 }

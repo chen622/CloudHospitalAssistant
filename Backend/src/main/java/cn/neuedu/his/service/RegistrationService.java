@@ -2,8 +2,11 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,8 +14,9 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface RegistrationService extends Service<Registration> {
-
-     List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state);
-      List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
-
+    void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException;
+    void retreatRegistrationInfo(Integer registrationId, Integer registrarId);
+    List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state);
+    List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
+    ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId);
 }

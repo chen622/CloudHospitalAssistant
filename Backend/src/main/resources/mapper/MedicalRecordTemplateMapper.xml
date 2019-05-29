@@ -17,5 +17,31 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="level_id" jdbcType="INTEGER" property="levelId" />
     <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+
+    <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst" column="{MRID =id}"></collection>
+    <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinall" column="{MRID =id}"></collection>
   </resultMap>
+
+  <select id="getHospitalMR" resultMap="BaseResultMap">
+    select  * from  medical_record_template WHERE   level_id=#{level}
+  </select>
+
+  <select id="getDeptMR" resultMap="BaseResultMap">
+    select *
+    from medical_record_template t where  t.level_id =#{level} and  t.department_id in (
+    select  tt.department_id from medical_record_template tt where tt.created_by_id=#{doctorID}
+    )
+  </select>
+
+  <select id="getPersonalMR" resultMap="BaseResultMap">
+    select  * from  medical_record_template WHERE  created_by_id=#{doctorID} and  level_id=#{level}
+  </select>
+
+  <select id="getFirst" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select * from diagnose where item_id=#{MRID} and  is_template= false
+  </select>
+
+  <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select * from diagnose where item_id=#{MRID} and  is_template = true
+  </select>
 </mapper>

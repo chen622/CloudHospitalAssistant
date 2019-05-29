@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Diagnose;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.MedicalRecordService;
@@ -51,6 +52,7 @@ public class DoctorControllerTest {
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
                 .claim("typeId", Constants.OUT_PATIENT_DOCTOR)
+                .claim("titleId", Constants.CHIEF_DOCTOR)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -95,12 +97,72 @@ public class DoctorControllerTest {
     }
 
 
+    //检查模板
     @Test
-    public void updateStateToOne() throws Exception, AuthenticationServiceException {
-        String requestJson = JSONObject.toJSONString("1");
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
+    public void getHospitalCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalCheckTemps")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDeptCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDeptCheckTemps")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getPersonalCheckTemps() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalCheckTemps")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    //病例模板
+    @Test
+    public void getHospitalMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDeptMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDeptMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getPersonalMR() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalMR")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
@@ -113,10 +175,12 @@ public class DoctorControllerTest {
     public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
         MedicalRecord medicalRecord = medicalRecordService.findById(1);
         medicalRecord.setId(null);
-        medicalRecord.setSelfDescription(null);
         JSONObject object=new JSONObject();
         object.put("medicalRecord", medicalRecord);
         object.put("registrationID", 1);
+        Diagnose diagnose=new Diagnose();
+        diagnose.setDiseaseId(1);
+        object.put("diagnose",diagnose );
         String requestJson=object.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -128,5 +192,24 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void saveHospitalMRTemplate() throws Exception, AuthenticationServiceException {
+        MedicalRecord medicalRecord = medicalRecordService.getMedicalRecordWithDiagnose(1);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecord", medicalRecord);
+        object.put("name", "测试");
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveHospitalMRTemplate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 
 }

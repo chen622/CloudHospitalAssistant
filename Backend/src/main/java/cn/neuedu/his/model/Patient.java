@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.util.Date;
+import java.util.List;
 
 public class Patient {
     @Id
@@ -34,6 +35,8 @@ public class Patient {
 
     @Column(name = "last_password_modify_time")
     private Date lastPasswordModifyTime;
+
+    private List<Payment> paymentList;
 
     /**
      * @return id
@@ -163,5 +166,13 @@ public class Patient {
      */
     public void setLastPasswordModifyTime(Date lastPasswordModifyTime) {
         this.lastPasswordModifyTime = lastPasswordModifyTime;
+    }
+
+    public List<Payment> getPaymentList() {
+        return paymentList;
+    }
+
+    public void setPaymentList(List<Payment> paymentList) {
+        this.paymentList = paymentList;
     }
 }

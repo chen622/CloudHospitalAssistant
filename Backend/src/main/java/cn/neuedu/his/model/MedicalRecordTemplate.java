@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "medical_record_template")
 public class MedicalRecordTemplate {
@@ -8,8 +9,12 @@ public class MedicalRecordTemplate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+
     @Column(name = "self_description")
     private String selfDescription;
+
+    @Column(name = "name")
+    private String name ;
 
     @Column(name = "is_pregnant")
     private Boolean isPregnant;
@@ -34,6 +39,51 @@ public class MedicalRecordTemplate {
 
     @Column(name = "department_id")
     private Integer departmentId;
+
+
+    private List<Diagnose> firstDiagnose;
+    private List<Diagnose> finalDiagnose;
+
+    public List<Diagnose> getFirstDiagnose() {
+        return firstDiagnose;
+    }
+
+    public void setFirstDiagnose(List<Diagnose> firstDiagnose) {
+        this.firstDiagnose = firstDiagnose;
+    }
+
+    public List<Diagnose> getFinalDiagnose() {
+        return finalDiagnose;
+    }
+
+    public void setFinalDiagnose(List<Diagnose> finalDiagnose) {
+        this.finalDiagnose = finalDiagnose;
+    }
+
+    public Boolean getPregnant() {
+        return isPregnant;
+    }
+
+    public void setPregnant(Boolean pregnant) {
+        isPregnant = pregnant;
+    }
+
+    public Boolean getWesternMedicine() {
+        return isWesternMedicine;
+    }
+
+    public void setWesternMedicine(Boolean westernMedicine) {
+        isWesternMedicine = westernMedicine;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * 权限级别，参照常量表

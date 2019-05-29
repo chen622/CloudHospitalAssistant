@@ -17,4 +17,8 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
     @Autowired
     private PaymentTypeMapper paymentTypeMapper;
 
+    @Override
+    public PaymentType getPaymentTypeByName(String paymentTypeName) {
+        return paymentTypeMapper.getPaymentTypeByName(paymentTypeName);
+    }
 }

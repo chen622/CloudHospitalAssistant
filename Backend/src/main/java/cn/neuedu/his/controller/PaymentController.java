@@ -1,9 +1,18 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Patient;
+import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 
 /**
  *
@@ -15,5 +24,29 @@ public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
+    @Autowired
+    PatientService patientService;
+
+    /**
+     * 查询病患个人信息及所有未冻结信息
+     * @param patient_id
+     * @return
+     */
+    @GetMapping("/getFrozenPayment/{patient_id}")
+    public JSONObject getFrozenPaymentAndPatient(@PathVariable("patient_id") Integer patient_id) {
+        JSONObject result = new JSONObject();
+        Patient patient = patientService.findPatientAndPaymentInfo(patient_id);
+
+        result.put("patient", patient);
+        JSONArray paymentArray = new JSONArray();
+        BigDecimal totalAmount = new BigDecimal(0);
+        for(Payment payment: patient.getPaymentList()) {
+            totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
+            paymentArray.add(payment);
+        }
+        result.put("payment", paymentArray);
+        result.put("totalAmount", totalAmount);
+        return result;
+    }
 
 }

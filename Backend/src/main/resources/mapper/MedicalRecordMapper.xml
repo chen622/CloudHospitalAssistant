@@ -2,9 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.MedicalRecordMapper">
   <resultMap id="BaseResultMap" type="cn.neuedu.his.model.MedicalRecord">
-    <!--
-      WARNING - @mbg.generated
-    -->
+  <!--
+    WARNING - @mbg.generated
+  -->
+  <id column="id" jdbcType="INTEGER" property="id" />
+  <result column="self_description" jdbcType="VARCHAR" property="selfDescription" />
+  <result column="is_pregnant" jdbcType="BIT" property="isPregnant" />
+  <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom" />
+  <result column="history_symptom" jdbcType="VARCHAR" property="historySymptom" />
+  <result column="is_western_medicine" jdbcType="BIT" property="isWesternMedicine" />
+  <result column="allergy_history" jdbcType="VARCHAR" property="allergyHistory" />
+  <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
+  <result column="registration_id" jdbcType="INTEGER" property="registrationId" />
+  <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+</resultMap>
+
+  <resultMap id="withDiagnose" type="cn.neuedu.his.model.MedicalRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="self_description" jdbcType="VARCHAR" property="selfDescription" />
     <result column="is_pregnant" jdbcType="BIT" property="isPregnant" />
@@ -15,12 +28,27 @@
     <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
     <result column="registration_id" jdbcType="INTEGER" property="registrationId" />
     <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+    <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst" column="{MRID =id}"></collection>
+    <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinall" column="{MRID =id}"></collection>
   </resultMap>
 
-  <select id="getAllByPatientId" resultMap="BaseResultMap">
-   select * from medical_record  where medical_record.registration_id in (
+  <select id="getAllByPatientId" resultMap="withDiagnose">
+   select *
+   from medical_record  where medical_record.registration_id in (
     select registration_id from registration
     where registration.patient_id=#{patient_id}
 ) ;
+  </select>
+
+  <select id="getMedicalRecordWithDiagnose" resultMap="withDiagnose">
+    select * from  medical_record where  id=#{id}
+  </select>
+
+  <select id="getFirst" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select * from diagnose where item_id=#{MRID} and  is_template= false
+  </select>
+
+  <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select * from diagnose where item_id=#{MRID} and  is_template = true
   </select>
 </mapper>

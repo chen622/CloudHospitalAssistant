@@ -11,4 +11,6 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
   </resultMap>
+
+
 </mapper>

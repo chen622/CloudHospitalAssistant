@@ -13,5 +13,8 @@
     <result column="standard" jdbcType="VARCHAR" property="standard" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
+    <result column="drug_type" javaType="INTEGER" property="drugType"/>
   </resultMap>
 </mapper>

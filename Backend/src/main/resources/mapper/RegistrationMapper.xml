@@ -28,12 +28,16 @@
   </resultMap>
 
   <select id="getAllWaitingRegistration" resultMap="registrationWithPatient">
-    select  * from registration,patient where  state=47 and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID} order by id ASC
+    select  * from registration,patient where  state=47 and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID} order by registration.id ASC
   </select>
 
   <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
      select  * from registration,patient where  state=47 and patient.id=registration.patient_id and patient.real_name=#{name} and  registration.doctor_id=#{doctorID}
-     order by id ASC
+     order by registration.id ASC
+  </select>
+
+  <select id="getAllRegistrationWaitingByPatientId" resultType="cn.neuedu.his.model.Registration">
+    select * from registration where patient_id = #{patientId} and (state = #{state1} or state = #{state2})
   </select>
 
 </mapper>

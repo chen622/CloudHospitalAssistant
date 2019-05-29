@@ -17,4 +17,8 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     @Autowired
     private PatientMapper patientMapper;
 
+    @Override
+    public Patient findPatientAndPaymentInfo(Integer patientId) {
+        return patientMapper.searchPatientAndFrozenPayment(patientId);
+    }
 }

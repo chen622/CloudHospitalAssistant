@@ -5,7 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Invoice {
     @Id
@@ -18,8 +20,7 @@ public class Invoice {
     @Column(name = "created_date")
     private Date createdDate;
 
-    @Column(name = "payment_id")
-    private Integer paymentId;
+    private ArrayList<Payment> paymentList;
 
     /**
      * @return id
@@ -63,17 +64,11 @@ public class Invoice {
         this.createdDate = createdDate;
     }
 
-    /**
-     * @return payment_id
-     */
-    public Integer getPaymentId() {
-        return paymentId;
+    public ArrayList<Payment> getPaymentList() {
+        return paymentList;
     }
 
-    /**
-     * @param paymentId
-     */
-    public void setPaymentId(Integer paymentId) {
-        this.paymentId = paymentId;
+    public void setPaymentList(ArrayList<Payment> paymentList) {
+        this.paymentList = paymentList;
     }
 }

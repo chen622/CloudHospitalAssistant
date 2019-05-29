@@ -15,4 +15,17 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
   </resultMap>
+
+  <resultMap id="patientAndPayment" type="cn.neuedu.his.model.Patient">
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotFrozenPaymentByPatientId" column="id"/>
+  </resultMap>
+
+  <select id="searchPatientAndFrozenPayment" resultMap="patientAndPayment">
+    select * from patient where id = #{patientId}
+  </select>
+
+  <select id="selectNotFrozenPaymentByPatientId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+    select * from payment
+    where patient_id = #{id} and payment_type_id != 0 and is_frozen = false
+  </select>
 </mapper>

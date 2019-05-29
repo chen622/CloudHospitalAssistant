@@ -8,4 +8,5 @@ import org.springframework.stereotype.Component;
 
 
 public interface PaymentTypeMapper extends MyMapper<PaymentType> {
+    PaymentType getPaymentTypeByName(String paymentTypeName);
 }

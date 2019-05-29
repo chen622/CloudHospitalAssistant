@@ -11,4 +11,43 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
   </resultMap>
+
+
+  <resultMap id="withRelationship" type="cn.neuedu.his.model.InspectionTemplate">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="level" jdbcType="INTEGER" property="level" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
+    <collection property="relationships" ofType="cn.neuedu.his.model.InspectionTemplateRelationship" select="getRelationship" column="{id=id,,nonDrugType=nonDrugType}">
+    </collection>
+  </resultMap>
+
+  <select id="getHospitalCheckTemps" resultMap="withRelationship">
+        select * ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType} end as nonDrugType from inspection_template i where i.created_by_id=#{doctorID} and  level=#{level }
+  </select>
+
+<!-- Relationship collection-->
+  <select id="getRelationship" resultMap="cn.neuedu.his.mapper.InspectionTemplateRelationshipMapper.Item" >
+        select *  ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType} end as nonDrugType from  inspection_template_relationship where template_id=#{id}
+  </select>
+
+  <select id="getDeptCheckTemps" resultMap="withRelationship">
+    select * ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType}  end as nonDrugType
+    from inspection_template where  level =#{level} and  inspection_template.created_by_id in(
+        select u.id from user as u  where u.department_id in (
+            select u2.department_id from user u2 where  u2.id=#{doctorID}
+            )
+        )
+
+  </select>
+
+  <select id="getPersonalCheckTemps" resultMap="withRelationship">
+    select * ,case when (${nonDrugType} > 0) then 10 else ${nonDrugType}  end as nonDrugType
+    from inspection_template where  level =#{level} and  inspection_template.created_by_id=#{doctorID}
+  </select>
+
 </mapper>

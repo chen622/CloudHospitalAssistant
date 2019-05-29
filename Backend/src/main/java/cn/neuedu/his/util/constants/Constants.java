@@ -23,9 +23,23 @@ public class Constants {
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
-    public static final List<Integer> userTypeList = Arrays.asList(601,602,603,604,605,606);
-    public static final List<Integer> doctorTypeList = Arrays.asList(602,603);
+    //所有人员类型
+    public static final List<Integer> USER_TYPE_LIST = Arrays.asList(601,602,603,604,605,606);
+    //所有医生类型
+    public static final List<Integer> DOCTOR_TYPE_LIST = Arrays.asList(602,603);
+    //所有医生职称
+    public static final List<Integer> DOCTOR_TITLE_TYPE_LIST = Arrays.asList(701,702,703,704);
+    //所有结算类别
+    public static final List<Integer> PAYMENT_TYPE_LIST=Arrays.asList(201,202,203);
 
+    //医院管理员
+    public static final Integer HOSPITAL_ADMIN = 606;
+
+    //财务管理员
+    public static final Integer FINANCIAL_ADMIN=605;
+
+    //药物管理员
+    public static final Integer MEDINCINE_ADMIN = 604;
 
     //临床科室
     public static final  Integer CLINICAL_DEPARTMENTS=101;
@@ -88,6 +102,9 @@ public class Constants {
     //医院管理员
     public static final  Integer HOSPITAL_ADMINISTRATOR=606;
 
+
+    //职称
+    public static final  Integer TITLE=7;
     //主任医师
     public static final  Integer CHIEF_DOCTOR=701;
     //副主任医师
@@ -98,7 +115,8 @@ public class Constants {
     public static final  Integer RESIDENT=704;
 
 
-
+    //看诊状态
+    public static final  Integer REGISTRATIONSTATE=8;
     //预约
     public static final  Integer RESERVATION=801;
 
@@ -117,16 +135,42 @@ public class Constants {
     // 预约未至
     public static final  Integer ABSENSE=808;
 
+
+    //费用类型
     //挂号费用类型
     public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
+    //处方费用类型
+    public static final Integer DRUG_PAYMENT_TYPE = 0;
+    //处方项目费用类型
+    public static final Integer NON_DRUG_PAYMENT_TYPE = 0;
+
+
+    // 非药
+    public static final  Integer NON_DRUG =10;
+    // 中成药
+    public static final  Integer FINISH_TRADITIONAL_DRUG =1101;
+    //中草药
+    public static final  Integer TRADITIONAL_DRUG=1102;
+    // 西药
+    public static final  Integer WESTEN_DRUG=1103;
+
+    //缴费状态
+    public static final  Integer PAYMENT_STATE =12;
+    //形成订单
+    public static final  Integer PRODUCE_PAYMENT =1201;
+    //缴费未取药
+    public static final  Integer HAVE_PAID =1202;
+    //缴费完成
+    public static final  Integer HAVE_COMPLETED_PAID=1203;
+    //退药未退费
+    public static final  Integer HAVE_RETURN_DRUG =1204;
+    //已退费
+    public static final  Integer HAVE_RETREAT=1205;
 
 
 
 
-    //职称
-    public static final  Integer TITLE=7;
-    //看诊状态
-    public static final  Integer REGISTRATIONSTATE=8;
+
 //    public enum USER_TYPE {
 //        CUSTOMER, RESTAURANT, COURIER;
 //
