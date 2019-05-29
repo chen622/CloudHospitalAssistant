@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.REGISTRATION_PAYMENT_TYPE;
+import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  *
@@ -24,7 +25,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     private PaymentMapper paymentMapper;
 
     /**
-     * 生成缴费单
+     * 生成挂号缴费单
      * @param registration
      * @param settlementTypeId
      * @param unitPrice
@@ -43,7 +44,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setSettlementTypeId(settlementTypeId);
         payment.setCreateTime(new Date(System.currentTimeMillis()));
         payment.setPaymentTypeId(REGISTRATION_PAYMENT_TYPE);
-        payment.setHaveCompleted(true);
+        payment.setState(HAVE_PAID);
         save(payment);
         return payment.getId();
     }
@@ -64,7 +65,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         //填入新的信息
         Payment newPayment = new Payment();
         newPayment.setQuantity(retreatQuantity * (-1));
-        newPayment.setIsRetreat(true);
         newPayment.setUnitPrice(originalPayment.getUnitPrice());
         newPayment.setOperatorId(registrationId);
         newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
@@ -75,8 +75,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setOperatorId(registrarId);
 
 
-        if (newPayment.getPaymentTypeId().equals(REGISTRATION_PAYMENT_TYPE))
-            newPayment.setHaveCompleted(true);
+        if (newPayment.getPaymentTypeId().equals(DRUG_PAYMENT_TYPE))
+            newPayment.setState(HAVE_RETURN_DRUG);
+        else
+            newPayment.setState(HAVE_RETREAT);
 
         save(newPayment);
 
@@ -86,5 +88,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Override
     public Payment findByRegistrationId(Integer registrationId) {
         return paymentMapper.selectByRegistrationId(registrationId, REGISTRATION_PAYMENT_TYPE);
+    }
+
+    @Override
+    public void updateInvoiceId(Integer invoiceId, Integer id) {
+        paymentMapper.updateInvoiceId(invoiceId, id);
     }
 }

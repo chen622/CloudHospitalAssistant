@@ -20,15 +20,6 @@ public class Payment {
     @Column(name = "create_time")
     private Date createTime;
 
-    @Column(name = "have_completed")
-    private Boolean haveCompleted;
-
-    /**
-     * 是否为退费
-     */
-    @Column(name = "is_retreat")
-    private Boolean isRetreat;
-
     /**
      * 对账的时候冻结账单
      */
@@ -59,6 +50,11 @@ public class Payment {
 
     @Column(name = "item_id")
     private Integer itemId;
+
+    private Integer state;
+
+    @Column(name = "invoice_id")
+    private Integer invoiceId;
 
     /**
      * @return id
@@ -114,38 +110,6 @@ public class Payment {
      */
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    /**
-     * @return have_completed
-     */
-    public Boolean getHaveCompleted() {
-        return haveCompleted;
-    }
-
-    /**
-     * @param haveCompleted
-     */
-    public void setHaveCompleted(Boolean haveCompleted) {
-        this.haveCompleted = haveCompleted;
-    }
-
-    /**
-     * 获取是否为退费
-     *
-     * @return is_retreat - 是否为退费
-     */
-    public Boolean getIsRetreat() {
-        return isRetreat;
-    }
-
-    /**
-     * 设置是否为退费
-     *
-     * @param isRetreat 是否为退费
-     */
-    public void setIsRetreat(Boolean isRetreat) {
-        this.isRetreat = isRetreat;
     }
 
     /**
@@ -250,5 +214,21 @@ public class Payment {
      */
     public void setItemId(Integer itemId) {
         this.itemId = itemId;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    public Integer getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(Integer invoiceId) {
+        this.invoiceId = invoiceId;
     }
 }

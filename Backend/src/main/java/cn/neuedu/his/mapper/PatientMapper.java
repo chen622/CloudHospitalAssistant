@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface PatientMapper extends MyMapper<Patient> {
+    Patient searchPatientAndFrozenPayment(Integer patientId);
 }

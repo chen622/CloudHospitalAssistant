@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -87,8 +88,12 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         Integer paymentId = paymentService.createRegistrationPayment(registration, jsonObject.getInteger("settlementType"), unitPrice);
 
         //生成发票
-        invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
+        Payment payment = paymentService.findById(paymentId);
+        Integer invoiceId = invoiceService.addInvoiceByPayment(payment);
+        payment.setInvoiceId(invoiceId);
 
+        //更改缴费单发票id字段
+        paymentService.update(payment);
     }
 
     /**
@@ -141,8 +146,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public void retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException{
+    public void retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException{
         Registration registration = findById(registrationId);
+        if (registration == null)
+            throw new IllegalArgumentException("registrationId");
         Integer state = registration.getState();
         if (!state.equals(RESERVATION) && !state.equals(WAITING_FOR_TREATMENT))
             throw new UnsupportedOperationException("503");
@@ -162,12 +169,16 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         }
 
         //形成冲红发票
+        Payment payment = paymentService.findById(newPaymentId);
+        Integer invoiceId;
         try {
-            invoiceService.addInvoiceByPayment(paymentService.findById(newPaymentId));
+            invoiceId = invoiceService.addInvoiceByPayment(payment);
         } catch (IllegalArgumentException e) {
             throw new UnsupportedOperationException("505");
         }
 
+        payment.setInvoiceId(invoiceId);
+        paymentService.update(payment);
     }
 
     /**
@@ -190,4 +201,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     public  List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state){
         return registrationMapper.getRegistrationByPatientName(name,doctorID, Constants.WAITING_FOR_TREATMENT);
     }
+
+    @Override
+    public ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId) {
+        return registrationMapper.getAllRegistrationWaitingByPatientId(patientId, RESERVATION, WAITING_FOR_TREATMENT);
+    }
+
+
 }

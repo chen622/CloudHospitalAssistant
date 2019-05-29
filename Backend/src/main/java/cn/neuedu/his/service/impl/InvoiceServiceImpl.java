@@ -29,28 +29,25 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
 
-        System.out.println(invoice.getId() + " " + invoice.getCreatedDate());
-//        for (Payment payment : invoice.getPaymentList()) {
-            System.out.println(invoice.getPayment().getId() + " " + invoice.getPayment().getUnitPrice().toString());
-//        }
-
         //TODO 打印成文件
     }
 
     /**
-     * 通过缴费信息，生成发票
+     * 通过缴费信息，生成挂号发票
      * @param payment
+     * @return
      * @throws IllegalArgumentException
      */
     @Override
-    public void addInvoiceByPayment(Payment payment) throws IllegalArgumentException{
+    public Integer addInvoiceByPayment(Payment payment) throws IllegalArgumentException{
         if (payment.equals(null))
             throw new IllegalArgumentException("no payment");
         Invoice invoice = new Invoice();
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
-        invoice.setPaymentId(payment.getId());
         save(invoice);
+
+        return invoice.getId();
     }
 
     @Override

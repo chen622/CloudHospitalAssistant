@@ -17,7 +17,7 @@
   </resultMap>
 
   <update id="updateHaveRegistrationAmountAdd" parameterType="Integer">
-    update job_schedule set have_registration_amount=have_registration_amount - 1 where id = #{id}
+    update job_schedule set have_registration_amount=have_registration_amount + 1 where id = #{id}
   </update>
 
   <update id="updateHaveRegistrationAmountReduce" parameterType="Integer">

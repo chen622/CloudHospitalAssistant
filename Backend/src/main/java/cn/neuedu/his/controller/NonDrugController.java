@@ -23,16 +23,4 @@ public class NonDrugController {
     @Autowired
     NonDrugService nonDrugService;
 
-    @PostMapping("/insert")
-    public JSONObject insertNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication){
-
-        //检查权限
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-
-    }
 }
