@@ -17,6 +17,7 @@ public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
     Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId);
+    void retreatPayment(Integer paymentId, Integer quantity);
 
 
     Integer createDrugPayment(Prescription prescription);

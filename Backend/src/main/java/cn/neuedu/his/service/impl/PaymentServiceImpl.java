@@ -135,6 +135,16 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         return result;
     }
 
+    @Override
+    public void retreatPayment(Integer paymentId, Integer quantity) {
+
+    }
+
+
+
+
+
+
     /**
      * 通过处方创建缴费单
      * @param prescription

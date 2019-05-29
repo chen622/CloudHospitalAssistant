@@ -36,4 +36,14 @@ public class PaymentController {
 
         return CommonUtil.successJson(result);
     }
+
+//    @PostMapping("retreat")
+//    public JSONObject retreat(@RequestBody JSONObject jsonObject, Authentication authentication) {
+//        Integer tollKeeper;
+//        try {
+//            tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
+//        }catch (AuthenticationServiceException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502);
+//        }
+//    }
 }
