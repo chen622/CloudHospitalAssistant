@@ -1,8 +1,5 @@
 package cn.neuedu.his.service;
-import cn.neuedu.his.model.Diagnose;
-import cn.neuedu.his.model.Doctor;
-import cn.neuedu.his.model.InspectionTemplate;
-import cn.neuedu.his.model.MedicalRecord;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -19,8 +16,6 @@ import java.util.List;
  */
 public interface DoctorService extends Service<Doctor> {
 
-    @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, Diagnose diagnose) throws Exception;
 
     @Transactional
     public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level);
@@ -41,7 +36,35 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject getPersonalMR(Integer doctorID,Integer level);
 
     @Transactional
+    Integer getDeptNo(Integer id);
+
+    @Transactional
+    JSONObject findDiseaseByName(String name);
+
+    @Transactional
+    JSONObject getAllDiease();
+
+    @Transactional
+    JSONObject findNonDrugByName(String name);
+
+    @Transactional
+    JSONObject  getAllNonDrug();
+
+
+
+    @Transactional
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, Diagnose diagnose) throws Exception;
+
+    @Transactional
     public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
-    Integer getDeptNo(Integer id);
+    @Transactional
+    public JSONObject saveDeptMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
+    @Transactional
+    public JSONObject savePersonalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+
+
+
 }
+

@@ -4,8 +4,12 @@ import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.util.inter.MyMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 
 
 public interface NonDrugMapper extends MyMapper<NonDrug> {
+    List<NonDrug> findByName (String name);
+    List<NonDrug> getAll ();
 }
