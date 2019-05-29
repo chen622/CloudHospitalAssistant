@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "medical_record")
 public class MedicalRecord {
@@ -37,6 +38,43 @@ public class MedicalRecord {
 
     @Column(name = "previous_treatment")
     private String previousTreatment;
+
+
+    private List<Diagnose> firstDiagnose;
+
+    private List<Diagnose> finalDiagnose;
+
+    public Boolean getPregnant() {
+        return isPregnant;
+    }
+
+    public void setPregnant(Boolean pregnant) {
+        isPregnant = pregnant;
+    }
+
+    public Boolean getWesternMedicine() {
+        return isWesternMedicine;
+    }
+
+    public void setWesternMedicine(Boolean westernMedicine) {
+        isWesternMedicine = westernMedicine;
+    }
+
+    public List<Diagnose> getFirstDiagnose() {
+        return firstDiagnose;
+    }
+
+    public void setFirstDiagnose(List<Diagnose> firstDiagnose) {
+        this.firstDiagnose = firstDiagnose;
+    }
+
+    public List<Diagnose> getFinalDiagnose() {
+        return finalDiagnose;
+    }
+
+    public void setFinalDiagnose(List<Diagnose> finalDiagnose) {
+        this.finalDiagnose = finalDiagnose;
+    }
 
     /**
      * @return id

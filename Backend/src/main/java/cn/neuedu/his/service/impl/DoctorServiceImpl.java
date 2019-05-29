@@ -7,16 +7,23 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  *
@@ -28,42 +35,21 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     private DoctorService doctorService;
     @Autowired
+    private DoctorMapper doctorMapper;
+    @Autowired
     RegistrationService registrationService;
     @Autowired
     MedicalRecordService medicalRecordService;
     @Autowired
     MedicalRecordTemplateService medicalRecordTemplateService;
     @Autowired
+    DiagnoseService diagnoseService;
+    @Autowired
     InspectionTemplateService inspectionTemplateService;
     @Autowired
     InspectionTemplateRelationshipService relationshipService;
     @Autowired
     DrugTemplateService drugTemplateService;
-
-    /**
-     * 提交初诊信息
-     * @param registrationID
-     * @param medicalRecord
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord) {
-        Registration registration = registrationService.findById(registrationID);
-        if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        } else{
-            registration.setState(Constants.FIRST_DIAGNOSIS);
-            registrationService.update(registration);
-        }
-        //检查是否有必要的参数没有填写完
-        String  check=cheakMedicalRecord(medicalRecord);
-        if(!check.equals("")){
-            throw new RuntimeException();
-        }
-        medicalRecordService.save(medicalRecord);
-        return CommonUtil.successJson();
-    }
 
     /**
      * 获得全院检查模板
@@ -155,6 +141,70 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
+    /**
+     * 提交初诊信息
+     * @param registrationID
+     * @param medicalRecord
+     * @return
+     */
+    @Override
+    @Transactional
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,Diagnose diagnose) throws RuntimeException {
+        Registration registration = registrationService.findById(registrationID);
+        if(registration==null){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        } else{
+            registration.setState(Constants.FIRST_DIAGNOSIS);
+            registrationService.update(registration);
+        }
+        //检查是否有必要的参数没有填写完
+        String  check=cheakMedicalRecord(medicalRecord);
+        if(!check.equals("")){
+            throw new RuntimeException("medicalRecord");
+        }
+        medicalRecord.setId(null);
+        medicalRecordService.save(medicalRecord);
+        diagnose.setItemId(medicalRecord.getId());
+        diagnose.setIsMajor(false);
+        diagnose.setCreateTime(new Date(System.currentTimeMillis()));
+        diagnose.setTemplate(false);
+        diagnoseService.save(diagnose);
+        return CommonUtil.successJson();
+    }
+
+    //存为全院病历模板
+    @Override
+    @Transactional
+    public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        MedicalRecordTemplate template=copyMedicalRecord(record);
+        template.setId(null);
+        template.setCreatedById(doctorID);
+        template.setName(name);
+        template.setDepartmentId(getDeptNo(doctorID));
+        template.setLevelId(Constants.HOSPITALLEVEL);
+        try{
+
+            medicalRecordTemplateService.save(template);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName("medicalRecoredTemplate"));
+        }
+        template.setCreatedById(doctorID);
+        try {
+            List<Diagnose> firstD=record.getFirstDiagnose();
+            saveDiagnose(firstD, template.getId());
+            List<Diagnose> finalD=record.getFinalDiagnose();
+            saveDiagnose(firstD, template.getId());
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName(" diagnose"));
+        }
+        return CommonUtil.successJson();
+    }
+
+    @Override
+    public Integer getDeptNo(Integer id) {
+        return doctorMapper.getDeptNo(id);
+    }
+
     private String cheakMedicalRecord(MedicalRecord record){
         if (registrationService.findById(record.getRegistrationId())==null)
             return "RegistrationId";
@@ -164,6 +214,26 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return "CurrentSymptom";
         if (record.getIsWesternMedicine()==null )
             return  "isWesternMedicne";
+        if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
+            return  "FirstDiagnose";
         return "";
+    }
+
+    private MedicalRecordTemplate copyMedicalRecord(MedicalRecord record) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        MedicalRecordTemplate template = JSON.parseObject(JSON.toJSONString(record), MedicalRecordTemplate.class);
+        return template;
+    }
+
+    @Transactional
+    public void saveDiagnose(List<Diagnose> firstD,Integer id) throws Exception{
+        if (firstD!=null){
+            for (Diagnose diagnose:firstD){
+                diagnose.setId(null);
+                diagnose.setTemplate(true);
+                diagnose.setItemId(id);
+                diagnose.setCreateTime(new Date(System.currentTimeMillis()));
+                diagnoseService.save(diagnose);
+            }
+        }
     }
 }

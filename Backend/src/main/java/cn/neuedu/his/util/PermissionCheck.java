@@ -65,7 +65,7 @@ public class PermissionCheck {
         if (typeId.equals(Constants.OUT_PATIENT_DOCTOR)) {
             return (Integer) data.get("id");
         } else {
-            throw new AuthenticationServiceException("");
+            throw new AuthenticationServiceException("is not Outpatient Doctor ");
         }
     }
 
@@ -98,6 +98,7 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
+
 
     public static Integer canPrintInvoice(Authentication authentication) throws AuthenticationServiceException{
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();

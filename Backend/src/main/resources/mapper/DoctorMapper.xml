@@ -10,4 +10,7 @@
     <result column="can_arrange" jdbcType="BIT" property="canArrange" />
   </resultMap>
 
+  <select id="getDeptNo" resultType="integer">
+        select u.department_id from  user u,doctor where u.id=doctor.id and doctor.id=#{id}
+  </select>
 </mapper>

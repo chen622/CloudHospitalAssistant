@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Diagnose;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.MedicalRecordService;
@@ -51,6 +52,7 @@ public class DoctorControllerTest {
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
                 .claim("typeId", Constants.OUT_PATIENT_DOCTOR)
+                .claim("titleId", Constants.CHIEF_DOCTOR)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -94,24 +96,6 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
-        MedicalRecord medicalRecord = medicalRecordService.findById(1);
-        medicalRecord.setId(null);
-        JSONObject object=new JSONObject();
-        object.put("medicalRecord", medicalRecord);
-        object.put("registrationID", 1);
-        String requestJson=object.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
-    }
 
     //检查模板
     @Test
@@ -186,4 +170,46 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
+        MedicalRecord medicalRecord = medicalRecordService.findById(1);
+        medicalRecord.setId(null);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecord", medicalRecord);
+        object.put("registrationID", 1);
+        Diagnose diagnose=new Diagnose();
+        diagnose.setDiseaseId(1);
+        object.put("diagnose",diagnose );
+        String requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void saveHospitalMRTemplate() throws Exception, AuthenticationServiceException {
+        MedicalRecord medicalRecord = medicalRecordService.getMedicalRecordWithDiagnose(1);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecord", medicalRecord);
+        object.put("name", "测试");
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveHospitalMRTemplate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
 }

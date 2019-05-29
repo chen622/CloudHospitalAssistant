@@ -102,6 +102,9 @@ public class Constants {
     //医院管理员
     public static final  Integer HOSPITAL_ADMINISTRATOR=606;
 
+
+    //职称
+    public static final  Integer TITLE=7;
     //主任医师
     public static final  Integer CHIEF_DOCTOR=701;
     //副主任医师
@@ -112,7 +115,8 @@ public class Constants {
     public static final  Integer RESIDENT=704;
 
 
-
+    //看诊状态
+    public static final  Integer REGISTRATIONSTATE=8;
     //预约
     public static final  Integer RESERVATION=801;
 
@@ -145,10 +149,8 @@ public class Constants {
     public static final  Integer WESTEN_DRUG=1103;
 
 
-    //职称
-    public static final  Integer TITLE=7;
-    //看诊状态
-    public static final  Integer REGISTRATIONSTATE=8;
+
+
 //    public enum USER_TYPE {
 //        CUSTOMER, RESTAURANT, COURIER;
 //
