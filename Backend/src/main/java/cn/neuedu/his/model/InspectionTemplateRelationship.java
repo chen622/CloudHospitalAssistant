@@ -23,7 +23,7 @@ public class InspectionTemplateRelationship {
 1是非药品
      */
     @Column(name = "item_type")
-    private Boolean itemType;
+    private Integer itemType;
 
     private Drug drug;
     private NonDrug nonDrug;
@@ -79,7 +79,7 @@ public class InspectionTemplateRelationship {
      * @return item_type - 0是药品
 1是非药品
      */
-    public Boolean getItemType() {
+    public Integer getItemType() {
         return itemType;
     }
 
@@ -90,7 +90,7 @@ public class InspectionTemplateRelationship {
      * @param itemType 0是药品
 1是非药品
      */
-    public void setItemType(Boolean itemType) {
+    public void setItemType(Integer itemType) {
         this.itemType = itemType;
     }
 

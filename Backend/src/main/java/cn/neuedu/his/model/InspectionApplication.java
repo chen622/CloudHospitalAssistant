@@ -21,10 +21,39 @@ public class InspectionApplication {
     @Column(name = "is_done")
     private Boolean isDone;
 
+    @Column(name = "is_emerged")
+    private  Boolean isEmerged;
+
+    @Column(name = "quantity")
     private Integer quantity;
 
     @Column(name = "is_canceled")
     private Boolean isCanceled;
+
+
+    public Boolean getDone() {
+        return isDone;
+    }
+
+    public void setDone(Boolean done) {
+        isDone = done;
+    }
+
+    public Boolean getEmerged() {
+        return isEmerged;
+    }
+
+    public void setEmerged(Boolean emerged) {
+        isEmerged = emerged;
+    }
+
+    public Boolean getCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(Boolean canceled) {
+        isCanceled = canceled;
+    }
 
     /**
      * @return id
@@ -80,20 +109,6 @@ public class InspectionApplication {
      */
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    /**
-     * @return is_done
-     */
-    public Boolean getIsDone() {
-        return isDone;
-    }
-
-    /**
-     * @param isDone
-     */
-    public void setIsDone(Boolean isDone) {
-        this.isDone = isDone;
     }
 
     /**

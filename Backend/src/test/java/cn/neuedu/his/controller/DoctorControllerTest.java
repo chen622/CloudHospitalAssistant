@@ -1,15 +1,17 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Diagnose;
+import cn.neuedu.his.model.InspectionApplication;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import net.minidev.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +27,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
@@ -52,7 +56,6 @@ public class DoctorControllerTest {
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
                 .claim("typeId", Constants.OUT_PATIENT_DOCTOR)
-                .claim("titleId", Constants.CHIEF_DOCTOR)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -124,7 +127,7 @@ public class DoctorControllerTest {
 
     @Test
     public void getPersonalCheckTemps() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalCheckTemps")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalInspectionTemps")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -288,6 +291,66 @@ public class DoctorControllerTest {
         object.put("name", "测试存入个人模板");
         String  requestJson=object.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/savePersonalMRTemplate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    public void saveInspection() throws Exception {
+        InspectionApplication i = new InspectionApplication();
+        i.setQuantity(1);
+        i.setNonDrugId(1);
+
+        InspectionApplication i1 = new InspectionApplication();
+        i1.setQuantity(2);
+        i1.setNonDrugId(2);
+
+        JSONArray array=new JSONArray();
+        array.add(i);
+        array.add(i1);
+        JSONObject object=new JSONObject();
+        object.put("medicalRecordId", 1);
+        object.put("inspections", array);
+        String  requestJson=object.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveInspection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void saveInspectionTem() throws Exception {
+        InspectionApplication i = new InspectionApplication();
+        i.setQuantity(1);
+        i.setNonDrugId(3);
+
+        InspectionApplication i1 = new InspectionApplication();
+        i1.setQuantity(2);
+        i1.setNonDrugId(4);
+
+        JSONArray array=new JSONArray();
+        array.add(i);
+        array.add(i1);
+        JSONObject object=new JSONObject();
+        object.put("name", "测试检查项目作为模板");
+        object.put("applications", array);
+        object.put("isNew", false);
+        object.put("level",Constants.PERSONALLEVEL);
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveInspectionTem")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

@@ -1,7 +1,7 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.inter.Service;
-import com.alibaba.fastjson.JSON;
+
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +27,13 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level);
 
     @Transactional
-    public JSONObject getHospitalMR(Integer doctorID,Integer level) ;
+    public JSONObject getHospitalMR(Integer doctorID, Integer level) ;
 
     @Transactional
     public JSONObject getDeptMR(Integer doctorID,Integer level) ;
 
     @Transactional
-    public JSONObject getPersonalMR(Integer doctorID,Integer level);
+    public JSONObject getPersonalMR(Integer doctorID, Integer level);
 
     @Transactional
     Integer getDeptNo(Integer id);
@@ -45,7 +45,7 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject getAllDiease();
 
     @Transactional
-    JSONObject findNonDrugByName(String name);
+    List<NonDrug> findNonDrugByName(String name);
 
     @Transactional
     JSONObject  getAllNonDrug();
@@ -56,14 +56,20 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, Diagnose diagnose) throws Exception;
 
     @Transactional
-    public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+    public JSONObject saveMRTemplate(MedicalRecord record,Integer doctorID,String name,Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     @Transactional
-    public JSONObject saveDeptMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+    JSONObject openInspection(Integer registrationId);
 
     @Transactional
-    public JSONObject savePersonalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
+    JSONObject saveInspections(JSONObject object) throws  Exception;
 
+
+    @Transactional
+    public JSONObject saveInspectionTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
+
+    @Transactional
+    public JSONObject saveInspectionAsTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
 
 
 }

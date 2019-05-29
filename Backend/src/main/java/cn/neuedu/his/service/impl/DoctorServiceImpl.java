@@ -9,6 +9,7 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.javassist.tools.reflect.Metalevel;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,11 +45,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     InspectionTemplateService inspectionTemplateService;
     @Autowired
-    InspectionTemplateRelationshipService relationshipService;
+    InspectionTemplateRelationshipService inspectionTemplateRelationshipService;
     @Autowired
     DrugTemplateService drugTemplateService;
     @Autowired
     DiseaseSecondService diseaseSecondService;
+    @Autowired
+    InspectionApplicationService inspectionApplicationService;
+
+
+
 
     /**
      * 获得全院检查模板
@@ -176,7 +182,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      */
     @Override
-    public JSONObject findNonDrugByName(String name) {
+    public List<NonDrug> findNonDrugByName(String name) {
         return nonDrugService.findByName(name);
     }
 
@@ -222,34 +228,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson();
     }
 
-    //存为全院病历模板
+    /**
+     * 存为病历模板
+     */
     @Override
     @Transactional
-    public JSONObject saveHospitalMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public JSONObject saveMRTemplate(MedicalRecord record,Integer doctorID,String name,Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         MedicalRecordTemplate template=copyMedicalRecord(record);
-        template=setImportantInfo(template, doctorID, name, Constants.HOSPITALLEVEL);
-        return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
-    }
-
-    //存为科室病历模板
-    @Override
-    @Transactional
-    public JSONObject saveDeptMRTemplate(MedicalRecord record,Integer doctorID,String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        MedicalRecordTemplate template=copyMedicalRecord(record);
-        template=setImportantInfo(template, doctorID, name, Constants.DEPTLEVEL);
-        try {
-            return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_607.addErrorParamName(e.getMessage()));
-        }
-    }
-
-    //存为个人病历模板
-    @Override
-    @Transactional
-    public JSONObject savePersonalMRTemplate(MedicalRecord record, Integer doctorID, String name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        MedicalRecordTemplate template=copyMedicalRecord(record);
-        template=setImportantInfo(template, doctorID, name, Constants.PERSONALLEVEL);
+        template=setImportantInfo(template, doctorID, name, level);
         return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
     }
 
@@ -261,6 +247,145 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         template.setLevelId(level);
         return template;
     }
+
+
+    @Override
+    public  JSONObject openInspection(Integer registrationId){
+        Registration registration=registrationService.findById(registrationId);
+        if(!(registration.getState().equals(Constants.FIRST_DIAGNOSIS) || registration.getState().equals(Constants.SUSPECT)))
+            return CommonUtil.errorJson(ErrorEnum.E_506.addErrorParamName("notFirstDiagnose"));
+        return CommonUtil.successJson();
+    }
+
+
+    /**
+     * 提交申请检查..项目
+     * @param object
+     * @return
+     * @throws Exception
+     */
+    @Override
+    @Transactional
+    public JSONObject saveInspections(JSONObject object) throws  Exception{
+        List<InspectionApplication> inspectionApplications= (ArrayList<InspectionApplication>)object.getJSONArray("inspections").toJavaList(InspectionApplication.class);
+        Integer medicalRecordId=(Integer) object.get("medicalRecordId");
+        Integer registrationId=(Integer) object.get("ragistrationId");
+        Registration registration=registrationService.findById(registrationId);
+        if(registration==null)
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        registration.setState(Constants.SUSPECT);
+        registrationService.update(registration);
+        for (InspectionApplication i:inspectionApplications){
+            i.setId(null);
+            i.setMedicalRecordId(medicalRecordId);
+            i.setCreateTime(new Date(System.currentTimeMillis()));
+            i.setIsCanceled(false);
+            String name=cheakInspection(i);
+            if(!name.equals("")){
+                throw new RuntimeException(name);
+            }
+            inspectionApplicationService.save(i);
+        }
+        return CommonUtil.successJson();
+    }
+
+    /**
+     * 新建检查检验模板
+     * @param object
+     * @param level
+     * @return
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @Override
+    @Transactional
+    public JSONObject saveInspectionTemplate(JSONObject object, Integer level,Integer doctorId) throws Exception {
+        List<InspectionTemplateRelationship> list=object.getJSONArray("relationships").toJavaList(InspectionTemplateRelationship.class);
+        InspectionTemplate template=new InspectionTemplate();
+        saveTemp(template,level,object, doctorId);
+        String  check;
+        if(list!=null){
+            for (InspectionTemplateRelationship r : list){
+                check = "";
+                check=checkInspectionRelation(r);
+                if(!check.equals("")){
+                    throw new Exception(check);
+                }
+                r.setTemplateId(template.getId());
+                inspectionTemplateRelationshipService.save(r);
+            }
+        }
+        return CommonUtil.successJson();
+    }
+
+    /**
+     * 新建检查检验模板
+     * @param object
+     * @param level
+     * @return
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @Override
+    @Transactional
+    public JSONObject saveInspectionAsTemplate(JSONObject object, Integer level,Integer doctorId) throws Exception {
+        List<InspectionApplication> list=object.getJSONArray("applications").toJavaList(InspectionApplication.class);
+        InspectionTemplate template=new InspectionTemplate();
+        saveTemp(template,level,object, doctorId);
+        String check;
+        if (list!=null){
+            for (InspectionApplication r : list){
+                InspectionTemplateRelationship relationship = new InspectionTemplateRelationship();
+                relationship.setTemplateId(template.getId());
+                relationship.setItemType(Constants.NON_DRUG);
+                relationship.setItemId(r.getNonDrugId());
+                relationship.setAmount(r.getQuantity());
+                check = "";
+                check=checkInspectionRelation(relationship);
+                if(!check.equals("")){
+                    throw new Exception(check);
+                }
+                inspectionTemplateRelationshipService.save(relationship);
+            }
+        }
+        return CommonUtil.successJson();
+    }
+
+    private void saveTemp(InspectionTemplate template,Integer level,JSONObject object,Integer doctorId) throws Exception {
+        template.setLevel(level);
+        template.setName((String) object.get("name"));
+        template.setCreatedById(doctorId);
+        template.setDepartmentId(doctorService.getDeptNo(doctorId));
+        String  check=checkInspectionTemp(template);
+        if(!check.equals("")){
+            throw new Exception(check);
+        }
+        inspectionTemplateService.save(template);
+    }
+
+    private String checkInspectionTemp(InspectionTemplate template){
+        if(template.getDepartmentId()==null)
+            return "departmentId";
+        if(template.getLevel()==null)
+            return "level";
+        if(template.getName()==null || template.getName().equals("")){
+            return "name";
+        }
+        if(template.getCreatedById()==null )
+            return "creareById";
+        return "";
+    }
+
+    private String checkInspectionRelation(InspectionTemplateRelationship template){
+        if(template.getItemId()==null)
+            return "itemId";
+        if(template.getItemType()==null)
+            return "itemType";
+        return "";
+    }
+
 
     @Transactional
     public JSONObject saveRecordAndDiagnoseAsTemp(MedicalRecord record, MedicalRecordTemplate template, Integer doctorID) throws RuntimeException {
@@ -291,6 +416,18 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return  "isWesternMedicne";
         if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
             return  "FirstDiagnose";
+        return "";
+    }
+
+    private String cheakInspection(InspectionApplication inspectionApplication){
+        if (medicalRecordService.findById(inspectionApplication.getMedicalRecordId())==null)
+            return "MedicalRecord";
+        if (nonDrugService.findById(inspectionApplication.getNonDrugId())==null)
+            return "NonDrug";
+        if (inspectionApplication.getQuantity()==null || inspectionApplication.getQuantity().equals("")  )
+            return "Quantity";
+        if (inspectionApplication.getCreateTime()==null || inspectionApplication.getCreateTime().equals("")  )
+            return "CreateTime";
         return "";
     }
 
