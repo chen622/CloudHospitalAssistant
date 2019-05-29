@@ -40,10 +40,10 @@ public class UserControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 1)
+                .claim("typeId", 606)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
-//        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
+        //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
 
@@ -198,7 +198,7 @@ public class UserControllerTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("501"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -238,7 +238,7 @@ public class UserControllerTest {
 
         String token = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
-                .setHeaderParam("typ", Constants.TOKEN_TYPE)
+                .setHeaderParam("tp", Constants.TOKEN_TYPE)
                 .setIssuer(Constants.TOKEN_ISSUER)
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("ccmccm")
@@ -252,7 +252,7 @@ public class UserControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/register")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .param("t")
+                .content("t")
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
@@ -261,8 +261,65 @@ public class UserControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    //插入医生信息
+    @Test
+    public void modifyProperDoctorInformation() throws Exception {
+        //json数据
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "t");
+        jsonObject.put("realName", "ty");
+        jsonObject.put("password", "123456");
+        jsonObject.put("createTime", new Date(System.currentTimeMillis()));
+        jsonObject.put("typeId", 602);
+        jsonObject.put("departmentId", 1);
+        jsonObject.put("identifyId", "211002199709251978");
+        jsonObject.put("titleId", 702);
+        jsonObject.put("canArrange", true);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/modify")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 
+    @Test
+    public void selectAdminUserInformation() throws Exception {
+
+        String requestJson ="ccmccm";
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/adminSelectUser/ccmccm")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("username")
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    
+    @Test
+    public void selectUserInformation() throws Exception {
+
+        String requestJson ="ccmccm";
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/selectUser/ccmccm")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content("username")
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
 
 
