@@ -10,5 +10,5 @@ import cn.neuedu.his.util.inter.Service;
 public interface InvoiceService extends Service<Invoice> {
     Integer addInvoiceByPayment(Payment payment);
     Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
-    void printInvoice(Integer invoiceId) throws  IllegalArgumentException;
+    Invoice printInvoice(Integer invoiceId) throws  IllegalArgumentException;
 }

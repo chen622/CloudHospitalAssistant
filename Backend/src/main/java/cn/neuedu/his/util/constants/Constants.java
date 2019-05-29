@@ -170,6 +170,19 @@ public class Constants {
     public static final  Integer HAVE_RETREAT=1205;
 
 
+    //医药费用类型
+    //MRI检查费
+    public static final  Integer MRI_INSPECTION_FEE_TYPE=108;
+    //CT检查费
+    public static final  Integer CT_INSPECTION_FEE_TYPE=109;
+    //西药费
+    public static final  Integer WESTERN_DRUG_FEE_TYPE=201;
+    //中成药
+    public static final  Integer MEDIUM_DRUG_FEE_TYPE=202;
+    //中草药
+    public static final  Integer CHI_DRUG_FEE_TYPE=203;
+
+
 
 
 

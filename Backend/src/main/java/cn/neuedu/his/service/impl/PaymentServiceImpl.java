@@ -126,7 +126,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     @Override
     public Payment findByRegistrationId(Integer registrationId) {
-        return paymentMapper.selectByRegistrationId(registrationId, REGISTRATION_PAYMENT_TYPE);
+        return paymentMapper.selectByItemId(registrationId, REGISTRATION_PAYMENT_TYPE);
     }
 
     @Override

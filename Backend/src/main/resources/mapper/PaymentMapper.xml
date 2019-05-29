@@ -19,8 +19,9 @@
     <result column="state" jdbcType="INTEGER" property="state" />
   </resultMap>
 
-  <select id="selectByRegistrationId" resultMap="BaseResultMap">
-    select * from payment where payment_type_id = #{paymentTypeId} and item_id = #{registrationId}
+  <select id="selectByItemId" resultMap="BaseResultMap">
+    select * from payment p
+    where (select type from payment_type pt where pt.id = p.payment_type_id) = #{paymentTotalTypeId} and item_id = #{registrationId}
   </select>
 
   <update id="updateInvoiceId">
