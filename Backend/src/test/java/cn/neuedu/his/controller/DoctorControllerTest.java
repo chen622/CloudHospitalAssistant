@@ -195,6 +195,31 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+
+    @Test
+    public void findNonDrugByName() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/findNonDrug/蛋白")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getAllNonDrug() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllNonDrug")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
     @Test
     public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
         MedicalRecord medicalRecord = medicalRecordService.findById(1);
