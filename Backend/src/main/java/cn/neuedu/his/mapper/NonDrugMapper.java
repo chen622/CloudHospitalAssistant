@@ -10,6 +10,10 @@ import java.util.List;
 
 
 public interface NonDrugMapper extends MyMapper<NonDrug> {
+
+    NonDrug selectNonDrugByName(String name);
+
+    NonDrug selectNonDrugByCode(String code);
     List<NonDrug> findByName (String name);
     List<NonDrug> getAll ();
 }

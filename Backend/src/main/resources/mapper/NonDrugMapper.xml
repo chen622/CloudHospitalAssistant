@@ -10,6 +10,8 @@
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="standard" jdbcType="VARCHAR" property="standard" />
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
+    <result column="code" jdbcType="String" property="code"/>
+    <result column="executive_department" jdbcType="String" property="executiveDepartment"/>
   </resultMap>
 
   <select id="findByName" resultMap="BaseResultMap">
@@ -17,5 +19,17 @@
   </select>
   <select id="getAll" resultMap="BaseResultMap">
     select * from non_drug;
+  </select>
+
+  <select id="selectNonDrugByName" resultMap="BaseResultMap">
+    select *
+    from non_drug
+    where name = #{name}
+  </select>
+
+  <select id="selectNonDrugByCode" resultMap="BaseResultMap">
+    select *
+    from non_drug
+    where code = #{code}
   </select>
 </mapper>

@@ -11,6 +11,10 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface NonDrugService extends Service<NonDrug> {
+
+    NonDrug selectNonDrugByName(String name);
+
+    NonDrug selectNonDrugByCode(String code);
     JSONObject findByName (String name);
     JSONObject getAll ();
 }

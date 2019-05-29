@@ -9,11 +9,36 @@ public class NonDrug {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "price")
     private BigDecimal price;
 
+    @Column(name = "standard")
     private String standard;
+
+    @Column(name = "code")
+    private String code;
+
+    @Column(name = "executive_department")
+    private Integer excutiveDepartment;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Integer getExcutiveDepartment() {
+        return excutiveDepartment;
+    }
+
+    public void setExcutiveDepartment(Integer excutiveDepartment) {
+        this.excutiveDepartment = excutiveDepartment;
+    }
 
     /**
      * 非药物费用类别
