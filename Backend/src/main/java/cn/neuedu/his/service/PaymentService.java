@@ -4,6 +4,7 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,6 +16,10 @@ import java.util.ArrayList;
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
     Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException;
+    JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId);
+    void retreatPayment(Integer paymentId, Integer quantity);
+
+
     Integer createDrugPayment(Prescription prescription);
 
 

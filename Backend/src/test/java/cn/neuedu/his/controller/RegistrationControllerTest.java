@@ -79,7 +79,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void retreatRegistration() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/registration/retreat/19")
+        mockMvc.perform(MockMvcRequestBuilders.post("/registration/retreat/20")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

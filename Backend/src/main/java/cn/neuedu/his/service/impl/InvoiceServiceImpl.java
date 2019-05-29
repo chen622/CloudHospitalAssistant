@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -27,12 +28,12 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     PaymentService paymentService;
 
     @Override
-    public void printInvoice(Integer invoiceId) throws  IllegalArgumentException{
+    public Invoice printInvoice(Integer invoiceId) throws  IllegalArgumentException{
         Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
 
-        //TODO 打印成文件
+        return invoice;
     }
 
     /**
@@ -55,6 +56,37 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         paymentService.update(payment);
 
         return invoice.getId();
+    }
+
+    /**
+     * 根据多条缴费单id，生成发票
+     * 需要计算总额，并更改这些payment的invoiceId
+     * @param paymentIdList
+     * @return
+     */
+    @Override
+    public Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) {
+        Invoice invoice = new Invoice();
+        invoice.setCreatedDate(new Date(System.currentTimeMillis()));
+
+        ArrayList<Payment> paymentArrayList = new ArrayList<>();
+        BigDecimal totalAmount = new BigDecimal(0);
+        for (Integer paymentId: paymentIdList) {
+            Payment payment = paymentService.findById(paymentId);
+            totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
+            paymentArrayList.add(payment);
+        }
+        invoice.setPriceAmount(totalAmount);
+
+        save(invoice);
+
+        Integer invoiceId = invoice.getId();
+        for (Payment payment: paymentArrayList) {
+            payment.setInvoiceId(invoiceId);
+            paymentService.update(payment);
+        }
+
+        return invoiceId;
     }
 
     @Override

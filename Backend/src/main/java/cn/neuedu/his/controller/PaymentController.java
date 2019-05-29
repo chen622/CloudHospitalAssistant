@@ -1,18 +1,17 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Patient;
-import cn.neuedu.his.model.Payment;
-import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
-import com.alibaba.fastjson.JSONArray;
+import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,29 +23,27 @@ public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
-    @Autowired
-    PatientService patientService;
 
-    /**
-     * 查询病患个人信息及所有未冻结信息
-     * @param patient_id
-     * @return
-     */
-    @GetMapping("/getFrozenPayment/{patient_id}")
-    public JSONObject getFrozenPaymentAndPatient(@PathVariable("patient_id") Integer patient_id) {
-        JSONObject result = new JSONObject();
-        Patient patient = patientService.findPatientAndPaymentInfo(patient_id);
-
-        result.put("patient", patient);
-        JSONArray paymentArray = new JSONArray();
-        BigDecimal totalAmount = new BigDecimal(0);
-        for(Payment payment: patient.getPaymentList()) {
-            totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
-            paymentArray.add(payment);
+    @PostMapping("/pay")
+    public JSONObject pay(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        Integer tollKeeper;
+        try {
+            tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
         }
-        result.put("payment", paymentArray);
-        result.put("totalAmount", totalAmount);
-        return result;
+        JSONObject result = paymentService.payPayment((ArrayList<Integer>) jsonObject.getJSONArray("paymentIdList").toJavaList(Integer.class), jsonObject.getInteger("settlementType"), tollKeeper);
+
+        return CommonUtil.successJson(result);
     }
 
+//    @PostMapping("retreat")
+//    public JSONObject retreat(@RequestBody JSONObject jsonObject, Authentication authentication) {
+//        Integer tollKeeper;
+//        try {
+//            tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
+//        }catch (AuthenticationServiceException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502);
+//        }
+//    }
 }

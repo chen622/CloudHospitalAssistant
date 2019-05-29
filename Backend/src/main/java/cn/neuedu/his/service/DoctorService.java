@@ -39,10 +39,16 @@ public interface DoctorService extends Service<Doctor> {
     Integer getDeptNo(Integer id);
 
     @Transactional
-    JSONObject findByName(String name);
+    JSONObject findDiseaseByName(String name);
 
     @Transactional
-    JSONObject  getAll();
+    JSONObject getAllDiease();
+
+    @Transactional
+    JSONObject findNonDrugByName(String name);
+
+    @Transactional
+    JSONObject  getAllNonDrug();
 
 
 

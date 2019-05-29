@@ -7,14 +7,12 @@ import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,7 +35,7 @@ public class InvoiceController {
      * @param authentication
      * @return
      */
-    @PostMapping("/print/{invoiceId}")
+    @GetMapping("/print/{invoiceId}")
     public JSONObject printVoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
         try {
             canPrintInvoice(authentication);
@@ -46,12 +44,10 @@ public class InvoiceController {
         }
 
         try {
-            invoiceService.printInvoice(invoiceId);
+            return CommonUtil.successJson(invoiceService.printInvoice(invoiceId));
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
-
-        return CommonUtil.successJson();
     }
 
 }

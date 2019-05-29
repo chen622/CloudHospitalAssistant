@@ -40,6 +40,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Autowired
     DiagnoseService diagnoseService;
     @Autowired
+    NonDrugService nonDrugService;
+    @Autowired
     InspectionTemplateService inspectionTemplateService;
     @Autowired
     InspectionTemplateRelationshipService relationshipService;
@@ -149,7 +151,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      */
     @Override
-    public JSONObject findByName(String name) {
+    public JSONObject findDiseaseByName(String name) {
         List<DiseaseSecond> list=diseaseSecondService.findByName(name);
         if(list==null)
             list=new ArrayList<>();
@@ -161,12 +163,33 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      */
     @Override
-    public JSONObject getAll() {
+    public JSONObject getAllDiease() {
         List<DiseaseSecond> list=diseaseSecondService.getAll();
         if(list==null)
             list=new ArrayList<>();
         return CommonUtil.successJson(list);
     }
+
+    /**
+     * 通过部分连续的字段获得所有非药项目
+     * @param name
+     * @return
+     */
+    @Override
+    public JSONObject findNonDrugByName(String name) {
+        return nonDrugService.findByName(name);
+    }
+
+    @Override
+    public JSONObject getAllNonDrug() {
+        return nonDrugService.getAll();
+    }
+
+
+
+
+
+
 
     /**
      * 提交初诊信息

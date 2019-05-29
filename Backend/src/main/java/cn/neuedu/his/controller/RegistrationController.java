@@ -43,7 +43,7 @@ public class RegistrationController {
         //获取挂号收费员id
         Integer registrarId;
         try {
-            registrarId = PermissionCheck.getIdByRegistrar(authentication);
+            registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
@@ -67,7 +67,7 @@ public class RegistrationController {
     public JSONObject retreatRegistration(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         Integer registrarId;
         try {
-            registrarId = PermissionCheck.getIdByRegistrar(authentication);
+            registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
