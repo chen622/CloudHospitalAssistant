@@ -11,4 +11,10 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="disease_first_id" jdbcType="INTEGER" property="diseaseFirstId" />
   </resultMap>
+  <select id="findByName" resultMap="BaseResultMap">
+    select * from disease_second where  name like "%"#{name}"%";
+  </select>
+  <select id="getAll" resultMap="BaseResultMap">
+    select * from disease_second;
+  </select>
 </mapper>
