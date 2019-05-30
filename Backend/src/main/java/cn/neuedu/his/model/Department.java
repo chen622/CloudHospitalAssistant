@@ -12,6 +12,8 @@ public class Department {
 
     private String name;
 
+    private DepartmentKind departmentKind;
+
     @Column(name = "kind_id")
     private Integer kindId;
 
@@ -71,5 +73,13 @@ public class Department {
      */
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public DepartmentKind getDepartmentKind() {
+        return departmentKind;
+    }
+
+    public void setDepartmentKind(DepartmentKind departmentKind) {
+        this.departmentKind = departmentKind;
     }
 }

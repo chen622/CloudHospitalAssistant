@@ -17,6 +17,8 @@ public class DepartmentKind {
     @Column(name = "classification_id")
     private Integer classificationId;
 
+    private ConstantVariable constantVariable;
+
     /**
      * @return id
      */
@@ -61,5 +63,13 @@ public class DepartmentKind {
      */
     public void setClassificationId(Integer classificationId) {
         this.classificationId = classificationId;
+    }
+
+    public ConstantVariable getConstantVariable() {
+        return constantVariable;
+    }
+
+    public void setConstantVariable(ConstantVariable constantVariable) {
+        this.constantVariable = constantVariable;
     }
 }

@@ -23,17 +23,26 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
     private NonDrugMapper nonDrugMapper;
 
     @Override
-    public JSONObject findByName(String name) {
+    public NonDrug selectNonDrugByName(String name) {
+        return nonDrugMapper.selectNonDrugByName(name);
+    }
+
+    @Override
+    public NonDrug selectNonDrugByCode(String code) {
+        return nonDrugMapper.selectNonDrugByCode(code);
+    }
+    @Override
+    public List<NonDrug> findByName(String name) {
         List<NonDrug> list=nonDrugMapper.findByName(name);
-        if(list!=null)
+        if(list==null)
             list=new ArrayList<>();
-        return CommonUtil.successJson(list);
+        return list;
     }
 
     @Override
     public JSONObject getAll() {
         List<NonDrug> list=nonDrugMapper.getAll();
-        if(list!=null)
+        if(list==null)
             list=new ArrayList<>();
         return CommonUtil.successJson(list);
     }

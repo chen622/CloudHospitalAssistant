@@ -8,4 +8,6 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface DepartmentService extends Service<Department> {
 
+    Department getAllDepartmentInformation(Integer id);
+
 }
