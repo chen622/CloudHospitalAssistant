@@ -217,7 +217,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         //检查是否已经有初诊了
         MedicalRecord record =medicalRecordService.getByRegistrationId(registrationID);
         if(record.getFirstDiagnose()!=null)
-            return  CommonUtil.errorJson(ErrorEnum.E_611.addErrorParamName("FirstDiagnose"));
+            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("FirstDiagnose"));
         //检查是否有必要的参数没有填写完
         String  check=cheakMedicalRecord(medicalRecord);
         if(!check.equals("")){
