@@ -87,6 +87,27 @@ public class DepartmentKindController {
         return CommonUtil.successJson(departmentKind);
     }
 
+    @PostMapping("/delete/{id}")
+    public JSONObject deleteDepartmentKinds(@PathVariable("id") Integer id, Authentication authentication){
+
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        DepartmentKind departmentKind = departmentKindService.findById(id);
+
+        //检测部门类型是否存在
+        if (departmentKind == null)
+            return CommonUtil.errorJson(ErrorEnum.E_612);
+
+        departmentKindService.deleteById(id);
+
+        return CommonUtil.successJson(departmentKind);
+    }
+
 
 
 }
