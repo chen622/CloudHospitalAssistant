@@ -37,4 +37,9 @@
     where department.id = #{id}
   </select>
 
+  <select id="getDepartmentByName" resultMap="BaseResultMap">
+    select *
+    from department
+    where name=#{name}
+  </select>
 </mapper>
