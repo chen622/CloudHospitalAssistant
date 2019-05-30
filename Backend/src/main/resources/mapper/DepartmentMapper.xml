@@ -11,4 +11,30 @@
     <result column="code" jdbcType="VARCHAR" property="code" />
   </resultMap>
 
+  <resultMap id="AllDepartmentInformation" type="cn.neuedu.his.model.Department">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="kind_id" jdbcType="INTEGER" property="kindId" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <association property="departmentKind" javaType="cn.neuedu.his.model.DepartmentKind">
+        <id column="departmentKindId" jdbcType="INTEGER" property="id" />
+        <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+        <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+      <association property="constantVariable" javaType="cn.neuedu.his.model.ConstantVariable">
+        <id column="constantId" jdbcType="INTEGER" property="id" />
+        <result column="constantName" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+      </association>
+    </association>
+  </resultMap>
+
+  <select id="getAllDepartmentInformation" resultMap="AllDepartmentInformation">
+    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName
+    from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
+    where department.id = #{id}
+  </select>
+
 </mapper>

@@ -2,7 +2,6 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
-import netscape.javascript.JSObject;
 
 import java.util.List;
 
