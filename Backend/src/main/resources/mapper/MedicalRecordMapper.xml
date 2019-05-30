@@ -51,4 +51,9 @@
   <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
         select * from diagnose where item_id=#{MRID} and  is_template = true
   </select>
+
+
+  <select id="getByRegistrationId" resultMap="withDiagnose">
+    select * from  medical_record where  registration_id=#{registrationid}
+  </select>
 </mapper>

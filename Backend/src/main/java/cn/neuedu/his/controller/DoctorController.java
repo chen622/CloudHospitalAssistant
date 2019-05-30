@@ -231,12 +231,12 @@ public class DoctorController {
         }
         MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
-        Diagnose diagnose=JSONObject.parseObject(object.get("diagnose").toString(),Diagnose.class);
-        if (diagnose.getDiseaseId()==null)
-            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diseaseId"));
+        ArrayList<Integer> diagnoses=(ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
+        if(diagnoses==null || diagnoses.size()==0)
+            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
         JSONObject object1;
         try {
-            object1=doctorService.setFirstDiagnose(registrationID, medicalRecord,diagnose);
+            object1=doctorService.setFirstDiagnose(registrationID, medicalRecord,diagnoses);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
         }
@@ -429,7 +429,6 @@ public class DoctorController {
     }
 
 
-
     /**
      * 保存医生申请的非药项目
      * @param object
@@ -498,7 +497,62 @@ public class DoctorController {
         }
     }
 
+    /**
+     * 获得检查结果
+     * @param id
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getResult/{id}")
+    public JSONObject getInspectionResult(@PathVariable("id") Integer id,Authentication authentication){
+        Integer doctorId;
+        try {
+            doctorId=PermissionCheck.isOutpatientDoctor(authentication);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        return doctorService.getInspectionResult(id);
+    }
 
+    /**
+     * 保存确诊信息
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/finalDiagnose")
+    public JSONObject saveFinalDiagnose(@RequestBody JSONObject object,Authentication authentication){
+        Integer doctorId;
+        try {
+            doctorId=PermissionCheck.isOutpatientDoctor(authentication);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        Integer registrationID=null,medicalRecordId;
+        try{
+            registrationID=Integer.parseInt(object.get("registrationID").toString());
+            if (registrationID==null)
+                throw new NumberFormatException();
+        }catch (NumberFormatException n){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
+        try{
+            medicalRecordId=Integer.parseInt(object.get("medicalRecordId").toString());
+            if (registrationID==null)
+                throw new NumberFormatException();
+        }catch (NumberFormatException n){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecordId"));
+        }
+
+        ArrayList<Integer> diagnoses=(ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
+        if(diagnoses==null || diagnoses.size()==0)
+            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
+        try {
+           return  doctorService.saveFinalDiagnose(registrationID,medicalRecordId, diagnoses);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+        }
+    }
 
 
     /**

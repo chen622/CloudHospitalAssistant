@@ -10,7 +10,11 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="inspection_application_id" jdbcType="INTEGER" property="inspectionApplicationId" />
-    <result column="text" jdbcType="LONGVARCHAR" property="text" />
-    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+    <result column="text" jdbcType="VARCHAR" property="text" />
+    <result column="picture" jdbcType="VARCHAR" property="picture" />
   </resultMap>
+
+  <select id="getInspectionResult" resultMap="BaseResultMap">
+    select * from inspection_result where inspection_application_id=#{id}
+  </select>
 </mapper>

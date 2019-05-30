@@ -28,4 +28,9 @@ public class MedicalRecordServiceImpl extends AbstractService<MedicalRecord> imp
     public MedicalRecord getMedicalRecordWithDiagnose(Integer id) {
         return medicalRecordMapper.getMedicalRecordWithDiagnose(id);
     }
+
+    @Override
+    public MedicalRecord getByRegistrationId(Integer registrationid) {
+        return medicalRecordMapper.getByRegistrationId(registrationid);
+    }
 }

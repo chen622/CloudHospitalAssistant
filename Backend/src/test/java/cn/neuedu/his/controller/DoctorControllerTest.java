@@ -9,9 +9,9 @@ import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import net.minidev.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -224,15 +224,30 @@ public class DoctorControllerTest {
     }
 
     @Test
+    public void getResult() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getResult/3")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     public void setFirstDiagnose() throws Exception, AuthenticationServiceException {
+
         MedicalRecord medicalRecord = medicalRecordService.findById(1);
         medicalRecord.setId(null);
         JSONObject object=new JSONObject();
         object.put("medicalRecord", medicalRecord);
         object.put("registrationID", 1);
-        Diagnose diagnose=new Diagnose();
-        diagnose.setDiseaseId(1);
-        object.put("diagnose",diagnose );
+
+        ArrayList<Integer> diagnose=new ArrayList<>();
+        diagnose.add(3);
+        diagnose.add(4);
+        object.put("diagnoses",diagnose );
         String requestJson=object.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/firstDiagnose")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -361,5 +376,29 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void saveFinalDiagnose() throws Exception {
+        JSONObject object=new JSONObject();
 
+        object.put("registrationID", 1);
+        object.put("medicalRecordId",1);
+
+        ArrayList<Integer> diagnose=new ArrayList<>();
+        diagnose.add(1);
+        diagnose.add(2);
+
+        object.put("diagnoses",diagnose);
+
+        String  requestJson=object.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/finalDiagnose")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

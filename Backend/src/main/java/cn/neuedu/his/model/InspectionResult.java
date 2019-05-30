@@ -21,9 +21,12 @@ public class InspectionResult {
     @Column(name = "inspection_application_id")
     private Integer inspectionApplicationId;
 
+    @Column(name = "text")
     private String text;
 
+    @Column(name = "picture")
     private String picture;
+
 
     /**
      * @return id
