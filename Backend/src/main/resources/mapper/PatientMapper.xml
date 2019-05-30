@@ -16,11 +16,11 @@
     <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
   </resultMap>
 
-  <resultMap id="patientAndPayment" type="cn.neuedu.his.model.Patient">
-    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotFrozenPaymentByPatientId" column="{patientId = id, noPaymentTotalTypeId = noPaymentTotalTypeId, paymentState = paymentState"/>
+  <resultMap id="patientAndNotPaidPayment" type="cn.neuedu.his.model.Patient">
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotFrozenPaymentByPatientId" column="{patientId = id, noPaymentTotalTypeId = noPaymentTotalTypeId, paymentState = paymentState}"/>
   </resultMap>
 
-  <select id="searchPatientAndFrozenPayment" resultMap="patientAndPayment">
+  <select id="searchPatientAndFrozenPayment" resultMap="patientAndNotPaidPayment">
     select * , #{noPaymentTotalTypeId} as NoPaymentTotalTypeId, #{state} as paymentState from patient where id = #{patientId}
   </select>
 
@@ -29,4 +29,20 @@
     where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) != #{noPaymentTotalTypeId} and is_frozen = false and state = #{paymentState}
     order by create_time desc
   </select>
+
+
+  <resultMap id="patientAndNotConsumePayment" type="cn.neuedu.his.model.Patient">
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotConsumePaymentByPatientId" column="{patientId = id, noPaymentTotalTypeId = noPaymentTotalTypeId}"/>
+  </resultMap>
+
+  <select id="searchPatientAndNotConsumePayment" resultMap="patientAndNotConsumePayment">
+    select * , #{noPaymentTotalTypeId} as NoPaymentTotalTypeId from patient where id = #{patientId}
+  </select>
+
+  <select id="selectNotConsumePaymentByPatientId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+    select * from payment
+    where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) != #{noPaymentTotalTypeId}
+    order by create_time desc
+  </select>
+
 </mapper>

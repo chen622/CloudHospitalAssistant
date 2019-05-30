@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -55,6 +56,27 @@ public class PaymentControllerTest {
     public void getFrozenPaymentAndPatient() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/payment/getFrozenPayment/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void pay() throws Exception {
+        JSONObject param = new JSONObject();
+        JSONArray arr = new JSONArray();
+        arr.add(13);
+        arr.add(14);
+        param.put("paymentIdList", arr);
+        param.put("settlementType", 202);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/payment/pay")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

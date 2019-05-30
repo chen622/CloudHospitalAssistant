@@ -69,4 +69,28 @@ public class PatientController {
         return CommonUtil.successJson(result);
     }
 
+    /**
+     * 查看患者信息及其项目缴费信息
+     * @param patientId
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getUnConsumePayment/{patientId}")
+    public JSONObject getNotConsumePaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        Patient patient;
+        try {
+            patient = patientService.findPatientAndNotConsumePayment(patientId);
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        return CommonUtil.successJson(patient);
+    }
+
 }

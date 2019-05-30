@@ -15,6 +15,6 @@ public interface NonDrugService extends Service<NonDrug> {
     NonDrug selectNonDrugByName(String name);
 
     NonDrug selectNonDrugByCode(String code);
-    JSONObject findByName (String name);
+    List<NonDrug> findByName (String name);
     JSONObject getAll ();
 }
