@@ -8,9 +8,9 @@ import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import net.minidev.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,14 +54,14 @@ public class DepartmentControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", Constants.OUT_PATIENT_DOCTOR)
+                .claim("typeId", Constants.HOSPITAL_ADMIN)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
     @Test
-    public void getAllRecordByPatientId() throws Exception{
+    public void getDepartmentById() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/department/get/2")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
@@ -71,4 +71,59 @@ public class DepartmentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void deleteDepartmentById() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/delete/140")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void addDepartment() throws Exception{
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "sdd");
+        jsonObject.put("kindId", 2);
+        jsonObject.put("code", "sdsdsd");
+
+        String request = jsonObject.toString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/add")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void modifyDepartment() throws Exception{
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id",141);
+        jsonObject.put("name", "s");
+        jsonObject.put("kindId", 1);
+        jsonObject.put("code", "s");
+
+        String request = jsonObject.toString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/modify")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
 }

@@ -10,4 +10,6 @@ public interface DepartmentService extends Service<Department> {
 
     Department getAllDepartmentInformation(Integer id);
 
+    Department getDepartmentByName(String name);
+
 }
