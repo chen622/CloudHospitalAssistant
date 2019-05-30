@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -53,18 +54,6 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void getFrozenPaymentAndPatient() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/payment/getFrozenPayment/1")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
     public void pay() throws Exception {
         JSONObject param = new JSONObject();
         JSONArray arr = new JSONArray();
@@ -75,6 +64,26 @@ public class PaymentControllerTest {
 
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/payment/pay")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void produceRetreatPayment() throws Exception {
+        JSONObject param = new JSONObject();
+        Integer paymentId = 16;
+        Integer quantity = 2;
+        param.put("paymentId", paymentId);
+        param.put("quantity", quantity);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/payment/produceRetreatPayment")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

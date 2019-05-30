@@ -87,7 +87,7 @@ public class PatientController {
         try {
             patient = patientService.findPatientAndNotConsumePayment(patientId);
         }catch (IllegalArgumentException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson(patient);

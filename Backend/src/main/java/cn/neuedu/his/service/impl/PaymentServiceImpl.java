@@ -10,6 +10,7 @@ import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     private DrugService drugService;
     @Autowired
     private InvoiceService invoiceService;
+    @Autowired
+    private PaymentTypeService paymentTypeService;
 
     /**
      * 生成挂号缴费单
@@ -61,42 +64,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     /**
-     * 形成冲红缴费单
-     * @param registrationId
-     * @param registrarId
-     * @param retreatQuantity -- 退回数量，主要针对drug，其余均设为1即可
-     * @return
-     */
-    @Override
-    public Integer retreatPayment(Integer registrationId, Integer registrarId, Integer retreatQuantity) throws IllegalArgumentException{
-        Payment originalPayment = findByRegistrationId(registrationId);
-        if (originalPayment == null)
-            throw new IllegalArgumentException();
-
-        //填入新的信息
-        Payment newPayment = new Payment();
-        newPayment.setQuantity(retreatQuantity * (-1));
-        newPayment.setUnitPrice(originalPayment.getUnitPrice());
-        newPayment.setOperatorId(registrationId);
-        newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
-        newPayment.setPaymentTypeId(originalPayment.getPaymentTypeId());
-        newPayment.setItemId(originalPayment.getItemId());
-        newPayment.setCreateTime(new Date(System.currentTimeMillis()));
-        newPayment.setPatientId(originalPayment.getPatientId());
-        newPayment.setOperatorId(registrarId);
-
-
-        if (newPayment.getPaymentTypeId().equals(DRUG_PAYMENT_TYPE))
-            newPayment.setState(HAVE_RETURN_DRUG);
-        else
-            newPayment.setState(HAVE_RETREAT);
-
-        save(newPayment);
-
-        return newPayment.getId();
-    }
-
-    /**
      * 缴费（包括检查项目和药费）
      * @param paymentIdList
      * @param settlementTypeId
@@ -104,7 +71,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @return
      */
     @Override
-    public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) {
+    public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException{
         ArrayList successId = new ArrayList(); //成功的缴费单号
         ArrayList failId = new ArrayList(); //失败的缴费单号
 
@@ -124,9 +91,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             successId.add(paymentId);
         }
 
-        if (!successId.isEmpty())
-            //生成发票
-            invoiceService.addInvoiceByPaymentList(successId);
+        try {
+            if (!successId.isEmpty())
+                //生成发票
+                invoiceService.addInvoiceByPaymentList(successId);
+        }catch (RuntimeException e) {
+            throw new NullPointerException();
+        }
 
         JSONObject result = new JSONObject();
         result.put("successId", successId);
@@ -135,14 +106,81 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         return result;
     }
 
+    /**
+     * 形成冲红缴费单（若是药物类，则处于退药不退钱状态）
+     * @param paymentId
+     * @param paymentAdminId
+     * @param retreatQuantity -- 退回数量，主要针对drug，其余均设为1即可
+     * @return
+     */
     @Override
-    public void retreatPayment(Integer paymentId, Integer quantity) {
+    public Integer produceRetreatPayment(Integer paymentId, Integer paymentAdminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+        //查找原缴费单
+        Payment originalPayment = findById(paymentId);
+        ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
 
+        Integer retreatIndex = 0;
+        for (Payment payment: paymentList) {
+            retreatIndex = retreatIndex + payment.getQuantity();
+        }
+
+        if (originalPayment == null)
+            throw new IllegalArgumentException("paymentId");
+
+        //确定是否能退:1.未冻结 2.处于缴费未使用或还未退药状态（状态均指完成缴费）
+        if (originalPayment.getIsFrozen().equals(true) || !originalPayment.getState().equals(HAVE_PAID))
+            throw new UnsupportedOperationException("payment");
+
+        //填入新的信息
+        Payment newPayment = new Payment();
+        newPayment.setUnitPrice(originalPayment.getUnitPrice());
+        newPayment.setOperatorId(paymentAdminId);
+        newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
+        newPayment.setPaymentTypeId(originalPayment.getPaymentTypeId());
+        newPayment.setItemId(originalPayment.getItemId());
+        newPayment.setCreateTime(new Date(System.currentTimeMillis()));
+        newPayment.setPatientId(originalPayment.getPatientId());
+
+        //药物与其他种类生成缴费单后状态有异，退药未退钱
+        Integer totalTypeId = paymentTypeService.findById(originalPayment.getPaymentTypeId()).getType();
+        if (totalTypeId.equals(DRUG_PAYMENT_TYPE)) {
+            newPayment.setState(HAVE_RETURN_DRUG);
+            if (retreatQuantity > retreatIndex)
+                throw new IndexOutOfBoundsException();
+            newPayment.setQuantity(retreatQuantity * (-1));
+        }
+        else {
+            newPayment.setState(HAVE_RETREAT);
+            if (retreatIndex.equals(0))
+                throw new IndexOutOfBoundsException();
+            newPayment.setQuantity(originalPayment.getQuantity() * (-1));
+        }
+
+        save(newPayment);
+
+        //生成冲红发票，若无法生成，抛出异常
+        try {
+            if (!totalTypeId.equals(DRUG_PAYMENT_TYPE))
+                invoiceService.addInvoiceByPayment(newPayment);
+        }catch (RuntimeException e) {
+            throw new UnsupportedOperationException("invoice");
+        }
+
+        return newPayment.getId();
     }
 
+    @Override
+    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId) {
+        Payment payment = new Payment();
+        if (payment == null)
+            throw new IllegalArgumentException();
 
+        Integer totalTypeId = paymentTypeService.findById(payment.getPaymentTypeId()).getType();
+        if (!totalTypeId.equals(DRUG_PAYMENT_TYPE) || payment.getState() != HAVE_RETURN_DRUG)
+            throw new UnsupportedOperationException();
+        //todo:是否为药物，状态是否为已退药
 
-
+    }
 
 
     /**

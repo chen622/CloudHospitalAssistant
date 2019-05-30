@@ -155,9 +155,9 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         //改变已挂号人数
         jobScheduleService.reduceRegistrationAmount(registration.getScheduleId());
 
-        //形成冲红缴费单
-        Integer newPaymentId = paymentService.retreatPayment(registrationId, registrarId, 1);
-        invoiceService.addInvoiceByPayment(paymentService.findById(newPaymentId));
+        //形成冲红缴费单及发票
+        Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();
+        paymentService.produceRetreatPayment(paymentId, registrarId, 1);
     }
 
     /**

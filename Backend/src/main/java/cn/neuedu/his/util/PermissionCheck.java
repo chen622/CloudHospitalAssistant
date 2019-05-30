@@ -6,8 +6,7 @@ import org.springframework.security.core.Authentication;
 
 import java.util.Map;
 
-import static cn.neuedu.his.util.constants.Constants.FINANCIAL_MANAGER;
-import static cn.neuedu.his.util.constants.Constants.REGISTRATION_CLERK;
+import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  * 权限校验类
@@ -38,7 +37,7 @@ public class PermissionCheck {
     }
 
     /**
-     * 挂号员权限检验
+     * 收费员权限检验
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
@@ -47,6 +46,22 @@ public class PermissionCheck {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         if (typeId.equals(REGISTRATION_CLERK)) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
+    /**
+     * 收费员或药房操作员（可以生成账单）
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer getIdByAdminProducePayment(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId.equals(REGISTRATION_CLERK) || typeId.equals(PHARMACY_OPERATOR)) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -94,17 +109,6 @@ public class PermissionCheck {
     public static String isIndivual(Authentication authentication, String username) throws AuthenticationServiceException{
         if (authentication.getName().equals(username)) {
             return (String) authentication.getName();
-        } else {
-            throw new AuthenticationServiceException("");
-        }
-    }
-
-
-    public static Integer canPrintInvoice(Authentication authentication) throws AuthenticationServiceException{
-        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(REGISTRATION_CLERK)|| typeId.equals(FINANCIAL_MANAGER)) {
-            return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
         }

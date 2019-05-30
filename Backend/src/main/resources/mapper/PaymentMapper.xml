@@ -27,4 +27,8 @@
   <update id="updateInvoiceId">
     update payment set invoice_id = #{invoiceId} where id = #{id}
   </update>
+
+  <select id="selectAllByItemIdAndPaymentTypeId" resultType="cn.neuedu.his.model.Payment">
+    select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId}
+  </select>
 </mapper>
