@@ -24,6 +24,12 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
+    /**
+     * 缴费
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
     @PostMapping("/pay")
     public JSONObject pay(@RequestBody JSONObject jsonObject, Authentication authentication) {
         Integer tollKeeper;
@@ -32,18 +38,45 @@ public class PaymentController {
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
-        JSONObject result = paymentService.payPayment((ArrayList<Integer>) jsonObject.getJSONArray("paymentIdList").toJavaList(Integer.class), jsonObject.getInteger("settlementType"), tollKeeper);
+
+        JSONObject result;
+        try {
+            result = paymentService.payPayment((ArrayList<Integer>) jsonObject.getJSONArray("paymentIdList").toJavaList(Integer.class), jsonObject.getInteger("settlementType"), tollKeeper);
+        }catch (RuntimeException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_505);
+        }
 
         return CommonUtil.successJson(result);
     }
 
-//    @PostMapping("retreat")
-//    public JSONObject retreat(@RequestBody JSONObject jsonObject, Authentication authentication) {
-//        Integer tollKeeper;
-//        try {
-//            tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
-//        }catch (AuthenticationServiceException e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_502);
-//        }
-//    }
+    /**
+     * 退费（退药为退药步骤）
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/produceRetreatPayment")
+    public JSONObject produceRetreatPayment(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        Integer tollKeeper;
+        try {
+            tollKeeper = PermissionCheck.getIdByAdminProducePayment(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            paymentService.produceRetreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+        }catch (IllegalArgumentException e1) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            if (e2.getMessage().equals("payment"))
+                return CommonUtil.errorJson(ErrorEnum.E_506);
+            else if (e2.getMessage().equals("invoice"))
+                return CommonUtil.errorJson(ErrorEnum.E_505);
+        }catch (IndexOutOfBoundsException e3) {
+            return CommonUtil.errorJson(ErrorEnum.E_507);
+        }
+
+        return CommonUtil.successJson();
+    }
 }

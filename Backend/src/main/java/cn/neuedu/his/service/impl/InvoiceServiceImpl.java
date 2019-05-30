@@ -65,14 +65,18 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @return
      */
     @Override
-    public Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) {
+    public Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException{
         Invoice invoice = new Invoice();
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
 
         ArrayList<Payment> paymentArrayList = new ArrayList<>();
+        if (paymentArrayList.isEmpty())
+            throw new NullPointerException("paymentList");
         BigDecimal totalAmount = new BigDecimal(0);
         for (Integer paymentId: paymentIdList) {
             Payment payment = paymentService.findById(paymentId);
+            if (payment == null)
+                throw new IllegalArgumentException("paymentId");
             totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
             paymentArrayList.add(payment);
         }

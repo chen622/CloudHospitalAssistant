@@ -1,13 +1,8 @@
 package cn.neuedu.his.controller;
-import cn.neuedu.his.model.Diagnose;
-import cn.neuedu.his.model.InspectionApplication;
-import cn.neuedu.his.model.MedicalRecord;
-import cn.neuedu.his.model.Registration;
+
 import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.RegistrationService;
-import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,23 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.core.Authentication;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class DepartmentControllerTest {
+public class DepartmentKindControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -61,39 +51,14 @@ public class DepartmentControllerTest {
     }
 
     @Test
-    public void getDepartmentById() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/department/get/2")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    public void deleteDepartmentById() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.post("/department/delete/140")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    public void addDepartment() throws Exception{
+    public void addDepartmentKind() throws Exception{
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", "sdd");
-        jsonObject.put("kindId", 2);
-        jsonObject.put("code", "sdsdsd");
+        jsonObject.put("kindName", "瞎掰");
+        jsonObject.put("classificationId", 101);
 
         String request = jsonObject.toString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/department/add")
+        mockMvc.perform(MockMvcRequestBuilders.post("/department_kind/add")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(request)
                 .header(Constants.TOKEN_HEADER, token)
@@ -104,19 +69,16 @@ public class DepartmentControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
-
     @Test
-    public void modifyDepartment() throws Exception{
+    public void modifyDepartmentKind() throws Exception{
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id",141);
-        jsonObject.put("name", "s");
-        jsonObject.put("kindId", 1);
-        jsonObject.put("code", "s");
+        jsonObject.put("id",21);
+        jsonObject.put("kindName", "瞎掰x2");
+        jsonObject.put("classificationId", 101);
 
         String request = jsonObject.toString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/department/modify")
+        mockMvc.perform(MockMvcRequestBuilders.post("/department_kind/modify")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(request)
                 .header(Constants.TOKEN_HEADER, token)
@@ -127,5 +89,17 @@ public class DepartmentControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void deleteDepartmentKind() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/department_kind/delete/21")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 }

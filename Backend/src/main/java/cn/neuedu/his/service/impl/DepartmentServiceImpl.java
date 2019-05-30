@@ -17,8 +17,14 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Autowired
     private DepartmentMapper departmentMapper;
 
+    @Override
     public Department getAllDepartmentInformation(Integer id){
         return departmentMapper.getAllDepartmentInformation(id);
+    }
+
+    @Override
+    public Department getDepartmentByName(String name) {
+        return departmentMapper.getDepartmentByName(name);
     }
 
 }

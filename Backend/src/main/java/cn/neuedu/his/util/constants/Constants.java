@@ -30,9 +30,11 @@ public class Constants {
     //所有医生职称
     public static final List<Integer> DOCTOR_TITLE_TYPE_LIST = Arrays.asList(701,702,703,704);
     //所有结算类别
-    public static final List<Integer> PAYMENT_TYPE_LIST=Arrays.asList(201,202,203);
+    public static final List<Integer> PAYMENT_TYPE_LIST = Arrays.asList(201,202,203);
     //所有非药品类别
-    public static final List<Integer> NONDRUG_TYPE_LIST=Arrays.asList(1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323,1324,1325,1326);
+    public static final List<Integer> NONDRUG_TYPE_LIST = Arrays.asList(1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323,1324,1325,1326);
+    //所有部门分类
+    public static final List<Integer> DEPARTMENT_KIND_LIST = Arrays.asList(101,102,103,104);
 
     //医院管理员
     public static final Integer HOSPITAL_ADMIN = 606;
@@ -143,7 +145,7 @@ public class Constants {
     public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
     //处方项目费用类型
     public static final Integer NON_DRUG_PAYMENT_TYPE = 1;
-    //检验费用类型
+    //处方费用类型
     public static final Integer DRUG_PAYMENT_TYPE = 2;
 
 

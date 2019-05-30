@@ -7,4 +7,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface DepartmentMapper extends MyMapper<Department> {
     Department getAllDepartmentInformation(Integer id);
+    Department getDepartmentByName(String name);
 }
