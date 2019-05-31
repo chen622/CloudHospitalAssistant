@@ -142,7 +142,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setPatientId(originalPayment.getPatientId());
 
         //药物与其他种类生成缴费单后状态有异，退药未退钱
-        Integer totalTypeId = paymentTypeService.findById(originalPayment.getPaymentTypeId()).getType();
+        Integer totalTypeId = getTotalPaymentType(originalPayment.getPaymentTypeId());
         if (totalTypeId.equals(DRUG_PAYMENT_TYPE)) {
             newPayment.setState(HAVE_RETURN_DRUG);
             if (retreatQuantity > retreatIndex)
@@ -169,18 +169,33 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         return newPayment.getId();
     }
 
+    /**
+     * 药品退费，打印发票
+     * @param paymentId
+     * @param paymentAdminId
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
+     */
     @Override
-    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId) {
-        Payment payment = new Payment();
+    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId)throws IllegalArgumentException, UnsupportedOperationException{
+        Payment payment = findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException();
 
-        Integer totalTypeId = paymentTypeService.findById(payment.getPaymentTypeId()).getType();
-        if (!totalTypeId.equals(DRUG_PAYMENT_TYPE) || payment.getState() != HAVE_RETURN_DRUG)
+        Integer totalTypeId = getTotalPaymentType(payment.getPaymentTypeId());
+        if (!totalTypeId.equals(DRUG_PAYMENT_TYPE) || !payment.getState().equals(HAVE_RETURN_DRUG))
             throw new UnsupportedOperationException();
-        //todo:是否为药物，状态是否为已退药
 
+        payment.setState(HAVE_RETREAT);
+        payment.setOperatorId(paymentAdminId);
+        update(payment);
+
+        invoiceService.addInvoiceByPayment(payment);
     }
+
+
+
+
 
 
     /**
@@ -219,5 +234,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Override
     public void updateInvoiceId(Integer invoiceId, Integer id) {
         paymentMapper.updateInvoiceId(invoiceId, id);
+    }
+
+    /**
+     * 通过二级缴费类型（西药费……）得出总缴费类型（处方费）
+     * @param typeId
+     * @return 总缴费类型
+     */
+    public Integer getTotalPaymentType(Integer typeId) {
+        return paymentTypeService.findById(typeId).getType();
     }
 }

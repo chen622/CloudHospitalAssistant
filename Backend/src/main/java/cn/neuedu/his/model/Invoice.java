@@ -18,7 +18,7 @@ public class Invoice {
     private BigDecimal priceAmount;
 
     @Column(name = "created_date")
-    private Date createdDate;
+    private Date createdDate = new Date(System.currentTimeMillis());
 
     private ArrayList<Payment> paymentList;
 

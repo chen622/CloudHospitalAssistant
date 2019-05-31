@@ -18,7 +18,7 @@ public class Payment {
     private BigDecimal unitPrice;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     /**
      * 对账的时候冻结账单

@@ -93,4 +93,16 @@ public class PaymentControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void retreatDrugFee() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/payment/retreatDrugFee/19")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }
