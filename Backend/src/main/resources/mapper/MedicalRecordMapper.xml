@@ -15,7 +15,9 @@
   <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
   <result column="registration_id" jdbcType="INTEGER" property="registrationId" />
   <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
-</resultMap>
+    <result column="check_advice" property="checkAdvice" jdbcType="LONGVARCHAR"/>
+    <result column="notification" property="notification" jdbcType="LONGVARCHAR"/>
+  </resultMap>
 
   <resultMap id="withDiagnose" type="cn.neuedu.his.model.MedicalRecord">
     <id column="id" jdbcType="INTEGER" property="id" />
@@ -28,6 +30,8 @@
     <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
     <result column="registration_id" jdbcType="INTEGER" property="registrationId" />
     <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+    <result column="check_advice" property="checkAdvice" jdbcType="LONGVARCHAR"/>
+    <result column="notification" property="notification" jdbcType="LONGVARCHAR"/>
     <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst" column="{MRID =id}"></collection>
     <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinall" column="{MRID =id}"></collection>
   </resultMap>
@@ -54,6 +58,6 @@
 
 
   <select id="getByRegistrationId" resultMap="withDiagnose">
-    select * from  medical_record where  registration_id=#{registrationid}
+    select * from  medical_record where  registration_id =#{registrationId}
   </select>
 </mapper>
