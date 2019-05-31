@@ -18,7 +18,7 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
     private DepartmentKindMapper departmentKindMapper;
 
     @Override
-    public DepartmentKind getDepartmentKindByName(String kindName) {
+    public DepartmentKind getDepartmentKindByName (String kindName) {
         return departmentKindMapper.getDepartmentKindByName(kindName);
     }
 }

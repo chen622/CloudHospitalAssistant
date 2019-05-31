@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 public class Registration {
     @Id
@@ -32,6 +33,9 @@ public class Registration {
 
     @Column(name = "registrar_id")
     private Integer registrarId;
+
+//    @Column(name = "create_time")
+//    private Date createTime = new Date(System.currentTimeMillis());
 
     private Integer age;
 
@@ -152,4 +156,12 @@ public class Registration {
     public void setAge(Integer age) {
         this.age = age;
     }
+
+//    public Date getCreateTime() {
+//        return createTime;
+//    }
+//
+//    public void setCreateTime(Date createTime) {
+//        this.createTime = createTime;
+//    }
 }

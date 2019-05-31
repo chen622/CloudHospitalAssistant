@@ -55,5 +55,54 @@ public class PaymentController {
      * @param authentication
      * @return
      */
+    @PostMapping("/produceRetreatPayment")
+    public JSONObject produceRetreatPayment(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        Integer tollKeeper;
+        try {
+            tollKeeper = PermissionCheck.getIdByAdminProducePayment(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
+        try {
+            paymentService.produceRetreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+        }catch (IllegalArgumentException e1) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            if (e2.getMessage().equals("payment"))
+                return CommonUtil.errorJson(ErrorEnum.E_506);
+            else if (e2.getMessage().equals("invoice"))
+                return CommonUtil.errorJson(ErrorEnum.E_505);
+        }catch (IndexOutOfBoundsException e3) {
+            return CommonUtil.errorJson(ErrorEnum.E_507);
+        }
+
+        return CommonUtil.successJson();
+    }
+
+    /**
+     * 药品类退费
+     * @param paymentId
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/retreatDrugFee/{paymentId}")
+    public JSONObject retreatDrugFee(@PathVariable("paymentId") Integer paymentId, Authentication authentication) {
+        Integer tollKeeper;
+        try {
+            tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            paymentService.retreatDrugFee(paymentId, tollKeeper);
+        }catch (IllegalArgumentException e1) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_506);
+        }
+
+        return CommonUtil.successJson();
+    }
 }

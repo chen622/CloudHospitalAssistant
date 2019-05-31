@@ -45,7 +45,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     @Override
     public Integer addInvoiceByPayment(Payment payment) throws IllegalArgumentException{
         if (payment.equals(null))
-            throw new IllegalArgumentException("no payment");
+            throw new IllegalArgumentException("paymentId");
         Invoice invoice = new Invoice();
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
