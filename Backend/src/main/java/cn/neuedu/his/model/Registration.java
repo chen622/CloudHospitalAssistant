@@ -34,8 +34,13 @@ public class Registration {
     @Column(name = "registrar_id")
     private Integer registrarId;
 
-//    @Column(name = "create_time")
-//    private Date createTime = new Date(System.currentTimeMillis());
+    @Column(name = "create_time")
+    private Date createTime = new Date(System.currentTimeMillis());
+
+    private int sequence;
+
+    @Column(name = "serial_number")
+    private int serialNumber;
 
     private Integer age;
 
@@ -157,11 +162,27 @@ public class Registration {
         this.age = age;
     }
 
-//    public Date getCreateTime() {
-//        return createTime;
-//    }
-//
-//    public void setCreateTime(Date createTime) {
-//        this.createTime = createTime;
-//    }
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
+    }
 }

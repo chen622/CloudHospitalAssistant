@@ -241,8 +241,8 @@ public class DoctorControllerTest {
         MedicalRecord medicalRecord = medicalRecordService.findById(1);
         medicalRecord.setId(null);
         JSONObject object=new JSONObject();
-        object.put("medicalRecord", medicalRecord);
-        object.put("registrationID", 1);
+        object.put("medicalRecordId", medicalRecord);
+        object.put("registrationId", 1);
 
         ArrayList<Integer> diagnose=new ArrayList<>();
         diagnose.add(3);
@@ -331,8 +331,10 @@ public class DoctorControllerTest {
         array.add(i);
         array.add(i1);
         JSONObject object=new JSONObject();
-        object.put("medicalRecordId", 1);
+
         object.put("inspections", array);
+        object.put("isDisposal", true);
+        object.put("registrationId", 19);
         String  requestJson=object.toJSONString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveInspection")
@@ -380,7 +382,7 @@ public class DoctorControllerTest {
     public void saveFinalDiagnose() throws Exception {
         JSONObject object=new JSONObject();
 
-        object.put("registrationID", 1);
+        object.put("registrationId", 1);
         object.put("medicalRecordId",1);
 
         ArrayList<Integer> diagnose=new ArrayList<>();

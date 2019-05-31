@@ -39,6 +39,11 @@ public class MedicalRecord {
     @Column(name = "previous_treatment")
     private String previousTreatment;
 
+    @Column(name = "notification")
+    private String notification;
+
+    @Column(name = "check_advice")
+    private String checkAdvice;
 
     private List<Diagnose> firstDiagnose;
 
