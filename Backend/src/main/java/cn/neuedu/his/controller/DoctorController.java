@@ -223,13 +223,13 @@ public class DoctorController {
         }
         Integer registrationID=null;
         try{
-            registrationID=Integer.parseInt(object.get("registrationID").toString());
+            registrationID=Integer.parseInt(object.get("registrationId").toString());
             if (registrationID==null)
                 throw new NumberFormatException();
         }catch (NumberFormatException n){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         }
-        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
+        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecordId").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
         ArrayList<Integer> diagnoses=(ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
         if(diagnoses==null || diagnoses.size()==0)
@@ -443,11 +443,16 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         }
         try{
-            return doctorService.saveInspections(object);
+            Boolean isDisposal=(Boolean) object.get("isDisposal");
+            if(!isDisposal)
+                return doctorService.saveInspection(object,isDisposal);
+            else
+                return doctorService.saveInspection(object, isDisposal);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
     }
+
 
 
     /**
@@ -530,7 +535,7 @@ public class DoctorController {
         }
         Integer registrationID=null,medicalRecordId;
         try{
-            registrationID=Integer.parseInt(object.get("registrationID").toString());
+            registrationID=Integer.parseInt(object.get("registrationId").toString());
             if (registrationID==null)
                 throw new NumberFormatException();
         }catch (NumberFormatException n){

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -269,11 +270,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Registration registration = registrationService.findById(registrationId);
         if(registration==null)
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("registration"));
-        registration.setState(Constants.FINISH_DIAGNOSIS);
-        registrationService.update(registration);
-        MedicalRecord record=medicalRecordService.findById(medicalRecordId);
+
+        MedicalRecord record =medicalRecordService.findById(medicalRecordId);
+        if(record.getFirstDiagnose()!=null)
+            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("finalDiagnose"));
         if(record==null || !record.getRegistrationId().equals(registrationId))
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("medicalRecordId"));
+        registration.setState(Constants.FINISH_DIAGNOSIS);
+        registrationService.update(registration);
         ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecordId,true,false);
         return CommonUtil.successJson();
     }
@@ -285,19 +289,34 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      * @throws Exception
      */
+    /**
+     * 保存处置
+     * @param object
+     * @return
+     * @throws Exception
+     */
     @Override
     @Transactional
-    public JSONObject saveInspections(JSONObject object) throws  Exception{
+    public JSONObject saveInspection(JSONObject object,Boolean isDisposal)throws  Exception{
         List<InspectionApplication> inspectionApplications= (ArrayList<InspectionApplication>)object.getJSONArray("inspections").toJavaList(InspectionApplication.class);
-        Integer medicalRecordId=(Integer) object.get("medicalRecordId");
-        MedicalRecord record=medicalRecordService.findById(medicalRecordId);
+        System.out.println(object.get("registrationId").toString());
+        Integer registrationId=Integer.parseInt(object.get("registrationId").toString());
+        System.out.println(registrationId);
+        MedicalRecord record=medicalRecordService.getByRegistrationId(registrationId);
+        Integer medicalRecordId=record.getId();
         if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
-            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("FirstDiagnose"));
-        Integer registrationId=(Integer) object.get("ragistrationId");
+            return  CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("firstDiagnose"));
+        if(isDisposal){
+            if(inspectionApplicationService.hasMedicalRecordInspection(medicalRecordId)){
+                if(record.getFinalDiagnose()==null)
+                    return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("finalDiagnose"));
+            }
+        }
         Registration registration=registrationService.findById(registrationId);
         if(registration==null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        registration.setState(Constants.SUSPECT);
+        if(!isDisposal)
+            registration.setState(Constants.SUSPECT);
         registrationService.update(registration);
         for (InspectionApplication i:inspectionApplications){
             i.setId(null);

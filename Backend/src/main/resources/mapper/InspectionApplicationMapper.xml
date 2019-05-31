@@ -14,4 +14,8 @@
     <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
     <result column="is_done" jdbcType="BIT" property="isDone"/>
   </resultMap>
+
+  <select id="hasMedicalRecordInspection" resultType="Integer">
+    select count(*) from  his.inspection_application where medical_record_id=#{medicalRecordId}
+  </select>
 </mapper>

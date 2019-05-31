@@ -63,8 +63,7 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject openInspection(Integer registrationId);
 
     @Transactional
-    JSONObject saveInspections(JSONObject object) throws  Exception;
-
+    JSONObject saveInspection(JSONObject object,Boolean isDisposal)throws  Exception;
 
     @Transactional
     public JSONObject saveInspectionTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
