@@ -9,4 +9,10 @@
     <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
     <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
   </resultMap>
+
+  <select id="getDepartmentKindByName" resultMap="BaseResultMap">
+    select *
+    from department_kind
+    where kind_name = #{kindName};
+  </select>
 </mapper>

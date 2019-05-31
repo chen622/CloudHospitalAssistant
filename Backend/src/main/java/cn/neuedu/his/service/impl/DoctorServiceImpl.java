@@ -9,7 +9,6 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.ibatis.javassist.tools.reflect.Metalevel;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +51,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     DiseaseSecondService diseaseSecondService;
     @Autowired
     InspectionApplicationService inspectionApplicationService;
+    @Autowired
+    InspectionResultService resultService;
 
 
 
@@ -205,7 +206,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      */
     @Override
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,Diagnose diagnose) throws RuntimeException {
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses) throws Exception {
         Registration registration = registrationService.findById(registrationID);
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
@@ -213,6 +214,10 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             registration.setState(Constants.FIRST_DIAGNOSIS);
             registrationService.update(registration);
         }
+        //检查是否已经有初诊了
+        MedicalRecord record =medicalRecordService.getByRegistrationId(registrationID);
+        if(record.getFirstDiagnose()!=null)
+            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("FirstDiagnose"));
         //检查是否有必要的参数没有填写完
         String  check=cheakMedicalRecord(medicalRecord);
         if(!check.equals("")){
@@ -220,11 +225,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         medicalRecord.setId(null);
         medicalRecordService.save(medicalRecord);
-        diagnose.setItemId(medicalRecord.getId());
-        diagnose.setIsMajor(false);
-        diagnose.setCreateTime(new Date(System.currentTimeMillis()));
-        diagnose.setTemplate(false);
-        diagnoseService.save(diagnose);
+        ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecord.getId(),false,false);
         return CommonUtil.successJson();
     }
 
@@ -249,11 +250,31 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
+
     @Override
     public  JSONObject openInspection(Integer registrationId){
         Registration registration=registrationService.findById(registrationId);
         if(!(registration.getState().equals(Constants.FIRST_DIAGNOSIS) || registration.getState().equals(Constants.SUSPECT)))
             return CommonUtil.errorJson(ErrorEnum.E_506.addErrorParamName("notFirstDiagnose"));
+        return CommonUtil.successJson();
+    }
+
+    @Override
+    public JSONObject getInspectionResult(Integer id) {
+        return  CommonUtil.successJson(resultService.getInspectionResult(id));
+    }
+
+    @Override
+    public JSONObject saveFinalDiagnose(Integer registrationId,Integer medicalRecordId,List<Integer> diagnoses) throws Exception {
+        Registration registration = registrationService.findById(registrationId);
+        if(registration==null)
+            return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("registration"));
+        registration.setState(Constants.FINISH_DIAGNOSIS);
+        registrationService.update(registration);
+        MedicalRecord record=medicalRecordService.findById(medicalRecordId);
+        if(record==null || !record.getRegistrationId().equals(registrationId))
+            return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("medicalRecordId"));
+        ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecordId,true,false);
         return CommonUtil.successJson();
     }
 
@@ -269,6 +290,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject saveInspections(JSONObject object) throws  Exception{
         List<InspectionApplication> inspectionApplications= (ArrayList<InspectionApplication>)object.getJSONArray("inspections").toJavaList(InspectionApplication.class);
         Integer medicalRecordId=(Integer) object.get("medicalRecordId");
+        MedicalRecord record=medicalRecordService.findById(medicalRecordId);
+        if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
+            return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("FirstDiagnose"));
         Integer registrationId=(Integer) object.get("ragistrationId");
         Registration registration=registrationService.findById(registrationId);
         if(registration==null)
@@ -353,6 +377,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson();
     }
 
+
+
     private void saveTemp(InspectionTemplate template,Integer level,JSONObject object,Integer doctorId) throws Exception {
         template.setLevel(level);
         template.setName((String) object.get("name"));
@@ -396,9 +422,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         try {
             List<Diagnose> firstD=record.getFirstDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(firstD, template.getId());
+            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(firstD, template.getId());
             List<Diagnose> finalD=record.getFinalDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(finalD, template.getId());
+            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(finalD, template.getId() );
         } catch (Exception e) {
             throw new  RuntimeException("diagnose");
         }
@@ -414,8 +440,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return "CurrentSymptom";
         if (record.getIsWesternMedicine()==null )
             return  "isWesternMedicne";
-        if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
-            return  "FirstDiagnose";
         return "";
     }
 
@@ -436,14 +460,33 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return template;
     }
 
+
     @Transactional
-    public void saveDiagnose(List<Diagnose> firstD,Integer id) throws Exception{
-        if (firstD!=null){
-            for (Diagnose diagnose:firstD){
+    public   void saveDiagnose(List<Integer> diagnoses ,Integer itemId,Boolean isMajor,Boolean isTemplate) throws  Exception{
+        if(diagnoses!=null){
+            for (Integer integer:diagnoses){
+                Diagnose diagnose=new Diagnose();
                 diagnose.setId(null);
-                diagnose.setTemplate(true);
-                diagnose.setItemId(id);
+                diagnose.setItemId(itemId);
+                diagnose.setIsMajor(isMajor);
                 diagnose.setCreateTime(new Date(System.currentTimeMillis()));
+                diagnose.setTemplate(isTemplate);
+                diagnose.setDiseaseId(integer);
+                diagnoseService.save(diagnose);
+            }
+        }
+    }
+
+    public void saveDiagnoseTemp(List<Diagnose> diagnoses,Integer templateId){
+        if(diagnoses!=null){
+            for (Diagnose d:diagnoses){
+                Diagnose diagnose=new Diagnose();
+                diagnose.setId(null);
+                diagnose.setItemId(templateId);
+                diagnose.setIsMajor(d.getIsMajor());
+                diagnose.setCreateTime(d.getCreateTime());
+                diagnose.setTemplate(true);
+                diagnose.setDiseaseId(d.getDiseaseId());
                 diagnoseService.save(diagnose);
             }
         }

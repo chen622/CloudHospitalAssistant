@@ -6,4 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface DepartmentKindMapper extends MyMapper<DepartmentKind> {
+
+    DepartmentKind getDepartmentKindByName(String kindName);
+
 }

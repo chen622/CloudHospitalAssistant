@@ -12,4 +12,5 @@ import java.util.List;
 public interface MedicalRecordService extends Service<MedicalRecord> {
      List<MedicalRecord> getAllByPatientId(Integer patient_id);
      MedicalRecord getMedicalRecordWithDiagnose(Integer id);
+     MedicalRecord getByRegistrationId(Integer registrationid);
 }

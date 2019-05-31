@@ -2,6 +2,7 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.inter.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public interface DoctorService extends Service<Doctor> {
 
 
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, Diagnose diagnose) throws Exception;
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, List<Integer> diagnoses) throws Exception;
 
     @Transactional
     public JSONObject saveMRTemplate(MedicalRecord record,Integer doctorID,String name,Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
@@ -71,6 +72,10 @@ public interface DoctorService extends Service<Doctor> {
     @Transactional
     public JSONObject saveInspectionAsTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
 
+    @Transactional
+    JSONObject getInspectionResult(Integer id);
 
+    @Transactional
+    JSONObject saveFinalDiagnose(Integer registrationId,Integer medicalRecordId,List<Integer> diagnoses) throws Exception;
 }
 
