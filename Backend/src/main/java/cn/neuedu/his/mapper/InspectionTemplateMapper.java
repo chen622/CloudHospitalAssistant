@@ -10,8 +10,8 @@ import java.util.List;
 @Component
 
 public interface InspectionTemplateMapper extends MyMapper<InspectionTemplate> {
-    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
-    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
-    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID,Integer level,Integer nonDrugType);
+    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level);
+    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID,Integer level);
+    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID,Integer level);
 
 }

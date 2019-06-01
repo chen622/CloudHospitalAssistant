@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 public class Prescription {
     @Id
@@ -16,19 +17,22 @@ public class Prescription {
     @Column(name = "usage_id")
     private Integer usageId;
 
-    @Column(name = "medical_record_id")
-    private Integer medicalRecordId;
+    @Column(name = "item_id")
+    private Integer itemId;
 
     /**
      * 频率
      */
+    @Column( name =  "frequency")
     private String frequency;
 
     @Column(name = "drug_id")
     private Integer drugId;
 
+    @Column (name = "amount")
     private Integer amount;
 
+    @Column (name = "days")
     private Integer days;
 
     /**
@@ -37,6 +41,7 @@ public class Prescription {
     @Column(name = "use_amount")
     private String useAmount;
 
+    @Column(name = "note")
     private String note;
 
     @Column(name = "need_skin_test")
@@ -44,6 +49,47 @@ public class Prescription {
 
     @Column(name = "skin_test_result")
     private Boolean skinTestResult;
+
+    @Column (name = "is_template")
+    private Boolean isTemplate;
+
+    @Column(name = "create_time")
+    private Date createTime;
+
+    public Prescription() {
+        return;
+    }
+
+    public Prescription(Prescription p) {
+        this.usageId = p.usageId;
+        this.itemId = p.itemId;
+        this.frequency = p.frequency;
+        this.drugId = p.drugId;
+        this.amount = p.amount;
+        this.days = p.days;
+        this.useAmount = p.useAmount;
+        this.note = p.note;
+        this.needSkinTest = p.needSkinTest;
+        this.skinTestResult = p.skinTestResult;
+        this.isTemplate = p.isTemplate;
+        createTime=new Date(System.currentTimeMillis());
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Boolean getTemplate() {
+        return isTemplate;
+    }
+
+    public void setTemplate(Boolean template) {
+        isTemplate = template;
+    }
 
     /**
      * @return id
@@ -80,15 +126,15 @@ public class Prescription {
     /**
      * @return medical_record_id
      */
-    public Integer getMedicalRecordId() {
-        return medicalRecordId;
+    public Integer getItemId() {
+        return itemId;
     }
 
     /**
-     * @param medicalRecordId
+     * @param itemId
      */
-    public void setMedicalRecordId(Integer medicalRecordId) {
-        this.medicalRecordId = medicalRecordId;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
     /**

@@ -18,13 +18,16 @@ public class Patient {
     @Column(name = "identity_id")
     private String identityId;
 
+    @Column(name = "password")
     private String password;
 
+    @Column(name =  "sex")
     private Boolean sex;
 
     @Column(name = "real_name")
     private String realName;
 
+    @Column(name = "username")
     private String username;
 
     @Column(name = "last_login_time")

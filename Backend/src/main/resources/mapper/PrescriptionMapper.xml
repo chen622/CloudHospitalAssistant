@@ -7,7 +7,7 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="usage_id" jdbcType="INTEGER" property="usageId" />
-    <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="frequency" jdbcType="VARCHAR" property="frequency" />
     <result column="drug_id" jdbcType="INTEGER" property="drugId" />
     <result column="amount" jdbcType="INTEGER" property="amount" />
@@ -16,5 +16,7 @@
     <result column="note" jdbcType="VARCHAR" property="note" />
     <result column="need_skin_test" jdbcType="BIT" property="needSkinTest" />
     <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
 </mapper>

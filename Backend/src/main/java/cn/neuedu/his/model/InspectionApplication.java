@@ -9,8 +9,8 @@ public class InspectionApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "medical_record_id")
-    private Integer medicalRecordId;
+    @Column(name = "item_id")
+    private Integer itemId;
 
     @Column(name = "non_drug_id")
     private Integer nonDrugId;
@@ -30,6 +30,23 @@ public class InspectionApplication {
     @Column(name = "is_canceled")
     private Boolean isCanceled;
 
+    @Column (name = "is_template")
+    private Boolean isTemplate;
+
+    public InspectionApplication() {
+        return;
+    }
+
+    public InspectionApplication(Integer itemId, Integer nonDrugId, Date createTime, Boolean isDone, Boolean isEmerged, Integer quantity, Boolean isCanceled, Boolean isTemplate) {
+        this.itemId = itemId;
+        this.nonDrugId = nonDrugId;
+        this.createTime = createTime;
+        this.isDone = isDone;
+        this.isEmerged = isEmerged;
+        this.quantity = quantity;
+        this.isCanceled = isCanceled;
+        this.isTemplate = isTemplate;
+    }
 
     public Boolean getDone() {
         return isDone;
@@ -45,6 +62,15 @@ public class InspectionApplication {
 
     public void setEmerged(Boolean emerged) {
         isEmerged = emerged;
+    }
+
+
+    public Boolean getTemplate() {
+        return isTemplate;
+    }
+
+    public void setTemplate(Boolean template) {
+        isTemplate = template;
     }
 
     public Boolean getCanceled() {
@@ -70,17 +96,17 @@ public class InspectionApplication {
     }
 
     /**
-     * @return medical_record_id
+     * @return item_id
      */
-    public Integer getMedicalRecordId() {
-        return medicalRecordId;
+    public Integer getItemId() {
+        return itemId;
     }
 
     /**
-     * @param medicalRecordId
+     * @param itemId
      */
-    public void setMedicalRecordId(Integer medicalRecordId) {
-        this.medicalRecordId = medicalRecordId;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 
     /**

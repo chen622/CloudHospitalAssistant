@@ -12,23 +12,32 @@ public class InspectionTemplate {
     @Column(name = "department_id")
     private Integer departmentId;
 
+    @Column(name = "level")
     private Integer level;
 
+    @Column(name = "name")
     private String name;
 
     @Column(name = "created_by_id")
     private Integer createdById;
 
-    //relationship
-    private List<InspectionTemplateRelationship> relationships;
+    List<Prescription> prescriptions;
+    List<InspectionApplication> applications;
 
-
-    public List<InspectionTemplateRelationship> getRelationships() {
-        return relationships;
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
     }
 
-    public void setRelationships(List<InspectionTemplateRelationship> relationships) {
-        this.relationships = relationships;
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
+    }
+
+    public List<InspectionApplication> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(List<InspectionApplication> applications) {
+        this.applications = applications;
     }
 
     /**

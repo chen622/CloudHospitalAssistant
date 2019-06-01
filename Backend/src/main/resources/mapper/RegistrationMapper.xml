@@ -22,13 +22,15 @@
     <result column="state" jdbcType="INTEGER" property="state" />
     <association property="patient" javaType="Patient">
       <id property="id" column="id"></id>
-      <result property="real_name" column="real_name"></result>
-      <result property="identity_id" column="identity_id"></result>
+      <result property="realName" column="real_name"></result>
+      <result property="identityId" column="identity_id"></result>
     </association>
   </resultMap>
 
   <select id="getAllWaitingRegistration" resultMap="registrationWithPatient">
-    select  * from registration,patient where  state=47 and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID} order by registration.id ASC
+    select  * from registration,patient where  registration.state=#{state} and registration.patient_id=patient.id and  registration.doctor_id=#{doctorID}
+    and   to_days(registration.create_time)=TO_DAYS(#{time})
+    order by registration.id ASC
   </select>
 
   <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
