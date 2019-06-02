@@ -42,7 +42,23 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      */
     @Override
     public Patient findPatientAndNotConsumePayment(Integer patientId) throws IllegalArgumentException{
-        Patient patient = patientMapper.searchPatientAndNotConsumePayment(patientId, REGISTRATION_PAYMENT_TYPE);
+        Patient patient = patientMapper.searchPatientAndNotConsumePayment(patientId, REGISTRATION_PAYMENT_TYPE, PRODUCE_PAYMENT, HAVE_PAID, HAVE_COMPLETED_PAID);
+        if (patient == null)
+            throw new IllegalArgumentException("patientId");
+
+        return patient;
+    }
+
+    /**
+     * 查询相应的已缴费尚未发放的药品信息
+     * @param patientId
+     * @return
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public Patient findPatientAndNotTakeDrug(Integer patientId) throws IllegalArgumentException{
+        Patient patient = patientMapper.searchPatientAndNotTakeDrug(patientId, DRUG_PAYMENT_TYPE, HAVE_PAID);
+
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 

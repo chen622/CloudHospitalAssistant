@@ -10,4 +10,5 @@ import cn.neuedu.his.util.inter.Service;
 public interface PatientService extends Service<Patient> {
     Patient findPatientAndPaymentInfo(Integer patientId);
     Patient findPatientAndNotConsumePayment(Integer patientId);
+    Patient findPatientAndNotTakeDrug(Integer patientId);
 }
