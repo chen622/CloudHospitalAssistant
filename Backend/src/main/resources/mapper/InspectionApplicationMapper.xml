@@ -6,16 +6,17 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="medical_record_id" jdbcType="INTEGER" property="medicalRecordId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
     <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
     <result column="is_done" jdbcType="BIT" property="isDone"/>
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
   </resultMap>
 
-  <select id="hasMedicalRecordInspection" resultType="Integer">
-    select count(*) from  his.inspection_application where medical_record_id=#{medicalRecordId}
+  <select id="hasMedicalRecordInspectionNotDone" resultType="Integer">
+    select count(*) from  his.inspection_application where item_id=#{itemId} and  is_template=false and  is_canceled=false  and  is_done=false ;
   </select>
 </mapper>

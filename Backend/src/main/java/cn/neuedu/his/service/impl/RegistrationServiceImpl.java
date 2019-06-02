@@ -166,8 +166,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      * @param state
      * @return
      */
-    public List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state){
-        return registrationMapper.getAllWaitingRegistration(doctorID);
+    public List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state,Date time){
+        return registrationMapper.getAllWaitingRegistration(doctorID,state,time);
     }
 
     /**

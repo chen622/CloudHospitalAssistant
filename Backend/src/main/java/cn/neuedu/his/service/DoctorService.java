@@ -63,18 +63,24 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject openInspection(Integer registrationId);
 
     @Transactional
-    JSONObject saveInspection(JSONObject object,Boolean isDisposal)throws  Exception;
+    JSONObject saveInspection(JSONObject object,Boolean isDisposal,Integer doctorId)throws  Exception;
 
     @Transactional
-    public JSONObject saveInspectionTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
-
-    @Transactional
-    public JSONObject saveInspectionAsTemplate(JSONObject object,Integer level,Integer doctorId) throws Exception;
+    public JSONObject saveInspectionAsTemplate(InspectionTemplate template ,Integer doctorId) throws Exception;
 
     @Transactional
     JSONObject getInspectionResult(Integer id);
 
     @Transactional
     JSONObject saveFinalDiagnose(Integer registrationId,Integer medicalRecordId,List<Integer> diagnoses) throws Exception;
+
+    @Transactional
+    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId) throws Exception;
+
+    @Transactional
+    public JSONObject savePrescriptionsTemp(DrugTemplate template,Integer medicalRecordId,Integer doctorId) throws Exception;
+
+    @Transactional
+    public  JSONObject finishDiagnose(Integer registrationId);
 }
 

@@ -35,6 +35,8 @@ public class Constants {
     public static final List<Integer> NONDRUG_TYPE_LIST = Arrays.asList(1301,1302,1303,1304,1305,1306,1307,1308,1309,1310,1311,1312,1313,1314,1315,1316,1317,1318,1319,1320,1321,1322,1323,1324,1325,1326);
     //所有部门分类
     public static final List<Integer> DEPARTMENT_KIND_LIST = Arrays.asList(101,102,103,104);
+    //所有午别分类
+    public static final List<Integer> Period_LIST = Arrays.asList(301,302,303);
 
     //医院管理员
     public static final Integer HOSPITAL_ADMIN = 606;
@@ -123,7 +125,6 @@ public class Constants {
     public static final  Integer REGISTRATIONSTATE=8;
     //预约
     public static final  Integer RESERVATION=801;
-
     // 待诊
     public static final  Integer WAITING_FOR_TREATMENT=802;
     //初诊

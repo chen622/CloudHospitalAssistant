@@ -8,5 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public interface PatientMapper extends MyMapper<Patient> {
     Patient searchPatientAndFrozenPayment(@Param("patientId") Integer patientId, @Param("noPaymentTotalTypeId") Integer noPaymentTotalTypeId, @Param("state") Integer state);
-    Patient searchPatientAndNotConsumePayment(@Param("patientId") Integer patientId, @Param("noPaymentTotalTypeId") Integer noPaymentTotalTypeId);
+    Patient searchPatientAndNotConsumePayment(@Param("patientId") Integer patientId, @Param("noPaymentTotalTypeId") Integer noPaymentTotalTypeId, @Param("state1") Integer state1, @Param("state2") Integer state2, @Param("state3") Integer state3);
+    Patient searchPatientAndNotTakeDrug(@Param("patientId") Integer patientId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId, @Param("state") Integer state);
 }

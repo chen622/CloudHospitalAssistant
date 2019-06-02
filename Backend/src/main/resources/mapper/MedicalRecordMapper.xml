@@ -33,7 +33,7 @@
     <result column="check_advice" property="checkAdvice" jdbcType="LONGVARCHAR"/>
     <result column="notification" property="notification" jdbcType="LONGVARCHAR"/>
     <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst" column="{MRID =id}"></collection>
-    <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinall" column="{MRID =id}"></collection>
+    <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinal" column="{MRID =id}"></collection>
   </resultMap>
 
   <select id="getAllByPatientId" resultMap="withDiagnose">
@@ -52,8 +52,8 @@
         select * from diagnose where item_id=#{MRID} and  is_template= false
   </select>
 
-  <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
-        select * from diagnose where item_id=#{MRID} and  is_template = true
+  <select id="getFinal" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select * from diagnose where item_id=#{MRID} and  is_template = false
   </select>
 
 

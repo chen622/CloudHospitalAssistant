@@ -7,5 +7,5 @@ import org.springframework.stereotype.Component;
 @Component
 
 public interface InspectionApplicationMapper extends MyMapper<InspectionApplication> {
-    Integer hasMedicalRecordInspection(Integer medicalRecordId);
+    Integer hasMedicalRecordInspectionNotDone(Integer medicalRecordId);
 }

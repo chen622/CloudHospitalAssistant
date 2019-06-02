@@ -11,11 +11,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Proxy;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +54,13 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     InspectionApplicationService inspectionApplicationService;
     @Autowired
     InspectionResultService resultService;
+    @Autowired
+    PaymentService paymentService;
+    @Autowired
+    DrugService drugService;
+    @Autowired
+    PrescriptionService prescriptionService;
+
 
 
 
@@ -67,7 +74,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level) {
-        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level,Constants.NON_DRUG);
+        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level);
         if(templates==null)
             templates=new ArrayList<>();
         return CommonUtil.successJson(templates);
@@ -86,7 +93,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 //        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
 //            return  CommonUtil.errorJson(ErrorEnum.E_601.addErrorParamName("registration state"));
 //        }
-        List<InspectionTemplate> templates=inspectionTemplateService.getDeptCheckTemps(doctorID,level,Constants.NON_DRUG);
+        List<InspectionTemplate> templates=inspectionTemplateService.getDeptCheckTemps(doctorID,level);
         if(templates==null)
             templates=new ArrayList<>();
         return CommonUtil.successJson(templates);
@@ -101,7 +108,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level) {
-        List<InspectionTemplate> templates=inspectionTemplateService.getPersonalCheckTemps(doctorID,level,Constants.NON_DRUG);
+        List<InspectionTemplate> templates=inspectionTemplateService.getPersonalCheckTemps(doctorID,level);
         if(templates==null)
             templates=new ArrayList<>();
         return CommonUtil.successJson(templates);
@@ -195,10 +202,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
 
 
-
-
-
-
     /**
      * 提交初诊信息
      * @param registrationID
@@ -217,8 +220,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         //检查是否已经有初诊了
         MedicalRecord record =medicalRecordService.getByRegistrationId(registrationID);
-        if(record.getFirstDiagnose()!=null)
-            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("FirstDiagnose"));
+       if(record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
+            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("firstDiagnose"));
         //检查是否有必要的参数没有填写完
         String  check=cheakMedicalRecord(medicalRecord);
         if(!check.equals("")){
@@ -270,13 +273,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Registration registration = registrationService.findById(registrationId);
         if(registration==null)
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("registration"));
-
         MedicalRecord record =medicalRecordService.findById(medicalRecordId);
-        if(record.getFirstDiagnose()!=null)
-            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("finalDiagnose"));
+
         if(record==null || !record.getRegistrationId().equals(registrationId))
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("medicalRecordId"));
-        registration.setState(Constants.FINISH_DIAGNOSIS);
+        if(record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
+            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("finalDiagnose"));
+
+
+        registration.setState(Constants.FINAL_DIAGNOSIS);
         registrationService.update(registration);
         ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecordId,true,false);
         return CommonUtil.successJson();
@@ -297,140 +302,181 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      */
     @Override
     @Transactional
-    public JSONObject saveInspection(JSONObject object,Boolean isDisposal)throws  Exception{
-        List<InspectionApplication> inspectionApplications= (ArrayList<InspectionApplication>)object.getJSONArray("inspections").toJavaList(InspectionApplication.class);
-        System.out.println(object.get("registrationId").toString());
+    public JSONObject saveInspection(JSONObject object,Boolean isDisposal,Integer doctorId)throws  Exception{
+
         Integer registrationId=Integer.parseInt(object.get("registrationId").toString());
-        System.out.println(registrationId);
         MedicalRecord record=medicalRecordService.getByRegistrationId(registrationId);
         Integer medicalRecordId=record.getId();
-        if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0)
+        //是否有初诊
+        if (record.getFirstDiagnose()==null  || record.getFirstDiagnose().size()==0) {
             return  CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("firstDiagnose"));
+        }
+        //是否是确诊处置
         if(isDisposal){
-            if(inspectionApplicationService.hasMedicalRecordInspection(medicalRecordId)){
+            //是否 是 有检查项目且没有确诊的情况
+            if(inspectionApplicationService.hasMedicalRecordInspectionNotDone(medicalRecordId)){
                 if(record.getFinalDiagnose()==null)
                     return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("finalDiagnose"));
             }
         }
+        //是否能找到 挂号
         Registration registration=registrationService.findById(registrationId);
         if(registration==null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         if(!isDisposal)
             registration.setState(Constants.SUSPECT);
+
+        //挂号更新
         registrationService.update(registration);
-        for (InspectionApplication i:inspectionApplications){
-            i.setId(null);
-            i.setMedicalRecordId(medicalRecordId);
-            i.setCreateTime(new Date(System.currentTimeMillis()));
-            i.setIsCanceled(false);
-            String name=cheakInspection(i);
-            if(!name.equals("")){
-                throw new RuntimeException(name);
+
+        //是否是模板数据
+
+        InspectionTemplate template= JSONObject.parseObject(JSONObject.toJSONString(object.get("template")), InspectionTemplate.class);
+        List<InspectionApplication> applicationList=template.getApplications();
+        //保存模板非药项目
+        if (applicationList!=null){
+            for (InspectionApplication r : applicationList){
+                if(r.getNonDrugId()==null || nonDrugService.findById(r.getNonDrugId())==null ){
+                    return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
+                }
+                InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,false);
+                inspectionApplicationService.save(application);
             }
-            inspectionApplicationService.save(i);
+        }
+
+        //保存模板非药项目
+        String check="";
+        List<Prescription> prescriptionList=template.getPrescriptions();
+        if(prescriptionList!=null){
+            for(Prescription prescription:prescriptionList){
+                check=checkPrescription(prescription);
+                if(!check.equals(""))
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
+                Prescription p2=new Prescription(prescription);
+                p2.setTemplate(false);
+                p2.setItemId(medicalRecordId);
+                prescriptionService.save(p2);
+            }
         }
         return CommonUtil.successJson();
     }
 
+
     /**
-     * 新建检查检验模板
-     * @param object
-     * @param level
+     * 新建检查检验/检验/处置模板
+     * @param template
+     * @param doctorId
      * @return
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
+     * @throws Exception
      */
     @Override
     @Transactional
-    public JSONObject saveInspectionTemplate(JSONObject object, Integer level,Integer doctorId) throws Exception {
-        List<InspectionTemplateRelationship> list=object.getJSONArray("relationships").toJavaList(InspectionTemplateRelationship.class);
-        InspectionTemplate template=new InspectionTemplate();
-        saveTemp(template,level,object, doctorId);
-        String  check;
-        if(list!=null){
-            for (InspectionTemplateRelationship r : list){
-                check = "";
-                check=checkInspectionRelation(r);
-                if(!check.equals("")){
-                    throw new Exception(check);
-                }
-                r.setTemplateId(template.getId());
-                inspectionTemplateRelationshipService.save(r);
-            }
-        }
-        return CommonUtil.successJson();
-    }
+    public JSONObject saveInspectionAsTemplate(InspectionTemplate template,Integer doctorId) throws Exception {
 
-    /**
-     * 新建检查检验模板
-     * @param object
-     * @param level
-     * @return
-     * @throws NoSuchMethodException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
-    @Override
-    @Transactional
-    public JSONObject saveInspectionAsTemplate(JSONObject object, Integer level,Integer doctorId) throws Exception {
-        List<InspectionApplication> list=object.getJSONArray("applications").toJavaList(InspectionApplication.class);
-        InspectionTemplate template=new InspectionTemplate();
-        saveTemp(template,level,object, doctorId);
-        String check;
-        if (list!=null){
-            for (InspectionApplication r : list){
-                InspectionTemplateRelationship relationship = new InspectionTemplateRelationship();
-                relationship.setTemplateId(template.getId());
-                relationship.setItemType(Constants.NON_DRUG);
-                relationship.setItemId(r.getNonDrugId());
-                relationship.setAmount(r.getQuantity());
-                check = "";
-                check=checkInspectionRelation(relationship);
-                if(!check.equals("")){
-                    throw new Exception(check);
-                }
-                inspectionTemplateRelationshipService.save(relationship);
-            }
-        }
-        return CommonUtil.successJson();
-    }
+        List<InspectionApplication> applicationList=template.getApplications();
+        List<Prescription> prescriptionList=template.getPrescriptions();
 
-
-
-    private void saveTemp(InspectionTemplate template,Integer level,JSONObject object,Integer doctorId) throws Exception {
-        template.setLevel(level);
-        template.setName((String) object.get("name"));
         template.setCreatedById(doctorId);
         template.setDepartmentId(doctorService.getDeptNo(doctorId));
-        String  check=checkInspectionTemp(template);
-        if(!check.equals("")){
-            throw new Exception(check);
-        }
+        if (template.getDepartmentId()==null)
+            return CommonUtil.errorJson(ErrorEnum.E_610);
         inspectionTemplateService.save(template);
-    }
-
-    private String checkInspectionTemp(InspectionTemplate template){
-        if(template.getDepartmentId()==null)
-            return "departmentId";
-        if(template.getLevel()==null)
-            return "level";
-        if(template.getName()==null || template.getName().equals("")){
-            return "name";
+        Integer tempId=template.getId();
+        //保存模板非药项目
+        if (applicationList!=null){
+            for (InspectionApplication r : applicationList){
+                if(r.getNonDrugId()==null || nonDrugService.findById(r.getNonDrugId())==null ){
+                    return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
+                }
+                InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true);
+                inspectionApplicationService.save(application);
+            }
         }
-        if(template.getCreatedById()==null )
-            return "creareById";
-        return "";
+        //保存模板非药项目
+        String check="";
+        if(prescriptionList!=null){
+            for(Prescription prescription:prescriptionList){
+                check=checkPrescription(prescription);
+                if(!check.equals(""))
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
+                Prescription p2=new Prescription(prescription);
+                p2.setTemplate(true);
+                p2.setItemId(tempId);
+                prescriptionService.save(p2);
+            }
+        }
+        return CommonUtil.successJson();
     }
 
-    private String checkInspectionRelation(InspectionTemplateRelationship template){
-        if(template.getItemId()==null)
-            return "itemId";
-        if(template.getItemType()==null)
-            return "itemType";
-        return "";
+
+    @Override
+    @Transactional
+    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId) throws Exception {
+
+        Registration registration=registrationService.findById(registationId);
+
+        if(!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
+            return CommonUtil.errorJson(ErrorEnum.E_703);
+        String check;
+        for (Prescription p:prescriptions){
+            p.setCreateTime(new Date(System.currentTimeMillis()));
+            p.setId(null);
+            p.setItemId(medicalRecordId);
+            p.setTemplate(false);
+            check=checkPrescription(p);
+            if(!check.equals("")){
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
+            }
+            prescriptionService.save(p);
+        }
+//        registration.setState(Constants.FINISH_DIAGNOSIS);
+        registrationService.update(registration);
+        return CommonUtil.successJson();
     }
 
+    @Override
+    @Transactional
+    public JSONObject savePrescriptionsTemp(DrugTemplate template,Integer medicalRecordId,Integer doctorId) throws Exception{
+        MedicalRecord medicalRecord=medicalRecordService.findById(medicalRecordId);
+        template.setHerbal(!medicalRecord.getWesternMedicine());
+        template.setCreatedById(doctorId);
+        template.setDepartmentId(doctorService.getDeptNo(doctorId));
+        drugTemplateService.save(template);
+
+        for (Prescription p: template.getPrescriptions()){
+            p.setId(null);
+            p.setTemplate(true);
+            p.setItemId(template.getId());
+            p.setCreateTime(new Date(System.currentTimeMillis()));
+            String check=checkPrescription(p);
+            if(!check.equals("")){
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
+            }
+            prescriptionService.save(p);
+        }
+        return CommonUtil.successJson();
+    }
+
+
+    private String checkPrescription(Prescription p){
+        if(p.getUsageId()==null){
+            return "usageId";
+        }
+        if(p.getFrequency()==null || p.getFrequency().equals("")){
+            return "frequency";
+        }
+        if(p.getDrugId()==null || drugService.findById(p.getDrugId())==null)
+            return "drug";
+        if(p.getAmount()==null )
+            return "amount";
+        if(p.getUseAmount()==null || p.getUseAmount().equals(""))
+            return "useAmount";
+        if(p.getDays()==null)
+            return "days";
+        if(p.getNeedSkinTest()==null)
+            return "needSkinTest";
+        return "";
+    }
 
     @Transactional
     public JSONObject saveRecordAndDiagnoseAsTemp(MedicalRecord record, MedicalRecordTemplate template, Integer doctorID) throws RuntimeException {
@@ -463,7 +509,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     private String cheakInspection(InspectionApplication inspectionApplication){
-        if (medicalRecordService.findById(inspectionApplication.getMedicalRecordId())==null)
+        if (medicalRecordService.findById(inspectionApplication.getItemId())==null)
             return "MedicalRecord";
         if (nonDrugService.findById(inspectionApplication.getNonDrugId())==null)
             return "NonDrug";
@@ -496,6 +542,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
     }
 
+    @Transactional
     public void saveDiagnoseTemp(List<Diagnose> diagnoses,Integer templateId){
         if(diagnoses!=null){
             for (Diagnose d:diagnoses){
@@ -509,5 +556,18 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 diagnoseService.save(diagnose);
             }
         }
+    }
+
+
+    @Transactional
+    public  JSONObject finishDiagnose(Integer registrationId){
+        Registration registration=registrationService.findById(registrationId);
+        if(registration==null)
+            return CommonUtil.errorJson(ErrorEnum.E_705);
+        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS) && !registration.getState().equals(Constants.FINAL_DIAGNOSIS))
+            return CommonUtil.errorJson(ErrorEnum.E_703);
+        registration.setState(Constants.FINISH_DIAGNOSIS);
+        registrationService.update(registration);
+        return CommonUtil.successJson();
     }
 }

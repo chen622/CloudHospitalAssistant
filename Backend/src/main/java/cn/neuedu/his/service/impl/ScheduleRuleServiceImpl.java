@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -17,4 +19,14 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     @Autowired
     private ScheduleRuleMapper scheduleRuleMapper;
 
+    @Override
+    public ScheduleRule getLegalSchedule(Integer doctorId, Integer period) {
+        return scheduleRuleMapper.getLegalSchedule(doctorId, period);
+    }
+
+
+    @Override
+    public List<ScheduleRule> getDoctorSchedule(Integer doctorId) {
+        return scheduleRuleMapper.getDoctorSchedule(doctorId);
+    }
 }
