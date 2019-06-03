@@ -1,13 +1,20 @@
 package cn.neuedu.his.service.impl;
 
+import cn.neuedu.his.util.SerializeUtil;
 import redis.clients.jedis.Jedis;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static jdk.internal.net.http.common.Utils.close;
 
 @Service
 public class RedisServiceImpl{
@@ -18,6 +25,7 @@ public class RedisServiceImpl{
     private String invoiceKey = "invoice-list";
     private String registrationKey = "registation-list";
 
+    //基础方法
     private Jedis getResource() {
         return jedisPool.getResource();
     }
@@ -59,6 +67,37 @@ public class RedisServiceImpl{
         return result;
     }
 
+    private void setObject(String key, Object value) {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.set(key.getBytes(), SerializeUtil.serialize(value));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    private Object getObject(String key, Object value) {
+        Object result = null;
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            byte[] data = jedis.get(key.getBytes());
+            result = SerializeUtil.unserialize(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+
+        return result;
+    }
+
+
+
+    //实现方法
     /**
      * 设置redis list
      * @param key
@@ -95,7 +134,7 @@ public class RedisServiceImpl{
         Jedis jedis=null;
         try{
             jedis = getResource();
-            result = Integer.valueOf(jedis.brpop(0, key).get(1));
+            result = Integer.valueOf(jedis.rpop(key));
             logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
@@ -120,6 +159,28 @@ public class RedisServiceImpl{
             returnResource(jedis);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * 设置发票号段
