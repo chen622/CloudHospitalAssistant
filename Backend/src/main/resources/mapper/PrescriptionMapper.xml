@@ -19,4 +19,8 @@
     <result column="is_template" jdbcType="BIT" property="isTemplate"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
+  <delete id="deleteByTemplateId">
+    delete  from prescription where  item_id=#{templateId} and  is_template=true ;
+  </delete>
+
 </mapper>

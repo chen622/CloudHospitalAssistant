@@ -15,5 +15,5 @@ public interface MedicalRecordTemplateService extends Service<MedicalRecordTempl
     public List<MedicalRecordTemplate> getDeptMR(Integer doctorID,Integer level) ;
 
     public List<MedicalRecordTemplate> getPersonalMR(Integer doctorID,Integer level);
-
+    List<MedicalRecordTemplate> getMeicalRecordTemByName(String name);
 }

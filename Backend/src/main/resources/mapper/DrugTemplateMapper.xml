@@ -23,5 +23,9 @@
     select * from drug_template where id=#{id}
   </select>
 
+  <select id="getPrescriptionsTemByName" resultMap="BaseResultMap">
+    select  * from  drug_template where  name like "%"#{name}"%"
+  </select>
+
 
 </mapper>

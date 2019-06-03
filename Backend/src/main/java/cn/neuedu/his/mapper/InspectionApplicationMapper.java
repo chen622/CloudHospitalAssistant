@@ -8,4 +8,5 @@ import org.springframework.stereotype.Component;
 
 public interface InspectionApplicationMapper extends MyMapper<InspectionApplication> {
     Integer hasMedicalRecordInspectionNotDone(Integer medicalRecordId);
+    public void  deleteByTemplateId(Integer templateId);
 }

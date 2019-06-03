@@ -49,4 +49,9 @@ public class MedicalRecordTemplateServiceImpl extends AbstractService<MedicalRec
             list=new ArrayList<>();
         return  list;
     }
+
+    @Override
+    public List<MedicalRecordTemplate> getMeicalRecordTemByName(String name) {
+        return medicalRecordTemplateMapper.getMeicalRecordTemByName(name);
+    }
 }

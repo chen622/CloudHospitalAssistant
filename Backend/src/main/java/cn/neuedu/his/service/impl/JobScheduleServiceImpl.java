@@ -7,6 +7,9 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -33,5 +36,23 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     @Override
     public void reduceRegistrationAmount(Integer id) {
         jobScheduleMapper.updateHaveRegistrationAmountReduce(id);
+    }
+
+    @Override
+    public void uodateHaveRegistration(Integer doctorId, Date date) {
+        jobScheduleMapper.uodateHaveRegistration(doctorId,date);
+    }
+
+    @Override
+    public JobSchedule getByDoctorId(Integer doctorId, Date date) {
+        return jobScheduleMapper.getByDoctorId(doctorId, date);
+    }
+
+    @Override
+    public HashMap<String, Integer> getRegistrationInof(Date time, Integer doctorId) {
+        HashMap<String ,Integer> map = jobScheduleMapper.getRegistrationInof(time, doctorId);
+        if(map==null)
+            map=new HashMap<>();
+        return map;
     }
 }
