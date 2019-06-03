@@ -54,7 +54,7 @@
     <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotTakeDrugPaymentByPatientId" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state}"/>
   </resultMap>
 
-  <select id="searchPatientAndNotTakeDrugPayment" resultMap="patientAndNotTakeDrugPayment">
+  <select id="searchPatientAndNotTakeDrug" resultMap="patientAndNotTakeDrug">
     select * , #{noPaymentTotalTypeId} as NoPaymentTotalTypeId, #{state} as state from patient where id = #{patientId}
   </select>
 

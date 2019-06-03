@@ -17,4 +17,8 @@ public class DiseaseFirstServiceImpl extends AbstractService<DiseaseFirst> imple
     @Autowired
     private DiseaseFirstMapper diseaseFirstMapper;
 
+    @Override
+    public DiseaseFirst getDiseaseByname(String name) {
+        return diseaseFirstMapper.getDiseaseByname(name);
+    }
 }

@@ -28,4 +28,15 @@ public class DiseaseSecondServiceImpl extends AbstractService<DiseaseSecond> imp
     public List<DiseaseSecond> getAll() {
         return diseaseSecondMapper.getAll();
     }
+
+    @Override
+    public DiseaseSecond findByIcdId(String icdId) {
+        return diseaseSecondMapper.findByIcdId(icdId);
+    }
+
+    @Override
+    public DiseaseSecond findByDiseaseCoding(String diseaseCoding) {
+        return diseaseSecondMapper.findByDiseaseCoding(diseaseCoding);
+    }
+
 }

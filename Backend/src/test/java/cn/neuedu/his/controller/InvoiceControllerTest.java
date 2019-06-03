@@ -62,4 +62,16 @@ public class InvoiceControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void setInvoiceNumberPhase() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/invoice/setPhase/100/105")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

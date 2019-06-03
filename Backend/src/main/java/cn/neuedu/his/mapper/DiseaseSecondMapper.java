@@ -11,4 +11,7 @@ public interface DiseaseSecondMapper extends MyMapper<DiseaseSecond> {
 
     public List<DiseaseSecond> findByName(String name);
     public List<DiseaseSecond>  getAll();
+
+    DiseaseSecond findByIcdId(String icdId);
+    DiseaseSecond findByDiseaseCoding(String diseaseCoding);
 }
