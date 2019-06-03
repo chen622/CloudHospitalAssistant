@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
@@ -62,5 +64,10 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
             throw new IndexOutOfBoundsException();
         }
 
+    }
+
+    @Override
+    public List<Drug> getDrugByName(String name) {
+        return drugMapper.getDrugByName(name);
     }
 }

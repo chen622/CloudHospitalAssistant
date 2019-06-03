@@ -17,4 +17,10 @@
     <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
     <result column="drug_type" javaType="INTEGER" property="drugType"/>
   </resultMap>
+
+  <select id="getDrugByName" resultMap="BaseResultMap">
+    select *
+    from drug
+    where name like concat('%',#{name},'%')
+  </select>
 </mapper>
