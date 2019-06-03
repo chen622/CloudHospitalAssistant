@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -26,5 +28,11 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     public Department getDepartmentByName(String name) {
         return departmentMapper.getDepartmentByName(name);
     }
+
+    @Override
+    public List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId) {
+        return departmentMapper.getAllDepartmentInformationByClassificationId(classificationId);
+    }
+
 
 }

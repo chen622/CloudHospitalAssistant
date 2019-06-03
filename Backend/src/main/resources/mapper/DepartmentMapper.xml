@@ -34,6 +34,12 @@
     where department.id = #{id}
   </select>
 
+  <select id="getAllDepartmentInformationByClassificationId" resultMap="AllDepartmentInformation">
+    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName
+    from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
+    where classification_id = #{classificationId}
+  </select>
+
   <select id="getDepartmentByName" resultMap="BaseResultMap">
     select *
     from department

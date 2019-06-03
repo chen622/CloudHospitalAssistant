@@ -1,9 +1,16 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.service.DrugService;
+import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import static cn.neuedu.his.util.constants.Constants.DRUG_TYPE_LIST;
 
 /**
  *
@@ -16,6 +23,71 @@ public class DrugController {
     @Autowired
     DrugService drugService;
 
+    @PostMapping("/delete/{id}")
+    public JSONObject deleteDrug(@PathVariable("id") Integer id , Authentication authentication){
 
+        //检测是药物管理员权限
+        try{
+            PermissionCheck.isDrugAdmin(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        Drug drug = drugService.findById(id);
+
+        //判断药物是否存在
+        if (drug == null)
+            return CommonUtil.errorJson(ErrorEnum.E_626);
+
+        drugService.deleteById(id);
+
+        return CommonUtil.successJson(id);
+    }
+
+    @PostMapping("/modify")
+    public JSONObject modifyDrug(@RequestBody JSONObject jsonObject , Authentication authentication){
+
+        //检测是药物管理员权限
+        try{
+            PermissionCheck.isDrugAdmin(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+
+        //判断药物是否存在
+        if (drugService.findById(drug.getId()) == null)
+            return CommonUtil.errorJson(ErrorEnum.E_626);
+
+        //判断药物类别是否正确
+        if (DRUG_TYPE_LIST.contains(drug))
+            return CommonUtil.errorJson(ErrorEnum.E_627);
+
+        drugService.update(drug);
+
+        return CommonUtil.successJson(drug);
+    }
+
+    @PostMapping("/insert")
+    public JSONObject insertDrug(@RequestBody JSONObject jsonObject , Authentication authentication){
+
+        //检测是药物管理员权限
+        try{
+            PermissionCheck.isDrugAdmin(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+
+        //判断药物类别是否正确
+        if (DRUG_TYPE_LIST.contains(drug))
+            return CommonUtil.errorJson(ErrorEnum.E_627);
+
+        drugService.update(drug);
+
+        return CommonUtil.successJson(drug);
+    }
 
 }

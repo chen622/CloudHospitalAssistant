@@ -32,4 +32,5 @@ public class ConstantVariableController {
     public  JSONObject getNamebyId(Integer id){
         return CommonUtil.successJson(constantVariableService.findById(id).getName());
     }
+
 }

@@ -15,4 +15,10 @@
     from department_kind
     where kind_name = #{kindName};
   </select>
+
+  <select id="getDepartmentKindByType" resultMap="BaseResultMap">
+    select *
+    from department_kind
+    where classification_id = #{classification_id};
+  </select>
 </mapper>
