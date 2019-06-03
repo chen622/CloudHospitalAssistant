@@ -60,7 +60,7 @@ public class SerializeUtil {
      * * @param list
      * * @return
      * */
-    public static byte[] serializeList(List<Object> list) {
+    public static byte[] serializeList(List<?> list) {
         if (list.isEmpty()) {
             return null;
         }
@@ -87,11 +87,11 @@ public class SerializeUtil {
      * * 	 * @param lb
      * * @return
      * */
-    public static List<Object> unserializeList(byte[] bytes) {
+    public static List<?> unserializeList(byte[] bytes) {
         if (bytes == null) {
             return null;
         }
-        List<Object> list = new ArrayList<Object>();
+        List<Object> list = new ArrayList<>();
         ByteArrayInputStream bais = null;
         ObjectInputStream ois = null;
         try {			// 反序列化

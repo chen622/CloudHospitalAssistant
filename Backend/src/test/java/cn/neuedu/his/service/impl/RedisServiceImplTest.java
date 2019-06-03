@@ -17,6 +17,7 @@ public class RedisServiceImplTest {
 
     @Test
     public void setInvoiceSerialsNumberList() {
+        redisService.setInvoiceSerialsNumberList(50, 60);
     }
 
     @Test

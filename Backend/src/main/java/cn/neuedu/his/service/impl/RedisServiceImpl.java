@@ -88,7 +88,7 @@ public class RedisServiceImpl{
         return result;
     }
 
-    private void setObjectList(String key, List<Object> list) {
+    private void setObjectList(String key, List<?> list) {
         Jedis jedis=null;
         try{
             jedis = getResource();
@@ -100,8 +100,8 @@ public class RedisServiceImpl{
         }
     }
 
-    private List<Object> getObjectList(String key) {
-        List<Object> result = null;
+    private List<?> getObjectList(String key) {
+        List<?> result = null;
         Jedis jedis=null;
         try{
             jedis = getResource();
@@ -133,7 +133,7 @@ public class RedisServiceImpl{
             int startNum = start.intValue();
             int endNum = end.intValue();
             for (int i = startNum; i <= endNum; i++) {
-                jedis.rpush(key, String.valueOf(i));
+                jedis.lpush(key, String.valueOf(i));
             }
             logger.info("Redis set success - " + key + ", start:" + start + ", end:" + end);
         } catch (Exception e) {
