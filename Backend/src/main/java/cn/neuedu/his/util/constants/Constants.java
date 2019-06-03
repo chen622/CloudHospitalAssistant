@@ -37,6 +37,9 @@ public class Constants {
     public static final List<Integer> DEPARTMENT_KIND_LIST = Arrays.asList(101,102,103,104);
     //所有午别分类
     public static final List<Integer> Period_LIST = Arrays.asList(301,302,303);
+    //所有药品类型
+    public static final List<Integer> DRUG_TYPE_LIST = Arrays.asList(1101,1102,1103);
+
 
     //医院管理员
     public static final Integer HOSPITAL_ADMIN = 606;
@@ -45,7 +48,7 @@ public class Constants {
     public static final Integer FINANCIAL_ADMIN=605;
 
     //药物管理员
-    public static final Integer MEDINCINE_ADMIN = 604;
+    public static final Integer MEDICINE_ADMIN = 604;
 
     //临床科室
     public static final  Integer CLINICAL_DEPARTMENTS=101;
