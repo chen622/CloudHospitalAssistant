@@ -113,4 +113,20 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
+
+    /**
+     * 药房管理员权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isDrugAdmin(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId.equals(MEDICINE_ADMIN)) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
 }

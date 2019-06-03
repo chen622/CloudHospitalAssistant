@@ -196,6 +196,8 @@ public class UserController {
         if (user.getIdentifyId().length() != 18)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userService.update(user);
 
         user = userService.getUserByUsername(user.getUsername());
