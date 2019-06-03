@@ -74,9 +74,9 @@ public class PaymentController {
             else if (e2.getMessage().equals("invoice"))
                 return CommonUtil.errorJson(ErrorEnum.E_505);
         }
-        /*catch (IndexOutOfBoundsException e3) {
+        catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
-        }*/
+        }
 
         return CommonUtil.successJson();
     }

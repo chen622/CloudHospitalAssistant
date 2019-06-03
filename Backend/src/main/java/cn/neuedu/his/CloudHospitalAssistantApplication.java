@@ -1,8 +1,5 @@
 package cn.neuedu.his;
 
-import cn.neuedu.his.controller.ConstantVariableController;
-import cn.neuedu.his.controller.RegistrationController;
-import cn.neuedu.his.model.Registration;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
@@ -51,5 +48,6 @@ public class CloudHospitalAssistantApplication {
 
         return new HttpMessageConverters((HttpMessageConverter<?>) fastConverter);
     }
+
 }
 

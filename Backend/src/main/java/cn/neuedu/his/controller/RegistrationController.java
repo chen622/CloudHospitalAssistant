@@ -52,6 +52,11 @@ public class RegistrationController {
             registrationService.registerRegistrationInfo(registrarId, jsonObject);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }catch (IndexOutOfBoundsException e1) {
+            if(e1.getMessage().equals("invoice"))
+                return CommonUtil.errorJson(ErrorEnum.E_509);
+            if (e1.getMessage().equals("sequence"))
+                return CommonUtil.errorJson(ErrorEnum.E_510);
         }
 
         return CommonUtil.successJson();

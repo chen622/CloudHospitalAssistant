@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -41,6 +40,23 @@ public class InvoiceController {
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
+    }
+
+    /**
+     * 将发票字段存入redis中
+     * @param start
+     * @param end
+     * @return
+     */
+    @PostMapping("/setPhase/{start}/{end}")
+    public  JSONObject setInvoiceNumberPhase(@PathVariable("start") Integer start, @PathVariable("end") Integer end) {
+        try {
+            invoiceService.setInvoiceNumberToRedis(start, end);
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_508);
+        }
+
+        return CommonUtil.successJson();
     }
 
 }
