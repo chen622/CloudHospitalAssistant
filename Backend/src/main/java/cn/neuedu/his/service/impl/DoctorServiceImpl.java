@@ -320,7 +320,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if(record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
             return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("finalDiagnose"));
 
-
         registration.setState(Constants.FINAL_DIAGNOSIS);
         registrationService.update(registration);
         ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecordId,true,false);
