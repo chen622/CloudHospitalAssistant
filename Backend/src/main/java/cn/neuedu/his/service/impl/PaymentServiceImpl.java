@@ -109,12 +109,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     /**
      * 形成冲红缴费单（若是药物类，则处于退药不退钱状态）
      * @param paymentId
-     * @param paymentAdminId
+     * @param adminId
      * @param retreatQuantity -- 退回数量，主要针对drug，其余均设为1即可
      * @return
      */
     @Override
-    public Integer produceRetreatPayment(Integer paymentId, Integer paymentAdminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+    public Integer produceRetreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
         ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
@@ -134,7 +134,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         //填入新的信息
         Payment newPayment = new Payment();
         newPayment.setUnitPrice(originalPayment.getUnitPrice());
-        newPayment.setOperatorId(paymentAdminId);
         newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
         newPayment.setPaymentTypeId(originalPayment.getPaymentTypeId());
         newPayment.setItemId(originalPayment.getItemId());
@@ -148,12 +147,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             if (retreatQuantity > retreatIndex)
                 throw new IndexOutOfBoundsException();
             newPayment.setQuantity(retreatQuantity * (-1));
+            newPayment.setProjectOperatorId(adminId);
         }
         else {
             newPayment.setState(HAVE_RETREAT);
             if (retreatIndex.equals(0))
                 throw new IndexOutOfBoundsException();
             newPayment.setQuantity(originalPayment.getQuantity() * (-1));
+            newPayment.setOperatorId(adminId);
         }
 
         save(newPayment);

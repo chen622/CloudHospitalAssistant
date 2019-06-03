@@ -41,4 +41,26 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         payment.setProjectOperatorId(drugOperatorId);
         paymentService.update(payment);
     }
+
+    @Transactional
+    @Override
+    public void retreatDrug(Integer paymentId, Integer drugId, Integer quantity, Integer drugOperatorId) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+        Drug drug = findById(drugId);
+        if (drug == null)
+            throw new IllegalArgumentException("drugId");
+
+        drug.setStockAmount(drug.getStockAmount() + quantity);
+        update(drug);
+
+        try {
+            paymentService.produceRetreatPayment(paymentId, drugOperatorId, quantity);
+        }catch (IllegalArgumentException e1) {
+            throw new IllegalArgumentException(e1.getMessage());
+        }catch (UnsupportedOperationException e2) {
+            throw new UnsupportedOperationException(e2.getMessage());
+        }catch (IndexOutOfBoundsException e3) {
+            throw new IndexOutOfBoundsException();
+        }
+
+    }
 }

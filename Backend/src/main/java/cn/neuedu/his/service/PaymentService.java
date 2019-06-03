@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
-    Integer produceRetreatPayment(Integer paymentId, Integer paymentAdminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
+    Integer produceRetreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void retreatDrugFee(Integer paymentId, Integer paymentAdminId);
 
 
