@@ -25,18 +25,18 @@ public class InspectionTemplateServiceImpl extends AbstractService<InspectionTem
     private InspectionTemplateRelationshipService relationshipService;
 
     @Override
-    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level,Integer nonDrugType) {
-        return inspectionTemplateMapper.getHospitalCheckTemps(doctorID,level,nonDrugType);
+    public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level) {
+        return inspectionTemplateMapper.getHospitalCheckTemps(doctorID,level);
     }
 
     @Override
-    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID, Integer level, Integer nonDrugType) {
-        return inspectionTemplateMapper.getDeptCheckTemps(doctorID, level,nonDrugType);
+    public List<InspectionTemplate> getDeptCheckTemps(Integer doctorID, Integer level) {
+        return inspectionTemplateMapper.getDeptCheckTemps(doctorID, level);
     }
 
     @Override
-    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID, Integer level, Integer nonDrugType) {
-        return inspectionTemplateMapper.getPersonalCheckTemps(doctorID, level,nonDrugType);
+    public List<InspectionTemplate> getPersonalCheckTemps(Integer doctorID, Integer level) {
+        return inspectionTemplateMapper.getPersonalCheckTemps(doctorID, level);
     }
 
 }

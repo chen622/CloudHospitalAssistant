@@ -18,7 +18,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     private InspectionApplicationMapper inspectionApplicationMapper;
 
     @Override
-    public Boolean hasMedicalRecordInspection(Integer medicalRecordId) {
-        return inspectionApplicationMapper.hasMedicalRecordInspection(medicalRecordId)>0?true:false;
+    public Boolean hasMedicalRecordInspectionNotDone(Integer medicalRecordId) {
+        return inspectionApplicationMapper.hasMedicalRecordInspectionNotDone(medicalRecordId)>0?true:false;
     }
 }

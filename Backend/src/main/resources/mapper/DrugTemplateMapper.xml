@@ -10,7 +10,18 @@
     <result column="level" jdbcType="INTEGER" property="level" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
+    <result column="is_herbal" jdbcType="BIT" property="isHerbal" />
+    <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription" select="getItems" column="id"/>
   </resultMap>
+  
+  <select id="getItems" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap">
+    select * from prescription where  item_id=#{id} and  is_template=true ;
+  </select>
+
+
+  <select id="getDrugTemp" resultMap="BaseResultMap">
+    select * from drug_template where id=#{id}
+  </select>
 
 
 </mapper>

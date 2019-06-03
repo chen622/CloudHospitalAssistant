@@ -19,6 +19,26 @@ public class DrugTemplate {
     @Column(name = "created_by_id")
     private Integer createdById;
 
+    @Column(name = "is_herbal")
+    private Boolean isHerbal;
+
+    List<Prescription> prescriptions;
+
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
+    }
+
+    public Boolean getHerbal() {
+        return isHerbal;
+    }
+
+    public void setHerbal(Boolean herbal) {
+        isHerbal = herbal;
+    }
 
     /**
      * @return id

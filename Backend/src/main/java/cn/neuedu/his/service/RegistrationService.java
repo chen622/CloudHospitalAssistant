@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 public interface RegistrationService extends Service<Registration> {
     void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException;
     void retreatRegistrationInfo(Integer registrationId, Integer registrarId);
-    List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state);
+    List<Registration> getAllWaitingRegistration(Integer doctorID, Integer state, Date time);
     List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
     ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId);
 }

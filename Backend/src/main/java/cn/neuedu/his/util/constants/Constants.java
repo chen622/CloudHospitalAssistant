@@ -125,7 +125,6 @@ public class Constants {
     public static final  Integer REGISTRATIONSTATE=8;
     //预约
     public static final  Integer RESERVATION=801;
-
     // 待诊
     public static final  Integer WAITING_FOR_TREATMENT=802;
     //初诊

@@ -37,10 +37,10 @@ public class Registration {
     @Column(name = "create_time")
     private Date createTime = new Date(System.currentTimeMillis());
 
-    private int sequence;
+    private Integer sequence;
 
     @Column(name = "serial_number")
-    private int serialNumber;
+    private Integer serialNumber;
 
     private Integer age;
 
@@ -178,11 +178,11 @@ public class Registration {
         this.sequence = sequence;
     }
 
-    public int getSerialNumber() {
+    public Integer getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(int serialNumber) {
+    public void setSerialNumber(Integer serialNumber) {
         this.serialNumber = serialNumber;
     }
 }
