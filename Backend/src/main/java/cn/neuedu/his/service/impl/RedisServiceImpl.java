@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
+import java.util.List;
+
 @Service
 public class RedisServiceImpl{
     private static Logger logger = Logger.getLogger(RedisServiceImpl.class);
@@ -14,7 +16,7 @@ public class RedisServiceImpl{
     private JedisPool jedisPool;    //jedisPool不属于springboot框架支持的redis类,所以需要自行注入到spring中。通过配置类RedisConfig类注入的
 
     private String invoiceKey = "invoice-list";
-    private String registrationKey = "registation-list";
+    private String registrationKey = "registration-list";
 
     //基础方法
     private Jedis getResource() {
@@ -86,6 +88,34 @@ public class RedisServiceImpl{
         return result;
     }
 
+    private void setObjectList(String key, List<Object> list) {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.set(key.getBytes(), SerializeUtil.serializeList(list));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    private List<Object> getObjectList(String key) {
+        List<Object> result = null;
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            byte[] data = jedis.get(key.getBytes());
+            result = SerializeUtil.unserializeList(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+
+        return result;
+    }
+
 
 
     //实现方法
@@ -103,7 +133,7 @@ public class RedisServiceImpl{
             int startNum = start.intValue();
             int endNum = end.intValue();
             for (int i = startNum; i <= endNum; i++) {
-                jedis.lpush(key, String.valueOf(i));
+                jedis.rpush(key, String.valueOf(i));
             }
             logger.info("Redis set success - " + key + ", start:" + start + ", end:" + end);
         } catch (Exception e) {
@@ -163,22 +193,6 @@ public class RedisServiceImpl{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * 设置发票号段
      * @param start
@@ -214,7 +228,7 @@ public class RedisServiceImpl{
      */
     public void setRegistrationSequenceList(Integer id, Integer amount) throws IllegalArgumentException{
         try {
-            setNumberList(id.toString() + "-" + registrationKey, 0, amount);
+            setNumberList(id.toString() + "-" + registrationKey, 1, amount);
         }catch (IllegalArgumentException e) {
             throw new IllegalArgumentException();
         }
