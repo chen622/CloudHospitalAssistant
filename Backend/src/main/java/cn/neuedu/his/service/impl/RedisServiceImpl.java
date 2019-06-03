@@ -1,5 +1,8 @@
 package cn.neuedu.his.service.impl;
 
+import cn.neuedu.his.model.InspectionApplication;
+import cn.neuedu.his.model.MedicalRecord;
+import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.util.SerializeUtil;
 import redis.clients.jedis.Jedis;
 import org.apache.log4j.Logger;
@@ -7,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -60,19 +65,20 @@ public class RedisServiceImpl{
         return result;
     }
 
-    private void setObject(String key, Object value) {
+    private void setObject(String key, Object value) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
             jedis.set(key.getBytes(), SerializeUtil.serialize(value));
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
     }
 
-    private Object getObject(String key, Object value) {
+    private Object getObject(String key ) throws Exception{
         Object result = null;
         Jedis jedis=null;
         try{
@@ -80,7 +86,7 @@ public class RedisServiceImpl{
             byte[] data = jedis.get(key.getBytes());
             result = SerializeUtil.unserialize(data);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new  Exception();
         }finally{
             returnResource(jedis);
         }
@@ -167,12 +173,6 @@ public class RedisServiceImpl{
         return result;
     }
 
-    /**
-     * 在某列中加入元素
-     * @param key
-     * @param sequence
-     * @throws IllegalArgumentException
-     */
     private void addNumberToList(String key, Integer sequence) throws IllegalArgumentException{
         Jedis jedis=null;
         try{
@@ -228,7 +228,7 @@ public class RedisServiceImpl{
      */
     public void setRegistrationSequenceList(Integer id, Integer amount) throws IllegalArgumentException{
         try {
-            setNumberList(id.toString() + "-" + registrationKey, 1, amount);
+            setNumberList(id.toString() + "-" + registrationKey, 0, amount);
         }catch (IllegalArgumentException e) {
             throw new IllegalArgumentException();
         }
@@ -261,4 +261,43 @@ public class RedisServiceImpl{
             throw new IllegalArgumentException();
         }
     }
+
+
+    /**
+     * 病历暂存
+     * @param id
+     * @param record
+     * @throws Exception
+     */
+    public void setTemporaryMedicalRecord(Integer id, MedicalRecord record) throws Exception {
+        setObject(id.toString()+"MR", record);
+    }
+
+    /**
+     * 获得暂存病历
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public MedicalRecord getTemporaryMedicalRecord(Integer id) throws Exception {
+        return (MedicalRecord) getObject(id.toString()+"MR");
+    }
+
+
+
+    public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
+        setObjectList(id.toString()+"applications", applications);
+        setObjectList(id.toString()+"prescriptions", prescriptions);
+    }
+
+    /**
+     * 获得检查
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public MedicalRecord getTemporaryInspection(Integer id) throws Exception {
+        return (MedicalRecord) getObject(id.toString()+"Inspection");
+    }
+
 }

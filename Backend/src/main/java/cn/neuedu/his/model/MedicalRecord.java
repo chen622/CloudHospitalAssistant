@@ -1,10 +1,11 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Table(name = "medical_record")
-public class MedicalRecord {
+public class MedicalRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
