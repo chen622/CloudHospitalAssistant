@@ -1,16 +1,21 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  *
@@ -24,6 +29,8 @@ public class DepartmentController {
     DepartmentService departmentService;
     @Autowired
     DepartmentKindService departmentKindService;
+    @Autowired
+    ConstantVariableService constantVariableService;
 
     /**
      * 获得一个部门的详细信息
@@ -118,6 +125,25 @@ public class DepartmentController {
         departmentService.update(department);
 
         return CommonUtil.successJson(department);
+    }
+
+    @GetMapping("/getAllDepartmentKind")
+    public  JSONObject getAllDepartmentKind(){
+        //获得科室大类
+        List<ConstantVariable> constantVariables = constantVariableService.getDepartmentType(1);
+        JSONObject returnJSON  = new JSONObject();
+        returnJSON.put("type",constantVariables);
+
+        JSONArray departments  = new JSONArray();
+        //获得分别与大类对应的科室信息
+        constantVariables.forEach(kind -> {
+            departments.add(departmentService.getAllDepartmentInformationByClassificationId(kind.getId()));
+        });
+        //{kind:[],depas:[[],[]] }
+
+
+        returnJSON.put("departments",departments);
+        return CommonUtil.successJson(returnJSON);
     }
 
 

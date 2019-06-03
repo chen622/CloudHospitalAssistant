@@ -7,6 +7,7 @@ import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -113,19 +114,5 @@ public class DepartmentKindController {
 
         return CommonUtil.successJson(departmentKind);
     }
-
-    @PostMapping("/getAllDepartmentKind")
-    public  JSONObject getNamebyId(){
-        List<ConstantVariable> constantVariables = constantVariableService.findAll();
-        List<DepartmentKind> departmentKinds = departmentKindService.findAll();
-
-        Object[] results = new Object[2];
-        results[0] =constantVariables;
-        results[1] = departmentKinds;
-
-        return CommonUtil.successJson(results);
-    }
-
-
 
 }
