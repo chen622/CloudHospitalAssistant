@@ -502,6 +502,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             for (InspectionApplication p:applications){
                 p.setItemId(tempId);
                 p.setTemplate(true);
+                p.setCreateTime(new Date(System.currentTimeMillis()));
                 inspectionApplicationService.save(p);
             }
         }
@@ -522,6 +523,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if(!template.getCreatedById().equals(doctorId)){
             return CommonUtil.errorJson(ErrorEnum.E_706.addErrorParamName("inspectionTemplate"));
         }
+        inspectionTemplateService.deleteRelationship(id);
         inspectionApplicationService.deleteById(id);
         return CommonUtil.successJson();
     }

@@ -329,7 +329,7 @@ public class DoctorControllerTest {
         MedicalRecordTemplate medicalRecord = templateService.findById(1);
         JSONObject object=new JSONObject();
         medicalRecord.setName("测试更新病历模板");
-        object.put("medicalRecord", medicalRecord);
+        object.put("medicalRecordTemplate", medicalRecord);
         String  requestJson=object.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/updateMedicalRecordTemp")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -473,6 +473,8 @@ public class DoctorControllerTest {
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
         prescription.setDays(2);
+        prescription.setItemId(1);
+        prescription.setCreateTime(new Date());
 
         List<Prescription> prescriptions=new ArrayList<>();
         List<InspectionApplication> applications=new ArrayList<>();
@@ -486,6 +488,9 @@ public class DoctorControllerTest {
         template.setName("测试更新模板");
         template.setLevel(Constants.PERSONALLEVEL);
         template.setId(1);
+        template.setCreatedById(1);
+        template.setDepartmentId(1);
+
 
         JSONObject object=new JSONObject();
         object.put("template",template);
