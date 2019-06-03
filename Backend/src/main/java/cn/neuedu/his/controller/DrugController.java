@@ -7,6 +7,9 @@ import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,12 +26,39 @@ public class DrugController {
     @Autowired
     DrugService drugService;
 
+    /**
+     * 发药
+     * @param paymentId
+     * @param drugId
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/takeDrug/{paymentId}/{drugId}")
+    public JSONObject takeDrug(@PathVariable("paymentId") Integer paymentId, @PathVariable("drugId") Integer drugId, Authentication authentication) {
+        Integer drugAdmin;
+        try {
+            drugAdmin = PermissionCheck.getIdByDrugAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            drugService.takeDrug(paymentId, drugId, drugAdmin);
+        }catch (IllegalArgumentException e1) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_506);
+        }
+
+        return CommonUtil.successJson();
+    }
+
     @PostMapping("/delete/{id}")
     public JSONObject deleteDrug(@PathVariable("id") Integer id , Authentication authentication){
 
         //检测是药物管理员权限
         try{
-            PermissionCheck.isDrugAdmin(authentication);
+            PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -49,7 +79,7 @@ public class DrugController {
 
         //检测是药物管理员权限
         try{
-            PermissionCheck.isDrugAdmin(authentication);
+            PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -74,7 +104,7 @@ public class DrugController {
 
         //检测是药物管理员权限
         try{
-            PermissionCheck.isDrugAdmin(authentication);
+            PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -89,5 +119,4 @@ public class DrugController {
 
         return CommonUtil.successJson(drug);
     }
-
 }

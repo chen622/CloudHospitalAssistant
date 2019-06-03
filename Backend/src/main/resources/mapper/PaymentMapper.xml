@@ -17,6 +17,7 @@
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
     <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
   </resultMap>
 
   <select id="selectByItemId" resultMap="BaseResultMap">

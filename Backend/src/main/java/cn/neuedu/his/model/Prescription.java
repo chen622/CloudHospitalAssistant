@@ -56,6 +56,8 @@ public class Prescription {
     @Column(name = "create_time")
     private Date createTime;
 
+    private Drug drug;
+
     public Prescription() {
         return;
     }
@@ -255,5 +257,13 @@ public class Prescription {
      */
     public void setSkinTestResult(Boolean skinTestResult) {
         this.skinTestResult = skinTestResult;
+    }
+
+    public Drug getDrug() {
+        return drug;
+    }
+
+    public void setDrug(Drug drug) {
+        this.drug = drug;
     }
 }

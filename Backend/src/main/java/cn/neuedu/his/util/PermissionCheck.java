@@ -120,7 +120,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isDrugAdmin(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer getIdByDrugAdmin(Authentication authentication) throws AuthenticationServiceException{
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         if (typeId.equals(MEDICINE_ADMIN)) {

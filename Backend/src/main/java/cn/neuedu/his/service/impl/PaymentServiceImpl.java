@@ -241,7 +241,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @param typeId
      * @return 总缴费类型
      */
-    public Integer getTotalPaymentType(Integer typeId) {
+    private Integer getTotalPaymentType(Integer typeId) {
         return paymentTypeService.findById(typeId).getType();
     }
 }

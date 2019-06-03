@@ -93,4 +93,51 @@ public class PatientController {
         return CommonUtil.successJson(patient);
     }
 
+    /**
+     * 获取患者需要取的药物信息
+     * @param patientId
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDrugTaken/{patientId}")
+    public JSONObject getDrugTakenInfo(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        Patient patient;
+        try {
+            patient = patientService.findPatientAndNotTakeDrug(patientId);
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+
+        return CommonUtil.successJson(patient);
+    }
+
+    /**
+     * 获取患者某一时期药物信息
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDrugDuringDate")
+    public JSONObject getDrugDuringDateInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        Patient patient;
+        try {
+            patient = patientService.findPatientAndDrugDuringDate(jsonObject.getInteger("patientId"), jsonObject.getDate("startDate"), jsonObject.getDate("endDate"));
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+
+        return CommonUtil.successJson(patient);
+    }
 }
