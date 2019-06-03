@@ -5,7 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import static jdk.internal.net.http.common.Utils.close;
+import static com.alibaba.fastjson.util.IOUtils.close;
+
 
 public class SerializeUtil {
     /**

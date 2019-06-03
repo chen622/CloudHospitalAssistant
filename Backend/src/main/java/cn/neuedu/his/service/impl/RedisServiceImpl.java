@@ -7,15 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static jdk.internal.net.http.common.Utils.close;
-
 @Service
 public class RedisServiceImpl{
     private static Logger logger = Logger.getLogger(RedisServiceImpl.class);
@@ -146,6 +137,12 @@ public class RedisServiceImpl{
         return result;
     }
 
+    /**
+     * 在某列中加入元素
+     * @param key
+     * @param sequence
+     * @throws IllegalArgumentException
+     */
     private void addNumberToList(String key, Integer sequence) throws IllegalArgumentException{
         Jedis jedis=null;
         try{
