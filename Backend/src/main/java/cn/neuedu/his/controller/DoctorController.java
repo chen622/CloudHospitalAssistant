@@ -4,6 +4,7 @@ import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -36,6 +37,67 @@ public class DoctorController {
 
     @Autowired
     MedicalRecordService medicalRecordService;
+
+    @Autowired
+    RedisServiceImpl redisService;
+
+    @PostMapping("/saveTemporaryMR")
+    public JSONObject saveTemporaryMR(@RequestBody  JSONObject object){
+        Integer id=Integer.parseInt(object.get("registrationId").toString());
+        MedicalRecord record=JSONObject.parseObject(object.get("record").toString(), MedicalRecord.class);
+        try {
+            redisService.setTemporaryMedicalRecord(id,record);
+        } catch (Exception e) {
+           return CommonUtil.errorJson(ErrorEnum.E_801);
+        }
+        return CommonUtil.successJson();
+    }
+
+
+    @GetMapping("/getTemporaryMR/{regsirationId}")
+    public JSONObject getTemporaryMR(@PathVariable("regsirationId") Integer regsirationId){
+        try {
+            MedicalRecord record= redisService.getTemporaryMedicalRecord(regsirationId);
+            return  CommonUtil.successJson(record);
+        } catch (Exception e) {
+           return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+    }
+
+
+    @PostMapping("/saveTemporaryInspection")
+    public JSONObject saveTemporaryInspection(@RequestBody JSONObject object){
+        Integer id=Integer.parseInt(object.get("registrationId").toString());
+        List<InspectionApplication> record=JSONObject.parseArray(object.get("inspections").toString(), InspectionApplication.class);
+        List<Prescription> prescriptions=JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
+        try {
+            redisService.setTemporaryInspection(id,record,prescriptions);
+        } catch (Exception e) {
+           return CommonUtil.errorJson(ErrorEnum.E_801);
+        }
+        return CommonUtil.successJson();
+    }
+
+
+    @GetMapping("/getTemporaryInspection/{regsirationId}")
+    public JSONObject getTemporaryInspection(@PathVariable("regsirationId") Integer regsirationId){
+        try {
+            redisService.getTemporaryMedicalRecord(regsirationId);
+        } catch (Exception e) {
+           return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+        return CommonUtil.successJson();
+    }
+
+
+
+
+
+
+
+
+
+
 
     //PARTONE-门诊病例首页
 

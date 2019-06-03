@@ -191,6 +191,8 @@ public class Constants {
     public static final  Integer MEDIUM_DRUG_FEE_TYPE=202;
     //中草药
     public static final  Integer CHI_DRUG_FEE_TYPE=203;
+    //挂号费
+    public static final Integer REGISTRATION_FEE_TYPE=301;
 
 
 

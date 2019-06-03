@@ -63,6 +63,93 @@ public class DoctorControllerTest {
     }
 
     @Test
+    public void saveTemporaryMR() throws Exception{
+        Integer registrationId=1;
+        MedicalRecord record=new MedicalRecord();
+        record.setRegistrationId(1);
+        record.setIsPregnant(false);
+        record.setIsWesternMedicine(false);
+        record.setPreviousTreatment("测试redis");
+        JSONObject object=new JSONObject();
+        object.put("registrationId", registrationId);
+        object.put("record", record);
+
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryMR")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getTemporaryMR() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryMR/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    public void saveTemporaryInspection() throws Exception{
+
+        InspectionApplication i = new InspectionApplication();
+        i.setQuantity(1);
+        i.setNonDrugId(1);
+
+        InspectionApplication i1 = new InspectionApplication();
+        i1.setQuantity(2);
+        i1.setNonDrugId(2);
+
+        Prescription prescription = new Prescription();
+        prescription.setDrugId(1);
+        prescription.setNeedSkinTest(false);
+        prescription.setNote("测试申请检查项目");
+        prescription.setTemplate(false);
+        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUseAmount("三个");
+        prescription.setAmount(1);
+        prescription.setFrequency("一天一次");
+        prescription.setDays(2);
+
+        List<Prescription> prescriptions=new ArrayList<>();
+        List<InspectionApplication> applications=new ArrayList<>();
+
+        prescriptions.add(prescription);
+        applications.add(i);
+        applications.add(i1);
+
+
+        JSONObject object=new JSONObject();
+        object.put("inspections",applications);
+        object.put("prescriptions", prescriptions);
+        object.put("registrationId", 1);
+
+        String  requestJson=object.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryInspection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+    @Test
     public void getAllRecordByPatientId() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRecord/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

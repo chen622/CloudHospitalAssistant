@@ -57,7 +57,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             payment.setUnitPrice(payment.getUnitPrice() .add(new BigDecimal(1)));
         payment.setSettlementTypeId(settlementTypeId);
         payment.setCreateTime(new Date(System.currentTimeMillis()));
-        payment.setPaymentTypeId(REGISTRATION_PAYMENT_TYPE);
+        payment.setPaymentTypeId(REGISTRATION_FEE_TYPE);
         payment.setState(HAVE_PAID);
         save(payment);
         return payment.getId();

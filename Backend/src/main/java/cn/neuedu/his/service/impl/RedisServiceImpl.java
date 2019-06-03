@@ -1,13 +1,18 @@
 package cn.neuedu.his.service.impl;
 
+import cn.neuedu.his.model.InspectionApplication;
+import cn.neuedu.his.model.MedicalRecord;
+import cn.neuedu.his.model.Prescription;
+import cn.neuedu.his.util.SerializeUtil;
 import redis.clients.jedis.Jedis;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class RedisServiceImpl{
@@ -16,8 +21,9 @@ public class RedisServiceImpl{
     private JedisPool jedisPool;    //jedisPool不属于springboot框架支持的redis类,所以需要自行注入到spring中。通过配置类RedisConfig类注入的
 
     private String invoiceKey = "invoice-list";
-    private String registrationKey = "registation-list";
+    private String registrationKey = "registration-list";
 
+    //基础方法
     private Jedis getResource() {
         return jedisPool.getResource();
     }
@@ -59,6 +65,66 @@ public class RedisServiceImpl{
         return result;
     }
 
+    private void setObject(String key, Object value) throws Exception{
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.set(key.getBytes(), SerializeUtil.serialize(value));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    private Object getObject(String key ) throws Exception{
+        Object result = null;
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            byte[] data = jedis.get(key.getBytes());
+            result = SerializeUtil.unserialize(data);
+        } catch (Exception e) {
+            throw new  Exception();
+        }finally{
+            returnResource(jedis);
+        }
+
+        return result;
+    }
+
+    private void setObjectList(String key, List<?> list) {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.set(key.getBytes(), SerializeUtil.serializeList(list));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    private List<?> getObjectList(String key) {
+        List<?> result = null;
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            byte[] data = jedis.get(key.getBytes());
+            result = SerializeUtil.unserializeList(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+
+        return result;
+    }
+
+
+
+    //实现方法
     /**
      * 设置redis list
      * @param key
@@ -95,7 +161,7 @@ public class RedisServiceImpl{
         Jedis jedis=null;
         try{
             jedis = getResource();
-            result = Integer.valueOf(jedis.brpop(0, key).get(1));
+            result = Integer.valueOf(jedis.rpop(key));
             logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
@@ -120,6 +186,12 @@ public class RedisServiceImpl{
             returnResource(jedis);
         }
     }
+
+
+
+
+
+
 
     /**
      * 设置发票号段
@@ -189,4 +261,43 @@ public class RedisServiceImpl{
             throw new IllegalArgumentException();
         }
     }
+
+
+    /**
+     * 病历暂存
+     * @param id
+     * @param record
+     * @throws Exception
+     */
+    public void setTemporaryMedicalRecord(Integer id, MedicalRecord record) throws Exception {
+        setObject(id.toString()+"MR", record);
+    }
+
+    /**
+     * 获得暂存病历
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public MedicalRecord getTemporaryMedicalRecord(Integer id) throws Exception {
+        return (MedicalRecord) getObject(id.toString()+"MR");
+    }
+
+
+
+    public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
+        setObjectList(id.toString()+"applications", applications);
+        setObjectList(id.toString()+"prescriptions", prescriptions);
+    }
+
+    /**
+     * 获得检查
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public MedicalRecord getTemporaryInspection(Integer id) throws Exception {
+        return (MedicalRecord) getObject(id.toString()+"Inspection");
+    }
+
 }
