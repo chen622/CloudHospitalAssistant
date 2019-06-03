@@ -7,8 +7,8 @@ public class RedisTest {
     @Test
     public void testRedis() {
         Jedis jedis = new Jedis("129.211.61.153", 6379);
-        jedis.set("stu", "mitko");
-        System.out.println(jedis.get("stu"));
+        jedis.set("st", "mitko");
+        System.out.println(jedis.get("st"));
         jedis.close();
     }
 }

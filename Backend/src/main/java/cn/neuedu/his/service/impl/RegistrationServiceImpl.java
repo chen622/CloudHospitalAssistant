@@ -36,13 +36,15 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Autowired
     private PatientService patientService;
     @Autowired
-    JobScheduleService jobScheduleService;
+    private JobScheduleService jobScheduleService;
     @Autowired
-    PaymentService paymentService;
+    private PaymentService paymentService;
     @Autowired
-    RegistrationTypeService registrationTypeService;
+    private RegistrationTypeService registrationTypeService;
     @Autowired
-    InvoiceService invoiceService;
+    private InvoiceService invoiceService;
+    @Autowired
+    private RedisServiceImpl redisService;
 
     /**
      * 现场挂号
@@ -52,7 +54,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException{
+    public void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException, IndexOutOfBoundsException{
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
@@ -77,6 +79,13 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         registration.setDoctorId(schedule.getDoctorId());
         registration.setState(WAITING_FOR_TREATMENT);
         registration.setNeedBook(jsonObject.getBoolean("needBook"));
+        //从redis中获取顺序号
+        try {
+            registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
+        }catch (IllegalArgumentException e) {
+            throw new IndexOutOfBoundsException("sequence");
+        }
+        registration.setSerialNumber(1);
 
         save(registration);
 
@@ -88,7 +97,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         Integer paymentId = paymentService.createRegistrationPayment(registration, jsonObject.getInteger("settlementType"), unitPrice);
 
         //生成发票
-        invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
+        try {
+            invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
+        }catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("invoice");
+        }
     }
 
     /**
@@ -151,6 +164,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         registration.setState(CANCEL);
         update(registration);
+        redisService.addRegistrationSequenceList(registration.getScheduleId(), registration.getSequence());
 
         //改变已挂号人数
         jobScheduleService.reduceRegistrationAmount(registration.getScheduleId());

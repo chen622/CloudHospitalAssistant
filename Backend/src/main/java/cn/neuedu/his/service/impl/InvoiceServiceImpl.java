@@ -5,8 +5,6 @@ import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InvoiceService;
 import cn.neuedu.his.service.PaymentService;
-import cn.neuedu.his.util.CommonUtil;
-import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,9 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     @Autowired
     private InvoiceMapper invoiceMapper;
     @Autowired
-    PaymentService paymentService;
+    private PaymentService paymentService;
+    @Autowired
+    private RedisServiceImpl redisService;
 
     @Override
     public Invoice printInvoice(Integer invoiceId) throws  IllegalArgumentException{
@@ -43,19 +43,28 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IllegalArgumentException
      */
     @Override
-    public Integer addInvoiceByPayment(Payment payment) throws IllegalArgumentException{
+    public Integer addInvoiceByPayment(Payment payment) throws IllegalArgumentException, IndexOutOfBoundsException{
         if (payment.equals(null))
             throw new IllegalArgumentException("paymentId");
         Invoice invoice = new Invoice();
+        Integer invoiceId;
+        //从redis取出发票号
+        try {
+            invoiceId = redisService.getInvoiceSerialsNumberFromFront();
+        }catch (IllegalArgumentException e) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        invoice.setId(invoiceId);
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
         save(invoice);
 
         //更改缴费单发票id字段
-        payment.setInvoiceId(invoice.getId());
+        payment.setInvoiceId(invoiceId);
         paymentService.update(payment);
 
-        return invoice.getId();
+        return invoiceId;
     }
 
     /**
@@ -67,32 +76,50 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     @Override
     public Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException{
         Invoice invoice = new Invoice();
+        Integer invoiceId;
+        //从redis取出发票号
+        try {
+            invoiceId = redisService.getInvoiceSerialsNumberFromFront();
+        }catch (IllegalArgumentException e) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        invoice.setId(invoiceId);
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
 
-        ArrayList<Payment> paymentArrayList = new ArrayList<>();
-        if (paymentArrayList.isEmpty())
+        if (paymentIdList.isEmpty())
             throw new NullPointerException("paymentList");
         BigDecimal totalAmount = new BigDecimal(0);
         for (Integer paymentId: paymentIdList) {
             Payment payment = paymentService.findById(paymentId);
             if (payment == null)
                 throw new IllegalArgumentException("paymentId");
+            //更新payment中invoiceId属性
+            payment.setInvoiceId(invoiceId);
+            paymentService.update(payment);
+            //计算总价
             totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
-            paymentArrayList.add(payment);
         }
         invoice.setPriceAmount(totalAmount);
 
         save(invoice);
-
-        Integer invoiceId = invoice.getId();
-        for (Payment payment: paymentArrayList) {
-            payment.setInvoiceId(invoiceId);
-            paymentService.update(payment);
-        }
-
         return invoiceId;
     }
 
+    /**
+     * 设置发票号段到redis
+     * @param start
+     * @param end
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public void setInvoiceNumberToRedis(Integer start, Integer end) throws IllegalArgumentException{
+        try {
+            redisService.setInvoiceSerialsNumberList(start, end);
+        }catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException();
+        }
+    }
 
 
     @Override

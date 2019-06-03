@@ -73,8 +73,8 @@ public class ScheduleRuleController {
             return CommonUtil.errorJson(ErrorEnum.E_618);
 
         //判断时间是否冲突
-        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_619);
+//        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
+//            return CommonUtil.errorJson(ErrorEnum.E_619);
 
         scheduleRuleService.save(scheduleRule);
         return CommonUtil.successJson(scheduleRule);
@@ -106,8 +106,8 @@ public class ScheduleRuleController {
             return CommonUtil.errorJson(ErrorEnum.E_618);
 
         //判断时间是否冲突
-        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_619);
+//        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
+//            return CommonUtil.errorJson(ErrorEnum.E_619);
 
         scheduleRuleService.update(scheduleRule);
         return CommonUtil.successJson(scheduleRule);
