@@ -119,9 +119,9 @@ public class DepartmentKindController {
         List<ConstantVariable> constantVariables = constantVariableService.findAll();
         List<DepartmentKind> departmentKinds = departmentKindService.findAll();
 
-        List<Object> results = new ArrayList<>();
-        results.add(constantVariables);
-        results.add(departmentKinds);
+        Object[] results = new Object[2];
+        results[0] =constantVariables;
+        results[1] = departmentKinds;
 
         return CommonUtil.successJson(results);
     }
