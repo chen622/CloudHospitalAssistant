@@ -11,4 +11,6 @@ import java.util.List;
 public interface DiseaseSecondService extends Service<DiseaseSecond> {
     public List<DiseaseSecond> findByName(String name);
     public List<DiseaseSecond>  getAll();
+    public DiseaseSecond findByIcdId(String icdId);
+    public DiseaseSecond findByDiseaseCoding(String diseaseCoding);
 }

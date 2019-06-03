@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface DiseaseFirstMapper extends MyMapper<DiseaseFirst> {
+    DiseaseFirst getDiseaseByname(String name);
 }
