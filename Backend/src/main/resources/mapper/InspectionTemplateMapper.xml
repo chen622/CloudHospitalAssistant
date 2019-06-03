@@ -54,4 +54,12 @@
     from inspection_template where  level =#{level} and  inspection_template.created_by_id=#{doctorID}
   </select>
 
+  <delete id="deleteRelationship">
+    delete from  prescription where  prescription.is_template=true and item_id=#{id};
+    delete from  inspection_application where item_id=#{id} and is_template=true ;
+  </delete>
+
+  <select id="getInspectionTemByName" resultMap="withRelationship">
+    select * from inspection_template where name like "%"#{name}"%"
+  </select>
 </mapper>

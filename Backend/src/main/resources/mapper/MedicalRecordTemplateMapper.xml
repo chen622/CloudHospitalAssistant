@@ -44,4 +44,8 @@
   <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
         select * from diagnose where item_id=#{MRID} and  is_template = true
   </select>
+
+  <select id="getMeicalRecordTemByName" resultMap="BaseResultMap">
+     select * from  medical_record_template where  name like "%"#{name}"%"
+  </select>
 </mapper>

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,6 +18,9 @@ import java.util.List;
  */
 public interface DoctorService extends Service<Doctor> {
 
+
+    @Transactional
+    JSONObject getRegistrationInof(Date time,Integer doctorId);
 
     @Transactional
     public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level);
@@ -37,6 +41,9 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject getPersonalMR(Integer doctorID, Integer level);
 
     @Transactional
+    JSONObject getMeicalRecordTemByName(String name);
+
+    @Transactional
     Integer getDeptNo(Integer id);
 
     @Transactional
@@ -54,11 +61,16 @@ public interface DoctorService extends Service<Doctor> {
 
 
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, List<Integer> diagnoses) throws Exception;
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, List<Integer> diagnoses,Integer doctorId) throws Exception;
 
     @Transactional
     public JSONObject saveMRTemplate(MedicalRecord record,Integer doctorID,String name,Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
+    @Transactional
+    public JSONObject deleteMedicalRecordTemp(Integer id,Integer doctorId) ;
+
+    @Transactional
+    public JSONObject updateMedicalRecordTem(MedicalRecordTemplate record, Integer doctorID);
     @Transactional
     JSONObject openInspection(Integer registrationId);
 
@@ -67,6 +79,17 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     public JSONObject saveInspectionAsTemplate(InspectionTemplate template ,Integer doctorId) throws Exception;
+
+    @Transactional
+    public JSONObject updateInspectionTem(InspectionTemplate template ,Integer doctorId) throws Exception;
+
+
+    @Transactional
+    JSONObject getInspectionTemByName(String name);
+
+    @Transactional
+    public JSONObject deleteInspectionTemp(Integer id,Integer doctorId) ;
+
 
     @Transactional
     JSONObject getInspectionResult(Integer id);
@@ -79,6 +102,9 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     public JSONObject savePrescriptionsTemp(DrugTemplate template,Integer medicalRecordId,Integer doctorId) throws Exception;
+
+    @Transactional
+    JSONObject getPrescriptionsTemByName(String name);
 
     @Transactional
     public  JSONObject finishDiagnose(Integer registrationId);

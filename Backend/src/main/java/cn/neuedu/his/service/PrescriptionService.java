@@ -8,5 +8,5 @@ import cn.neuedu.his.util.inter.Service;
  * Created by ccm on 2019/05/29.
  */
 public interface PrescriptionService extends Service<Prescription> {
-
+    public  void deleteByTemplateId(Integer templateId);
 }

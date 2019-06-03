@@ -9,11 +9,13 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.security.krb5.internal.PAData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
@@ -60,10 +62,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     DrugService drugService;
     @Autowired
     PrescriptionService prescriptionService;
+    @Autowired
+    JobScheduleService scheduleService;
 
 
-
-
+    @Override
+    public JSONObject getRegistrationInof(Date time, Integer doctorId) {
+        return CommonUtil.successJson(scheduleService.getRegistrationInof(time,doctorId));
+    }
 
     /**
      * 获得全院检查模板
@@ -154,6 +160,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson(templates);
     }
 
+    @Override
+    public JSONObject getMeicalRecordTemByName(String name) {
+        return CommonUtil.successJson(doctorService.getMeicalRecordTemByName(name));
+    }
+
 
     @Override
     public Integer getDeptNo(Integer id) {
@@ -210,7 +221,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      */
     @Override
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses) throws Exception {
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses,Integer doctorId) throws Exception {
+        JobSchedule schedule=scheduleService.getByDoctorId(doctorId, new Date(System.currentTimeMillis()));
+        if (schedule.getHaveRegistrationAmount()+1>schedule.getLimitRegistrationAmount())
+            return CommonUtil.errorJson(ErrorEnum.E_708.addErrorParamName(schedule.getLimitRegistrationAmount().toString()));
+
         Registration registration = registrationService.findById(registrationID);
         if(registration==null){
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
@@ -230,6 +245,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         medicalRecord.setId(null);
         medicalRecordService.save(medicalRecord);
         ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecord.getId(),false,false);
+        schedule.setHaveRegistrationAmount(schedule.getHaveRegistrationAmount()+1);
+        scheduleService.update(schedule);
         return CommonUtil.successJson();
     }
 
@@ -253,6 +270,29 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return template;
     }
 
+    @Override
+    @Transactional
+    public JSONObject updateMedicalRecordTem(MedicalRecordTemplate record, Integer doctorID) {
+        Integer id=record.getId();
+        if(id==null || medicalRecordTemplateService.findById(id)==null)
+            return CommonUtil.errorJson(ErrorEnum.E_707.addErrorParamName("medicalRecordTemplate"));
+        medicalRecordTemplateService.update(record);
+        return CommonUtil.successJson();
+    }
+
+
+    @Override
+    @Transactional
+    public JSONObject deleteMedicalRecordTemp(Integer id,Integer doctorId){
+        MedicalRecordTemplate template=medicalRecordTemplateService.findById(id);
+        if(template==null)
+            return CommonUtil.errorJson(ErrorEnum.E_707.addErrorParamName("medicalRecordTemplate"));
+        if(!template.getCreatedById().equals(doctorId)){
+            return CommonUtil.errorJson(ErrorEnum.E_706.addErrorParamName("medicalRecordTemplate"));
+        }
+            medicalRecordTemplateService.deleteById(id);
+        return CommonUtil.successJson();
+    }
 
 
     @Override
@@ -341,6 +381,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 }
                 InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,false);
                 inspectionApplicationService.save(application);
+                Payment payment = setInspectionPayment(r,registration.getPatientId());
+                paymentService.save(payment);
             }
         }
 
@@ -356,11 +398,43 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setTemplate(false);
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
+                Payment p=setPrescriptionPayment(prescription, registration.getPatientId());
             }
         }
         return CommonUtil.successJson();
     }
 
+
+    private  Payment setInspectionPayment(InspectionApplication application,Integer patientId){
+        Payment payment = new Payment();
+        NonDrug nonDrug=nonDrugService.findById(application.getNonDrugId());
+        payment.setQuantity(application.getQuantity());
+        payment.setUnitPrice(nonDrug.getPrice());
+        payment.setCreateTime(new Date(System.currentTimeMillis()));
+        payment.setPatientId(patientId);
+        payment.setPaymentTypeId(nonDrug.getFeeTypeId());
+        payment.setItemId(application.getId());
+        payment.setState(Constants.PRODUCE_PAYMENT);
+        return payment;
+    }
+
+    private  Payment setPrescriptionPayment(Prescription application,Integer patientId){
+        Payment payment = new Payment();
+        Drug drug=drugService.findById(application.getDrugId());
+        payment.setQuantity(application.getAmount());
+        payment.setUnitPrice(drug.getPrice());
+        payment.setCreateTime(new Date(System.currentTimeMillis()));
+        payment.setPatientId(patientId);
+        if(drug.getDrugType().equals(Constants.WESTEN_DRUG))
+            payment.setPaymentTypeId(Constants.WESTERN_DRUG_FEE_TYPE);
+        else if(drug.getDrugType().equals(Constants.TRADITIONAL_DRUG))
+            payment.setPaymentTypeId(Constants.CHI_DRUG_FEE_TYPE);
+        else
+            payment.setPaymentTypeId(Constants.MEDIUM_DRUG_FEE_TYPE);
+        payment.setItemId(application.getId());
+        payment.setState(Constants.PRODUCE_PAYMENT);
+        return payment;
+    }
 
     /**
      * 新建检查检验/检验/处置模板
@@ -408,6 +482,50 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson();
     }
 
+    @Override
+    @Transactional
+    public JSONObject updateInspectionTem(InspectionTemplate template ,Integer doctorId) throws Exception{
+        Integer tempId=template.getId();
+        if(tempId==null || inspectionTemplateService.findById(tempId)==null)
+            return  CommonUtil.errorJson(ErrorEnum.E_707.addErrorParamName("inspectionTemplate"));
+        inspectionTemplateService.deleteRelationship(tempId);
+        List<Prescription> prescriptions=template.getPrescriptions();
+        if(prescriptions!=null){
+            for (Prescription p:prescriptions){
+                p.setItemId(tempId);
+                p.setTemplate(true);
+                prescriptionService.save(p);
+            }
+        }
+        List<InspectionApplication> applications=template.getApplications();
+        if(applications!=null){
+            for (InspectionApplication p:applications){
+                p.setItemId(tempId);
+                p.setTemplate(true);
+                inspectionApplicationService.save(p);
+            }
+        }
+        return  CommonUtil.successJson();
+    }
+
+    @Override
+    public JSONObject getInspectionTemByName(String name) {
+        return CommonUtil.successJson(inspectionTemplateService.getInspectionTemByName(name));
+    }
+
+    @Override
+    @Transactional
+    public JSONObject deleteInspectionTemp(Integer id,Integer doctorId) {
+        InspectionTemplate template=inspectionTemplateService.findById(id);
+        if(template==null)
+            return CommonUtil.errorJson(ErrorEnum.E_707.addErrorParamName("inspectionTemplate"));
+        if(!template.getCreatedById().equals(doctorId)){
+            return CommonUtil.errorJson(ErrorEnum.E_706.addErrorParamName("inspectionTemplate"));
+        }
+        inspectionApplicationService.deleteById(id);
+        return CommonUtil.successJson();
+    }
+
 
     @Override
     @Transactional
@@ -428,6 +546,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
             }
             prescriptionService.save(p);
+            Payment payment = setPrescriptionPayment(p, registration.getPatientId());
         }
 //        registration.setState(Constants.FINISH_DIAGNOSIS);
         registrationService.update(registration);
@@ -455,6 +574,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             prescriptionService.save(p);
         }
         return CommonUtil.successJson();
+    }
+
+    @Override
+    public JSONObject getPrescriptionsTemByName(String name) {
+        return CommonUtil.successJson(drugTemplateService.getPrescriptionsTemByName(name));
     }
 
 
