@@ -7,6 +7,7 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,5 +24,45 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
     @Override
     public List<ConstantVariable> getDepartmentType() {
         return constantVariableMapper.getDepartmentType();
+    }
+
+    @Override
+    public List<ConstantVariable> getPrimaryConstant() {
+        return constantVariableMapper.getPrimaryConstant();
+    }
+
+    @Override
+    public ConstantVariable getConstantByName(Integer type, String name) {
+        return constantVariableMapper.getConstantByName(name,type);
+    }
+
+    public ConstantVariable justifyPrimaryType(Integer id){
+        return constantVariableMapper.justifyPrimaryType(id);
+    }
+
+    @Override
+    public void insertConstant(ConstantVariable constantVariable) {
+        //判断大类type0是否存在
+        if (constantVariable.getType() != 0){
+            ConstantVariable constantVariable1 = this.justifyPrimaryType(constantVariable.getType());
+            if (constantVariable1 == null)
+                throw new RuntimeException("629");
+        }
+
+        ConstantVariable constantVariable1 = this.getConstantByName(constantVariable.getType(),constantVariable.getName());
+        //判断常量是否存在
+        if (constantVariable1 != null)
+            throw new RuntimeException("630");
+
+        this.save(constantVariable);
+    }
+
+    @Override
+    public void deleteConstant(Integer id){
+
+        if (this.findById(id) == null)
+            throw new RuntimeException("629");
+
+        this.deleteById(id);
     }
 }
