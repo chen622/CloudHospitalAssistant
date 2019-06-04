@@ -8,6 +8,6 @@ import java.util.List;
 
 @Component
 public interface ConstantVariableMapper extends MyMapper<ConstantVariable> {
-    List<ConstantVariable> getDepartmentType(Integer type);
+    List<ConstantVariable> getDepartmentType();
 
 }
