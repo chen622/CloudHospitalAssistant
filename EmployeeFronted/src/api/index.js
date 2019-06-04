@@ -41,7 +41,7 @@ export default { // 自定义判断元素类型JS
 
         axios({
             method: method,
-            url: global.baseURL + "/ccm" + url,
+            url: global.baseURL + url,
             data: method === 'POST' || method === 'PUT' ? params : null,
             params: method === 'GET' || method === 'DELETE' ? params : null,
             baseURL: global.baseURL,
