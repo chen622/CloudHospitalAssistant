@@ -116,7 +116,7 @@ public class PermissionCheck {
     public static Integer getIdByDrugAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR.getId())) {
+        if (typeId.equals(UserType.PHARMACY_OPERATOR.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");

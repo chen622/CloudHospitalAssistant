@@ -21,4 +21,14 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
     public PaymentType getPaymentTypeByName(String paymentTypeName) {
         return paymentTypeMapper.getPaymentTypeByName(paymentTypeName);
     }
+
+    /**
+     * 通过二级缴费类型（西药费……）得出总缴费类型（处方费）
+     * @param typeId
+     * @return 总缴费类型
+     */
+    @Override
+    public Integer getTotalPaymentType(Integer typeId) {
+        return findById(typeId).getType();
+    }
 }

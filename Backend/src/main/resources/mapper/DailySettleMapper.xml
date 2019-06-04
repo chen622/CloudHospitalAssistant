@@ -18,6 +18,17 @@
     <result column="other_fee" jdbcType="DECIMAL" property="otherFee" />
     <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
     <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
-    <result column="again_invoice_amount" jdbcType="INTEGER" property="againInvoiceAmount" />
+    <result column="is_pass" jdbcType="BIT" property="isPass" />
+    <result column="check_id" jdbcType="INTEGER" property="checkId" />
   </resultMap>
+
+  <select id="selectLastTime" resultMap="BaseResultMap">
+    select * from daily_settle where admin_id = #{adminId} order by make_date desc limit 1
+  </select>
+
+
+<!--  获取为审核的日结表-->
+  <select id="selectNotCheckByAdminId" resultMap="BaseResultMap">
+    select * from daily_settle where admin_id = #{adminId} and is_pass = false order by make_date desc
+  </select>
 </mapper>

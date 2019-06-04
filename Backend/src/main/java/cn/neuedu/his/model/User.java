@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class User {
@@ -40,6 +41,8 @@ public class User {
     private String identifyId;
 
     private Doctor doctor;
+
+    private ArrayList<Invoice> invoiceList;
 
     public Doctor getDoctor() {
         return doctor;
@@ -185,5 +188,13 @@ public class User {
 
     public void setIdentifyId(String identifyId) {
         this.identifyId = identifyId;
+    }
+
+    public ArrayList<Invoice> getInvoiceList() {
+        return invoiceList;
+    }
+
+    public void setInvoiceList(ArrayList<Invoice> invoiceList) {
+        this.invoiceList = invoiceList;
     }
 }

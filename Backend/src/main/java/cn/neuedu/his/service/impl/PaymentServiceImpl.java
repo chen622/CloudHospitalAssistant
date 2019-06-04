@@ -178,7 +178,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         if(originalPayment == null)
             throw new IllegalArgumentException("paymentId");
         //如果不是药物，则抛出异常
-        Integer totalTypeId = getTotalPaymentType(originalPayment.getPaymentTypeId());
+        Integer totalTypeId = paymentTypeService.getTotalPaymentType(originalPayment.getPaymentTypeId());
         if (!totalTypeId.equals(DRUG_PAYMENT_TYPE ))
             throw new UnsupportedOperationException("paymentType");
         //获取所有payment（包括冲红）
@@ -238,7 +238,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         if (payment == null)
             throw new IllegalArgumentException();
 
-        Integer totalTypeId = getTotalPaymentType(payment.getPaymentTypeId());
+        Integer totalTypeId = paymentTypeService.getTotalPaymentType(payment.getPaymentTypeId());
         if (!totalTypeId.equals(DRUG_PAYMENT_TYPE) || !payment.getState().equals(HAVE_RETURN_DRUG))
             throw new UnsupportedOperationException();
 
@@ -290,14 +290,5 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Override
     public void updateInvoiceId(Integer invoiceId, Integer id) {
         paymentMapper.updateInvoiceId(invoiceId, id);
-    }
-
-    /**
-     * 通过二级缴费类型（西药费……）得出总缴费类型（处方费）
-     * @param typeId
-     * @return 总缴费类型
-     */
-    private Integer getTotalPaymentType(Integer typeId) {
-        return paymentTypeService.findById(typeId).getType();
     }
 }

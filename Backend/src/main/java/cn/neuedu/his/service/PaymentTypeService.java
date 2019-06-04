@@ -8,5 +8,6 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface PaymentTypeService extends Service<PaymentType> {
     PaymentType getPaymentTypeByName(String paymentTypeName);
+    Integer getTotalPaymentType(Integer typeId);
 
 }

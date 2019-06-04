@@ -9,7 +9,6 @@
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
     <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
     <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
     <result column="patient_id" jdbcType="INTEGER" property="patientId" />
     <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId" />
@@ -18,6 +17,7 @@
     <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
+    <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
   </resultMap>
 
   <select id="selectByItemId" resultMap="BaseResultMap">

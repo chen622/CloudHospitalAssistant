@@ -48,4 +48,33 @@
 
 
 
+<!--  收费员的发票和缴费单信息-->
+  <resultMap id="adminAndInvoiceAndPaymentDuringDate" type="cn.neuedu.his.model.User">
+    <collection property="invoiceList" ofType="cn.neuedu.his.model.Invoice" select="selectInvoiceByUserId" column="{userId = id, startDate = startDate, endDate = endDate}"/>
+  </resultMap>
+
+  <resultMap id="paymentAndInvoice" type="cn.neuedu.his.model.Invoice">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
+    <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
+    <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
+    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectPaymentByInvoiceId" column="{invoiceId = id}"/>
+  </resultMap>
+
+  <select id="getUserAndInvoiceAndPaymentDuringDate" resultMap="adminAndInvoiceAndPaymentDuringDate">
+    select *, #{startDate} as startDate, #{endDate} as endDate from user where id = #{userId}
+  </select>
+
+  <select id="selectInvoiceByUserId" resultMap="paymentAndInvoice">
+    select * from invoice where operator_id = #{userId} and datediff(created_date, #{startDate}) &gt;= 0 and datediff(created_date, #{endDate}) &lt; 0
+  </select>
+
+  <select id="selectPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+    select * from payment where invoice_id = #{invoiceId}
+  </select>
+
+
 </mapper>
