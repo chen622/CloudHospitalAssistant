@@ -6,7 +6,7 @@
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="formulation" jdbcType="VARCHAR" property="formulation" />
+    <result column="formulation" jdbcType="INTEGER" property="formulation" />
     <result column="factory" jdbcType="VARCHAR" property="factory" />
     <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
     <result column="spell" jdbcType="VARCHAR" property="spell" />
@@ -17,4 +17,10 @@
     <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
     <result column="drug_type" javaType="INTEGER" property="drugType"/>
   </resultMap>
+
+  <select id="getDrugByName" resultMap="BaseResultMap">
+    select *
+    from drug
+    where name like concat('%',#{name},'%')
+  </select>
 </mapper>

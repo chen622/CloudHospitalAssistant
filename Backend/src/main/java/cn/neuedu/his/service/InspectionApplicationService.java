@@ -8,4 +8,5 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface InspectionApplicationService extends Service<InspectionApplication> {
     Boolean hasMedicalRecordInspectionNotDone(Integer medicalRecordId);
+    public void  deleteByTemplateId(Integer templateId);
 }

@@ -30,7 +30,8 @@
                         :tabList="departmentKind"
                         :activeTabKey="departmentKey"
                         @tabChange="key => tabChange(key)"
-                        :headStyle="{fontSize: '30px'}">
+                        :headStyle="{fontSize: '30px'}"
+                        :loading="departmentLoading">
                     <a-card-grid v-for="dep in departments[departmentKey]" :key="dep"
                                  style="width:25%;text-align:center">
                         {{dep}}
@@ -48,23 +49,44 @@
             departmentKind: [
                 {
                     key: '0',
-                    tab: '临床科室',
+                    tab: '加载中',
                 },
                 {
                     key: '1',
-                    tab: '医技科室',
+                    tab: '加载中',
                 }
             ],
             departmentKey: '0',
             departments: [
                 ["儿科", "眼科", "皮肤科"],
                 ["超声科", "药剂科"]
-            ]
+            ],
+            departmentLoading: true,
         }),
         methods: {
             tabChange: function (key) {
                 this.departmentKey = key
-            }
+            },
+            getDepartmentKindAndDepartment () {
+                let that = this
+                this.$api.get('/general/getAllDepartmentKind', null,
+                    res => {
+                        that.departmentKey = []
+                        that.departments = []
+                        let index = 0
+                        res.data.type.forEach(type => {
+                            that.departmentKey.push({tab: type.name, key: index + ''})
+                            index++
+                            that.departments.push(res.data.departments[index])
+                        })
+                    },
+                    res => {
+                        this.$message.error(res.msg);
+                    })
+            },
+        },
+        mounted () {
+            this.getDepartmentKindAndDepartment()
         }
     }
 </script>

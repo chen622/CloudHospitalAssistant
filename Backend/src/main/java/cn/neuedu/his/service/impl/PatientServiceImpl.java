@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
@@ -58,7 +60,23 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     @Override
     public Patient findPatientAndNotTakeDrug(Integer patientId) throws IllegalArgumentException{
         Patient patient = patientMapper.searchPatientAndNotTakeDrug(patientId, DRUG_PAYMENT_TYPE, HAVE_PAID);
+        if (patient == null)
+            throw new IllegalArgumentException("patientId");
 
+        return patient;
+    }
+
+    /**
+     * 查询某时间段内患者的药物情况
+     * @param patientId
+     * @param startDate
+     * @param endDate
+     * @return
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public Patient findPatientAndDrugDuringDate(Integer patientId, Date startDate, Date endDate) throws IllegalArgumentException{
+        Patient patient = patientMapper.searchPatientAndDrugDuringDate(patientId, DRUG_PAYMENT_TYPE, startDate, endDate);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 

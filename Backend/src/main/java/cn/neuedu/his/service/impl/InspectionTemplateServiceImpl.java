@@ -39,4 +39,13 @@ public class InspectionTemplateServiceImpl extends AbstractService<InspectionTem
         return inspectionTemplateMapper.getPersonalCheckTemps(doctorID, level);
     }
 
+    @Override
+    public void deleteRelationship(Integer id){
+        inspectionTemplateMapper.deleteRelationship(id);
+    }
+
+    @Override
+    public List<InspectionTemplate> getInspectionTemByName(String name) {
+        return inspectionTemplateMapper.getInspectionTemByName(name);
+    }
 }

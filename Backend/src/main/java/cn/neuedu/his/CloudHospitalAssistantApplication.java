@@ -17,7 +17,6 @@ import java.util.List;
 @EnableTransactionManagement
 @SpringBootApplication
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
-@EnableAspectJAutoProxy(exposeProxy = true)
 public class CloudHospitalAssistantApplication {
     private static Logger logger = Logger.getLogger(CloudHospitalAssistantApplication.class);
 

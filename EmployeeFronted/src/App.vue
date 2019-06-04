@@ -8,7 +8,7 @@
                     </a-col>
                     <a-col :span="16">
                         <a-menu class="right-title" v-model="current" mode="horizontal" :multiple="false">
-                            <a-menu-item key="index" @click="toRouter('/home')">
+                            <a-menu-item key="index" @click="toRouter('/')">
                                 <a-icon type="home"/>
                                 首页
                             </a-menu-item>
@@ -32,11 +32,12 @@
                 <a-row type="flex" justify="space-around" align="top">
                     <a-col span="8">
                         <img class="logo" src="./assets/logo/logo-white-none.png">
+                        <p>Copyright 2019 NEUEDU All Rights Reserved. </p>
                     </a-col>
                     <a-col span="8">
-                        <p class="footer-title" >东软智慧医院</p>
-                        <p class="footer-info" >地址：沈阳市浑南区创新路66号</p>
-                        <p class="footer-info" >电话：024-66666666</p>
+                        <p class="footer-title">东软智慧医院</p>
+                        <p class="footer-info">地址：沈阳市浑南区创新路66号</p>
+                        <p class="footer-info">电话：024-66666666</p>
                     </a-col>
                 </a-row>
             </a-layout-footer>
@@ -45,17 +46,18 @@
 </template>
 
 <script>
-    import ACol from "ant-design-vue/es/grid/Col";
 
     export default {
-        components: {ACol},
         data: () => ({
-            current: ['mail'],
+            current: ['index'],
+            departmentKind: [],
+            departments: [],
         }),
         methods: {
             toRouter: function (router) {
                 this.$router.push({path: router})
-            }
+            },
+
         },
     }
 </script>
@@ -63,7 +65,7 @@
 <style scoped>
     .header {
         background: #fff !important;
-        box-shadow: 0 5px 8px #8b8b8b;
+        box-shadow: 0 5px 8px rgba(139, 139, 139, 0.7);
         position: relative;
         z-index: 10;
         max-width: 100%;
@@ -100,7 +102,8 @@
     }
 
     .footer-title {
-        font-size: 20px;font-weight: bold
+        font-size: 20px;
+        font-weight: bold
     }
 
     .footer-info {

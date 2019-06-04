@@ -15,4 +15,5 @@ public interface MedicalRecordTemplateMapper extends MyMapper<MedicalRecordTempl
 
     public List<MedicalRecordTemplate> getPersonalMR(Integer doctorID,Integer level);
 
+    List<MedicalRecordTemplate> getMeicalRecordTemByName(String name);
 }

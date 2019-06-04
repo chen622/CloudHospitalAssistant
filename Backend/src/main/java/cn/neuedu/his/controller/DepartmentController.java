@@ -1,19 +1,23 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -24,38 +28,32 @@ public class DepartmentController {
     DepartmentService departmentService;
     @Autowired
     DepartmentKindService departmentKindService;
+    @Autowired
+    ConstantVariableService constantVariableService;
 
     /**
-     * 获得一个部门的详细信息
-     * @param id
-     * @param authentication
+     * 获得部门的详细信息
+     *
      * @return
      */
-    @GetMapping("/get/{id}")
-    public JSONObject getDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication){
-
-        //检查权限
+    @GetMapping("/get")
+    public JSONObject getDepartmentInformation() {
         try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
+            List<Department> departments = departmentService.getDepartmentInformation();
+            return CommonUtil.successJson(departments);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
         }
 
-        Department department = departmentService.getAllDepartmentInformation(id);
-
-        if (department == null)
-            return CommonUtil.errorJson(ErrorEnum.E_610);
-
-        return CommonUtil.successJson(department);
     }
 
     @PostMapping("/delete/{id}")
-    public JSONObject deleteDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject deleteDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -71,16 +69,16 @@ public class DepartmentController {
     }
 
     @PostMapping("/add")
-    public JSONObject addDepartment(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject addDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+        Department department = jsonObject.toJavaObject(jsonObject, Department.class);
 
         //检测部门是否存在
         if (departmentService.getDepartmentByName(department.getName()) != null)
@@ -96,16 +94,16 @@ public class DepartmentController {
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+        Department department = jsonObject.toJavaObject(jsonObject, Department.class);
 
         //检测部门是否存在
         if (departmentService.getDepartmentByName(department.getName()) != null)
@@ -119,6 +117,8 @@ public class DepartmentController {
 
         return CommonUtil.successJson(department);
     }
+
+
 
 
 }

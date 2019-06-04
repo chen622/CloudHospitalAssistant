@@ -11,7 +11,8 @@ public class Drug {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String formulation;
+    @Column(name = "formulation")
+    private Integer formulation;
 
     private String factory;
 
@@ -77,14 +78,14 @@ public class Drug {
     /**
      * @return formulation
      */
-    public String getFormulation() {
+    public Integer getFormulation() {
         return formulation;
     }
 
     /**
      * @param formulation
      */
-    public void setFormulation(String formulation) {
+    public void setFormulation(Integer formulation) {
         this.formulation = formulation;
     }
 

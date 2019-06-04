@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.MedicalRecordService;
+import cn.neuedu.his.service.MedicalRecordTemplateService;
 import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -62,6 +63,93 @@ public class DoctorControllerTest {
     }
 
     @Test
+    public void saveTemporaryMR() throws Exception{
+        Integer registrationId=1;
+        MedicalRecord record=new MedicalRecord();
+        record.setRegistrationId(1);
+        record.setIsPregnant(false);
+        record.setIsWesternMedicine(false);
+        record.setPreviousTreatment("测试redis");
+        JSONObject object=new JSONObject();
+        object.put("registrationId", registrationId);
+        object.put("record", record);
+
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryMR")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getTemporaryMR() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryMR/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    public void saveTemporaryInspection() throws Exception{
+
+        InspectionApplication i = new InspectionApplication();
+        i.setQuantity(1);
+        i.setNonDrugId(1);
+
+        InspectionApplication i1 = new InspectionApplication();
+        i1.setQuantity(2);
+        i1.setNonDrugId(2);
+
+        Prescription prescription = new Prescription();
+        prescription.setDrugId(1);
+        prescription.setNeedSkinTest(false);
+        prescription.setNote("测试申请检查项目");
+        prescription.setTemplate(false);
+        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUseAmount("三个");
+        prescription.setAmount(1);
+        prescription.setFrequency("一天一次");
+        prescription.setDays(2);
+
+        List<Prescription> prescriptions=new ArrayList<>();
+        List<InspectionApplication> applications=new ArrayList<>();
+
+        prescriptions.add(prescription);
+        applications.add(i);
+        applications.add(i1);
+
+
+        JSONObject object=new JSONObject();
+        object.put("inspections",applications);
+        object.put("prescriptions", prescriptions);
+        object.put("registrationId", 1);
+
+        String  requestJson=object.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryInspection")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+    @Test
     public void getAllRecordByPatientId() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRecord/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -101,7 +189,6 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
-
 
     //检查模板
     @Test
@@ -320,7 +407,42 @@ public class DoctorControllerTest {
     }
 
 
+    @Autowired
+    MedicalRecordTemplateService templateService;
+
+
     @Test
+    public void updateMedicalRecordTemp() throws Exception, AuthenticationServiceException {
+        MedicalRecordTemplate medicalRecord = templateService.findById(1);
+        JSONObject object=new JSONObject();
+        medicalRecord.setName("测试更新病历模板");
+        object.put("medicalRecordTemplate", medicalRecord);
+        String  requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/updateMedicalRecordTemp")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void deleteMedicalRecord() throws  Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/deleteMedicalRecordTemp/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"));
+
+    }
+
+
+        @Test
     public void saveInspection() throws Exception {
         InspectionApplication i = new InspectionApplication();
         i.setQuantity(1);
@@ -409,6 +531,60 @@ public class DoctorControllerTest {
         String  requestJson=object.toJSONString();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveInspectionTem")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+    @Test
+    public void updateInspectionTem() throws Exception {
+        InspectionApplication i = new InspectionApplication();
+        i.setQuantity(1);
+        i.setNonDrugId(1);
+
+
+        Prescription prescription = new Prescription();
+        prescription.setDrugId(1);
+        prescription.setNeedSkinTest(false);
+        prescription.setNote("测试更新检查项目");
+        prescription.setTemplate(false);
+        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUseAmount("三个");
+        prescription.setAmount(1);
+        prescription.setFrequency("一天一次");
+        prescription.setDays(2);
+        prescription.setItemId(1);
+        prescription.setCreateTime(new Date());
+
+        List<Prescription> prescriptions=new ArrayList<>();
+        List<InspectionApplication> applications=new ArrayList<>();
+
+        prescriptions.add(prescription);
+        applications.add(i);
+
+        InspectionTemplate template=new InspectionTemplate();
+        template.setApplications(applications);
+        template.setPrescriptions(prescriptions);
+        template.setName("测试更新模板");
+        template.setLevel(Constants.PERSONALLEVEL);
+        template.setId(1);
+        template.setCreatedById(1);
+        template.setDepartmentId(1);
+
+
+        JSONObject object=new JSONObject();
+        object.put("template",template);
+
+        String  requestJson=object.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/updateInspectionTem")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

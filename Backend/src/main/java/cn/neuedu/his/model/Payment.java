@@ -56,6 +56,11 @@ public class Payment {
     @Column(name = "invoice_id")
     private Integer invoiceId;
 
+    @Column(name = "project_operator_id")
+    private Integer projectOperatorId;
+
+    private Prescription prescription;
+
     /**
      * @return id
      */
@@ -230,5 +235,29 @@ public class Payment {
 
     public void setInvoiceId(Integer invoiceId) {
         this.invoiceId = invoiceId;
+    }
+
+    public Boolean getFrozen() {
+        return isFrozen;
+    }
+
+    public void setFrozen(Boolean frozen) {
+        isFrozen = frozen;
+    }
+
+    public Prescription getPrescription() {
+        return prescription;
+    }
+
+    public void setPrescription(Prescription prescription) {
+        this.prescription = prescription;
+    }
+
+    public Integer getProjectOperatorId() {
+        return projectOperatorId;
+    }
+
+    public void setProjectOperatorId(Integer projectOperatorId) {
+        this.projectOperatorId = projectOperatorId;
     }
 }

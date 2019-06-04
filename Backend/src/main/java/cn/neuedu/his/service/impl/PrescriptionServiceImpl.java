@@ -17,4 +17,7 @@ public class PrescriptionServiceImpl extends AbstractService<Prescription> imple
     @Autowired
     private PrescriptionMapper prescriptionMapper;
 
+    public  void deleteByTemplateId(Integer templateId){
+        prescriptionMapper.deleteByTemplateId(templateId);
+    }
 }

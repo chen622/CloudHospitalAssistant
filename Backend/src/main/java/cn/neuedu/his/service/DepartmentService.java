@@ -1,6 +1,10 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.Service;
+
+import java.util.List;
 
 /**
  *
@@ -8,8 +12,11 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface DepartmentService extends Service<Department> {
 
-    Department getAllDepartmentInformation(Integer id);
+    List<Department> getAllDepartmentInformation();
 
     Department getDepartmentByName(String name);
 
+    List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
+
+    List<Department> getDepartmentInformation();
 }

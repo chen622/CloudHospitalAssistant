@@ -39,6 +39,10 @@ public class Constants {
     public static final List<Integer> Period_LIST = Arrays.asList(301,302,303);
     //所有药品类型
     public static final List<Integer> DRUG_TYPE_LIST = Arrays.asList(1101,1102,1103);
+    //最大剂型
+    public static final Integer LARGEST_FORMULATION = 1432;
+    //最小剂型
+    public static final Integer LEAST_FORMULATION = 1432;
 
 
     //医院管理员
@@ -187,6 +191,8 @@ public class Constants {
     public static final  Integer MEDIUM_DRUG_FEE_TYPE=202;
     //中草药
     public static final  Integer CHI_DRUG_FEE_TYPE=203;
+    //挂号费
+    public static final Integer REGISTRATION_FEE_TYPE=301;
 
 
 

@@ -19,4 +19,8 @@
   <select id="hasMedicalRecordInspectionNotDone" resultType="Integer">
     select count(*) from  his.inspection_application where item_id=#{itemId} and  is_template=false and  is_canceled=false  and  is_done=false ;
   </select>
+  <delete id="deleteByTemplateId">
+    delete  from  inspection_application where  item_id=#{templateId} and  is_template=true
+  </delete>
+
 </mapper>

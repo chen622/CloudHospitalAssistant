@@ -20,4 +20,8 @@ public class DrugTemplateServiceImpl extends AbstractService<DrugTemplate> imple
     private DrugTemplateMapper drugTemplateMapper;
 
 
+    @Override
+    public List<DrugTemplate> getPrescriptionsTemByName(String name) {
+        return drugTemplateMapper.getPrescriptionsTemByName(name);
+    }
 }
