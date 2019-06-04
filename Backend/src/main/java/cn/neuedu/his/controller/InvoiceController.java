@@ -49,11 +49,57 @@ public class InvoiceController {
      * @return
      */
     @PostMapping("/setPhase/{start}/{end}")
-    public  JSONObject setInvoiceNumberPhase(@PathVariable("start") Integer start, @PathVariable("end") Integer end) {
+    public JSONObject setInvoiceNumberPhase(@PathVariable("start") Integer start, @PathVariable("end") Integer end) {
         try {
             invoiceService.setInvoiceNumberToRedis(start, end);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_508);
+        }
+
+        return CommonUtil.successJson();
+    }
+
+    /**
+     * 重打发票
+     * @param invoiceId
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/anewInvoice/{invoiceId")
+    public JSONObject anewInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            invoiceService.addAnewInvoice(invoiceId);
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+
+        return CommonUtil.successJson();
+    }
+
+    /**
+     * 补打发票
+     * @param invoiceId
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/againInvoice/{invoiceId")
+    public JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            invoiceService.addAgainInvoice(invoiceId);
+        }catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson();

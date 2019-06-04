@@ -5,15 +5,21 @@
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
-    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
+      <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+      <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
+      <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
+      <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
   </resultMap>
 
   <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
       <id column="id" jdbcType="INTEGER" property="id" />
       <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
       <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+      <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
+      <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
+      <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
       <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByInvoiceId" column="id"/>
   </resultMap>
 

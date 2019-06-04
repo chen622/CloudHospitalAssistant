@@ -20,6 +20,15 @@ public class Invoice {
     @Column(name = "created_date")
     private Date createdDate = new Date(System.currentTimeMillis());
 
+    @Column(name = "anew_amount")
+    private Integer anewAmount;
+
+    @Column(name = "again_amount")
+    private Integer againAmount;
+
+    @Column(name = "daily_settle_id")
+    private Integer dailySettleId;
+
     private ArrayList<Payment> paymentList;
 
     /**
@@ -70,5 +79,29 @@ public class Invoice {
 
     public void setPaymentList(ArrayList<Payment> paymentList) {
         this.paymentList = paymentList;
+    }
+
+    public Integer getAnewAmount() {
+        return anewAmount;
+    }
+
+    public void setAnewAmount(Integer anewAmount) {
+        this.anewAmount = anewAmount;
+    }
+
+    public Integer getAgainAmount() {
+        return againAmount;
+    }
+
+    public void setAgainAmount(Integer againAmount) {
+        this.againAmount = againAmount;
+    }
+
+    public Integer getDailySettleId() {
+        return dailySettleId;
+    }
+
+    public void setDailySettleId(Integer dailySettleId) {
+        this.dailySettleId = dailySettleId;
     }
 }
