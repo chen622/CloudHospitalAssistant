@@ -8,4 +8,12 @@ import cn.neuedu.his.util.inter.Service;
  */
 public interface DiseaseFirstService extends Service<DiseaseFirst> {
     DiseaseFirst getDiseaseByname(String name);
+
+    void insertDiseaseFirst(DiseaseFirst diseaseFirst);
+
+    void modifyDiseaseFirst(DiseaseFirst diseaseFirst);
+
+    void deleteDiseaseFirst(Integer id);
+
+    DiseaseFirst selectDiseaseFirst(String name);
 }

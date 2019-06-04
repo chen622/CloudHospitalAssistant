@@ -22,7 +22,7 @@ public class NonDrug {
     private String code;
 
     @Column(name = "executive_department")
-    private Integer excutiveDepartment;
+    private Integer executiveDepartment;
 
     public String getCode() {
         return code;
@@ -32,12 +32,12 @@ public class NonDrug {
         this.code = code;
     }
 
-    public Integer getExcutiveDepartment() {
-        return excutiveDepartment;
+    public Integer getExecutiveDepartment() {
+        return executiveDepartment;
     }
 
-    public void setExcutiveDepartment(Integer excutiveDepartment) {
-        this.excutiveDepartment = excutiveDepartment;
+    public void setExecutiveDepartment(Integer excutiveDepartment) {
+        this.executiveDepartment = executiveDepartment;
     }
 
     /**
@@ -119,4 +119,5 @@ public class NonDrug {
     public void setFeeTypeId(Integer feeTypeId) {
         this.feeTypeId = feeTypeId;
     }
+
 }

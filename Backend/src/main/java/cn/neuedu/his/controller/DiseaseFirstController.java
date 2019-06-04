@@ -31,9 +31,16 @@ public class DiseaseFirstController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        diseaseFirstService.deleteById(id);
+        try{
+            diseaseFirstService.deleteDiseaseFirst(id);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("624"))
+                return CommonUtil.errorJson(ErrorEnum.E_624);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
 
-        return CommonUtil.successJson(id);
     }
 
     @PostMapping("/insert")
@@ -48,13 +55,15 @@ public class DiseaseFirstController {
 
         DiseaseFirst diseaseFirst = jsonObject.toJavaObject(jsonObject,DiseaseFirst.class);
 
-        //判断类别名称是否重复
-        if (diseaseFirstService.getDiseaseByname(diseaseFirst.getName()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_620);
-
-        diseaseFirstService.save(diseaseFirst);
-
-        return CommonUtil.successJson(diseaseFirst);
+        try {
+            diseaseFirstService.insertDiseaseFirst(diseaseFirst);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("620"))
+                return CommonUtil.errorJson(ErrorEnum.E_620);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     @PostMapping("/modify")
@@ -69,16 +78,15 @@ public class DiseaseFirstController {
 
         DiseaseFirst diseaseFirst = jsonObject.toJavaObject(jsonObject,DiseaseFirst.class);
 
-        if (diseaseFirstService.findById(diseaseFirst.getId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_620);
-
-        //判断疾病是否存在
-        if (diseaseFirstService.getDiseaseByname(diseaseFirst.getName()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_620);
-
-        diseaseFirstService.update(diseaseFirst);
-
-        return CommonUtil.successJson(diseaseFirst);
+        try{
+            diseaseFirstService.modifyDiseaseFirst(diseaseFirst);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e){
+            if (e.getMessage().equals("620"))
+                return CommonUtil.errorJson(ErrorEnum.E_620);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+        }
     }
 
     @PostMapping("/select/{name}")
@@ -91,13 +99,15 @@ public class DiseaseFirstController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        DiseaseFirst diseaseFirst = diseaseFirstService.getDiseaseByname(name);
-
-        //判断疾病是否存在
-        if (diseaseFirst == null)
-            return CommonUtil.errorJson(ErrorEnum.E_620);
-
-        return CommonUtil.successJson(diseaseFirst);
+        try{
+            DiseaseFirst diseaseFirst = diseaseFirstService.selectDiseaseFirst(name);
+            return CommonUtil.successJson(diseaseFirst);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("620"))
+                return CommonUtil.errorJson(ErrorEnum.E_620);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
 }
