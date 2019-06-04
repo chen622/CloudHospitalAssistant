@@ -45,7 +45,7 @@ public class DepartmentController {
             List<Department> departments = departmentService.getDepartmentInformation();
             return CommonUtil.successJson(departments);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
 
     }
@@ -148,6 +148,7 @@ public class DepartmentController {
         Integer operatorId;
         try {
             operatorId = PermissionCheck.isFinancialOfficer(authentication);
+            return CommonUtil.successJson();
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         }

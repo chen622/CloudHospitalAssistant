@@ -9,4 +9,8 @@ import cn.neuedu.his.util.inter.Service;
 public interface RegistrationTypeService extends Service<RegistrationType> {
     RegistrationType getRegistrationTypeByName(String name);
     void deleteRegistrationTypeByName(String name);
+    void insertRegisterType(RegistrationType registrationType);
+    void deleteRegisterType(Integer id);
+    void modifyRegisterType(RegistrationType registrationType);
+    RegistrationType selectRegisterType(String name);
 }

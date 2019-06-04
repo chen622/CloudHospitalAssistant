@@ -40,23 +40,25 @@ public class RegistrationTypeController {
 
         RegistrationType registrationType = jsonObject.toJavaObject(jsonObject,RegistrationType.class);
 
-        //判断挂号类型是否已经存在
-        if (registrationTypeService.getRegistrationTypeByName(registrationType.getName())!= null)
-            return CommonUtil.errorJson(ErrorEnum.E_603);
-
-        registrationTypeService.save(registrationType);
-
-        return CommonUtil.successJson(registrationType);
+       try{
+           registrationTypeService.insertRegisterType(registrationType);
+           return CommonUtil.successJson();
+       }catch (RuntimeException e){
+           if (e.getMessage().equals("603"))
+               return CommonUtil.errorJson(ErrorEnum.E_603);
+           else
+               return CommonUtil.errorJson(ErrorEnum.E_500);
+       }
     }
 
     /**
      * 医院管理员删除挂号类型
-     * @param name
+     * @param id
      * @param authentication
      * @return
      */
-    @PostMapping("/deleteRegisterType/{name}")
-    public JSONObject deleteRegisterType(@PathVariable("name") String name, Authentication authentication){
+    @PostMapping("/deleteRegisterType/{id}")
+    public JSONObject deleteRegisterType(@PathVariable("id") Integer id, Authentication authentication){
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -64,15 +66,15 @@ public class RegistrationTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        System.out.println(name);
-
-        //判断挂号类型是否存在
-        if (registrationTypeService.getRegistrationTypeByName(name) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_604);
-
-        registrationTypeService.deleteRegistrationTypeByName(name);
-
-        return CommonUtil.successJson(name);
+       try {
+           registrationTypeService.deleteRegisterType(id);
+           return CommonUtil.successJson();
+       }catch (RuntimeException e){
+           if (e.getMessage().equals("604"))
+               return CommonUtil.errorJson(ErrorEnum.E_604);
+           else
+               return CommonUtil.errorJson(ErrorEnum.E_500);
+       }
     }
 
     /**
@@ -91,14 +93,16 @@ public class RegistrationTypeController {
         }
 
         RegistrationType registrationType = jsonObject.toJavaObject(jsonObject,RegistrationType.class);
-        RegistrationType beforeType = registrationTypeService.getRegistrationTypeByName(registrationType.getName());
-        //判断挂号类型是否存在
-        if (beforeType == null)
-            return CommonUtil.errorJson(ErrorEnum.E_604);
 
-        registrationType.setId(beforeType.getId());
-        registrationTypeService.update(registrationType);
-        return CommonUtil.successJson(registrationType);
+        try{
+            registrationTypeService.modifyRegisterType(registrationType);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("604"))
+                return CommonUtil.errorJson(ErrorEnum.E_604);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     /**
@@ -115,11 +119,15 @@ public class RegistrationTypeController {
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-        RegistrationType registrationType = registrationTypeService.getRegistrationTypeByName(name);
-        //判断挂号类型是否存在
-        if (registrationType== null)
-            return CommonUtil.errorJson(ErrorEnum.E_604);
 
-        return CommonUtil.successJson(registrationType);
+        try{
+            RegistrationType registrationType = registrationTypeService.selectRegisterType(name);
+            return CommonUtil.successJson(registrationType);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("604"))
+                return CommonUtil.errorJson(ErrorEnum.E_604);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 }

@@ -16,4 +16,14 @@ public interface NonDrugService extends Service<NonDrug> {
     NonDrug selectNonDrugByCode(String code);
     List<NonDrug> findByName (String name);
     JSONObject getAll ();
+
+    void insertNonDrug(NonDrug nonDrug);
+
+    NonDrug selectNonDrugUsingName(String name);
+
+    NonDrug selectNonDrugUsingCode(String code);
+
+    void deleteNonDrug(Integer id);
+
+    void modifyNonDrug(NonDrug nonDrug);
 }

@@ -4,6 +4,7 @@ import cn.neuedu.his.mapper.NonDrugMapper;
 import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.service.NonDrugService;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static cn.neuedu.his.util.constants.Constants.NONDRUG_TYPE_LIST;
 
 /**
  *
@@ -45,5 +48,66 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
         if(list==null)
             list=new ArrayList<>();
         return CommonUtil.successJson(list);
+    }
+
+    @Override
+    public void insertNonDrug(NonDrug nonDrug){
+        //检查费药品类型是否存在
+        if (NONDRUG_TYPE_LIST.contains(nonDrug.getFeeTypeId()))
+            throw new RuntimeException("608");
+        //检查执行部门是否存在
+        Integer excutiveDepartmentId = nonDrug.getExecutiveDepartment();
+        if (excutiveDepartmentId != null) {
+            if (this.findById(excutiveDepartmentId) == null){
+                throw new RuntimeException("609");
+            }
+        }
+
+        this.save(nonDrug);
+    }
+
+    @Override
+    public NonDrug selectNonDrugUsingName(String name) {
+        NonDrug nonDrug = this.selectNonDrugByName(name);
+
+        //检查非药品是否存在
+        if (nonDrug == null)
+            throw new RuntimeException("608");
+
+        return nonDrug;
+    }
+
+    @Override
+    public NonDrug selectNonDrugUsingCode(String code) {
+        NonDrug nonDrug = this.selectNonDrugByCode(code);
+
+        //检查非药品是否存在
+        if (nonDrug == null)
+            throw new RuntimeException("608");
+
+        return nonDrug;
+    }
+
+    @Override
+    public void deleteNonDrug(Integer id) {
+        NonDrug nonDrug = this.findById(id);
+
+        if (nonDrug == null)
+            throw new RuntimeException("608");
+
+        this.deleteById(id);
+    }
+
+    @Override
+    public void modifyNonDrug(NonDrug nonDrug) {
+
+        Integer executiveDepartmentId = nonDrug.getExecutiveDepartment();
+        if (executiveDepartmentId != null) {
+            if (this.findById(executiveDepartmentId) == null){
+                throw new RuntimeException("609");
+            }
+        }
+
+        this.update(nonDrug);
     }
 }

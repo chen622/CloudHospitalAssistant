@@ -40,21 +40,18 @@ public class NonDrugController {
 
         NonDrug nonDrug = jsonObject.toJavaObject(NonDrug.class);
 
-        //检查费药品类型是否存在
-        if (NONDRUG_TYPE_LIST.contains(nonDrug.getFeeTypeId()))
-            return CommonUtil.errorJson(ErrorEnum.E_608);
-
-        //检查执行部门是否存在
-        Integer excutiveDepartmentId = nonDrug.getExcutiveDepartment();
-        if (excutiveDepartmentId != null) {
-            if (departmentService.findById(excutiveDepartmentId) == null){
+        try{
+            nonDrugService.insertNonDrug(nonDrug);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("608"))
+                return CommonUtil.errorJson(ErrorEnum.E_608);
+            else if (e.getMessage().equals("609"))
                 return CommonUtil.errorJson(ErrorEnum.E_609);
-            }
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
 
-        nonDrugService.save(nonDrug);
-
-        return CommonUtil.successJson(nonDrug);
     }
 
     /*
@@ -98,13 +95,17 @@ public class NonDrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        NonDrug nonDrug = nonDrugService.selectNonDrugByName(name);
 
-        //检查非药品是否存在
-        if (nonDrug == null)
-            return CommonUtil.errorJson(ErrorEnum.E_608);
+        try {
+            NonDrug nonDrug = nonDrugService.selectNonDrugUsingName(name);
+            return CommonUtil.successJson(nonDrug);
 
-        return CommonUtil.successJson(nonDrug);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("608"))
+                return CommonUtil.errorJson(ErrorEnum.E_608);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     @GetMapping("/selectByCode/{code}")
@@ -117,12 +118,57 @@ public class NonDrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        NonDrug nonDrug = nonDrugService.selectNonDrugByCode(code);
+        try {
+            NonDrug nonDrug = nonDrugService.selectNonDrugUsingCode(code);
+            return CommonUtil.successJson(nonDrug);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("608"))
+                return CommonUtil.errorJson(ErrorEnum.E_608);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
 
-        //检查非药品是否存在
-        if (nonDrug == null)
-            return CommonUtil.errorJson(ErrorEnum.E_608);
+    @PostMapping("/delete/{id}")
+    public JSONObject deleteNonDrug(@PathVariable("id") Integer id, Authentication authentication){
 
-        return CommonUtil.successJson(nonDrug);
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            nonDrugService.deleteNonDrug(id);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("608"))
+                return CommonUtil.errorJson(ErrorEnum.E_608);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
+
+    @PostMapping("/modify")
+    public JSONObject modifyNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication){
+
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            NonDrug nonDrug = jsonObject.toJavaObject(jsonObject, NonDrug.class);
+            nonDrugService.modifyNonDrug(nonDrug);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("609"))
+                return CommonUtil.errorJson(ErrorEnum.E_609);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 }
