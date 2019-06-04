@@ -1,10 +1,11 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "inspection_application")
-public class InspectionApplication {
+public class InspectionApplication implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

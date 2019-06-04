@@ -41,6 +41,11 @@ public class DoctorController {
     @Autowired
     RedisServiceImpl redisService;
 
+    /**
+     * 暂存病历
+     * @param object
+     * @return
+     */
     @PostMapping("/saveTemporaryMR")
     public JSONObject saveTemporaryMR(@RequestBody  JSONObject object){
         Integer id=Integer.parseInt(object.get("registrationId").toString());
@@ -53,18 +58,41 @@ public class DoctorController {
         return CommonUtil.successJson();
     }
 
-
-    @GetMapping("/getTemporaryMR/{regsirationId}")
-    public JSONObject getTemporaryMR(@PathVariable("regsirationId") Integer regsirationId){
+    /**
+     * 获得暂存病历
+     * @param registrationId
+     * @return
+     */
+    @GetMapping("/getTemporaryMR/{registrationId}")
+    public JSONObject getTemporaryMR(@PathVariable("registrationId") Integer registrationId){
         try {
-            MedicalRecord record= redisService.getTemporaryMedicalRecord(regsirationId);
+            MedicalRecord record= redisService.getTemporaryMedicalRecord(registrationId);
             return  CommonUtil.successJson(record);
         } catch (Exception e) {
            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
+    /**
+     * 获得暂存病历
+     * @param registrationId
+     * @return
+     */
+    @GetMapping("/deleteTemporaryMR/{registrationId}")
+    public JSONObject deleteTemporaryMR(@PathVariable("registrationId") Integer registrationId){
+        try {
+            redisService.deleteTemporaryMR(registrationId);
+            return  CommonUtil.successJson();
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_803);
+        }
+    }
 
+    /**
+     * 暂存检查/处置
+     * @param object
+     * @return
+     */
     @PostMapping("/saveTemporaryInspection")
     public JSONObject saveTemporaryInspection(@RequestBody JSONObject object){
         Integer id=Integer.parseInt(object.get("registrationId").toString());
@@ -79,14 +107,37 @@ public class DoctorController {
     }
 
 
-    @GetMapping("/getTemporaryInspection/{regsirationId}")
-    public JSONObject getTemporaryInspection(@PathVariable("regsirationId") Integer regsirationId){
+    /**
+     * 获得暂存检查/处置
+     * @param registrationId
+     * @return
+     */
+    @GetMapping("/getTemporaryInspection/{registrationId}")
+    public JSONObject getTemporaryInspection(@PathVariable("registrationId") Integer registrationId){
+        JSONObject object=new JSONObject();
         try {
-            redisService.getTemporaryMedicalRecord(regsirationId);
+            object.put("prescriptions", redisService.getTemporaryPrescription(registrationId));
+            object.put("applications", redisService.getTemporaryApplications(registrationId));
+            return CommonUtil.successJson(object);
         } catch (Exception e) {
+            e.printStackTrace();
            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        return CommonUtil.successJson();
+    }
+
+    /**
+     * 获得暂存病历
+     * @param registrationId
+     * @return
+     */
+    @GetMapping("/deleteTemporaryInspection/{registrationId}")
+    public JSONObject deleteTemporaryInspection(@PathVariable("registrationId") Integer registrationId){
+        try {
+            redisService.deleteTemporaryInspection(registrationId);
+            return  CommonUtil.successJson();
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_803);
+        }
     }
 
 

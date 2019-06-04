@@ -12,9 +12,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -140,5 +143,14 @@ public class DepartmentController {
         }
     }
 
+    @GetMapping("/billingDeptDayKnot/{start}/{end}")
+    public JSONObject billingDeptDayKnot(@PathVariable("start") Date start,@PathVariable("end") Date end ,Authentication authentication){
+        Integer operatorId;
+        try {
+            operatorId = PermissionCheck.isFinancialOfficer(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        }
+    }
 
 }

@@ -375,9 +375,10 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(r.getNonDrugId()==null || nonDrugService.findById(r.getNonDrugId())==null ){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
-                InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,false);
+                InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(System.currentTimeMillis()),false,r.getEmerged(),r.getQuantity(),false,false);
                 inspectionApplicationService.save(application);
-                Payment payment = setInspectionPayment(r,registration.getPatientId());
+                System.out.println(application.getId());
+                Payment payment = setInspectionPayment(application,registration.getPatientId());
                 paymentService.save(payment);
             }
         }
@@ -394,7 +395,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setTemplate(false);
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
-                Payment p=setPrescriptionPayment(prescription, registration.getPatientId());
+                Payment p=setPrescriptionPayment(p2, registration.getPatientId());
             }
         }
         return CommonUtil.successJson();
@@ -692,4 +693,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         registrationService.update(registration);
         return CommonUtil.successJson();
     }
+
+
 }

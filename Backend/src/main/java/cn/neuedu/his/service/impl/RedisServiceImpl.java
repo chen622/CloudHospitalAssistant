@@ -4,6 +4,7 @@ import cn.neuedu.his.model.InspectionApplication;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.util.SerializeUtil;
+import com.alibaba.fastjson.JSONObject;
 import redis.clients.jedis.Jedis;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,7 @@ public class RedisServiceImpl{
             byte[] data = jedis.get(key.getBytes());
             result = SerializeUtil.unserialize(data);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new  Exception();
         }finally{
             returnResource(jedis);
@@ -283,6 +285,10 @@ public class RedisServiceImpl{
         return (MedicalRecord) getObject(id.toString()+"MR");
     }
 
+    public void deleteTemporaryMR(Integer id) throws Exception {
+        Jedis jedis=getResource();
+        jedis.del(id.toString()+"MR");
+    }
 
 
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
@@ -296,8 +302,18 @@ public class RedisServiceImpl{
      * @return
      * @throws Exception
      */
-    public MedicalRecord getTemporaryInspection(Integer id) throws Exception {
-        return (MedicalRecord) getObject(id.toString()+"Inspection");
+    public List<Prescription> getTemporaryPrescription(Integer id) throws Exception {
+        ArrayList<Prescription> list= (ArrayList<Prescription>) getObjectList(id.toString()+"prescriptions");
+        return  list;
+    }
+    public List<InspectionApplication> getTemporaryApplications(Integer id) throws Exception {
+        return (ArrayList<InspectionApplication>)getObjectList(id.toString()+"applications");
+    }
+
+    public void  deleteTemporaryInspection(Integer id){
+        Jedis jedis=getResource();
+        jedis.del(id.toString()+"applications");
+        jedis.del(id.toString()+"prescriptions");
     }
 
 }

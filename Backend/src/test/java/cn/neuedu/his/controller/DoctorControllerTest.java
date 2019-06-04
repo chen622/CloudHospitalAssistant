@@ -62,6 +62,10 @@ public class DoctorControllerTest {
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
+    /**
+     * 暂存病历
+     * @throws Exception
+     */
     @Test
     public void saveTemporaryMR() throws Exception{
         Integer registrationId=1;
@@ -86,6 +90,10 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    /**
+     * 获得暂存病历
+     * @throws Exception
+     */
     @Test
     public void getTemporaryMR() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryMR/1")
@@ -98,7 +106,26 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    /**
+     * 获得暂存病历
+     * @throws Exception
+     */
+    @Test
+    public void deleteTemporaryMR() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/deleteTemporaryMR/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
+    /**
+     * 暂存检查/处置
+     * @throws Exception
+     */
     @Test
     public void saveTemporaryInspection() throws Exception{
 
@@ -146,6 +173,45 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    /**
+     * 获得暂存的检查/处置
+     * @throws Exception
+     */
+    @Test
+    public void getTemporaryInspection() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryInspection/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    /**
+     * 获得暂存的检查/处置
+     * @throws Exception
+     */
+    @Test
+    public void deleteTemporaryInspection() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/deleteTemporaryInspection/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+
+
 
 
 
