@@ -6,13 +6,15 @@
             <a-tabs defaultActiveKey="1" @change="callback" style="text-align: center" size="large">
                 <a-tab-pane key="1" tab="账号密码登录"  >
                     <a-form-item>
-                        <a-input size="large" type="text" placeholder="账户: admin" v-model="loginform.username" >
+                        <a-input size="large" type="text" placeholder="账户: admin" v-model="loginform.username"
+                                 v-decorator="['username',{rules: [{ required: true, message: '请输入帐户名或邮箱地址' }]}]">
                             <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
                         </a-input>
                     </a-form-item>
 
                     <a-form-item>
-                        <a-input size="large" type="password" autocomplete="false" placeholder="密码: admin or ant.design" v-model="loginform.password" @keyup.enter.native="handleSubmit">
+                        <a-input size="large" type="password" autocomplete="false" placeholder="密码: admin or ant.design" v-model="loginform.password" @keyup.enter.native="handleSubmit"
+                                 v-decorator="['password',{rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}]">
                             <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
                         </a-input>
                     </a-form-item>
@@ -55,10 +57,6 @@
                 loginform:{
                     username: '',
                     password: '',
-                },
-                rules:{
-                    username: [{required: true, message: '请输入用户名' ,trigger: 'blur'}],
-                    password: [{required: true, message: '请输入密码' , trigger: 'blur'}]
                 },
                 checked: false
 
