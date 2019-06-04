@@ -64,9 +64,4 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return userMapper.getUserAndInvoiceAndPaymentDuringDate(userId, startDate, endDate);
     }
 
-    @Override
-    public List<User> findAllUsers() {
-        return this.findAll();
-    }
-
 }

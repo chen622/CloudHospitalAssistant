@@ -17,8 +17,6 @@ public interface UserService extends Service<User> {
 
     User findUserAndInvoiceAndPaymentDuringDate(Integer userId, Date startDate, Date endDate);
 
-    List<User> findAllUsers();
-
 
 
 }
