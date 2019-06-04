@@ -85,7 +85,7 @@ public class DiseaseFirstController {
             if (e.getMessage().equals("620"))
                 return CommonUtil.errorJson(ErrorEnum.E_620);
             else
-                return CommonUtil.errorJson(ErrorEnum.E_501);
+                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
 

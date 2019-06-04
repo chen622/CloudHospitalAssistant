@@ -58,26 +58,22 @@ public class ScheduleRuleController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
+        try{
         ScheduleRule scheduleRule = jsonObject.toJavaObject(jsonObject,ScheduleRule.class);
-
-        //检测操作员id是否存在
-        if (userService.findById(scheduleRule.getOperatorId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_616);
-
-        //检测医生是否存在
-        if (doctorService.findById(scheduleRule.getDoctorId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_617);
-
-        //检测挂号类型是否存在
-        if (registrationTypeService.findById(scheduleRule.getRegistrationTypeId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_618);
-
-        //判断时间是否冲突
-        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_619);
-
-        scheduleRuleService.save(scheduleRule);
-        return CommonUtil.successJson(scheduleRule);
+        scheduleRuleService.insertScheduleRule(scheduleRule);
+        return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("616"))
+                return CommonUtil.errorJson(ErrorEnum.E_616);
+            else if (e.getMessage().equals("617"))
+                return CommonUtil.errorJson(ErrorEnum.E_617);
+            else if (e.getMessage().equals("618"))
+                return CommonUtil.errorJson(ErrorEnum.E_618);
+            else if (e.getMessage().equals("619"))
+                return CommonUtil.errorJson(ErrorEnum.E_619);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
 
@@ -90,27 +86,23 @@ public class ScheduleRuleController {
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
+        try{
+            ScheduleRule scheduleRule = jsonObject.toJavaObject(jsonObject,ScheduleRule.class);
+            scheduleRuleService.modifyScheduleRule(scheduleRule);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("616"))
+                return CommonUtil.errorJson(ErrorEnum.E_616);
+            else if (e.getMessage().equals("617"))
+                return CommonUtil.errorJson(ErrorEnum.E_617);
+            else if (e.getMessage().equals("618"))
+                return CommonUtil.errorJson(ErrorEnum.E_618);
+            else if (e.getMessage().equals("619"))
+                return CommonUtil.errorJson(ErrorEnum.E_619);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
 
-        ScheduleRule scheduleRule = jsonObject.toJavaObject(jsonObject,ScheduleRule.class);
-
-        //检测操作员id是否存在
-        if (userService.findById(scheduleRule.getOperatorId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_616);
-
-        //检测医生是否存在
-        if (doctorService.findById(scheduleRule.getDoctorId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_617);
-
-        //检测挂号类型是否存在
-        if (registrationTypeService.findById(scheduleRule.getRegistrationTypeId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_618);
-
-        //判断时间是否冲突
-        if (scheduleRuleService.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_619);
-
-        scheduleRuleService.update(scheduleRule);
-        return CommonUtil.successJson(scheduleRule);
     }
 
     @GetMapping("/select/{doctorId}")
