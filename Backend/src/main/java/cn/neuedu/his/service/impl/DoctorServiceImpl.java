@@ -708,23 +708,17 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if(prescriptions==null)
             prescriptions=new ArrayList<>();
         else {
-            for (Prescription p:prescriptions){
-                total= total.add( BigDecimal.valueOf(p.getAmount()).multiply(p.getDrug().getPrice()));
-            }
+            total=addPrescriptionTotal(total, prescriptions);
         }
         if(applications==null)
             applications=new ArrayList<>();
         else {
-            for (InspectionApplication a:applications){
-                total= total.add( BigDecimal.valueOf(a.getQuantity()).multiply(a.getNonDrug().getPrice()));
-            }
+           total=addApplicationTotal(total, applications);
         }
         if(payments==null)
             payments=new ArrayList<>();
         else {
-            for (Payment p:payments){
-                total=total.add(p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
-            }
+            total=addRegistrationTotal(total, payments);
         }
         JSONObject object=new JSONObject();
         object.put("prescriptions",prescriptions);
@@ -737,13 +731,33 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     public JSONObject getDoctorTotal(Integer doctorId, String start, String end) {
         JSONObject object=new JSONObject();
-        List<Integer> registrationIds=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINISH_DIAGNOSIS);
+        HashMap<Integer ,List<Integer>> registrationHashMap=new HashMap<>();
+
+        List<Integer> registrationIds=registrationService.getAllByDoctor(doctorId, start, end,Constants.FIRST_DIAGNOSIS);
+        registrationHashMap.put(Constants.FIRST_DIAGNOSIS, registrationIds);
+
+        List<Integer> suspects=registrationService.getAllByDoctor(doctorId, start, end,Constants.SUSPECT);
+        registrationIds.addAll(suspects);
+        registrationHashMap.put(Constants.SUSPECT, suspects);
+
+        List<Integer> finalD=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINAL_DIAGNOSIS);
+        registrationIds.addAll(finalD);
+        registrationHashMap.put(Constants.FINAL_DIAGNOSIS, finalD);
+
+        List<Integer> finish=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINISH_DIAGNOSIS);
+        registrationIds.addAll(finish);
+        registrationHashMap.put(Constants.FINISH_DIAGNOSIS, finish);
+
+
 
         HashMap<Integer ,List<InspectionApplication>> applicationHashMap=new HashMap<>();
         HashMap<Integer ,List<Prescription>> prescriptionHashMap=new HashMap<>();
-        HashMap<Integer ,List<Payment>> registrationHashMap=new HashMap<>();
+        HashMap<Integer ,List<Payment>> otherPaymentHashMap=new HashMap<>();
         HashMap<Integer,MedicalRecord> medicalRecordHashMap=new HashMap<>();
 
+        BigDecimal prescriptionTotal= BigDecimal.valueOf(0);
+        BigDecimal applicationTotal= BigDecimal.valueOf(0);
+        BigDecimal registrationTotal= BigDecimal.valueOf(0);
         for (Integer registrationId:registrationIds){
             MedicalRecord record=medicalRecordService.getByRegistrationId(registrationId);
 
@@ -752,27 +766,66 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             List<Payment> payments=paymentService.getByRegistrationId(registrationId,Constants.REGISTRATION_FEE_TYPE);
 
             if(prescriptions==null)
-                prescriptions = new ArrayList<>();
+                prescriptions=new ArrayList<>();
+            else
+                prescriptionTotal=addPrescriptionTotal(prescriptionTotal, prescriptions);
             if(applications==null)
-                applications = new ArrayList<>();
+                applications=new ArrayList<>();
+            else
+                applicationTotal=addApplicationTotal(applicationTotal, applications);
+
             if(payments==null)
-                payments = new ArrayList<>();
+                payments=new ArrayList<>();
+            else
+                registrationTotal=addRegistrationTotal(registrationTotal, payments);
 
             prescriptionHashMap.put(registrationId, prescriptions);
             applicationHashMap.put(registrationId, applications);
-            registrationHashMap.put(registrationId, payments);
+            otherPaymentHashMap.put(registrationId, payments);
             medicalRecordHashMap.put(registrationId, record);
 
         }
 
-        object.put("registrationIds",registrationIds);
+
+        object.put("registrations",registrationHashMap);
+        object.put("registrationsNum",registrationIds.size());
         object.put("prescriptionHashMap",prescriptionHashMap);
         object.put("applicationHashMap", applicationHashMap);
-        object.put("registrationHashMap",registrationHashMap);
+        object.put("otherPaymentHashMap",otherPaymentHashMap);
         object.put("medicalRecordHashMap",medicalRecordHashMap);
+
+
+
+        object.put("prescriptionNum",prescriptionTotal);
+        object.put("applicationNum",applicationTotal);
+        object.put("registrationNum", registrationTotal);
 
         return CommonUtil.successJson(object);
     }
 
+    private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal,  List<Prescription> prescriptions){
+
+            for (Prescription p:prescriptions){
+                prescriptionTotal= prescriptionTotal.add( BigDecimal.valueOf(p.getAmount()).multiply(p.getDrug().getPrice()));
+            }
+            return prescriptionTotal;
+    }
+
+    private BigDecimal addApplicationTotal(BigDecimal applicationTotal,  List<InspectionApplication> applications){
+
+
+            for (InspectionApplication a:applications){
+                applicationTotal= applicationTotal.add( BigDecimal.valueOf(a.getQuantity()).multiply(a.getNonDrug().getPrice()));
+            }
+        return  applicationTotal;
+    }
+
+    private BigDecimal addRegistrationTotal(BigDecimal registrationTotal,List<Payment> payments){
+
+            for (Payment p:payments){
+                registrationTotal=registrationTotal.add(p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
+            }
+        return  registrationTotal;
+    }
 
 }
