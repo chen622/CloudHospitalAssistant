@@ -45,7 +45,7 @@ public class DepartmentController {
             List<Department> departments = departmentService.getDepartmentInformation();
             return CommonUtil.successJson(departments);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_500);
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
         }
 
     }
@@ -143,15 +143,14 @@ public class DepartmentController {
         }
     }
 
-    @GetMapping("/billingDeptDayKnot/{start}/{end}")
-    public JSONObject billingDeptDayKnot(@PathVariable("start") Date start,@PathVariable("end") Date end ,Authentication authentication){
-        Integer operatorId;
-        try {
-            operatorId = PermissionCheck.isFinancialOfficer(authentication);
-            return CommonUtil.successJson();
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        }
-    }
+//    @GetMapping("/billingDeptDayKnot/{start}/{end}")
+//    public JSONObject billingDeptDayKnot(@PathVariable("start") Date start,@PathVariable("end") Date end ,Authentication authentication){
+//        Integer operatorId;
+//        try {
+//            operatorId = PermissionCheck.isFinancialOfficer(authentication);
+//        } catch (AuthenticationServiceException a) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+//        }
+//    }
 
 }

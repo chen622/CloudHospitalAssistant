@@ -125,6 +125,34 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         return invoice;
     }
 
+    /**
+     * 发票重打
+     * @param invoiceId
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public void addAnewInvoice(Integer invoiceId) throws IllegalArgumentException {
+        Invoice invoice = findById(invoiceId);
+        if (invoice == null)
+            throw new IllegalArgumentException("invoiceId");
+        invoice.setAnewAmount(invoice.getAnewAmount() + 1);
+        update(invoice);
+    }
+
+    /**
+     * 发票补打
+     * @param invoiceId
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public void addAgainInvoice(Integer invoiceId) throws IllegalArgumentException {
+        Invoice invoice = findById(invoiceId);
+        if (invoice == null)
+            throw new IllegalArgumentException("invoiceId");
+        invoice.setAgainAmount(invoice.getAgainAmount() + 1);
+        update(invoice);
+    }
+
     @Override
     public Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId) {
         return invoiceMapper.getInvoiceAndPaymentByInvoiceId(invoiceId);

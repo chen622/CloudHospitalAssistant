@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.neuedu.his.mapper.DailySettleMapper">
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DailySettle">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="make_date" jdbcType="TIMESTAMP" property="makeDate" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="make_id" jdbcType="INTEGER" property="makeId" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
+    <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
+    <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
+    <result column="other_fee" jdbcType="DECIMAL" property="otherFee" />
+    <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
+    <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
+    <result column="again_invoice_amount" jdbcType="INTEGER" property="againInvoiceAmount" />
+  </resultMap>
+</mapper>
