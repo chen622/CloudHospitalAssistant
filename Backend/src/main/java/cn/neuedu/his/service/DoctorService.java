@@ -108,5 +108,11 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     public  JSONObject finishDiagnose(Integer registrationId);
+
+    @Transactional
+    public JSONObject getAllPaymentDetails(Integer medicalRecordIds,Integer registrationId);
+
+    @Transactional
+    public JSONObject getDoctorTotal(Integer doctorId,String start,String end);
 }
 

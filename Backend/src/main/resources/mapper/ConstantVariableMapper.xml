@@ -10,10 +10,30 @@
     <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
 
-<select id="getDepartmentType" resultMap="BaseResultMap">
-  select *
-from constant_variable
-where type = 1
-</select>
+  <!-- 获得大类（type 0） -->
+  <select id="getPrimaryType" resultMap="BaseResultMap">
+    select *
+    from constant_variable
+    where type = 0
+  </select>
+
+  <select id="justifyPrimaryType" resultMap="BaseResultMap">
+    select *
+    from constant_variable
+    where type = 0 and id = #{id}
+  </select>
+
+  <!-- 获得部门类型-->
+  <select id="getDepartmentType" resultMap="BaseResultMap">
+    select *
+    from constant_variable
+    where type = 1
+  </select>
+
+  <select id="getConstantByName" resultMap="BaseResultMap">
+    select *
+    from constant_variable
+    where name = #{name} and  type = #{type}
+  </select>
   
 </mapper>

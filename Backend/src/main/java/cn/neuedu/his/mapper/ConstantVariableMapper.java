@@ -9,5 +9,8 @@ import java.util.List;
 @Component
 public interface ConstantVariableMapper extends MyMapper<ConstantVariable> {
     List<ConstantVariable> getDepartmentType();
+    List<ConstantVariable> getPrimaryConstant();
+    ConstantVariable getConstantByName(String name, Integer type);
+    ConstantVariable justifyPrimaryType(Integer id);
 
 }

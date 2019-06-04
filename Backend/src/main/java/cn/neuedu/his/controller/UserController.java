@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
@@ -105,12 +106,12 @@ public class UserController {
     /**
      * 管理员删除信息
      *
-     * @param username
+     * @param id
      * @param authentication
      * @return
      */
-    @PostMapping("/delete/{username}")
-    public JSONObject deleteUserInformation(@PathVariable("username") String username, Authentication authentication) {
+    @PostMapping("/delete/{id}")
+    public JSONObject deleteUserInformation(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
         try {
@@ -120,22 +121,19 @@ public class UserController {
         }
 
         //获取user
-        User user = userService.getUserByUsername("username");
-
-        //获取id,因为可能要删除doctor中的数据，所以获取id是必要的
-        Integer userId = user.getId();
+        User user = userService.findById(id);
 
         //判断被删除用户是否存在
-        if (userId == null)
+        if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
         //判断是否要先将doctor表中的数据删除
         if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId()) == true) {
-            doctorService.deleteById(userId);
+            doctorService.deleteById(id);
         }
 
         //删除用户表中的信息
-        userService.deleteById(userId);
+        userService.deleteById(id);
 
         return CommonUtil.successJson(user);
     }
@@ -279,6 +277,16 @@ public class UserController {
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);
+    }
+
+    @GetMapping("/findAll")
+    public JSONObject findAll(){
+        try{
+            List<User> users = userService.findAll();
+            return CommonUtil.successJson(users);
+        }catch (RuntimeException e){
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
 }

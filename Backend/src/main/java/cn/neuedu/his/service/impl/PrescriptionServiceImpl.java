@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 /**
  *
  * Created by ccm on 2019/05/29.
@@ -19,5 +21,10 @@ public class PrescriptionServiceImpl extends AbstractService<Prescription> imple
 
     public  void deleteByTemplateId(Integer templateId){
         prescriptionMapper.deleteByTemplateId(templateId);
+    }
+
+    @Override
+    public ArrayList<Prescription> getByMedicalRecordId(Integer id) {
+        return prescriptionMapper.getByMedicalRecordId(id);
     }
 }

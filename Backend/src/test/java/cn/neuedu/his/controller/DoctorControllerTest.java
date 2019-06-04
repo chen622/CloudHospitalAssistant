@@ -295,7 +295,7 @@ public class DoctorControllerTest {
     //病例模板
     @Test
     public void getHospitalMR() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getHospitalMR")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getMRTemplate/"+Constants.HOSPITALLEVEL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -307,7 +307,7 @@ public class DoctorControllerTest {
 
     @Test
     public void getDeptMR() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDeptMR")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getMRTemplate/"+Constants.DEPTLEVEL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -319,7 +319,7 @@ public class DoctorControllerTest {
 
     @Test
     public void getPersonalMR() throws  Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPersonalMR")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getMRTemplate/"+Constants.PERSONALLEVEL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -607,7 +607,6 @@ public class DoctorControllerTest {
     }
 
 
-
     @Test
     public void updateInspectionTem() throws Exception {
         InspectionApplication i = new InspectionApplication();
@@ -772,4 +771,43 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    @Test
+    public void paymentDetails() throws  Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/paymentDetails/1/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+    @Test
+    public void getDoctorTotal() throws  Exception{
+        Date start=new Date();
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd");
+        start=ft.parse("2019-05-28 00:00:00");
+        Date end=new Date(System.currentTimeMillis());
+
+        JSONObject object=new JSONObject();
+        object.put("doctorId", 1);
+        object.put("start", "2019-05-28 00:00:00");
+        object.put("end", "2019-06-05 00:00:00");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/getDoctorTotal")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .content(object.toJSONString())
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 }
