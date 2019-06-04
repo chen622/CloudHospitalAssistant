@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -25,5 +27,10 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public void deleteByTemplateId(Integer templateId) {
         inspectionApplicationMapper.deleteByTemplateId(templateId);
+    }
+
+    @Override
+    public ArrayList<InspectionApplication> getByMedicalRecordId(Integer id) {
+        return inspectionApplicationMapper.getByMedicalRecordId(id);
     }
 }

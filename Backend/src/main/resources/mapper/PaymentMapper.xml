@@ -20,6 +20,8 @@
     <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
   </resultMap>
 
+
+
   <select id="selectByItemId" resultMap="BaseResultMap">
     select * from payment p
     where (select type from payment_type pt where pt.id = p.payment_type_id) = #{paymentTotalTypeId} and item_id = #{registrationId}
@@ -31,5 +33,9 @@
 
   <select id="selectAllByItemIdAndPaymentTypeId" resultType="cn.neuedu.his.model.Payment">
     select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId}
+  </select>
+
+  <select id="getByRegistrationId" resultMap="BaseResultMap">
+        select * from payment where  item_id=#{id} and  payment_type_id=#{type};
   </select>
 </mapper>

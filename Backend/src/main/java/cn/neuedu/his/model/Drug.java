@@ -36,6 +36,16 @@ public class Drug {
     private String code;
     private Integer stockAmount;
     private Integer drugType;
+    private Integer feeTypeId;
+
+
+    public Integer getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Integer feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
 
     public String getCode() {
         return code;

@@ -1,10 +1,7 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.RegistrationMapper;
-import cn.neuedu.his.model.JobSchedule;
-import cn.neuedu.his.model.Patient;
-import cn.neuedu.his.model.Payment;
-import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.Constants;
@@ -191,6 +188,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Override
     public ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId) {
         return registrationMapper.getAllRegistrationWaitingByPatientId(patientId, RESERVATION, WAITING_FOR_TREATMENT);
+    }
+
+    @Override
+    public ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String  end, Integer state) {
+        return registrationMapper.getAllByDoctor(doctorId, start, end,state);
     }
 
 

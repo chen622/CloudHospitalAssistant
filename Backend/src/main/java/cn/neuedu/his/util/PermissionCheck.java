@@ -92,6 +92,22 @@ public class PermissionCheck {
     }
 
     /**
+     * 医院管理员权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isTechnicalDoctor(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId.equals(Constants.UserType.TECHNICAL_DOCTOR.getId())) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
+    /**
      * 个人权限检验
      *
      * @param authentication

@@ -8,6 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,4 +27,8 @@ public interface PaymentService extends Service<Payment> {
 
     Payment findByRegistrationId(Integer registrationId);
     void updateInvoiceId(Integer invoiceId, Integer id);
+
+
+    ArrayList<Payment> getWithItem(Integer id);
+    List<Payment> getByRegistrationId(Integer id, Integer type);
 }

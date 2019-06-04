@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
@@ -290,6 +291,16 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Override
     public void updateInvoiceId(Integer invoiceId, Integer id) {
         paymentMapper.updateInvoiceId(invoiceId, id);
+    }
+
+    @Override
+    public ArrayList<Payment> getWithItem(Integer id) {
+        return paymentMapper.getWithItem(id);
+    }
+
+    @Override
+    public List<Payment> getByRegistrationId(Integer id, Integer type) {
+        return paymentMapper.getByRegistrationId(id, type);
     }
 
     /**

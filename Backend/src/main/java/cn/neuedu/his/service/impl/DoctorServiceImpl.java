@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -372,12 +374,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         //保存模板非药项目
         if (applicationList!=null){
             for (InspectionApplication r : applicationList){
-                if(r.getNonDrugId()==null || nonDrugService.findById(r.getNonDrugId())==null ){
+                NonDrug nonDrug=nonDrugService.findById(r.getNonDrugId());
+                if(r.getNonDrugId()==null || nonDrug==null ){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
-                InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(System.currentTimeMillis()),false,r.getEmerged(),r.getQuantity(),false,false);
+                InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(System.currentTimeMillis()),false,r.getEmerged(),r.getQuantity(),false,false,nonDrug.getFeeTypeId());
+                if(isDisposal)
+                    application.setCheck(false);
                 inspectionApplicationService.save(application);
-                System.out.println(application.getId());
                 Payment payment = setInspectionPayment(application,registration.getPatientId());
                 paymentService.save(payment);
             }
@@ -391,7 +395,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 check=checkPrescription(prescription);
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
-                Prescription p2=new Prescription(prescription);
+                Drug drug = drugService.findById(prescription.getDrugId());
+                Prescription p2=new Prescription(prescription, drug.getFeeTypeId(),medicalRecordId,false);
                 p2.setTemplate(false);
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
@@ -422,12 +427,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         payment.setUnitPrice(drug.getPrice());
         payment.setCreateTime(new Date(System.currentTimeMillis()));
         payment.setPatientId(patientId);
-        if(drug.getDrugType().equals(Constants.WESTEN_DRUG))
-            payment.setPaymentTypeId(Constants.WESTERN_DRUG_FEE_TYPE);
-        else if(drug.getDrugType().equals(Constants.TRADITIONAL_DRUG))
-            payment.setPaymentTypeId(Constants.CHI_DRUG_FEE_TYPE);
-        else
-            payment.setPaymentTypeId(Constants.MEDIUM_DRUG_FEE_TYPE);
+        payment.setPaymentTypeId(drug.getFeeTypeId());
         payment.setItemId(application.getId());
         payment.setState(Constants.PRODUCE_PAYMENT);
         return payment;
@@ -456,10 +456,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         //保存模板非药项目
         if (applicationList!=null){
             for (InspectionApplication r : applicationList){
-                if(r.getNonDrugId()==null || nonDrugService.findById(r.getNonDrugId())==null ){
+
+                NonDrug drug=nonDrugService.findById(r.getNonDrugId());
+                if(r.getNonDrugId()==null || drug==null ){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
-                InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true);
+                InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true,drug.getFeeTypeId());
                 inspectionApplicationService.save(application);
             }
         }
@@ -470,7 +472,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 check=checkPrescription(prescription);
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
-                Prescription p2=new Prescription(prescription);
+                Drug drug=drugService.findById(prescription.getDrugId());
+                Prescription p2=new Prescription(prescription,drug.getFeeTypeId(),prescription.getItemId(),true);
                 p2.setTemplate(true);
                 p2.setItemId(tempId);
                 prescriptionService.save(p2);
@@ -692,6 +695,83 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         registration.setState(Constants.FINISH_DIAGNOSIS);
         registrationService.update(registration);
         return CommonUtil.successJson();
+    }
+
+
+    @Override
+    @Transactional
+    public JSONObject getAllPaymentDetails(Integer medicalRecordId,Integer registrationId) {
+        List<Prescription> prescriptions=prescriptionService.getByMedicalRecordId(medicalRecordId);
+        List<InspectionApplication> applications=inspectionApplicationService.getByMedicalRecordId(medicalRecordId);
+        List<Payment> payments=paymentService.getByRegistrationId(registrationId,Constants.REGISTRATION_FEE_TYPE);
+        BigDecimal total= BigDecimal.valueOf(0);
+        if(prescriptions==null)
+            prescriptions=new ArrayList<>();
+        else {
+            for (Prescription p:prescriptions){
+                total= total.add( BigDecimal.valueOf(p.getAmount()).multiply(p.getDrug().getPrice()));
+            }
+        }
+        if(applications==null)
+            applications=new ArrayList<>();
+        else {
+            for (InspectionApplication a:applications){
+                total= total.add( BigDecimal.valueOf(a.getQuantity()).multiply(a.getNonDrug().getPrice()));
+            }
+        }
+        if(payments==null)
+            payments=new ArrayList<>();
+        else {
+            for (Payment p:payments){
+                total=total.add(p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
+            }
+        }
+        JSONObject object=new JSONObject();
+        object.put("prescriptions",prescriptions);
+        object.put("applications", applications);
+        object.put("registrations", payments);
+        object.put("total", total);
+        return CommonUtil.successJson(object);
+    }
+
+    @Override
+    public JSONObject getDoctorTotal(Integer doctorId, String start, String end) {
+        JSONObject object=new JSONObject();
+        List<Integer> registrationIds=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINISH_DIAGNOSIS);
+
+        HashMap<Integer ,List<InspectionApplication>> applicationHashMap=new HashMap<>();
+        HashMap<Integer ,List<Prescription>> prescriptionHashMap=new HashMap<>();
+        HashMap<Integer ,List<Payment>> registrationHashMap=new HashMap<>();
+        HashMap<Integer,MedicalRecord> medicalRecordHashMap=new HashMap<>();
+
+        for (Integer registrationId:registrationIds){
+            MedicalRecord record=medicalRecordService.getByRegistrationId(registrationId);
+
+            List<Prescription> prescriptions=prescriptionService.getByMedicalRecordId(record.getId());
+            List<InspectionApplication> applications=inspectionApplicationService.getByMedicalRecordId(record.getId());
+            List<Payment> payments=paymentService.getByRegistrationId(registrationId,Constants.REGISTRATION_FEE_TYPE);
+
+            if(prescriptions==null)
+                prescriptions = new ArrayList<>();
+            if(applications==null)
+                applications = new ArrayList<>();
+            if(payments==null)
+                payments = new ArrayList<>();
+
+            prescriptionHashMap.put(registrationId, prescriptions);
+            applicationHashMap.put(registrationId, applications);
+            registrationHashMap.put(registrationId, payments);
+            medicalRecordHashMap.put(registrationId, record);
+
+        }
+
+        object.put("registrationIds",registrationIds);
+        object.put("prescriptionHashMap",prescriptionHashMap);
+        object.put("applicationHashMap", applicationHashMap);
+        object.put("registrationHashMap",registrationHashMap);
+        object.put("medicalRecordHashMap",medicalRecordHashMap);
+
+        return CommonUtil.successJson(object);
     }
 
 

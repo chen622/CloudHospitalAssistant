@@ -60,6 +60,15 @@ public class Payment {
     private Integer projectOperatorId;
 
     private Prescription prescription;
+    private InspectionApplication application;
+
+    public InspectionApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(InspectionApplication application) {
+        this.application = application;
+    }
 
     /**
      * @return id

@@ -9,6 +9,7 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -784,79 +787,6 @@ public class DoctorController {
     }
 
 
-    /**
-     * update the registration state as suspect diagnose which is 804
-     * 当医生申请检查，应该更新该挂号状态为疑诊
-     *
-     * @param id
-     * @return
-     */
-    @Transactional
-    public JSONObject updateStateToSuspectDiagnose(@RequestBody Integer id, Authentication authentication) {
-        try {
-            PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        }
-        Registration registration = registrationService.findById(id);
-        if (registration == null) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        } else {
-            registration.setState(Constants.SUSPECT);
-            registrationService.update(registration);
-            return CommonUtil.successJson();
-        }
-    }
-
-    /**
-     * update the registration state as suspect diagnose which is 804
-     * 当医生点击了确诊的时候，应该更新该挂号状态为确诊
-     *
-     * @param id
-     * @return
-     */
-    @Transactional
-    public JSONObject updateStateToFinalDiagnose(@RequestBody Integer id, Authentication authentication) {
-        try {
-            PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        }
-        Registration registration = registrationService.findById(id);
-        if (registration == null) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        } else {
-            registration.setState(Constants.FINAL_DIAGNOSIS);
-            registrationService.update(registration);
-            return CommonUtil.successJson();
-        }
-    }
-
-    /**
-     * update the registration state as suspect diagnose which is 804
-     * 当医生提交处方，应该更新该挂号状态为诊毕
-     *
-     * @param id
-     * @return
-     */
-    @Transactional
-    public JSONObject updateStateToFinishDiagnose(@RequestBody Integer id, Authentication authentication) {
-        try {
-            PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        }
-        Registration registration = registrationService.findById(id);
-        if (registration == null) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        } else {
-            registration.setState(Constants.FINISH_DIAGNOSIS);
-            registrationService.update(registration);
-            return CommonUtil.successJson();
-        }
-    }
-
-
     //part three
 
     /**
@@ -872,9 +802,12 @@ public class DoctorController {
         try {
             doctorId = PermissionCheck.isOutpatientDoctor(authentication);
         } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+            try{
+                doctorId=PermissionCheck.isTechnicalDoctor(authentication);
+            }catch (AuthenticationServiceException aa){
+                return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+            }
         }
-
         Integer medicalId = Integer.parseInt(object.get("medicalRecordId").toString());
         Integer registationId = Integer.parseInt(object.get("medicalRecordId").toString());
 
@@ -945,6 +878,38 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
         return doctorService.finishDiagnose(registrationId);
+    }
+
+    @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
+    public JSONObject getAllPaymentDetails(@PathVariable("registrationId") Integer registrationId,@PathVariable("medicalRecordId") Integer medicalRecordId,Authentication authentication){
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        return doctorService.getAllPaymentDetails(medicalRecordId,registrationId);
+    }
+
+    @PostMapping("/getDoctorTotal")
+    public JSONObject getDoctorTotal(@RequestBody JSONObject object,Authentication authentication){
+        Integer doctorId = null;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        }catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+        Date start= null,end=null;
+        try {
+            start =  ft.parse(object.get("start").toString());
+            end=  ft.parse(object.get("end").toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return CommonUtil.errorJson(ErrorEnum.E_804);
+        }
+        return doctorService.getDoctorTotal(doctorId,object.get("start").toString(),object.get("end").toString());
     }
 
     private JSONObject checkTemplate(String templateType, Integer doctorId, String name, Integer level) {

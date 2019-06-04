@@ -11,12 +11,13 @@
     <result column="standard" jdbcType="VARCHAR" property="standard" />
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
     <result column="code" jdbcType="VARCHAR" property="code"/>
-    <result column="executive_department" jdbcType="VARCHAR" property="executiveDepartment"/>
+    <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
   </resultMap>
 
   <select id="findByName" resultMap="BaseResultMap">
     select * from non_drug where  name like CONCAT('%',#{name},'%');
   </select>
+
   <select id="getAll" resultMap="BaseResultMap">
     select * from non_drug;
   </select>
