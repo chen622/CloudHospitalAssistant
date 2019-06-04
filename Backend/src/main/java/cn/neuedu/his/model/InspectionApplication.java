@@ -34,11 +34,34 @@ public class InspectionApplication implements Serializable {
     @Column (name = "is_template")
     private Boolean isTemplate;
 
+    private Integer feeTypeId;
+
+    private Boolean isCheck=true;
+
+    private  Payment payment;
+    private NonDrug nonDrug;
+
+    public Boolean getCheck() {
+        return isCheck;
+    }
+
+    public void setCheck(Boolean check) {
+        isCheck = check;
+    }
+
+    public Integer getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Integer feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
+
     public InspectionApplication() {
         return;
     }
 
-    public InspectionApplication(Integer itemId, Integer nonDrugId, Date createTime, Boolean isDone, Boolean isEmerged, Integer quantity, Boolean isCanceled, Boolean isTemplate) {
+    public InspectionApplication(Integer itemId, Integer nonDrugId, Date createTime, Boolean isDone, Boolean isEmerged, Integer quantity, Boolean isCanceled, Boolean isTemplate,Integer feeTypeId) {
         this.itemId = itemId;
         this.nonDrugId = nonDrugId;
         this.createTime = createTime;
@@ -47,6 +70,7 @@ public class InspectionApplication implements Serializable {
         this.quantity = quantity;
         this.isCanceled = isCanceled;
         this.isTemplate = isTemplate;
+        this.feeTypeId=feeTypeId;
     }
 
     public Boolean getDone() {
@@ -68,6 +92,22 @@ public class InspectionApplication implements Serializable {
 
     public Boolean getTemplate() {
         return isTemplate;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
+    public NonDrug getNonDrug() {
+        return nonDrug;
+    }
+
+    public void setNonDrug(NonDrug nonDrug) {
+        this.nonDrug = nonDrug;
     }
 
     public void setTemplate(Boolean template) {

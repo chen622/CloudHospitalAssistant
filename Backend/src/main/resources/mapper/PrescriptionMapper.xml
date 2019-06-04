@@ -18,9 +18,27 @@
     <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
     <result column="is_template" jdbcType="BIT" property="isTemplate"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+
+
+    <association property="drug" javaType="cn.neuedu.his.model.Drug" select="getDrug" column="drug_id"/>
+    <association property="payment" javaType="cn.neuedu.his.model.Payment" select="getPayment" column="{id=id,type=fee_type_id}"/>
   </resultMap>
+
   <delete id="deleteByTemplateId">
     delete  from prescription where  item_id=#{templateId} and  is_template=true ;
   </delete>
+
+  <select id="getByMedicalRecordId" resultMap="BaseResultMap">
+        select * from prescription where is_template=false  and  item_id=#{id} ;
+  </select>
+
+  <select id="getDrug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap">
+    select * from  drug where  id=#{drug_id}  ;
+  </select>
+
+  <select id="getPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+     select * from  payment where  item_id=#{id}  and  payment_type_id=#{type};
+  </select>
 
 </mapper>

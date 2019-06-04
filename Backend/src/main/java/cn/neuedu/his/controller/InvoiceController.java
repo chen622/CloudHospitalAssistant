@@ -67,14 +67,15 @@ public class InvoiceController {
      */
     @PostMapping("/anewInvoice/{invoiceId")
     public JSONObject anewInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
+        Integer admin;
         try {
-            PermissionCheck.getIdByPaymentAdmin(authentication);
+            admin = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
         try {
-            invoiceService.addAnewInvoice(invoiceId);
+            invoiceService.addAnewInvoice(invoiceId, admin);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
@@ -90,14 +91,15 @@ public class InvoiceController {
      */
     @PostMapping("/againInvoice/{invoiceId")
     public JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
+        Integer admin;
         try {
-            PermissionCheck.getIdByPaymentAdmin(authentication);
+            admin = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
         try {
-            invoiceService.addAgainInvoice(invoiceId);
+            invoiceService.addAgainInvoice(invoiceId, admin);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }

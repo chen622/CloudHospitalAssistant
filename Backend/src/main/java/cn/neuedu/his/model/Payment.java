@@ -21,12 +21,6 @@ public class Payment {
     private Date createTime = new Date(System.currentTimeMillis());
 
     /**
-     * 对账的时候冻结账单
-     */
-    @Column(name = "is_frozen")
-    private Boolean isFrozen;
-
-    /**
      * 缴费员
      */
     @Column(name = "operator_id")
@@ -59,7 +53,22 @@ public class Payment {
     @Column(name = "project_operator_id")
     private Integer projectOperatorId;
 
+    /**
+     * 对账的时候冻结账单
+     */
+    @Column(name = "is_frozen")
+    private Boolean isFrozen;
+
     private Prescription prescription;
+    private InspectionApplication application;
+
+    public InspectionApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(InspectionApplication application) {
+        this.application = application;
+    }
 
     /**
      * @return id

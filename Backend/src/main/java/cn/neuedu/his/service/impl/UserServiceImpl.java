@@ -8,6 +8,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -55,6 +57,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public User getUserAllInformationByName(String username){
         return userMapper.getUserAllInformationByUsername(username);
+    }
+
+    @Override
+    public User findUserAndInvoiceAndPaymentDuringDate(Integer userId, Date startDate, Date endDate) {
+        return userMapper.getUserAndInvoiceAndPaymentDuringDate(userId, startDate, endDate);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        return this.findAll();
     }
 
 }

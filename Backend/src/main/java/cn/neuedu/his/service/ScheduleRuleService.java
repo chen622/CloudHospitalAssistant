@@ -12,4 +12,8 @@ public interface ScheduleRuleService extends Service<ScheduleRule> {
     ScheduleRule getLegalSchedule(Integer doctorId, Integer period);
     List<ScheduleRule> getDoctorSchedule(Integer doctorId);
 
+    void insertScheduleRule(ScheduleRule scheduleRule);
+
+    void modifyScheduleRule(ScheduleRule scheduleRule);
+
 }

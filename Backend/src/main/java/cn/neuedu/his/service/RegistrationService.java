@@ -1,5 +1,6 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.mapper.RegistrationMapper;
+import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
@@ -20,4 +21,5 @@ public interface RegistrationService extends Service<Registration> {
     List<Registration> getAllWaitingRegistration(Integer doctorID, Integer state, Date time);
     List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
     ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId);
+    ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String end, Integer state);
 }

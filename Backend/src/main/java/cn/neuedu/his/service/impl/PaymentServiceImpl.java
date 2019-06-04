@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
@@ -292,12 +293,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         paymentMapper.updateInvoiceId(invoiceId, id);
     }
 
-    /**
-     * 通过二级缴费类型（西药费……）得出总缴费类型（处方费）
-     * @param typeId
-     * @return 总缴费类型
-     */
-    private Integer getTotalPaymentType(Integer typeId) {
-        return paymentTypeService.findById(typeId).getType();
+    @Override
+    public ArrayList<Payment> getWithItem(Integer id) {
+        return paymentMapper.getWithItem(id);
+    }
+
+    @Override
+    public List<Payment> getByRegistrationId(Integer id, Integer type) {
+        return paymentMapper.getByRegistrationId(id, type);
     }
 }

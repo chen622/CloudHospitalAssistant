@@ -16,6 +16,7 @@
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
     <result column="drug_type" javaType="INTEGER" property="drugType"/>
+    <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
   </resultMap>
 
   <select id="getDrugByName" resultMap="BaseResultMap">

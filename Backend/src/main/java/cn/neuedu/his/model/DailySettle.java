@@ -70,8 +70,11 @@ public class DailySettle {
     @Column(name = "anew_invoice_amount")
     private Integer anewInvoiceAmount;
 
-    @Column(name = "again_invoice_amount")
-    private Integer againInvoiceAmount;
+    @Column(name = "is_pass")
+    private Boolean isPass;
+
+    @Column(name = "check_id")
+    private Integer checkId;
 
     /**
      * @return id
@@ -287,17 +290,19 @@ public class DailySettle {
         this.anewInvoiceAmount = anewInvoiceAmount;
     }
 
-    /**
-     * @return again_invoice_amount
-     */
-    public Integer getAgainInvoiceAmount() {
-        return againInvoiceAmount;
+    public Boolean getPass() {
+        return isPass;
     }
 
-    /**
-     * @param againInvoiceAmount
-     */
-    public void setAgainInvoiceAmount(Integer againInvoiceAmount) {
-        this.againInvoiceAmount = againInvoiceAmount;
+    public void setPass(Boolean pass) {
+        isPass = pass;
+    }
+
+    public Integer getCheckId() {
+        return checkId;
+    }
+
+    public void setCheckId(Integer checkId) {
+        this.checkId = checkId;
     }
 }

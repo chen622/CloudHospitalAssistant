@@ -53,6 +53,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         invoice.setId(invoiceId);
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
+        invoice.setOperatorId(payment.getOperatorId());
         save(invoice);
 
         //更改缴费单发票id字段
@@ -96,6 +97,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
             totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         }
         invoice.setPriceAmount(totalAmount);
+        invoice.setOperatorId(paymentService.findById(paymentIdList.get(0)).getOperatorId());
 
         save(invoice);
         return invoiceId;
@@ -131,11 +133,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IllegalArgumentException
      */
     @Override
-    public void addAnewInvoice(Integer invoiceId) throws IllegalArgumentException {
+    public void addAnewInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException {
         Invoice invoice = findById(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
         invoice.setAnewAmount(invoice.getAnewAmount() + 1);
+        invoice.setOperatorId(admin);
+        invoice.setCreatedDate(new Date(System.currentTimeMillis()));
+        //todo:查看是否frozen
         update(invoice);
     }
 
@@ -145,16 +150,28 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IllegalArgumentException
      */
     @Override
-    public void addAgainInvoice(Integer invoiceId) throws IllegalArgumentException {
+    public void addAgainInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException {
         Invoice invoice = findById(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
         invoice.setAgainAmount(invoice.getAgainAmount() + 1);
+        invoice.setOperatorId(admin);
+        invoice.setCreatedDate(new Date(System.currentTimeMillis()));
         update(invoice);
     }
 
     @Override
     public Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId) {
         return invoiceMapper.getInvoiceAndPaymentByInvoiceId(invoiceId);
+    }
+
+    @Override
+    public ArrayList<Integer> getInvoiceNormalIdList(Integer settleId) {
+        return invoiceMapper.getInvoiceNormalList(settleId);
+    }
+
+    @Override
+    public ArrayList<Integer> getInvoiceAnewIdList(Integer settleId) {
+        return invoiceMapper.getInvoiceAnewList(settleId);
     }
 }
