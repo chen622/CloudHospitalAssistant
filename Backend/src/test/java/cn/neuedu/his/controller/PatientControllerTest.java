@@ -21,7 +21,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.PAYMENT_BY_INSURANCE;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)

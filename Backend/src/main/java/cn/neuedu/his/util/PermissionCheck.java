@@ -20,32 +20,20 @@ public class PermissionCheck {
      */
     public static Integer getIdByUser(Authentication authentication) {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer typeId = (Integer) data.get("typeId");
         return (Integer) data.get("id");
     }
 
     /**
-     * 通用的权限校验接口，所有类别都可通过
-     *
-     * @param authentication
-     * @return
-     */
-    public static Integer getNameByUser(Authentication authentication) {
-        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer typeId = (Integer) data.get("username");
-        return (Integer) data.get("username");
-    }
-
-    /**
      * 收费员权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByPaymentAdmin(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer getIdByPaymentAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(REGISTRATION_CLERK)) {
+        if (typeId.equals(Constants.UserType.REGISTRATION_CLERK.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -54,14 +42,15 @@ public class PermissionCheck {
 
     /**
      * 收费员或药房操作员（可以生成账单）
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByAdminProducePayment(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer getIdByAdminProducePayment(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(REGISTRATION_CLERK) || typeId.equals(PHARMACY_OPERATOR)) {
+        if (typeId.equals(Constants.UserType.REGISTRATION_CLERK.getId()) || typeId.equals(Constants.UserType.PHARMACY_OPERATOR.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -70,14 +59,15 @@ public class PermissionCheck {
 
     /**
      * 门诊医生权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.OUT_PATIENT_DOCTOR)) {
+        if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("is not Outpatient Doctor ");
@@ -86,14 +76,15 @@ public class PermissionCheck {
 
     /**
      * 医院管理员权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.HOSPITAL_ADMIN)) {
+        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR)) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -102,11 +93,12 @@ public class PermissionCheck {
 
     /**
      * 个人权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static String isIndivual(Authentication authentication, String username) throws AuthenticationServiceException{
+    public static String isIndivual(Authentication authentication, String username) throws AuthenticationServiceException {
         if (authentication.getName().equals(username)) {
             return (String) authentication.getName();
         } else {
@@ -116,36 +108,37 @@ public class PermissionCheck {
 
     /**
      * 药房管理员权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByDrugAdmin(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer getIdByDrugAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(MEDICINE_ADMIN)) {
+        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
         }
     }
 
-        /**
+    /**
      * 财务管理员权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isFinancialOfficer(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer isFinancialOfficer(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(FINANCIAL_ADMIN)) {
+        if (typeId.equals(UserType.FINANCIAL_MANAGER.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
         }
     }
-
 
 
 }

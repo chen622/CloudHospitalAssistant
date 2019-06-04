@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.PAYMENT_BY_INSURANCE;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -62,7 +61,7 @@ public class RegistrationControllerTest {
         param.put("scheduleId", 1);
         param.put("needBook", 1);
         param.put("patientId", 1);
-        param.put("settlementType", PAYMENT_BY_INSURANCE);
+        param.put("settlementType", 202);
 
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/registration/registration")

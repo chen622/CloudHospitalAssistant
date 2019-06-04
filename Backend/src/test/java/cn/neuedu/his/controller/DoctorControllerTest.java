@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,7 +55,7 @@ public class DoctorControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", Constants.OUT_PATIENT_DOCTOR)
+                .claim("typeId", Constants.UserType.OUT_PATIENT_DOCTOR.getId())
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -142,7 +141,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试申请检查项目");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
@@ -523,7 +522,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试申请检查项目");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
@@ -572,7 +571,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试申请检查项目");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
@@ -621,7 +620,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试更新检查项目");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
@@ -696,7 +695,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试申请成药项目");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");
@@ -730,7 +729,7 @@ public class DoctorControllerTest {
         prescription.setNeedSkinTest(false);
         prescription.setNote("测试模板");
         prescription.setTemplate(false);
-        prescription.setUsageId(Constants.SUBCUTANEOUSINJECTION);
+        prescription.setUsageId(Constants.Usage.SUBCUTANEOUSINJECTION.getId());
         prescription.setUseAmount("三个");
         prescription.setAmount(1);
         prescription.setFrequency("一天一次");

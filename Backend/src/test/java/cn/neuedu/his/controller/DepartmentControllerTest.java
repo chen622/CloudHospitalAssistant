@@ -54,7 +54,7 @@ public class DepartmentControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", Constants.HOSPITAL_ADMIN)
+                .claim("typeId", Constants.UserType.HOSPITAL_ADMINISTRATOR.getId())
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();

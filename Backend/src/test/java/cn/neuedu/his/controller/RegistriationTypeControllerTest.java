@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.PAYMENT_BY_INSURANCE;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

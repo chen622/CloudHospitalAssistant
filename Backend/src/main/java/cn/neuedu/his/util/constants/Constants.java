@@ -56,31 +56,46 @@ public class Constants {
         AFTERNOON(302),
         ALLDAY(303);
 
-        Integer id;
+        int id;
 
-        Period(Integer id) {
+        Period(int id) {
             this.id = id;
         }
 
-        public Integer getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(Integer id) {
+        public void setId(int id) {
             this.id = id;
         }
     }
 
-    //静脉滴注
-    public static final Integer INTRAVENOUSDRIP = 401;
-    //静脉可注
-    public static final Integer INTRAVENOUSINJECTION = 402;
-    //肌肉注射
-    public static final Integer INTRAMUSCULARINJECTION = 403;
-    //口服
-    public static final Integer ORAL = 404;
-    //皮下注射
-    public static final Integer SUBCUTANEOUSINJECTION = 405;
+    public enum Usage {
+        //静脉滴注
+        INTRAVENOUSDRIP(401),
+        //静脉可注
+        INTRAVENOUSINJECTION(402),
+        //肌肉注射
+        INTRAMUSCULARINJECTION(403),
+        //口服
+        ORAL(404),
+        //皮下注射
+        SUBCUTANEOUSINJECTION(405);
+        private int id;
+
+        Usage(int id) {
+            this.id = id;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+    }
 
 
     //权限级别
@@ -101,17 +116,17 @@ public class Constants {
         FINANCIAL_MANAGER(605),
         HOSPITAL_ADMINISTRATOR(606);
 
-        private Integer id;
+        private int id;
 
-        UserType(Integer id) {
+        UserType(int id) {
             this.id = id;
         }
 
-        public Integer getId() {
+        public int getId() {
             return id;
         }
 
-        public void setId(Integer id) {
+        public void setId(int id) {
             this.id = id;
         }
     }

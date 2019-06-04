@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import static cn.neuedu.his.util.constants.Constants.PAYMENT_BY_INSURANCE;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -57,7 +56,7 @@ public class PaymentControllerTest {
     public void payRegistration() throws Exception {
         JSONObject param = new JSONObject();
         param.put("registrationId", 26);
-        param.put("settlementType", PAYMENT_BY_INSURANCE);
+        param.put("settlementType", 202);
 
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/payment/payRegistration")
