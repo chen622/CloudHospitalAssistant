@@ -11,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cn.neuedu.his.util.constants.Constants.DRUG_TYPE_LIST;
 
 /**
@@ -124,6 +126,11 @@ public class DrugController {
         if (DRUG_TYPE_LIST.contains(drug))
             return CommonUtil.errorJson(ErrorEnum.E_627);
 
+
+        //判断剂型是否正确
+        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
+            return CommonUtil.errorJson(ErrorEnum.E_628);
+
         drugService.update(drug);
 
         return CommonUtil.successJson(drug);
@@ -145,8 +152,42 @@ public class DrugController {
         if (DRUG_TYPE_LIST.contains(drug))
             return CommonUtil.errorJson(ErrorEnum.E_627);
 
+        //判断剂型是否正确
+        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
+            return CommonUtil.errorJson(ErrorEnum.E_628);
+
         drugService.update(drug);
 
         return CommonUtil.successJson(drug);
+    }
+
+
+    /***
+     * 未结束
+     * @param name
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/select/{name}")
+    public JSONObject selectDrug(@PathVariable("name") String name , Authentication authentication){
+
+        System.out.println(name);
+
+        //检测是药物管理员权限
+        try{
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        List<Drug> drugs = drugService.getDrugByName(name);
+        System.out.println("----------------");
+        System.out.println(drugs.size());
+
+        //判断药物是否存在
+        if (drugs == null)
+            return CommonUtil.errorJson(ErrorEnum.E_626);
+
+        return CommonUtil.successJson(drugs);
     }
 }
