@@ -10,6 +10,7 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,6 +27,29 @@ import java.util.Map;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    class url {
+        String name;
+        String url;
+        String key;
+
+        url(String name, String url, String key) {
+            this.name = name;
+            this.url = url;
+            this.key = key;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getKey() {
+            return key;
+        }
+    }
 
     @Autowired
     UserService userService;
@@ -36,13 +60,18 @@ public class UserController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-//    @GetMapping("/function")
-//    public JSONObject login(Authentication authentication) {
-//        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-//        Integer typeId = (Integer) data.get("typeId");
-//        if (typeId.equals(Constants.UserType.HOSPITAL_ADMINISTRATOR.getId()))
-//            return CommonUtil.successJson(authentication.getName());
-//    }
+    @GetMapping("/function")
+    public JSONObject login(Authentication authentication) {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        JSONArray urls = new JSONArray();
+        if (typeId.equals(Constants.UserType.HOSPITAL_ADMINISTRATOR.getId())) {
+            urls.add(new url("账户管理", "/admin/user", "admin"));
+            urls.add(new url("排班管理", "/admin/rule", "rule"));
+            urls.add(new url("医疗信息管理", "/admin/other", "other"));
+        }
+        return CommonUtil.successJson(urls);
+    }
 
     /**
      * 注册用户信息
