@@ -37,21 +37,31 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     private InvoiceService invoiceService;
     @Autowired
     private PaymentTypeService paymentTypeService;
+    @Autowired
+    private RegistrationTypeService registrationTypeService;
+    @Autowired
+    private JobScheduleService jobScheduleService;
 
     /**
      * 生成挂号缴费单
-     * @param registration
+     * @param registrationId
      * @param settlementTypeId
-     * @param unitPrice
      * @return
+     * @throws IllegalArgumentException
+     * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice) {
-        Payment payment = new Payment();
+    public Integer createRegistrationPayment(Integer registrationId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException{
+        Registration registration = registrationService.findById(registrationId);
+        if (registration == null)
+            throw new IllegalArgumentException("registrationId");
 
+        //新增账单信息
+        Payment payment = new Payment();
         payment.setItemId(registration.getId());
         payment.setPatientId(registration.getPatientId());
         payment.setOperatorId(registration.getRegistrarId());
+        BigDecimal unitPrice = registrationTypeService.findById(jobScheduleService.findById(registration.getScheduleId()).getRegistrationTypeId()).getPrice();
         payment.setUnitPrice(unitPrice);
         if (registration.getNeedBook())
             payment.setUnitPrice(payment.getUnitPrice() .add(new BigDecimal(1)));
@@ -60,6 +70,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setPaymentTypeId(REGISTRATION_FEE_TYPE);
         payment.setState(HAVE_PAID);
         save(payment);
+
+        //生成发票
+        try {
+            invoiceService.addInvoiceByPayment(payment.getId());
+        }catch (IndexOutOfBoundsException e) {
+            throw new IndexOutOfBoundsException("invoice");
+        }
+
         return payment.getId();
     }
 
@@ -107,31 +125,89 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     /**
-     * 形成冲红缴费单（若是药物类，则处于退药不退钱状态）
+     * 检验项目、挂号类，药品类（未取药）退费
      * @param paymentId
      * @param adminId
-     * @param retreatQuantity -- 退回数量，主要针对drug，其余均设为1即可
      * @return
      */
     @Override
-    public Integer produceRetreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+    public void retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
+        if (originalPayment == null)
+            throw new IllegalArgumentException("paymentId");
+        //获取所有payment（包括冲红）
         ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
 
+        //获取目前患者已检查（挂号）数量，若为0，则表示已退费，抛出异常
         Integer retreatIndex = 0;
         for (Payment payment: paymentList) {
             retreatIndex = retreatIndex + payment.getQuantity();
         }
-
-        if (originalPayment == null)
-            throw new IllegalArgumentException("paymentId");
+        if (retreatIndex.equals(0))
+            throw new IndexOutOfBoundsException();
 
         //确定是否能退:1.未冻结 2.处于缴费未使用或还未退药状态（状态均指完成缴费）
         if (originalPayment.getIsFrozen().equals(true) || !originalPayment.getState().equals(HAVE_PAID))
             throw new UnsupportedOperationException("payment");
 
         //填入新的信息
+        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId);
+
+        //生成冲红发票，若无法生成，抛出异常
+        try {
+            invoiceService.addInvoiceByPayment(newPaymentId);
+        }catch (RuntimeException e) {
+            throw new UnsupportedOperationException("invoice");
+        }
+    }
+
+    /**
+     * 退还药物，生成缴费单
+     * @param paymentId
+     * @param adminId
+     * @param retreatQuantity
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
+     * @throws IndexOutOfBoundsException
+     */
+    @Override
+    public void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
+        //查找原缴费单
+        Payment originalPayment = findById(paymentId);
+        if(originalPayment == null)
+            throw new IllegalArgumentException("paymentId");
+        //如果不是药物，则抛出异常
+        Integer totalTypeId = getTotalPaymentType(originalPayment.getPaymentTypeId());
+        if (!totalTypeId.equals(DRUG_PAYMENT_TYPE ))
+            throw new UnsupportedOperationException("paymentType");
+        //获取所有payment（包括冲红）
+        ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
+
+        //获取目前患者手中药物数量
+        Integer retreatIndex = 0;
+        for (Payment payment: paymentList) {
+            retreatIndex = retreatIndex + payment.getQuantity();
+        }
+        if (retreatQuantity > retreatIndex)
+            throw new IndexOutOfBoundsException();
+
+        //确定是否能退:1.未冻结 2.处于取完药状态
+        if (originalPayment.getIsFrozen().equals(true) || !originalPayment.getState().equals(HAVE_COMPLETED_PAID))
+            throw new UnsupportedOperationException("paymentState");
+
+        //填入新的信息
+        addPayment(originalPayment, retreatQuantity, adminId);
+    }
+
+    /**
+     * 生成新的缴费单
+     * @param originalPayment
+     * @param retreatQuantity
+     * @param adminId
+     * @return
+     */
+    private Integer addPayment(Payment originalPayment, Integer retreatQuantity, Integer adminId) {
         Payment newPayment = new Payment();
         newPayment.setUnitPrice(originalPayment.getUnitPrice());
         newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
@@ -139,39 +215,18 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setItemId(originalPayment.getItemId());
         newPayment.setCreateTime(new Date(System.currentTimeMillis()));
         newPayment.setPatientId(originalPayment.getPatientId());
-
-        //药物与其他种类生成缴费单后状态有异，退药未退钱
-        Integer totalTypeId = getTotalPaymentType(originalPayment.getPaymentTypeId());
-        if (totalTypeId.equals(DRUG_PAYMENT_TYPE)) {
-            newPayment.setState(HAVE_RETURN_DRUG);
-            if (retreatQuantity > retreatIndex)
-                throw new IndexOutOfBoundsException();
-            newPayment.setQuantity(retreatQuantity * (-1));
-            newPayment.setProjectOperatorId(adminId);
-        }
-        else {
-            newPayment.setState(HAVE_RETREAT);
-            if (retreatIndex.equals(0))
-                throw new IndexOutOfBoundsException();
-            newPayment.setQuantity(originalPayment.getQuantity() * (-1));
-            newPayment.setOperatorId(adminId);
-        }
+        newPayment.setState(HAVE_RETURN_DRUG);
+        newPayment.setQuantity(retreatQuantity * (-1));
+        newPayment.setProjectOperatorId(adminId);
 
         save(newPayment);
 
-        //生成冲红发票，若无法生成，抛出异常
-        try {
-            if (!totalTypeId.equals(DRUG_PAYMENT_TYPE))
-                invoiceService.addInvoiceByPayment(newPayment);
-        }catch (RuntimeException e) {
-            throw new UnsupportedOperationException("invoice");
-        }
-
         return newPayment.getId();
+
     }
 
     /**
-     * 药品退费，打印发票
+     * 药品退费，生成发票
      * @param paymentId
      * @param paymentAdminId
      * @throws IllegalArgumentException
@@ -191,7 +246,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setOperatorId(paymentAdminId);
         update(payment);
 
-        invoiceService.addInvoiceByPayment(payment);
+        invoiceService.addInvoiceByPayment(payment.getId());
     }
 
 

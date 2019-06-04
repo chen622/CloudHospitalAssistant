@@ -1,8 +1,6 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.constants.Constants;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -28,14 +25,14 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class PaymentControllerTest {
+public class DrugControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
     private String token = "";
 
     @Autowired
-    PaymentController paymentController;
+    private DrugController drugController;
 
     @Before
     public void setUp() throws Exception {
@@ -47,20 +44,33 @@ public class PaymentControllerTest {
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 2)
-                .claim("typeId", 601)
+                .claim("typeId", 604)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
     @Test
-    public void payRegistration() throws Exception {
+    public void takeDrug() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/14/2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void retreatDrug() throws Exception{
         JSONObject param = new JSONObject();
-        param.put("registrationId", 26);
-        param.put("settlementType", PAYMENT_BY_INSURANCE);
+        param.put("paymentId", 14);
+        param.put("drugId", 2);
+        param.put("quantity", 2);
 
         String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/payment/payRegistration")
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/retreatDrug")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
@@ -72,55 +82,14 @@ public class PaymentControllerTest {
     }
 
     @Test
-    public void pay() throws Exception {
-        JSONObject param = new JSONObject();
-        JSONArray arr = new JSONArray();
-        arr.add(13);
-        arr.add(14);
-        param.put("paymentIdList", arr);
-        param.put("settlementType", 202);
-
-        String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/payment/pay")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
+    public void deleteDrug() {
     }
 
     @Test
-    public void retreatPayment() throws Exception {
-        JSONObject param = new JSONObject();
-        Integer paymentId = 16;
-        Integer quantity = 2;
-        param.put("paymentId", paymentId);
-        param.put("quantity", quantity);
-
-        String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/payment/produceRetreatPayment")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
+    public void modifyDrug() {
     }
 
     @Test
-    public void retreatDrugFee() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/payment/retreatDrugFee/29")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(Constants.TOKEN_HEADER, token)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-        )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
-                .andDo(MockMvcResultHandlers.print());
+    public void insertDrug() {
     }
 }

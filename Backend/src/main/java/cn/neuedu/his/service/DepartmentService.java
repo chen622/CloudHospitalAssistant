@@ -19,4 +19,12 @@ public interface DepartmentService extends Service<Department> {
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
 
     List<Department> getDepartmentInformation();
+
+    void deleteDepartmentInformation(Integer id);
+
+    void addDepartment(Department department);
+
+    void modifyDepartment(Department department);
+
+
 }

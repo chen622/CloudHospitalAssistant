@@ -27,24 +27,18 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     @Autowired
     private RedisServiceImpl redisService;
 
-    @Override
-    public Invoice printInvoice(Integer invoiceId) throws  IllegalArgumentException{
-        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
-        if (invoice == null)
-            throw new IllegalArgumentException("invoiceId");
-
-        return invoice;
-    }
 
     /**
      * 通过缴费信息，生成挂号发票
-     * @param payment
+     * @param paymentId
      * @return
      * @throws IllegalArgumentException
+     * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer addInvoiceByPayment(Payment payment) throws IllegalArgumentException, IndexOutOfBoundsException{
-        if (payment.equals(null))
+    public Integer addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException{
+        Payment payment = paymentService.findById(paymentId);
+        if (payment == null)
             throw new IllegalArgumentException("paymentId");
         Invoice invoice = new Invoice();
         Integer invoiceId;
@@ -54,6 +48,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         }catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException();
         }
+        //todo:invoiceId设为规律码（可以直接在model类进行处理）
 
         invoice.setId(invoiceId);
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
@@ -121,6 +116,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         }
     }
 
+    @Override
+    public Invoice getInvoiceInfo(Integer invoiceId) throws  IllegalArgumentException{
+        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
+        if (invoice == null)
+            throw new IllegalArgumentException("invoiceId");
+
+        return invoice;
+    }
 
     @Override
     public Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId) {

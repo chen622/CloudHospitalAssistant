@@ -56,7 +56,6 @@ public class RegistrationControllerTest {
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
-
     @Test
     public void registration() throws Exception {
         JSONObject param = new JSONObject();
@@ -79,7 +78,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void retreatRegistration() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/registration/retreat/20")
+        mockMvc.perform(MockMvcRequestBuilders.post("/registration/retreat/24")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

@@ -14,9 +14,10 @@ import java.util.ArrayList;
  * Created by ccm on 2019/05/24.
  */
 public interface PaymentService extends Service<Payment> {
-    Integer createRegistrationPayment(Registration registration, Integer settlementTypeId, BigDecimal unitPrice);
+    Integer createRegistrationPayment(Integer registrationId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
-    Integer produceRetreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
+    void retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
+    void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void retreatDrugFee(Integer paymentId, Integer paymentAdminId);
 
 
