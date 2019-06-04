@@ -49,14 +49,11 @@ public class RegistrationController {
         }
 
         try {
-            registrationService.registerRegistrationInfo(registrarId, jsonObject);
+            registrationService.registerRegistrationInfo(registrarId, jsonObject.getInteger("patientId"), jsonObject.getInteger("scheduleId"), jsonObject.getBoolean("needBook"));
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }catch (IndexOutOfBoundsException e1) {
-            if(e1.getMessage().equals("invoice"))
-                return CommonUtil.errorJson(ErrorEnum.E_509);
-            if (e1.getMessage().equals("sequence"))
-                return CommonUtil.errorJson(ErrorEnum.E_510);
+            return CommonUtil.errorJson(ErrorEnum.E_510);
         }
 
         return CommonUtil.successJson();

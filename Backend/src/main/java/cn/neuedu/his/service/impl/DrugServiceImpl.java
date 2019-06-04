@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
@@ -24,6 +26,14 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Autowired
     private PaymentService paymentService;
 
+    /**
+     * 取药
+     * @param paymentId
+     * @param drugId
+     * @param drugOperatorId
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
+     */
     @Transactional
     @Override
     public void takeDrug(Integer paymentId, Integer drugId, Integer drugOperatorId) throws IllegalArgumentException, UnsupportedOperationException{
@@ -42,6 +52,16 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         paymentService.update(payment);
     }
 
+    /**
+     * 退药
+     * @param paymentId
+     * @param drugId
+     * @param quantity
+     * @param drugOperatorId
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
+     * @throws IndexOutOfBoundsException
+     */
     @Transactional
     @Override
     public void retreatDrug(Integer paymentId, Integer drugId, Integer quantity, Integer drugOperatorId) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
@@ -53,7 +73,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         update(drug);
 
         try {
-            paymentService.produceRetreatPayment(paymentId, drugOperatorId, quantity);
+            paymentService.produceRetreatDrugPayment(paymentId, drugOperatorId, quantity);
         }catch (IllegalArgumentException e1) {
             throw new IllegalArgumentException(e1.getMessage());
         }catch (UnsupportedOperationException e2) {
@@ -62,5 +82,10 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
             throw new IndexOutOfBoundsException();
         }
 
+    }
+
+    @Override
+    public List<Drug> getDrugByName(String name) {
+        return drugMapper.getDrugByName(name);
     }
 }

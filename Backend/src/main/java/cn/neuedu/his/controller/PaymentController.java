@@ -25,6 +25,31 @@ public class PaymentController {
     PaymentService paymentService;
 
     /**
+     * 挂号缴费
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/payRegistration")
+    public JSONObject payRegistration(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        try {
+            paymentService.createRegistrationPayment(jsonObject.getInteger("registrationId"), jsonObject.getInteger("settlementType"));
+        }catch (IllegalArgumentException e1) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+        }catch (IndexOutOfBoundsException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_509);
+        }
+
+        return CommonUtil.successJson();
+    }
+
+    /**
      * 缴费
      * @param jsonObject
      * @param authentication
@@ -50,7 +75,7 @@ public class PaymentController {
     }
 
     /**
-     * 退费（退药为退药步骤）
+     * 检验项目、药品类（未取药）退费
      * @param jsonObject
      * @param authentication
      * @return
@@ -65,7 +90,7 @@ public class PaymentController {
         }
 
         try {
-            paymentService.produceRetreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+            paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
         }catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         }catch (UnsupportedOperationException e2) {

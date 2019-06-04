@@ -36,7 +36,7 @@ public class InvoiceController {
         }
 
         try {
-            return CommonUtil.successJson(invoiceService.printInvoice(invoiceId));
+            return CommonUtil.successJson(invoiceService.getInvoiceInfo(invoiceId));
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }

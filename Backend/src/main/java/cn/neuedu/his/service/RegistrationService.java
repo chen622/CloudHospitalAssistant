@@ -15,7 +15,7 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface RegistrationService extends Service<Registration> {
-    void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException, IndexOutOfBoundsException;
+    void registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException;
     void retreatRegistrationInfo(Integer registrationId, Integer registrarId);
     List<Registration> getAllWaitingRegistration(Integer doctorID, Integer state, Date time);
     List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
