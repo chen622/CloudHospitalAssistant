@@ -143,14 +143,14 @@ public class DepartmentController {
         }
     }
 
-    @GetMapping("/billingDeptDayKnot/{start}/{end}")
-    public JSONObject billingDeptDayKnot(@PathVariable("start") Date start,@PathVariable("end") Date end ,Authentication authentication){
-        Integer operatorId;
-        try {
-            operatorId = PermissionCheck.isFinancialOfficer(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        }
-    }
+//    @GetMapping("/billingDeptDayKnot/{start}/{end}")
+//    public JSONObject billingDeptDayKnot(@PathVariable("start") Date start,@PathVariable("end") Date end ,Authentication authentication){
+//        Integer operatorId;
+//        try {
+//            operatorId = PermissionCheck.isFinancialOfficer(authentication);
+//        } catch (AuthenticationServiceException a) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+//        }
+//    }
 
 }

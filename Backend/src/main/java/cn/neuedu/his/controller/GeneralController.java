@@ -25,7 +25,7 @@ public class GeneralController {
     public JSONObject getAllDepartmentKind() {
         try {
             //获得科室大类
-            List<ConstantVariable> constantVariables = constantVariableService.getDepartmentType(1);
+            List<ConstantVariable> constantVariables = constantVariableService.getDepartmentType();
             JSONObject returnJSON = new JSONObject();
             JSONArray departments = new JSONArray();
             if (constantVariables != null) {
