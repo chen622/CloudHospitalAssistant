@@ -51,16 +51,6 @@ public class Constants {
     //医技科室
     public static final Integer TECHNICAL_DEPARTMENTS = 102;
 
-    //结算类别
-    public static final Integer TECHNICAL_DEPT = 2;
-    //自费
-    public static final Integer PAYMENT_BY_SELF = 201;
-    //医保
-    public static final Integer PAYMENT_BY_INSURANCE = 202;
-    //新农合
-    public static final Integer PAYMENT_BY_NCMS = 203;
-
-
     public enum Period {
         MORNING(301),
         AFTERNOON(302),
@@ -95,7 +85,6 @@ public class Constants {
 
     //权限级别
     public static final Integer AUTENTICATIONLEVEL = 5;
-
     //全级
     public static final Integer HOSPITALLEVEL = 501;
     //科室
