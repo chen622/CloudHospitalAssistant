@@ -60,7 +60,7 @@ export default { // 自定义判断元素类型JS
             // console.log(JSON.stringify(res.data))
         }).catch(function (err) {
             if (err) {
-                if (err.response && err.response.status === 401) {
+                if (err.response && err.response.status === 403) {
                     sessionStorage.removeItem("token")
                     location.href = '/#/login'
                 }
