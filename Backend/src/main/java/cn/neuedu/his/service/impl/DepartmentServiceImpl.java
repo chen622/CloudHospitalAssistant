@@ -46,5 +46,48 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             return departments;
     }
 
+    @Override
+    public void deleteDepartmentInformation(Integer id){
+
+        Department department = this.findById(id);
+
+        //检测部门是否存在
+        if (department == null)
+            throw new RuntimeException("610");
+
+        this.deleteById(id);
+
+    }
+
+    @Override
+    public void addDepartment(Department department) {
+
+        //检测部门是否存在
+        if (this.getDepartmentByName(department.getName()) != null)
+            throw new RuntimeException("611");
+            //return CommonUtil.errorJson(ErrorEnum.E_611);
+
+        //检测部门类型是否存在
+        if (this.findById(department.getKindId()) == null)
+            throw new RuntimeException("612");
+            //return CommonUtil.errorJson(ErrorEnum.E_612);
+
+        this.save(department);
+
+    }
+
+    @Override
+    public void modifyDepartment(Department department) {
+        //检测部门是否存在
+        if (this.getDepartmentByName(department.getName()) != null)
+            throw new RuntimeException("610");
+
+        //检测部门类型是否存在
+        if (this.findById(department.getKindId()) == null)
+            throw  new RuntimeException("612");
+
+        this.update(department);
+    }
+
 
 }

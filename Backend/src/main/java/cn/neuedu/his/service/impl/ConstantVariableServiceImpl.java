@@ -21,7 +21,7 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
 
 
     @Override
-    public List<ConstantVariable> getDepartmentType(Integer type) {
-        return constantVariableMapper.getDepartmentType(type);
+    public List<ConstantVariable> getDepartmentType() {
+        return constantVariableMapper.getDepartmentType();
     }
 }

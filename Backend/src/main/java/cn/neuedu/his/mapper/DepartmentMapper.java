@@ -8,10 +8,11 @@ import java.util.List;
 
 @Component
 public interface DepartmentMapper extends MyMapper<Department> {
+
     List<Department> getAllDepartmentInformation();
+
     Department getDepartmentByName(String name);
 
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
 
-    public List<Department> getSingleDepartmentInformation();
 }

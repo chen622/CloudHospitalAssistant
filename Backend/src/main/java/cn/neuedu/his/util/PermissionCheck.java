@@ -129,4 +129,23 @@ public class PermissionCheck {
             throw new AuthenticationServiceException("");
         }
     }
+
+        /**
+     * 财务管理员权限检验
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isFinancialOfficer(Authentication authentication) throws AuthenticationServiceException{
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        if (typeId.equals(FINANCIAL_ADMIN)) {
+            return (Integer) data.get("id");
+        } else {
+            throw new AuthenticationServiceException("");
+        }
+    }
+
+
+
 }

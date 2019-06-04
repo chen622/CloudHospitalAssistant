@@ -13,7 +13,7 @@
 <select id="getDepartmentType" resultMap="BaseResultMap">
   select *
 from constant_variable
-where type = #{type}
+where type = 1
 </select>
   
 </mapper>

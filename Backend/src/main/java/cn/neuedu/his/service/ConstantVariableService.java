@@ -9,6 +9,6 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface ConstantVariableService extends Service<ConstantVariable> {
-    List<ConstantVariable> getDepartmentType(Integer type);
+    List<ConstantVariable> getDepartmentType();
 
 }
