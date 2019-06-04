@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -16,8 +17,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static cn.neuedu.his.util.constants.Constants.PAYMENT_BY_INSURANCE;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -41,8 +45,8 @@ public class PatientControllerTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 2)
-                .claim("typeId", 601)
+                .claim("id", 6)
+                .claim("typeId", 604)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -64,6 +68,46 @@ public class PatientControllerTest {
     public void getNotConsumePaymentAndPatient() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/patient/getUnConsumePayment/1")
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDrugTakenInfo() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getDrugTaken/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDrugDuringDateInfo() throws Exception {
+        JSONObject param = new JSONObject();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = formatter.parse("2019-05-29 06:00:00");
+            end = formatter.parse("2019-05-30 12:00:00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        param.put("patientId", 1);
+        param.put("startDate", start);
+        param.put("endDate", end);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getDrugDuringDate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

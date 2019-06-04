@@ -50,25 +50,34 @@
 
 
 <!--  患者信息及所有未拿取的药单信息-->
-  <resultMap id="patientAndNotTakeDrug" type="cn.neuedu.his.model.Patient">
+<!--  患者获取缴费单-->
+  <resultMap id="patientAndPayment" type="cn.neuedu.his.model.Patient">
     <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotTakeDrugPaymentByPatientId" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state}">
-      <association property="prescription" javaType="cn.neuedu.his.model.Prescription" select="selectPrescriptionByPayment" column="item_id">
-        <association property="drug" javaType="cn.neuedu.his.model.Drug" select="selectDrugByPrescription" column="drug_id"/>
-      </association>
     </collection>
   </resultMap>
 
-  <select id="searchPatientAndNotTakeDrug" resultMap="patientAndNotTakeDrug">
-    select * , #{noPaymentTotalTypeId} as NoPaymentTotalTypeId, #{state} as state from patient where id = #{patientId}
+<!--  缴费单获取处方-->
+  <resultMap id="paymentAndPrescription" type="cn.neuedu.his.model.Payment">
+    <association property="prescription" javaType="cn.neuedu.his.model.Prescription" select="selectPrescriptionByPayment" column="item_id"/>
+  </resultMap>
+
+<!--  处方获取药物信息-->
+  <resultMap id="prescriptionAndNotTakeDrug" type="cn.neuedu.his.model.Prescription">
+    <association property="drug" javaType="cn.neuedu.his.model.Drug" select="selectDrugByPrescription" column="drug_id"/>
+  </resultMap>
+
+
+  <select id="searchPatientAndNotTakeDrug" resultMap="patientAndPayment">
+    select * , #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state from patient where id = #{patientId}
   </select>
 
-  <select id="selectNotTakeDrugPaymentByPatientId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+  <select id="selectNotTakeDrugPaymentByPatientId" resultMap="paymentAndPrescription">
     select * from payment
     where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) = #{paymentTotalTypeId} and state = #{state}
     order by create_time desc
   </select>
 
-  <select id="selectPrescriptionByPayment" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap">
+  <select id="selectPrescriptionByPayment" resultMap="prescriptionAndNotTakeDrug">
     select * from prescription where id = #{item_id}
   </select>
 
@@ -76,22 +85,21 @@
     select * from drug where id = #{drug_id}
   </select>
 
+
+
+
 <!--患者信息及某一时段内药物信息  -->
   <resultMap id="patientAndDrugDuringDate" type="cn.neuedu.his.model.Patient">
-    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectDrugPaymentByPatientIdDuringDate" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, startDate = startDate, endDate = endDate}">
-      <association property="prescription" javaType="cn.neuedu.his.model.Prescription" select="selectPrescriptionByPayment" column="item_id">
-        <association property="drug" javaType="cn.neuedu.his.model.Drug" select="selectDrugByPrescription" column="drug_id"/>
-      </association>
-    </collection>
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectDrugPaymentByPatientIdDuringDate" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, startDate = startDate, endDate = endDate}"/>
   </resultMap>
 
   <select id="searchPatientAndDrugDuringDate" resultMap="patientAndDrugDuringDate">
-    select * , #{noPaymentTotalTypeId} as NoPaymentTotalTypeId, #{startDate} as startDate, #{endDate} as endDate from patient where id = #{patientId}
+    select * , #{paymentTotalTypeId} as paymentTotalTypeId, #{startDate} as startDate, #{endDate} as endDate from patient where id = #{patientId}
   </select>
 
-  <select id="selectDrugPaymentByPatientIdDuringDate" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+  <select id="selectDrugPaymentByPatientIdDuringDate" resultMap="paymentAndPrescription">
     select * from payment
-    where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) = #{paymentTotalTypeId} and datediff(create_time, startDate) &gt;= 0 and datediff(create_time, endDate) &lt;= 0
+    where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) = #{paymentTotalTypeId} and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
     order by create_time
   </select>
 

@@ -49,16 +49,19 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     /**
      * 现场挂号
      * @param registrarId
-     * @param jsonObject
+     * @param patientId
+     * @param scheduleId
+     * @param needBook
      * @throws IllegalArgumentException
+     * @throws IndexOutOfBoundsException
      */
     @Transactional
     @Override
-    public void registerRegistrationInfo(Integer registrarId, JSONObject jsonObject) throws IllegalArgumentException, IndexOutOfBoundsException{
+    public void registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException{
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
-        Patient patient = patientService.findById(jsonObject.getInteger("patientId"));
+        Patient patient = patientService.findById(patientId);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -71,37 +74,27 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         }
 
         //获取时间表内信息
-        JobSchedule schedule = jobScheduleService.findById(jsonObject.getInteger("scheduleId"));
+        JobSchedule schedule = jobScheduleService.findById(scheduleId);
         if (schedule == null)
             throw new IllegalArgumentException("scheduleId");
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
         registration.setState(WAITING_FOR_TREATMENT);
-        registration.setNeedBook(jsonObject.getBoolean("needBook"));
+        registration.setNeedBook(needBook);
         //从redis中获取顺序号
         try {
             registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
         }catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException("sequence");
         }
+        //todo:设置挂号码（serialNumber）
         registration.setSerialNumber(1);
 
         save(registration);
 
         //改变已挂号人数
         jobScheduleService.addHaveRegistrationAmount(schedule.getId());
-
-        //生成缴费单
-        BigDecimal unitPrice = registrationTypeService.findById(schedule.getRegistrationTypeId()).getPrice();
-        Integer paymentId = paymentService.createRegistrationPayment(registration, jsonObject.getInteger("settlementType"), unitPrice);
-
-        //生成发票
-        try {
-            invoiceService.addInvoiceByPayment(paymentService.findById(paymentId));
-        }catch (IndexOutOfBoundsException e) {
-            throw new IndexOutOfBoundsException("invoice");
-        }
     }
 
     /**
@@ -171,7 +164,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         //形成冲红缴费单及发票
         Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();
-        paymentService.produceRetreatPayment(paymentId, registrarId, 1);
+        paymentService.retreatPayment(paymentId, registrarId, 1);
     }
 
     /**

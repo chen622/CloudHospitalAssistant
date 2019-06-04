@@ -71,17 +71,17 @@ public class DrugController {
         }catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         }catch (UnsupportedOperationException e2) {
-            if (e2.getMessage().equals("payment"))
+            if (e2.getMessage().equals("paymentState"))
                 return CommonUtil.errorJson(ErrorEnum.E_506);
-            else if (e2.getMessage().equals("invoice"))
-                return CommonUtil.errorJson(ErrorEnum.E_505);
-        }
-        catch (IndexOutOfBoundsException e3) {
+            else if (e2.getMessage().equals("paymentType"))
+                return CommonUtil.errorJson(ErrorEnum.E_504);
+        } catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
         }
 
         return CommonUtil.successJson();
     }
+
 
     @PostMapping("/delete/{id}")
     public JSONObject deleteDrug(@PathVariable("id") Integer id , Authentication authentication){
