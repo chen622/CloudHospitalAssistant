@@ -6,7 +6,7 @@
             <a-tabs defaultActiveKey="1" @change="callback" style="text-align: center" size="large">
                 <a-tab-pane key="1" tab="账号密码登录"  >
                     <a-form-item>
-                        <a-input size="large" type="text" placeholder="账户: admin" v-model="loginform.username" v-decorator="['username',{{rules.username}}]" >
+                        <a-input size="large" type="text" placeholder="账户: admin" v-model="loginform.username" >
                             <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
                         </a-input>
                     </a-form-item>
@@ -44,14 +44,14 @@
 
 
     export default {
-        name:'login2',
+        name:'login',
         components: {
 
         },
         data () {
             return {
                 form: this.$form.createForm(this),
-                imgUrl:require("../assets/logo-grey-white.png"),
+                imgUrl:require("../assets/logo/logo-grey-white.png"),
                 loginform:{
                     username: '',
                     password: '',
