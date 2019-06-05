@@ -16,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -72,17 +69,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     /**
      * 获得全院检查模板
-     * @param doctorID
+     * @param doctorId
      * @param level
      * @return
      */
     @Override
     @Transactional
-    public JSONObject getHospitalCheckTemps(Integer doctorID,Integer level) {
-        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorID,level);
-        if(templates==null)
-            templates=new ArrayList<>();
-        return CommonUtil.successJson(templates);
+    public JSONObject getHospitalCheckTemps(Integer doctorId,Integer level) {
+        return getInspectionTemps(doctorId,level);
     }
 
     /**
@@ -94,14 +88,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getDeptCheckTemps(Integer doctorID,Integer level) {
-//        Registration registration = registrationService.findById(registrationId);
-//        if(!registration.getState().equals(Constants.FIRST_DIAGNOSIS)){
-//            return  CommonUtil.errorJson(ErrorEnum.E_601.addErrorParamName("registration state"));
-//        }
-        List<InspectionTemplate> templates=inspectionTemplateService.getDeptCheckTemps(doctorID,level);
-        if(templates==null)
-            templates=new ArrayList<>();
-        return CommonUtil.successJson(templates);
+        return getInspectionTemps(doctorID,level);
     }
 
     /**
@@ -113,12 +100,37 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level) {
-        List<InspectionTemplate> templates=inspectionTemplateService.getPersonalCheckTemps(doctorID,level);
-        if(templates==null)
-            templates=new ArrayList<>();
-        return CommonUtil.successJson(templates);
+        return getInspectionTemps(doctorID,level);
     }
 
+    public JSONObject getInspectionTemps(Integer doctorId,Integer level){
+        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorId,level);
+        if(templates==null)
+            templates=new ArrayList<>();
+        Iterator<InspectionTemplate> iterator=templates.iterator();
+        while (iterator.hasNext()){
+            InspectionTemplate template = iterator.next();
+            if(template.getPrescriptions()!=null && template.getPrescriptions().size()>0){
+                Iterator<Prescription> iterator1=template.getPrescriptions().iterator();
+                while (iterator1.hasNext()){
+                    Prescription p=iterator1.next();
+                    if(p.getDrug().isDelete()==true){
+                        iterator1.remove();
+                    }
+                }
+            }
+            if(template.getApplications()!=null && template.getApplications().size()>0){
+                Iterator<InspectionApplication> iterator1=template.getApplications().iterator();
+                while (iterator1.hasNext()){
+                    InspectionApplication p=iterator1.next();
+                    if(p.getNonDrug().isDelete()==true){
+                        iterator1.remove();
+                    }
+                }
+            }
+        }
+        return CommonUtil.successJson(templates);
+    }
 
     /**
      * 获得全院病例模板
@@ -129,8 +141,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getHospitalMR(Integer doctorID,Integer level) {
-        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getHospitalMR(doctorID,level);
-        return CommonUtil.successJson(templates);
+       return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID,level));
     }
 
     /**
@@ -142,8 +153,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getDeptMR(Integer doctorID,Integer level) {
-        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getDeptMR(doctorID,level);
-        return CommonUtil.successJson(templates);
+        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID,level));
     }
 
     /**
@@ -155,13 +165,23 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getPersonalMR(Integer doctorID,Integer level) {
-        List<MedicalRecordTemplate> templates=medicalRecordTemplateService.getPersonalMR(doctorID,level);
+        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID,level));
+    }
+
+    private JSONObject getMRTemp(List<MedicalRecordTemplate> templates){
+        for (MedicalRecordTemplate record:templates){
+            Iterator<Diagnose> w=record.getFinalDiagnose().iterator();
+            while (w.hasNext()){
+                if(diseaseSecondService.findById(w.next().getDiseaseId())==null)
+                    w.remove();
+            }
+        }
         return CommonUtil.successJson(templates);
     }
 
     @Override
     public JSONObject getMeicalRecordTemByName(String name) {
-        return CommonUtil.successJson(doctorService.getMeicalRecordTemByName(name));
+        return getMRTemp(medicalRecordTemplateService.getMeicalRecordTemByName(name));
     }
 
 
@@ -375,7 +395,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (applicationList!=null){
             for (InspectionApplication r : applicationList){
                 NonDrug nonDrug=nonDrugService.findById(r.getNonDrugId());
-                if(r.getNonDrugId()==null || nonDrug==null ){
+                if(r.getNonDrugId()==null || nonDrug==null || nonDrug.isDelete()==true){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(System.currentTimeMillis()),false,r.getEmerged(),r.getQuantity(),false,false,nonDrug.getFeeTypeId());
@@ -396,6 +416,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug = drugService.findById(prescription.getDrugId());
+                if(drug==null || drug.isDelete()==true)
+                    return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2=new Prescription(prescription, drug.getFeeTypeId(),medicalRecordId,false);
                 p2.setTemplate(false);
                 p2.setItemId(medicalRecordId);
@@ -460,7 +482,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             for (InspectionApplication r : applicationList){
 
                 NonDrug drug=nonDrugService.findById(r.getNonDrugId());
-                if(r.getNonDrugId()==null || drug==null ){
+                if(r.getNonDrugId()==null || drug==null || drug.isDelete()==true){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true,drug.getFeeTypeId());
@@ -475,6 +497,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug=drugService.findById(prescription.getDrugId());
+                if(drug.isDelete()==true)
+                    return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2=new Prescription(prescription,drug.getFeeTypeId(),prescription.getItemId(),true);
                 p2.setTemplate(true);
                 p2.setItemId(tempId);
@@ -545,6 +569,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             p.setId(null);
             p.setItemId(medicalRecordId);
             p.setTemplate(false);
+            Drug drug= drugService.findById(p.getDrugId());
+            if(drug==null || drug.isDelete()==true)
+                return CommonUtil.errorJson(ErrorEnum.E_626);
             check=checkPrescription(p);
             if(!check.equals("")){
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
@@ -582,7 +609,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     public JSONObject getPrescriptionsTemByName(String name) {
-        return CommonUtil.successJson(drugTemplateService.getPrescriptionsTemByName(name));
+        List<DrugTemplate> drugTemplates=drugTemplateService.getPrescriptionsTemByName(name);
+        for (DrugTemplate drugTemplate:drugTemplates){
+            Iterator<Prescription> iterator=drugTemplate.getPrescriptions().iterator();
+            while (iterator.hasNext()){
+                if (iterator.next().getDrug().isDelete()==true)
+                    iterator.remove();
+            }
+        }
+        return CommonUtil.successJson();
     }
 
 
@@ -593,7 +628,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if(p.getFrequency()==null || p.getFrequency().equals("")){
             return "frequency";
         }
-        if(p.getDrugId()==null || drugService.findById(p.getDrugId())==null)
+        if(p.getDrugId()==null )
             return "drug";
         if(p.getAmount()==null )
             return "amount";

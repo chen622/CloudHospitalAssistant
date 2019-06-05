@@ -20,7 +20,6 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
 
-
     <association property="drug" javaType="cn.neuedu.his.model.Drug" select="getDrug" column="drug_id"/>
     <association property="payment" javaType="cn.neuedu.his.model.Payment" select="getPayment" column="{id=id,type=fee_type_id}"/>
   </resultMap>
