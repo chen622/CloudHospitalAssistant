@@ -5,6 +5,7 @@ import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.DrugService;
 import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,5 +88,55 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Override
     public List<Drug> getDrugByName(String name) {
         return drugMapper.getDrugByName(name);
+    }
+
+    @Override
+    public void deleteDrug(Integer id) {
+        Drug drug = this.findById(id);
+
+        //判断药物是否存在
+        if (drug == null)
+            throw new RuntimeException("626");
+            //return CommonUtil.errorJson(ErrorEnum.E_626);
+
+        this.deleteById(id);
+    }
+
+    @Override
+    public void modifyDrug(Drug drug) {
+        //判断药物是否存在
+        if (this.findById(drug.getId()) == null)
+            throw new RuntimeException("626");
+
+        //判断药品名是否重复
+        if (this.getDrugByName(drug.getName()) != null)
+            throw new RuntimeException("631");
+
+        //判断药物类别是否正确
+        if (DRUG_TYPE_LIST.contains(drug))
+            throw new RuntimeException("627");
+
+        //判断剂型是否正确
+        if (drug.getFormulation()>LARGEST_FORMULATION ||drug.getFormulation()<LEAST_FORMULATION)
+            throw new RuntimeException("628");
+
+        this.update(drug);
+    }
+
+    @Override
+    public void insertDrug(Drug drug) {
+        //判断药品名是否重复
+        if (this.getDrugByName(drug.getName()) != null)
+            throw new RuntimeException("631");
+
+        //判断药物类别是否正确
+        if (DRUG_TYPE_LIST.contains(drug))
+            throw new RuntimeException("627");
+
+        //判断剂型是否正确
+        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
+            throw new RuntimeException("628");
+
+        this.save(drug);
     }
 }

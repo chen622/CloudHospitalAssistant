@@ -14,4 +14,9 @@ public interface DrugService extends Service<Drug> {
 
     List<Drug> getDrugByName(String name);
 
+    void deleteDrug(Integer id);
+
+    void modifyDrug(Drug drug);
+
+    void insertDrug(Drug drug);
 }
