@@ -34,7 +34,7 @@ public class PaymentTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        PaymentType paymentType = jsonObject.toJavaObject(jsonObject,PaymentType.class);
+        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
 
         //判断类型是否正确
         if(PAYMENT_TYPE_LIST.contains(paymentType.getType()))
@@ -79,7 +79,7 @@ public class PaymentTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        PaymentType paymentType = jsonObject.toJavaObject(jsonObject,PaymentType.class);
+        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
 
         PaymentType lastPaymentType = paymentTypeService.getPaymentTypeByName(paymentType.getName());
 

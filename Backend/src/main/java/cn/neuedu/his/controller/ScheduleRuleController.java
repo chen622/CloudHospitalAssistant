@@ -59,7 +59,7 @@ public class ScheduleRuleController {
         }
 
         try{
-        ScheduleRule scheduleRule = jsonObject.toJavaObject(jsonObject,ScheduleRule.class);
+        ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject,ScheduleRule.class);
         scheduleRuleService.insertScheduleRule(scheduleRule);
         return CommonUtil.successJson();
         }catch (RuntimeException e){
@@ -87,7 +87,7 @@ public class ScheduleRuleController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
         try{
-            ScheduleRule scheduleRule = jsonObject.toJavaObject(jsonObject,ScheduleRule.class);
+            ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject,ScheduleRule.class);
             scheduleRuleService.modifyScheduleRule(scheduleRule);
             return CommonUtil.successJson();
         }catch (RuntimeException e){

@@ -38,7 +38,7 @@ public class RegistrationTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        RegistrationType registrationType = jsonObject.toJavaObject(jsonObject,RegistrationType.class);
+        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject,RegistrationType.class);
 
        try{
            registrationTypeService.insertRegisterType(registrationType);
@@ -92,7 +92,7 @@ public class RegistrationTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        RegistrationType registrationType = jsonObject.toJavaObject(jsonObject,RegistrationType.class);
+        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject,RegistrationType.class);
 
         try{
             registrationTypeService.modifyRegisterType(registrationType);

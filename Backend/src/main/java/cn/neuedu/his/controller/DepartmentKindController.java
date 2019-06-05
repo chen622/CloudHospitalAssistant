@@ -41,7 +41,7 @@ public class DepartmentKindController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        DepartmentKind departmentKind = jsonObject.toJavaObject(jsonObject,DepartmentKind.class);
+        DepartmentKind departmentKind = JSONObject.toJavaObject(jsonObject,DepartmentKind.class);
 
         //检测部门是否存在
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
@@ -65,7 +65,7 @@ public class DepartmentKindController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        DepartmentKind departmentKind = jsonObject.toJavaObject(jsonObject,DepartmentKind.class);
+        DepartmentKind departmentKind = JSONObject.toJavaObject(jsonObject,DepartmentKind.class);
 
         //检测部门是否存在
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
