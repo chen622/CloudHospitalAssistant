@@ -11,6 +11,7 @@
       <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
       <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
       <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
+      <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
   </resultMap>
 
   <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
@@ -20,6 +21,7 @@
       <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
       <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
       <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
+      <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
       <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByInvoiceId" column="id"/>
   </resultMap>
 
@@ -30,4 +32,12 @@
   <select id="getPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
         SELECT * FROM payment where id = #{id} order by create_time asc
    </select>
+
+    <select id="getInvoiceNormalList" resultType="java.lang.Integer">
+        select id from invoice where daily_settle_id = #{settleId}
+    </select>
+
+    <select id="getInvoiceAnewList" resultType="java.lang.Integer">
+        select id from invoice where daily_settle_id = #{settleId} and anew_amount != 0
+    </select>
 </mapper>

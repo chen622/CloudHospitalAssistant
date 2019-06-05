@@ -56,16 +56,18 @@ public class Prescription implements Serializable {
 
     @Column(name = "create_time")
     private Date createTime;
+    private Integer feeTypeId;
 
     private Drug drug;
+    private Payment payment;
 
     public Prescription() {
         return;
     }
 
-    public Prescription(Prescription p) {
+    public Prescription(Prescription p,Integer feeTypeId,Integer medicalRecord,Boolean isTemplate) {
         this.usageId = p.usageId;
-        this.itemId = p.itemId;
+        this.itemId = medicalRecord;
         this.frequency = p.frequency;
         this.drugId = p.drugId;
         this.amount = p.amount;
@@ -74,8 +76,26 @@ public class Prescription implements Serializable {
         this.note = p.note;
         this.needSkinTest = p.needSkinTest;
         this.skinTestResult = p.skinTestResult;
-        this.isTemplate = p.isTemplate;
+        this.isTemplate = isTemplate;
         createTime=new Date(System.currentTimeMillis());
+        this.feeTypeId=feeTypeId;
+    }
+
+
+    public Integer getFeeTypeId() {
+        return feeTypeId;
+    }
+
+    public void setFeeTypeId(Integer feeTypeId) {
+        this.feeTypeId = feeTypeId;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 
     public Date getCreateTime() {

@@ -2,7 +2,7 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.util.inter.Service;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  *
@@ -15,7 +15,7 @@ public interface UserService extends Service<User> {
 
     User getUserAllInformationByName(String username);
 
-    List<User> findAllUsers();
+    User findUserAndInvoiceAndPaymentDuringDate(Integer userId, Date startDate, Date endDate);
 
 
 

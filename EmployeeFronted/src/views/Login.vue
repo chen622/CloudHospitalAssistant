@@ -45,6 +45,8 @@
 </template>
 
 <script>
+    import axios from 'axios'
+
     export default {
         name: 'Login',
         data () {
@@ -55,7 +57,11 @@
                     password: '',
                 },
                 rules: {
-                    username: [{required: true, message: '请输入用户名', trigger: 'blur'}, {min: 5, message: "用户名长度应大于5", trigger: 'blur'}],
+                    username: [{required: true, message: '请输入用户名', trigger: 'blur'}, {
+                        min: 5,
+                        message: "用户名长度应大于5",
+                        trigger: 'blur'
+                    }],
                     password: [{required: true, message: '请输入密码', trigger: 'blur'}]
                 },
                 checked: false
@@ -68,22 +74,39 @@
                 let that = this
                 this.form.validateFields((err) => {
                         if (!err) {
-                            this.$api.get("/user/login", this.form.getFieldsValue(),
-                                res => {
-                                    if (res.code === "200") {
-                                        that.$router.replace({path: "/"})
-                                    } else {
-                                        that.$message.error(res.msg);
+                            axios({
+                                method: 'GET',
+                                url: 'http://localhost:8078/user/login',
+                                params: this.form.getFieldsValue()
+                            }).then(function (res) {
+                                sessionStorage.setItem("token", res.headers.authorization)
+                                that.$message.success("登录成功")
+                                setTimeout(() => {
+                                    that.$api.get("/user/function", null,
+                                        res => {
+                                            that.$store.commit("setUrls", res.data)
+                                        }, res => {
+                                            // eslint-disable-next-line
+                                            console.log('API error: ' + res)
+                                        })
+                                }, 1000)
+                                that.$store.commit("setLogin", true)
+                                that.$store.commit("setUserType", parseInt(res.headers.usertype))
+                                that.$router.replace({path: "/"})
+                            }).catch(function (err) {
+                                if (err) {
+                                    if (err.response && err.response.status === 403) {
+                                        sessionStorage.removeItem("token")
+                                        that.$message.error("用户名或密码错误");
                                     }
-                                }, res => {
-
-                                    that.$message.error("网络异常")
-                                })
+                                    // eslint-disable-next-line
+                                    console.log('API error: ' + err)
+                                }
+                            });
                         }
                     },
                 );
-            }
-
+            },
         }
     }
 </script>

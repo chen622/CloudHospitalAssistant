@@ -29,6 +29,9 @@ public class Invoice {
     @Column(name = "daily_settle_id")
     private Integer dailySettleId;
 
+    @Column(name = "operator_id")
+    private Integer operatorId;
+
     private ArrayList<Payment> paymentList;
 
     /**
@@ -103,5 +106,13 @@ public class Invoice {
 
     public void setDailySettleId(Integer dailySettleId) {
         this.dailySettleId = dailySettleId;
+    }
+
+    public Integer getOperatorId() {
+        return operatorId;
+    }
+
+    public void setOperatorId(Integer operatorId) {
+        this.operatorId = operatorId;
     }
 }
