@@ -1,4 +1,5 @@
 package cn.neuedu.his.service;
+
 import cn.neuedu.his.model.Department;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -11,7 +12,6 @@ import javax.sql.rowset.serial.SerialStruct;
 import java.util.List;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 public interface DepartmentService extends Service<Department> {
@@ -28,10 +28,9 @@ public interface DepartmentService extends Service<Department> {
 
     void addDepartment(Department department);
 
-    void modifyDepartment(Department department);
+    void modifyDepartment(Department department) throws RuntimeException;
 
     List<Department> getDepartmentListByName(String name);
-
 
 
     JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException;
