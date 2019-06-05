@@ -101,6 +101,7 @@
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
     <association property="deptName" javaType="String" column="{id=department_id}" select="getDeptName"/>
     <association property="type" javaType="String" column="type_id" select="getType"/>
+    <association property="title" javaType="String" column="id" select="getTile"/>
   </resultMap>
 
   <select id="findAllWithName" resultMap="findAllWithName">
@@ -111,6 +112,9 @@
   </select>
   <select id="getType" resultType="String">
     select name from  constant_variable where id=#{type_id}
+  </select>
+  <select id="getTile" resultType="String">
+    select c.name from  doctor ,constant_variable c where doctor.id=#{id} and title_id = c.id
   </select>
 
 
