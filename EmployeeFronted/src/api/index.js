@@ -37,7 +37,7 @@ export default { // 自定义判断元素类型JS
         let token = sessionStorage.getItem('token')
 
 
-        // let that = this
+        let that = this
 
         axios({
             method: method,
@@ -46,7 +46,7 @@ export default { // 自定义判断元素类型JS
             params: method === 'GET' || method === 'DELETE' ? params : null,
             baseURL: global.baseURL,
             headers: {
-                'Authorization': 'Bearer ' + token,
+                'Authorization': token,
                 'Content-Type': 'application/json;charset=UTF-8'
             },
             withCredentials: false

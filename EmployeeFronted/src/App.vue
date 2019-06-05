@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <a-locale-provider :locale="locale">
         <a-layout style="background: #fff">
             <a-layout-header class="header">
                 <a-row type="flex" align="middle" justify="start">
@@ -12,13 +12,19 @@
                                 <a-icon type="home"/>
                                 首页
                             </a-menu-item>
-                            <a-menu-item key="user">
+                            <a-menu-item v-if="!$store.state.isLogin" key="user">
                                 <a-icon type="wechat"/>
                                 患者平台
                             </a-menu-item>
+                            <a-sub-menu v-else>
+                                <span slot="title" class="submenu-title-wrapper">可用功能</span>
+                                <a-menu-item v-for="item in $store.state.urls" :key="item.key"
+                                             @click="toRouter(item.url)">{{item.name}}
+                                </a-menu-item>
+                            </a-sub-menu>
                             <a-sub-menu>
                                 <span slot="title" class="submenu-title-wrapper"><a-icon type="setting"/>控制台</span>
-                                <a-menu-item key="login">登录</a-menu-item>
+                                <a-menu-item key="login" @click="toRouter('/login')">登录</a-menu-item>
                                 <a-menu-item key="about">关于</a-menu-item>
                             </a-sub-menu>
                         </a-menu>
@@ -42,13 +48,15 @@
                 </a-row>
             </a-layout-footer>
         </a-layout>
-    </div>
+    </a-locale-provider>
 </template>
 
 <script>
+    import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
 
     export default {
         data: () => ({
+            locale: zhCN,
             current: ['index'],
             departmentKind: [],
             departments: [],
@@ -57,15 +65,28 @@
             toRouter: function (router) {
                 this.$router.push({path: router})
             },
-
+            urls () {
+                let that = this
+                this.$api.get("/user/function", null, res => {
+                    that.$store.commit("setLogin", true)
+                    that.$store.commit("setUrls", res.data)
+                }, res => {// eslint-disable-next-line
+                    console.log('API error: ' + res)
+                })
+            }
         },
+        mounted () {
+            if (sessionStorage.getItem("token") != null) {
+                this.urls()
+            }
+        }
     }
 </script>
 
 <style scoped>
     .header {
         background: #fff !important;
-        box-shadow: 0 5px 8px rgba(139, 139, 139, 0.7);
+        box-shadow: 0 2px 8px rgba(139, 139, 139, 0.52);
         position: relative;
         z-index: 10;
         max-width: 100%;

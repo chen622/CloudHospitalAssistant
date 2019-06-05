@@ -32,9 +32,9 @@
                         @tabChange="key => tabChange(key)"
                         :headStyle="{fontSize: '30px'}"
                         :loading="departmentLoading">
-                    <a-card-grid v-for="dep in departments[departmentKey]" :key="dep"
+                    <a-card-grid v-for="dep in departments[departmentKey]" :key="dep.id"
                                  style="width:25%;text-align:center">
-                        {{dep}}
+                        {{dep.name}}
                     </a-card-grid>
                 </a-card>
             </a-col>
@@ -71,11 +71,12 @@
                 let that = this
                 this.$api.get('/general/getAllDepartmentKind', null,
                     res => {
-                        that.departmentKey = []
+                        that.departmentLoading = false
+                        that.departmentKind = []
                         that.departments = []
                         let index = 0
                         res.data.type.forEach(type => {
-                            that.departmentKey.push({tab: type.name, key: index + ''})
+                            that.departmentKind.push({tab: type.name, key: index + ''})
                             index++
                             that.departments.push(res.data.departments[index])
                         })

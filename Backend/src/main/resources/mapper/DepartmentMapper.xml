@@ -17,6 +17,7 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
     <association property="departmentKind" javaType="cn.neuedu.his.model.DepartmentKind">
         <id column="departmentKindId" jdbcType="INTEGER" property="id" />
         <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
