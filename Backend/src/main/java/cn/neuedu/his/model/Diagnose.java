@@ -18,7 +18,7 @@ public class Diagnose {
     private Integer diseaseId;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     @Column(name = "is_template")
     private Boolean isTemplate;

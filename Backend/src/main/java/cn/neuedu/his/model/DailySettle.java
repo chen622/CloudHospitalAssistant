@@ -17,7 +17,7 @@ public class DailySettle {
     private Date endDate;
 
     @Column(name = "make_date")
-    private Date makeDate;
+    private Date makeDate = new Date(System.currentTimeMillis());
 
     /**
      * 收费员id

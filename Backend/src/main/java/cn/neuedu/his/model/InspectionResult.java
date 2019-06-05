@@ -16,7 +16,7 @@ public class InspectionResult {
     private Integer departmentId;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     @Column(name = "inspection_application_id")
     private Integer inspectionApplicationId;

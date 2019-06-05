@@ -17,7 +17,7 @@ public class InspectionApplication implements Serializable {
     private Integer nonDrugId;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     @Column(name = "is_done")
     private Boolean isDone;

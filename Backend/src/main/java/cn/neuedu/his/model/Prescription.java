@@ -55,7 +55,7 @@ public class Prescription implements Serializable {
     private Boolean isTemplate;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
     private Integer feeTypeId;
 
     private Drug drug;

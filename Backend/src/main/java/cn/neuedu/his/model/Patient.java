@@ -34,7 +34,7 @@ public class Patient {
     private Date lastLoginTime;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private Date createTime = new Date(System.currentTimeMillis());
 
     @Column(name = "last_password_modify_time")
     private Date lastPasswordModifyTime;
