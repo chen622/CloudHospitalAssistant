@@ -15,7 +15,7 @@
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"></result>
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
@@ -29,6 +29,7 @@
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
     <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
       <id column="id" jdbcType="INTEGER" property="id" />
       <result column="title_id" jdbcType="INTEGER" property="titleId" />
@@ -104,6 +105,7 @@
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
     <association property="dept" javaType="cn.neuedu.his.model.Department" column="{id=department_id}" select="getDept"/>
     <association property="type" javaType="String" column="type_id" select="getType"/>
     <association property="title" javaType="String" column="id" select="getTile"/>

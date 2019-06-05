@@ -98,7 +98,7 @@ public class DepartmentController {
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
@@ -142,16 +142,18 @@ public class DepartmentController {
         }
     }
 
-    @GetMapping("/getDepartmentList/{name}")
-    public JSONObject getDepartmentListByname(@PathVariable("name")String name ,Authentication authentication){
+    @GetMapping({"/getDepartmentList/{name}", "/getDepartmentList/"})
+    public JSONObject getDepartmentListByname(@PathVariable(name = "name", required = false) String name, Authentication authentication) {
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
+        try {
+            if (name == null)
+                name = "";
             List<Department> departments = departmentService.getDepartmentListByName(name);
             return CommonUtil.successJson(departments);
         }catch (RuntimeException e){

@@ -70,6 +70,8 @@ public class UserController {
             urls.add(new url("账户管理", "/admin/user", "admin"));
             urls.add(new url("排班管理", "/admin/rule", "rule"));
             urls.add(new url("医疗信息管理", "/admin/other", "other"));
+        }else if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())){
+            urls.add(new url("看诊","/doctor/index","doctor"));
         }
         return CommonUtil.successJson(urls);
     }
