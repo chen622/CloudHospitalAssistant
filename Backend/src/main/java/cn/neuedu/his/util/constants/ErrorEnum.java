@@ -61,7 +61,8 @@ public enum ErrorEnum {
     ,E_801("801","暂存失败")
     ,E_802("802","获取暂存数据失败")
     ,E_803("803","删除暂存数据失败")
-    ,E_804("804","时间格式错误(yyyy-mm-dd hh-mm-ss)");
+    ,E_804("804","时间格式错误(yyyy-mm-dd hh-mm-ss)")
+    ;
 
     private String errorCode;
 

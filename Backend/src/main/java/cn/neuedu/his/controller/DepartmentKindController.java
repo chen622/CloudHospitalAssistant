@@ -107,14 +107,30 @@ public class DepartmentKindController {
      */
     @GetMapping("/getAll")
     public JSONObject getDepartmentKindList(Authentication authentication){
-        //检查权限
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
 
-        return CommonUtil.successJson(departmentKindService.getDepartmentKindList());
+        try {
+            //获得部门大类
+            List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(1);
+            JSONObject returnJSON = new JSONObject();
+            JSONArray departmentKinds = new JSONArray();
+
+            if (constantVariables != null) {
+                returnJSON.put("type", constantVariables);
+
+                constantVariables.forEach(kind -> {
+                    List<DepartmentKind> departmentKindList = departmentKindService.getDepartmentKindByClassificationId(kind.getId());
+                    departmentKinds.add(departmentKindList);
+                });
+
+                returnJSON.put("departmentKinds", departmentKinds);
+            } else {
+                returnJSON.put("type", departmentKinds);
+                returnJSON.put("departmentKinds", departmentKinds);
+            }
+            return CommonUtil.successJson(returnJSON);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
+        }
     }
 
 }

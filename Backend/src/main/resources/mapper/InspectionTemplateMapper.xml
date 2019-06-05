@@ -37,7 +37,7 @@
         select * from prescription where item_id=#{id} and  is_template=true ;
   </select>
 <!-- Relationship collection-->
-  <select id="getInspection" resultMap="cn.neuedu.his.mapper.InspectionApplicationMapper.BaseResultMap" >
+  <select id="getInspection" resultMap="cn.neuedu.his.mapper.InspectionApplicationMapper.withItem" >
         select * from inspection_application  where item_id=#{id} and  is_template=true ;
   </select>
 

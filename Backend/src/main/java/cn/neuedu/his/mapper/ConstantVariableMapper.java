@@ -13,4 +13,7 @@ public interface ConstantVariableMapper extends MyMapper<ConstantVariable> {
     ConstantVariable getConstantByName(String name, Integer type);
     ConstantVariable justifyPrimaryType(Integer id);
 
+    //根据类型获得常量list
+    List<ConstantVariable> getConstantByType(Integer type);
+
 }

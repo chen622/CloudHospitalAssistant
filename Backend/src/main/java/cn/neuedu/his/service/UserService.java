@@ -25,4 +25,6 @@ public interface UserService extends Service<User> {
 
     ArrayList<User> findAllWithName();
 
+    List<User> findUser(String name);
+
 }

@@ -23,6 +23,8 @@ public class Diagnose {
     @Column(name = "is_template")
     private Boolean isTemplate;
 
+    private DiseaseSecond diseaseSecond;
+
 
     public Boolean getTemplate() {
         return isTemplate;
@@ -118,5 +120,13 @@ public class Diagnose {
      */
     public void setIsMajor(Boolean isMajor) {
         this.isMajor = isMajor;
+    }
+
+    public DiseaseSecond getDiseaseSecond() {
+        return diseaseSecond;
+    }
+
+    public void setDiseaseSecond(DiseaseSecond diseaseSecond) {
+        this.diseaseSecond = diseaseSecond;
     }
 }

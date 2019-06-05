@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Component
 
@@ -17,4 +18,6 @@ public interface UserMapper extends MyMapper<User> {
 
     User getUserAllInformationByUsername(String username);
     ArrayList<User> findAllWithName();
+
+    List<User> findUser(String name);
 }

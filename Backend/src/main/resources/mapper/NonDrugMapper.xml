@@ -12,25 +12,26 @@
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
     <result column="code" jdbcType="VARCHAR" property="code"/>
     <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <select id="findByName" resultMap="BaseResultMap">
-    select * from non_drug where  name like CONCAT('%',#{name},'%');
+    select * from non_drug where  name like CONCAT('%',#{name},'%') and  is_delete=false ;
   </select>
 
   <select id="getAll" resultMap="BaseResultMap">
-    select * from non_drug;
+    select * from non_drug where  is_delete=false ;
   </select>
 
   <select id="selectNonDrugByName" resultMap="BaseResultMap">
     select *
     from non_drug
-    where name = #{name}
+    where name = #{name} and is_delete=false ;
   </select>
 
   <select id="selectNonDrugByCode" resultMap="BaseResultMap">
     select *
     from non_drug
-    where code = #{code}
+    where code = #{code} and is_delete=false ;
   </select>
 </mapper>

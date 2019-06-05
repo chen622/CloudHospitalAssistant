@@ -80,4 +80,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return userMapper.findAllWithName();
     }
 
+    @Override
+    public List<User> findUser(String name) {
+        return userMapper.findUser(name);
+    }
+
 }

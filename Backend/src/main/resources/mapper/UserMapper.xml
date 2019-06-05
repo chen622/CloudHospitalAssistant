@@ -44,6 +44,11 @@
     select * from user where department_id = #{departmentId}
   </select>
 
+  <!-- 获得模糊搜索的用户信息-->
+  <select id="findUser" parameterType="String" resultMap="BaseResultMap">
+    select * from user where username like concat('%',#{username},'%')
+  </select>
+
 
 
   <!-- 选择用户和医生信息 -->

@@ -308,10 +308,23 @@ public class UserController {
         return CommonUtil.successJson(user);
     }
 
-    @GetMapping("/findAll")
-    public JSONObject findAll(){
+    /**
+     * 模糊搜索用户
+     * @param name
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/findUser/{name}")
+    public JSONObject findUser(@PathVariable("name") String name, Authentication authentication){
+
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
         try{
-            List<User> users = userService.findAllWithName();
+            List<User> users = userService.findUser(name);
             return CommonUtil.successJson(users);
         }catch (RuntimeException e){
             e.printStackTrace();

@@ -303,7 +303,13 @@ public class RedisServiceImpl{
 
     public void deleteTemporaryMR(Integer id) throws Exception {
         Jedis jedis=getResource();
-        jedis.del(id.toString()+"MR");
+        try{
+            jedis.del(id.toString()+"MR");
+        }catch (Exception e){
+            throw  new Exception();
+        }finally {
+            returnResource(jedis);
+        }
     }
 
 
