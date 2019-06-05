@@ -39,6 +39,12 @@
     select * from user where username = #{username}
   </select>
 
+  <select id="getUserByDepartmentId" resultMap="BaseResultMap">
+    select * from user where department_id = #{departmentId}
+  </select>
+
+
+
   <!-- 选择用户和医生信息 -->
   <select id="getUserAllInformationByUsername" parameterType="String" resultMap="UserAndDoctor">
     SELECT *

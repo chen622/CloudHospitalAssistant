@@ -8,6 +8,7 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +68,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Override
     public List<User> findAllUsers() {
         return this.findAll();
+    }
+
+    @Override
+    public ArrayList<User> findUserByDepartmentId(Integer departmentId) {
+        return userMapper.getUserByDepartmentId(departmentId);
     }
 
 }
