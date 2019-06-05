@@ -32,12 +32,20 @@
     update payment set invoice_id = #{invoiceId} where id = #{id}
   </update>
 
-  <select id="selectAllByItemIdAndPaymentTypeId" resultType="cn.neuedu.his.model.Payment">
+  <select id="selectAllByItemIdAndPaymentTypeId" resultMap="BaseResultMap">
     select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId}
   </select>
 
   <select id="getByRegistrationId" resultMap="BaseResultMap">
         select * from payment where  item_id=#{id} and  payment_type_id=#{type};
+  </select>
+
+  <select id="getByDoctorId" resultMap="BaseResultMap">
+    select * from payment where doctor_id = #{doctorId} and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
+  </select>
+
+  <select id="getByProjectOperatorId" resultMap="BaseResultMap">
+    select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
   </select>
 
 <!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->

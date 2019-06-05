@@ -14,4 +14,8 @@
   <select id="getPaymentTypeByName" parameterType="String" resultMap="BaseResultMap">
     select * from payment_type where name = #{paymentTypeName};
   </select>
+
+  <select id="getAllNotDelete" resultMap="BaseResultMap">
+    select * from payment_type where is_delete = false
+  </select>
 </mapper>

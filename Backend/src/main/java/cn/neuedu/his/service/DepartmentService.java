@@ -3,7 +3,10 @@ import cn.neuedu.his.model.Department;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
+import java.util.Date;
 import javax.sql.rowset.serial.SerialStruct;
 import java.util.List;
 
@@ -29,5 +32,8 @@ public interface DepartmentService extends Service<Department> {
 
     List<Department> getDepartmentListByName(String name);
 
+
+
+    JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException;
 
 }

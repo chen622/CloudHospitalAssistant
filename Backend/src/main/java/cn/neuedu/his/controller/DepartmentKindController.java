@@ -105,7 +105,7 @@ public class DepartmentKindController {
      * @param authentication
      * @return
      */
-    @PostMapping("/getAll")
+    @GetMapping("/getAll")
     public JSONObject getDepartmentKindList(Authentication authentication){
         //检查权限
         try {

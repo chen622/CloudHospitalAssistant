@@ -7,6 +7,7 @@ import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -155,6 +156,48 @@ public class DepartmentController {
             return CommonUtil.successJson(departments);
         }catch (RuntimeException e){
             return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
+
+    /**
+     * 临床科室工作量统计
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/departmentClinicWorkload")
+    public JSONObject getClinicDepartmentWorkLoad(@RequestBody JSONObject jsonObject,  Authentication authentication){
+        try {
+            PermissionCheck.isFinancialOfficer(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        }
+
+        try {
+            return CommonUtil.successJson(departmentService.workCalculate(Constants.CLINICAL_DEPARTMENTS, jsonObject.getDate("start"), jsonObject.getDate("end")));
+        } catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+    }
+
+    /**
+     * 医技科室工作量统计
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/departmentTechniqueWorkload")
+    public JSONObject getTechniqueDepartmentWorkLoad(@RequestBody JSONObject jsonObject,  Authentication authentication){
+        try {
+            PermissionCheck.isFinancialOfficer(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        }
+
+        try {
+            return CommonUtil.successJson(departmentService.workCalculate(Constants.TECHNICAL_DEPARTMENTS, jsonObject.getDate("start"), jsonObject.getDate("end")));
+        } catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
     }
 

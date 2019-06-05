@@ -4,6 +4,7 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.inter.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -20,4 +21,6 @@ public interface InvoiceService extends Service<Invoice> {
     Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
     ArrayList<Integer> getInvoiceNormalIdList(Integer settleId);
     ArrayList<Integer> getInvoiceAnewIdList(Integer settleId);
+    Integer getInvoiceNumberByDoctorId(Integer doctorId, Date start, Date end);
+    Integer getInvoiceNumberByProjectOperatorId(Integer projectOperatorId, Date start, Date end);
 }

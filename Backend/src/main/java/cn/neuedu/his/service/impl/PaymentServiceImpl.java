@@ -70,6 +70,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setCreateTime(new Date(System.currentTimeMillis()));
         payment.setPaymentTypeId(REGISTRATION_FEE_TYPE);
         payment.setState(HAVE_PAID);
+        payment.setDoctorId(registration.getDoctorId());
         save(payment);
 
         //生成发票
@@ -301,5 +302,15 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Override
     public List<Payment> getByRegistrationId(Integer id, Integer type) {
         return paymentMapper.getByRegistrationId(id, type);
+    }
+
+    @Override
+    public ArrayList<Payment> findByDoctorId(Integer doctorId, Date start, Date end) {
+        return paymentMapper.getByDoctorId(doctorId, start, end);
+    }
+
+    @Override
+    public ArrayList<Payment> findByProjectOperatorId(Integer projectOperatorId, Date start, Date end) {
+        return paymentMapper.getByProjectOperatorId(projectOperatorId, start, end);
     }
 }

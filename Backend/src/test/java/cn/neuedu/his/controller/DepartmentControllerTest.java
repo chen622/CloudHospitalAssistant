@@ -26,6 +26,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +56,7 @@ public class DepartmentControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", Constants.UserType.HOSPITAL_ADMINISTRATOR.getId())
+                .claim("typeId", 605)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -119,6 +121,60 @@ public class DepartmentControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/department/modify")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(request)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getClinicDepartmentWorkLoad() throws Exception {
+        JSONObject param = new JSONObject();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = formatter.parse("2019-05-29 06:00:00");
+            end = formatter.parse("2019-05-30 12:00:00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        param.put("start", start);
+        param.put("end", end);
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.get("/department/departmentClinicWorkload")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getTechniqueDepartmentWorkLoad() throws Exception {
+        JSONObject param = new JSONObject();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = formatter.parse("2019-05-29 06:00:00");
+            end = formatter.parse("2019-06-04 00:24:48");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        param.put("start", start);
+        param.put("end", end);
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.get("/department/departmentTechniqueWorkload")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
