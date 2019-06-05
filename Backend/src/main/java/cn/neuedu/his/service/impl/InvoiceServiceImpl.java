@@ -176,12 +176,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     }
 
     @Override
-    public Integer getInvoiceNumberByDoctorId(Integer doctorId, Date start, Date end) {
-        return invoiceMapper.getInvoiceNumberByDoctorId(doctorId, start, end);
-    }
-
-    @Override
-    public Integer getInvoiceNumberByProjectOperatorId(Integer projectOperatorId, Date start, Date end) {
-        return invoiceMapper.getInvoiceNumberByProjectOperatorId(projectOperatorId, start, end);
+    public Integer getInvoiceNumberByAllDoctor(Integer projectOperatorId, Date start, Date end) {
+        return invoiceMapper.getInvoiceNumberByAllDoctor(projectOperatorId, start, end);
     }
 }

@@ -174,6 +174,16 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         return registrationMapper.getAllWaitingRegistration(doctorID,state,time);
     }
 
+    @Override
+    public List<Registration> getHadRegistration(Integer doctorID, Integer state, Date time) {
+        return null;
+    }
+
+    @Override
+    public List<Registration> getFinishRegistration(Integer doctorID, Integer state, Date time) {
+        return null;
+    }
+
     /**
      * 通过用户名查找所有带诊患者
      * @param name

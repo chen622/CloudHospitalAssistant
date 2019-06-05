@@ -305,12 +305,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     @Override
-    public ArrayList<Payment> findByDoctorId(Integer doctorId, Date start, Date end) {
-        return paymentMapper.getByDoctorId(doctorId, start, end);
+    public ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end) {
+        return paymentMapper.getByAllDoctor(doctorId, start, end);
     }
 
-    @Override
-    public ArrayList<Payment> findByProjectOperatorId(Integer projectOperatorId, Date start, Date end) {
-        return paymentMapper.getByProjectOperatorId(projectOperatorId, start, end);
-    }
 }

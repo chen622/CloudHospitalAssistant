@@ -21,6 +21,5 @@ public interface InvoiceService extends Service<Invoice> {
     Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
     ArrayList<Integer> getInvoiceNormalIdList(Integer settleId);
     ArrayList<Integer> getInvoiceAnewIdList(Integer settleId);
-    Integer getInvoiceNumberByDoctorId(Integer doctorId, Date start, Date end);
-    Integer getInvoiceNumberByProjectOperatorId(Integer projectOperatorId, Date start, Date end);
+    Integer getInvoiceNumberByAllDoctor(Integer doctorId, Date start, Date end);
 }

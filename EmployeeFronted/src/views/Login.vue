@@ -32,15 +32,12 @@
                         <a-checkbox v-model="checked">记住密码</a-checkbox>
                     </a-form-item>
 
-                    <a-form-item style="margin-top:24px">
-                        <a-button size="large" type="primary" htmlType="submit" class="login-button"
-                                  style="width: 100%">登录
-                        </a-button>
-                    </a-form-item>
-                </a-form>
+            <a-form-item style="margin-top:24px">
+                <a-button size="large" type="primary" htmlType="submit" class="login-button" style="width: 100%">登陆</a-button>
+            </a-form-item>
+        </a-form>
             </a-col>
         </a-row>
-
     </div>
 </template>
 

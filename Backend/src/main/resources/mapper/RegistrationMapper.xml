@@ -39,6 +39,9 @@
     order by registration.create_time ASC
   </select>
 
+
+
+
   <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
      select  * from registration,patient where  state=47 and patient.id=registration.patient_id and patient.real_name=#{name} and  registration.doctor_id=#{doctorID}
      order by registration.create_time ASC
