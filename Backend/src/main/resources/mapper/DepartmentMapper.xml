@@ -47,9 +47,6 @@
     where name=#{name}
   </select>
 
-
-
-
   <select id="getDepartmentByClassification" resultType="cn.neuedu.his.model.Department">
     select * from department where kind_id in (select dk.id from department_kind dk where classification_id = #{classification});
   </select>

@@ -15,6 +15,7 @@
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"></result>
   </resultMap>
 
   <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">

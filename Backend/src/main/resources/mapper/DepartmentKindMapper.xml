@@ -10,6 +10,19 @@
     <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
   </resultMap>
 
+  <resultMap id="TypeAndKind" type="cn.neuedu.his.model.DepartmentKind">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+    <association property="constantVariable" javaType="cn.neuedu.his.model.ConstantVariable" >
+      <id column="constantId" jdbcType="INTEGER" property="id" />
+      <result column="constantName" jdbcType="VARCHAR" property="name" />
+    </association>
+  </resultMap>
+
   <select id="getDepartmentKindByName" resultMap="BaseResultMap">
     select *
     from department_kind
@@ -20,5 +33,10 @@
     select *
     from department_kind
     where classification_id = #{classification_id};
+  </select>
+  
+  <select id="getDepartmentKindList" resultMap="TypeAndKind">
+    select *,constant_variable.id as constantId, constant_variable.name as constantName
+    from department_kind join constant_variable on department_kind.classification_id = constant_variable.id
   </select>
 </mapper>

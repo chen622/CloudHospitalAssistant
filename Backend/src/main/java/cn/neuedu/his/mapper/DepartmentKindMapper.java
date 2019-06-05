@@ -13,4 +13,7 @@ public interface DepartmentKindMapper extends MyMapper<DepartmentKind> {
 
     List<DepartmentKind> getDepartmentKindByType(Integer type);
 
+    List<DepartmentKind> getDepartmentKindList();
+
+
 }
