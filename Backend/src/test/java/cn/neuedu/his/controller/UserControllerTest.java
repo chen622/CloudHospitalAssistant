@@ -293,7 +293,6 @@ public class UserControllerTest {
     @Test
     public void selectAdminUserInformation() throws Exception {
 
-        String requestJson ="ccmccm";
         mockMvc.perform(MockMvcRequestBuilders.get("/user/adminSelectUser/ccmccm")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("username")
