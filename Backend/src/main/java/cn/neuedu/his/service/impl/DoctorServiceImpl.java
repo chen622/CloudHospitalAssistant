@@ -382,7 +382,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(isDisposal)
                     application.setCheck(false);
                 inspectionApplicationService.save(application);
-                Payment payment = setInspectionPayment(application,registration.getPatientId());
+                Payment payment = setInspectionPayment(application,registration.getPatientId(),doctorId);
                 paymentService.save(payment);
             }
         }
@@ -400,14 +400,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setTemplate(false);
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
-                Payment p=setPrescriptionPayment(p2, registration.getPatientId());
+                Payment p=setPrescriptionPayment(p2, registration.getPatientId(),doctorId);
             }
         }
         return CommonUtil.successJson();
     }
 
 
-    private  Payment setInspectionPayment(InspectionApplication application,Integer patientId){
+    private  Payment setInspectionPayment(InspectionApplication application,Integer patientId,Integer doctorId){
         Payment payment = new Payment();
         NonDrug nonDrug=nonDrugService.findById(application.getNonDrugId());
         payment.setQuantity(application.getQuantity());
@@ -417,10 +417,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         payment.setPaymentTypeId(nonDrug.getFeeTypeId());
         payment.setItemId(application.getId());
         payment.setState(Constants.PRODUCE_PAYMENT);
+        payment.setDoctorId(doctorId);
         return payment;
     }
 
-    private  Payment setPrescriptionPayment(Prescription application,Integer patientId){
+    private  Payment setPrescriptionPayment(Prescription application,Integer patientId,Integer doctorId){
         Payment payment = new Payment();
         Drug drug=drugService.findById(application.getDrugId());
         payment.setQuantity(application.getAmount());
@@ -430,6 +431,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         payment.setPaymentTypeId(drug.getFeeTypeId());
         payment.setItemId(application.getId());
         payment.setState(Constants.PRODUCE_PAYMENT);
+        payment.setDoctorId(doctorId);
         return payment;
     }
 
@@ -531,7 +533,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     @Transactional
-    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId) throws Exception {
+    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId,Integer doctorId) throws Exception {
 
         Registration registration=registrationService.findById(registationId);
 
@@ -548,7 +550,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
             }
             prescriptionService.save(p);
-            Payment payment = setPrescriptionPayment(p, registration.getPatientId());
+            Payment payment = setPrescriptionPayment(p, registration.getPatientId(),doctorId);
         }
 //        registration.setState(Constants.FINISH_DIAGNOSIS);
         registrationService.update(registration);

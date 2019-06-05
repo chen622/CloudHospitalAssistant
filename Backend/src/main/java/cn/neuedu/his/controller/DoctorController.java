@@ -814,7 +814,7 @@ public class DoctorController {
         List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
         if (prescriptions != null && !prescriptions.isEmpty()) {
             try {
-                return doctorService.savePrescriptions(prescriptions, medicalId, registationId);
+                return doctorService.savePrescriptions(prescriptions, medicalId, registationId,doctorId);
             } catch (Exception e) {
                 return CommonUtil.errorJson(ErrorEnum.E_500.addErrorParamName(e.getMessage()));
             }

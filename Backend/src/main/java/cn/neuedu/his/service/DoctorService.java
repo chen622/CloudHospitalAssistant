@@ -98,7 +98,7 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject saveFinalDiagnose(Integer registrationId,Integer medicalRecordId,List<Integer> diagnoses) throws Exception;
 
     @Transactional
-    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId) throws Exception;
+    public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer medicalRecordId,Integer registationId,Integer doctorId) throws Exception;
 
     @Transactional
     public JSONObject savePrescriptionsTemp(DrugTemplate template,Integer medicalRecordId,Integer doctorId) throws Exception;
