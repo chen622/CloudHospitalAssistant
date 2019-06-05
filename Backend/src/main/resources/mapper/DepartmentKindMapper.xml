@@ -35,7 +35,7 @@
     where classification_id = #{classification_id};
   </select>
   
-  <select id="getDepartmentKindList" resultMap="">
+  <select id="getDepartmentKindList" resultMap="TypeAndKind">
     select *,constant_variable.id as constantId, constant_variable.name as constantName
     from department_kind join constant_variable on department_kind.classification_id = constant_variable.id
   </select>

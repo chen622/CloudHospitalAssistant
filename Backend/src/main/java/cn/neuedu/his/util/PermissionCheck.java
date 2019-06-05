@@ -84,7 +84,7 @@ public class PermissionCheck {
     public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR)) {
+        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR.getId())) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");

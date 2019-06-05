@@ -2,7 +2,6 @@ package cn.neuedu.his.mapper;
 
 import cn.neuedu.his.model.DepartmentKind;
 import cn.neuedu.his.util.inter.MyMapper;
-import jdk.internal.jline.internal.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
