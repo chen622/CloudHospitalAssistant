@@ -32,18 +32,18 @@
                         <a-checkbox v-model="checked">记住密码</a-checkbox>
                     </a-form-item>
 
-            <a-form-item style="margin-top:24px">
-                <a-button size="large" type="primary" htmlType="submit" class="login-button" style="width: 100%">登陆</a-button>
-            </a-form-item>
-        </a-form>
+                    <a-form-item style="margin-top:24px">
+                        <a-button size="large" type="primary" class="login-button"
+                                  style="width: 100%" @click="handleSubmit">登陆
+                        </a-button>
+                    </a-form-item>
+                </a-form>
             </a-col>
         </a-row>
     </div>
 </template>
 
 <script>
-    import axios from 'axios'
-
     export default {
         name: 'Login',
         data () {
@@ -55,7 +55,7 @@
                 },
                 rules: {
                     username: [{required: true, message: '请输入用户名', trigger: 'blur'}, {
-                        min: 5,
+                        min: 3,
                         message: "用户名长度应大于5",
                         trigger: 'blur'
                     }],
@@ -70,14 +70,10 @@
                 let that = this
                 this.form.validateFields((err) => {
                         if (!err) {
-                            axios({
-                                method: 'GET',
-                                url: 'http://localhost:8078/user/login',
-                                params: this.form.getFieldsValue()
-                            }).then(function (res) {
-                                sessionStorage.setItem("token", res.headers.authorization)
-                                that.$message.success("登录成功")
-                                setTimeout(() => {
+                            sessionStorage.removeItem("token")
+                            that.$api.get('/user/login', this.form.getFieldsValue(),
+                                function (res) {
+                                    sessionStorage.setItem("token", res.headers.authorization)
                                     that.$api.get("/user/function", null,
                                         res => {
                                             that.$store.commit("setUrls", res.data)
@@ -85,20 +81,51 @@
                                             // eslint-disable-next-line
                                             console.log('API error: ' + res)
                                         })
-                                }, 4000)
-                                that.$store.commit("setLogin", true)
-                                that.$store.commit("setUserType", parseInt(res.headers.usertype))
-                                that.$router.replace({path: "/"})
-                            }).catch(function (err) {
-                                if (err) {
-                                    if (err.response && err.response.status === 403) {
-                                        sessionStorage.removeItem("token")
-                                        that.$message.error("用户名或密码错误");
+                                    that.$store.commit("setLogin", true)
+                                    that.$store.commit("setUserType", parseInt(res.headers.usertype))
+                                    that.$router.replace({path: "/"})
+                                    that.$message.success("登录成功！")
+                                }, function (err) {
+                                    if (err) {
+                                        if (err.response && err.response.status === 403) {
+                                            sessionStorage.removeItem("token")
+                                            that.$message.error("用户名或密码错误");
+                                        }
+                                        // eslint-disable-next-line
+                                        console.log('API error: ' + err)
                                     }
-                                    // eslint-disable-next-line
-                                    console.log('API error: ' + err)
                                 }
-                            });
+                            )
+                            // axios({
+                            //     method: 'POST',
+                            //     url: 'http://localhost:8078/user/login',
+                            //     params: this.form.getFieldsValue()
+                            // }).then(function (res) {
+                            //     sessionStorage.setItem("token", res.headers.authorization)
+                            //     setTimeout(() => {
+                            //         that.$api.get("/user/function", null,
+                            //             res => {
+                            //                 that.$store.commit("setUrls", res.data)
+                            //             }, res => {
+                            //                 // eslint-disable-next-line
+                            //                 console.log('API error: ' + res)
+                            //             })
+                            //     }, 4000)
+                            //     that.$store.commit("setLogin", true)
+                            //     that.$store.commit("setUserType", parseInt(res.headers.usertype))
+                            //     that.$router.replace({path: "/"})
+                            //     that.$message.success("登录成功！")
+                            // }).catch(function (err) {
+                            //     console.log(err)
+                            //     if (err) {
+                            //         if (err.response && err.response.status === 403) {
+                            //             sessionStorage.removeItem("token")
+                            //             that.$message.error("用户名或密码错误");
+                            //         }
+                            //         // eslint-disable-next-line
+                            //         console.log('API error: ' + err)
+                            //     }
+                            // });
                         }
                     },
                 );

@@ -1,5 +1,38 @@
 <template>
     <a-row type="flex" align="middle" justify="center" class="info-card">
+        <a-modal
+                v-if="newDepartment.isCreating"
+                :confirmLoading="newDepartment.createLoading"
+                :visible="newDepartment.isCreating"
+                @cancel="newDepartment.isCreating = false"
+                @ok="addDepartment"
+                title="创建科室">
+            <a-form :form="newDepartment.item">
+                <a-form-item label="科室名称">
+                    <a-input v-decorator="['name',{rules: rules.name}]"
+                             placeholder="请输入对应名称"/>
+                </a-form-item>
+                <a-form-item label="科室编号">
+                    <a-input v-decorator="['code',{rules: rules.code}]"
+                             placeholder="请输入科室对应编号"/>
+                </a-form-item>
+                <a-form-item label="科室分类">
+                    <a-select
+                            v-decorator="['typeId',{initialValue: departmentKind.type[0].id,rules: rules.typeId}]"
+                            @change="changeKind">
+                        <a-select-option v-for="t in departmentKind.type" :key="t.id">{{t.name}}</a-select-option>
+                    </a-select>
+                </a-form-item>
+                <a-form-item label="科室类别">
+                    <a-select
+                            v-decorator="['kindId',{initialValue: departmentKinds[0].id,rules: rules.kindId}]"
+                            style="width: 120px">
+                        <a-select-option v-for="kind in departmentKinds" :key="kind.id">{{kind.kindName}}
+                        </a-select-option>
+                    </a-select>
+                </a-form-item>
+            </a-form>
+        </a-modal>
 
         <a-col span="20">
             <a-card hoverable title="科室管理" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding: '5px 0'}">
@@ -10,7 +43,7 @@
                                 @search="onSearch"
                                 enterButton></a-input-search>
                     </a-col>
-                    <a-button @click="addDepartment" type="primary" style="margin-left: 10px">
+                    <a-button @click="showCreate" type="primary" style="margin-left: 10px">
                         <a-icon type="plus-circle"/>
                         新建
                     </a-button>
@@ -54,6 +87,15 @@
     export default {
         name: "Other",
         data: () => ({
+            departmentKind: [],//所有选项
+            departmentKinds: [],//第二个选项
+            cacheData: null,
+            newDepartment: {
+                item: null,
+                isCreating: false,
+                createLoading: false,
+            },
+            deptLoading: true,
             columns: [
                 {
                     title: '名称',
@@ -102,13 +144,43 @@
                     }
                 }
             ],
-            departmentKind: [],
-            cacheData: null,
-            deptLoading: true
+            rules: {
+                kindId: [{required: true, message: '请选择科室类别'}],
+                typeId: [{required: true, message: '请选择科室分类'}],
+                name: [{required: true, message: '请输入科室名称', trigger: 'blur'}],
+                code: [{required: true, message: '请输入科室对应编号', trigger: 'blur'}]
+            }
         }),
         methods: {
+            showCreate () {
+                this.newDepartment.isCreating = true
+                this.newDepartment.item = this.$form.createForm(this)
+            },
+            changeKind (key) {
+                this.departmentKinds = this.departmentKind.departmentKinds[parseInt(key)]
+            },
             addDepartment () {
+                this.newDepartment.createLoading = true
+                let that = this
+                this.newDepartment.item.validateFields((err) => {
+                    if (!err) {
+                        this.$api.post("/department/add", this.newDepartment.item.getFieldsValue(),
+                            res => {
+                                if (res.code === "100") {
+                                    that.$message.success("创建成功！")
+                                    that.newDepartment.isCreating = false
+                                    that.getDepartment()
+                                } else {
+                                    that.$message.error(res.msg)
+                                }
+                                that.newDepartment.createLoading = false
 
+                            }, res => {
+                                that.$message.error(res)
+                                that.newDepartment.createLoading = false
+                            })
+                    }
+                })
             },
             getDepartment () {
                 let that = this
@@ -132,6 +204,7 @@
                     res => {
                         if (res.code === "100") {
                             that.departmentKind = res.data
+                            that.departmentKinds = res.data.departmentKinds[res.data.type[0].id]
                         } else {
                             that.$message.error(res)
                         }
@@ -157,7 +230,6 @@
                     })
             },
             handleChange (value, key, column) {
-                console.log(value)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
@@ -181,6 +253,13 @@
                     this.data = newData
                     this.cacheData = newData.map(item => ({...item}))
                 }
+            },
+            remove (key) {
+                let that = this
+                this.$api.post("/delete/" + key, null,
+                    res => {
+                    }, res => {
+                    })
             },
             cancel (key) {
                 const newData = [...this.data]

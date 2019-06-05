@@ -30,6 +30,11 @@ export default new Router({
             component: () => import('./views/admin/Other')
         },
         {
+            path: '/doctor/index',
+            name: 'doctor',
+            component: () => import('./views/doctor/Index')
+        },
+        {
             path: '/about',
             name: 'about',
             // route level code-splitting
