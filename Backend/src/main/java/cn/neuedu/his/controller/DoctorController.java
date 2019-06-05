@@ -943,5 +943,22 @@ public class DoctorController {
         return null;
     }
 
+    /**
+     * 计算医生工作量
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDoctorWorkload")
+    public JSONObject getDoctorWorkload(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.isFinancialOfficer(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        }
+
+        return CommonUtil.successJson(doctorService.doctorWorkCalculate(jsonObject.getDate("start"), jsonObject.getDate("end")));
+    }
+
 }
 

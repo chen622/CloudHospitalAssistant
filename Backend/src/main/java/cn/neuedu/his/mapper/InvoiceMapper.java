@@ -14,5 +14,5 @@ public interface InvoiceMapper extends MyMapper<Invoice> {
     ArrayList<Integer> getInvoiceNormalList(Integer settleId);
     ArrayList<Integer> getInvoiceAnewList(Integer settleId);
     Integer getInvoiceNumberByDoctorId(@Param("doctorId") Integer doctorId, @Param("startDate") Date startDate, @Param("endDate")Date endDate);
-    Integer getInvoiceNumberByProjectOperatorId(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") Date startDate, @Param("endDate")Date endDate);
+    Integer getInvoiceNumberByAllDoctor(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") Date startDate, @Param("endDate")Date endDate);
 }

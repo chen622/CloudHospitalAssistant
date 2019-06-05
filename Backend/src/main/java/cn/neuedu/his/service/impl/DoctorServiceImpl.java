@@ -8,6 +8,7 @@ import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -60,6 +63,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     PrescriptionService prescriptionService;
     @Autowired
     JobScheduleService scheduleService;
+    @Autowired
+    PaymentTypeService paymentTypeService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    InvoiceService invoiceService;
 
 
     @Override
@@ -131,6 +140,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         return CommonUtil.successJson(templates);
     }
+
 
     /**
      * 获得全院病例模板
@@ -395,7 +405,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (applicationList!=null){
             for (InspectionApplication r : applicationList){
                 NonDrug nonDrug=nonDrugService.findById(r.getNonDrugId());
-                if(r.getNonDrugId()==null || nonDrug==null || nonDrug.isDelete()==true){
+                if(r.getNonDrugId()==null || nonDrug==null ){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application=new InspectionApplication(medicalRecordId,r.getNonDrugId(),new Date(System.currentTimeMillis()),false,r.getEmerged(),r.getQuantity(),false,false,nonDrug.getFeeTypeId());
@@ -497,8 +507,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug=drugService.findById(prescription.getDrugId());
-                if(drug.isDelete()==true)
-                    return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2=new Prescription(prescription,drug.getFeeTypeId(),prescription.getItemId(),true);
                 p2.setTemplate(true);
                 p2.setItemId(tempId);
@@ -853,6 +861,57 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         registrationIds.addAll(finish);
         return  registrationIds.size();
     }
+
+    /**
+     * 门诊医生工作量统计
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Override
+    public JSONArray doctorWorkCalculate(Date startDate, Date endDate) {
+        JSONArray result = new JSONArray();
+        ArrayList<Doctor> doctorList = doctorMapper.getAllNotDelete();
+
+        //取出所有paymentType的id和名字
+        Map<Integer, String> paymentTypeMap = new HashMap<>();
+        for (PaymentType paymentType: paymentTypeService.findAllNotDelete()) {
+            if (paymentType.getId() > 100) {
+                paymentTypeMap.put(paymentType.getId(), paymentType.getName());
+            }
+        }
+
+        for (Doctor doctor: doctorList) {
+            //使用map记录每个医生的每个paymentType对应的总额
+            Map<Integer, BigDecimal> feeMap = new HashMap<>();
+            for(Integer id: paymentTypeMap.keySet()) {
+                feeMap.put(id, new BigDecimal(0));
+            }
+
+            for (Payment payment: paymentService.findByAllDoctor(doctor.getId(), startDate, endDate)) {
+                //更新某缴费项目类型的金额数据
+                feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+            }
+
+            JSONObject detail = new JSONObject();
+            detail.put("doctor", doctor);
+            detail.put("发票数", invoiceService.getInvoiceNumberByAllDoctor(doctor.getId(), startDate, endDate));
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            detail.put("看诊人数", doctorService.registrationNum(doctor.getId(), format.format(startDate), format.format(endDate)));
+            BigDecimal totalFee = new BigDecimal(0);
+            for (Integer key: feeMap.keySet()) {
+                totalFee = totalFee.add(feeMap.get(key));
+                detail.put(paymentTypeMap.get(key), feeMap.get(key));
+            }
+            detail.put("合计", totalFee);
+
+            result.add(detail);
+        }
+
+        return result;
+    }
+
+
 
     private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal,  List<Prescription> prescriptions){
 
