@@ -47,6 +47,25 @@ public class User {
     @Column(name = "is_delete")
     private boolean isDelete;
 
+    private String type;
+    private String deptName;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
     public boolean isDelete() {
         return isDelete;
     }

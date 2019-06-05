@@ -23,6 +23,6 @@ public interface UserService extends Service<User> {
 
     ArrayList<User> findUserByDepartmentId(Integer departmentId);
 
-
+    ArrayList<User> findAllWithName();
 
 }
