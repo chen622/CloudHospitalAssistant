@@ -99,7 +99,7 @@
     <result column="type_id" jdbcType="INTEGER" property="typeId" />
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <association property="deptName" javaType="String" column="{id=department_id}" select="getDeptName"/>
+    <association property="dept" javaType="cn.neuedu.his.model.Department" column="{id=department_id}" select="getDept"/>
     <association property="type" javaType="String" column="type_id" select="getType"/>
     <association property="title" javaType="String" column="id" select="getTile"/>
   </resultMap>
@@ -107,8 +107,8 @@
   <select id="findAllWithName" resultMap="findAllWithName">
     select * from user;
   </select>
-  <select id="getDeptName" resultType="String">
-    select name from department where id=#{id}
+  <select id="getDept" resultMap="cn.neuedu.his.mapper.DepartmentMapper.BaseResultMap">
+    select * from department where id=#{id}
   </select>
   <select id="getType" resultType="String">
     select name from  constant_variable where id=#{type_id}
