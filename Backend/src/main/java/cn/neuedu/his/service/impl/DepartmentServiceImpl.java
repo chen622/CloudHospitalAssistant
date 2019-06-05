@@ -98,6 +98,10 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         this.update(department);
     }
 
+    @Override
+    public List<Department> getDepartmentListByName(String name) {
+        return departmentMapper.getDepartmentListByName(name);
+    }
 
 
 //    public JSONObject workCalculate(Integer classification) throws IllegalArgumentException{

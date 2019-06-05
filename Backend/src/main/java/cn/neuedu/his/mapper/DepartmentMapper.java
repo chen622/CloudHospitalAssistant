@@ -18,4 +18,6 @@ public interface DepartmentMapper extends MyMapper<Department> {
 
     ArrayList<Department> getDepartmentByClassification(Integer classification);
 
+    List<Department> getDepartmentListByName(String name);
+
 }

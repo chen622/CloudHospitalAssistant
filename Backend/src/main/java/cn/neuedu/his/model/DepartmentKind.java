@@ -22,11 +22,11 @@ public class DepartmentKind {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    public Boolean isDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
-    public void setDelete(Boolean delete) {
+    public void setIsDelete(Boolean delete) {
         isDelete = delete;
     }
 
