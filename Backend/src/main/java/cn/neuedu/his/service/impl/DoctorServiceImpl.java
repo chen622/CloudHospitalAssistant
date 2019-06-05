@@ -805,6 +805,20 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson(object);
     }
 
+    public Integer registrationNum(Integer doctorId, String start, String end){
+        List<Integer> registrationIds=registrationService.getAllByDoctor(doctorId, start, end,Constants.FIRST_DIAGNOSIS);
+
+        List<Integer> suspects=registrationService.getAllByDoctor(doctorId, start, end,Constants.SUSPECT);
+        registrationIds.addAll(suspects);
+
+        List<Integer> finalD=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINAL_DIAGNOSIS);
+        registrationIds.addAll(finalD);
+
+        List<Integer> finish=registrationService.getAllByDoctor(doctorId, start, end,Constants.FINISH_DIAGNOSIS);
+        registrationIds.addAll(finish);
+        return  registrationIds.size();
+    }
+
     private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal,  List<Prescription> prescriptions){
 
             for (Prescription p:prescriptions){
