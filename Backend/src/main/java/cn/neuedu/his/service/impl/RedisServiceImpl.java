@@ -35,6 +35,13 @@ public class RedisServiceImpl{
             jedisPool.returnResourceObject(jedis);
     }
 
+    @SuppressWarnings("deprecation")
+    private void returnBrokenResource(Jedis jedis) {
+        if (jedis != null) {
+            jedisPool.returnBrokenResource(jedis);
+        }
+    }
+
     private void set(String key, String value) {
         Jedis jedis=null;
         try{
@@ -43,6 +50,7 @@ public class RedisServiceImpl{
             logger.info("Redis set success - " + key + ", value:" + value);
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + value);
         }finally{
             returnResource(jedis);
@@ -58,6 +66,7 @@ public class RedisServiceImpl{
             logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
         }finally{
             returnResource(jedis);
@@ -73,6 +82,7 @@ public class RedisServiceImpl{
             jedis.set(key.getBytes(), SerializeUtil.serialize(value));
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
             throw new Exception();
         }finally{
             returnResource(jedis);
@@ -88,6 +98,7 @@ public class RedisServiceImpl{
             result = SerializeUtil.unserialize(data);
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
             throw new  Exception();
         }finally{
             returnResource(jedis);
@@ -103,6 +114,7 @@ public class RedisServiceImpl{
             jedis.set(key.getBytes(), SerializeUtil.serializeList(list));
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
         }finally{
             returnResource(jedis);
         }
@@ -117,6 +129,7 @@ public class RedisServiceImpl{
             result = SerializeUtil.unserializeList(data);
         } catch (Exception e) {
             e.printStackTrace();
+            returnBrokenResource(jedis);
         }finally{
             returnResource(jedis);
         }
@@ -146,6 +159,7 @@ public class RedisServiceImpl{
             logger.info("Redis set success - " + key + ", start:" + start + ", end:" + end);
         } catch (Exception e) {
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", start:" + start + ", end:" + end);
+            returnBrokenResource(jedis);
             throw new IllegalArgumentException();
         }finally{
             returnResource(jedis);
@@ -167,6 +181,7 @@ public class RedisServiceImpl{
             logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
+            returnBrokenResource(jedis);
             throw new IllegalArgumentException();
         }finally{
             returnResource(jedis);
@@ -183,6 +198,7 @@ public class RedisServiceImpl{
             logger.info("Redis set success - " + key + ", sequence" + sequence);
         } catch (Exception e) {
             logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", sequence" + sequence);
+            returnBrokenResource(jedis);
             throw new IllegalArgumentException();
         }finally{
             returnResource(jedis);
@@ -287,7 +303,13 @@ public class RedisServiceImpl{
 
     public void deleteTemporaryMR(Integer id) throws Exception {
         Jedis jedis=getResource();
-        jedis.del(id.toString()+"MR");
+        try{
+            jedis.del(id.toString()+"MR");
+        }catch (Exception e){
+            throw  new Exception();
+        }finally {
+            returnResource(jedis);
+        }
     }
 
 
@@ -312,8 +334,15 @@ public class RedisServiceImpl{
 
     public void  deleteTemporaryInspection(Integer id){
         Jedis jedis=getResource();
-        jedis.del(id.toString()+"applications");
-        jedis.del(id.toString()+"prescriptions");
+        try{
+            jedis.del(id.toString()+"applications");
+            jedis.del(id.toString()+"prescriptions");
+        }catch (Exception e) {
+            returnBrokenResource(jedis);
+        }finally {
+            returnResource(jedis);
+        }
+
     }
 
 }
