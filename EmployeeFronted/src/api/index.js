@@ -36,9 +36,6 @@ export default { // 自定义判断元素类型JS
         }
         let token = sessionStorage.getItem('token')
 
-
-        let that = this
-
         axios({
             method: method,
             url: global.baseURL + url,
@@ -63,6 +60,8 @@ export default { // 自定义判断元素类型JS
                 if (err.response && err.response.status === 403) {
                     sessionStorage.removeItem("token")
                     location.href = '/#/login'
+                    alert('API error: ' + err)
+
                 }
                 // eslint-disable-next-line
                 console.log('API error: ' + err)

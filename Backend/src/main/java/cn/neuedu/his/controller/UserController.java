@@ -314,6 +314,7 @@ public class UserController {
             List<User> users = userService.findAllWithName();
             return CommonUtil.successJson(users);
         }catch (RuntimeException e){
+            e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }

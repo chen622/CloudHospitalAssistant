@@ -68,7 +68,6 @@
 
             }
         },
-
         methods: {
             handleSubmit () {
                 let that = this
@@ -89,7 +88,7 @@
                                             // eslint-disable-next-line
                                             console.log('API error: ' + res)
                                         })
-                                }, 1000)
+                                }, 4000)
                                 that.$store.commit("setLogin", true)
                                 that.$store.commit("setUserType", parseInt(res.headers.usertype))
                                 that.$router.replace({path: "/"})

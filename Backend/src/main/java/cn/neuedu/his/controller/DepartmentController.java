@@ -41,31 +41,31 @@ public class DepartmentController {
      * @return
      */
     @GetMapping("/get")
-    public JSONObject getDepartmentInformation(){
+    public JSONObject getDepartmentInformation() {
         try {
             List<Department> departments = departmentService.getDepartmentInformation();
             return CommonUtil.successJson(departments);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
         }
 
     }
 
     @PostMapping("/delete/{id}")
-    public JSONObject deleteDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject deleteDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
 
-        try{
+        try {
             departmentService.deleteDepartmentInformation(id);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("610"))
                 return CommonUtil.errorJson(ErrorEnum.E_610);
             else
@@ -74,21 +74,21 @@ public class DepartmentController {
     }
 
     @PostMapping("/add")
-    public JSONObject addDepartment(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject addDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+        Department department = jsonObject.toJavaObject(jsonObject, Department.class);
 
-        try{
+        try {
             departmentService.addDepartment(department);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("611"))
                 return CommonUtil.errorJson(ErrorEnum.E_611);
             else if (e.getMessage().equals("612"))
@@ -99,20 +99,20 @@ public class DepartmentController {
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
-            Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+        try {
+            Department department = JSONObject.toJavaObject(jsonObject, Department.class);
             departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("610"))
                 return CommonUtil.errorJson(ErrorEnum.E_610);
             else if (e.getMessage().equals("612"))
@@ -123,7 +123,7 @@ public class DepartmentController {
     }
 
     @GetMapping("/getAllDepartmentKind")
-    public  JSONObject getAllDepartmentMatchKind(){
+    public JSONObject getAllDepartmentMatchKind() {
         try {
             //获得科室大类
             List<ConstantVariable> constantVariables = constantVariableService.getDepartmentType();
@@ -138,8 +138,27 @@ public class DepartmentController {
             //{kind:[],depas:[[],[]] }
             returnJSON.put("departments", departments);
             return CommonUtil.successJson(returnJSON);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
+        }
+    }
+
+    @GetMapping({"/getDepartmentList/{name}", "/getDepartmentList/"})
+    public JSONObject getDepartmentListByname(@PathVariable(name = "name", required = false) String name, Authentication authentication) {
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            if (name == null)
+                name = "";
+            List<Department> departments = departmentService.getDepartmentListByName(name);
+            return CommonUtil.successJson(departments);
+        } catch (RuntimeException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
 
@@ -182,22 +201,6 @@ public class DepartmentController {
             return CommonUtil.successJson(departmentService.workCalculate(Constants.TECHNICAL_DEPARTMENTS, jsonObject.getDate("start"), jsonObject.getDate("end")));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
-    @GetMapping("/getDepartmentList/{name}")
-    public JSONObject getDepartmentListByname(@PathVariable("name")String name ,Authentication authentication){
-        //检查权限
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-        try{
-            List<Department> departments = departmentService.getDepartmentListByName(name);
-            return CommonUtil.successJson(departments);
-        }catch (RuntimeException e){
-            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
 

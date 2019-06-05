@@ -45,7 +45,7 @@ public class User {
     private ArrayList<Invoice> invoiceList;
 
     @Column(name = "is_delete")
-    private boolean isDelete;
+    private Boolean isDelete;
 
     //用户类型
     private String type;
@@ -53,6 +53,14 @@ public class User {
     private Department dept;
     //医生职称
     private String title;
+
+    public Boolean getDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
+    }
 
     public String getTitle() {
         return title;
@@ -78,13 +86,6 @@ public class User {
         this.dept = dept;
     }
 
-    public boolean isDelete() {
-        return isDelete;
-    }
-
-    public void setDelete(boolean delete) {
-        isDelete = delete;
-    }
 
     public Doctor getDoctor() {
         return doctor;

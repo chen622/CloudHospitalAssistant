@@ -77,6 +77,7 @@
         },
         mounted () {
             if (sessionStorage.getItem("token") != null) {
+                console.log(111)
                 this.urls()
             }
         }
