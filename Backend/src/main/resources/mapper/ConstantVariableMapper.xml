@@ -35,5 +35,11 @@
     from constant_variable
     where name = #{name} and  type = #{type}
   </select>
+
+  <select id="getConstantByType" resultMap="BaseResultMap">
+    select *
+    from constant_variable
+    where type = #{type}
+  </select>
   
 </mapper>

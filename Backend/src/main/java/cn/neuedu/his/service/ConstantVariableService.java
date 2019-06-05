@@ -23,4 +23,6 @@ public interface ConstantVariableService extends Service<ConstantVariable> {
 
     void modifyConstant(ConstantVariable constantVariable);
 
+    List<ConstantVariable> getConstantByType(Integer type);
+
 }

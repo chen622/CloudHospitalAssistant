@@ -80,4 +80,9 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
 
         this.update(constantVariable);
     }
+
+    @Override
+    public List<ConstantVariable> getConstantByType(Integer type) {
+        return constantVariableMapper.getConstantByType(type);
+    }
 }

@@ -26,6 +26,10 @@
     </association>
   </resultMap>
 
+  <!-- 获得一个类型的全部部门分类-->
+  <select id="getDepartmentKindByClassificationId" resultMap="BaseResultMap">
+    select * from department_kind where classification_id =#{id}
+  </select>
   <select id="getDepartmentKindByName" resultMap="BaseResultMap">
     select *
     from department_kind
