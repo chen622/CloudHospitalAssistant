@@ -3,22 +3,6 @@
 
         <a-col span="20">
             <a-card hoverable title="科室管理" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding: '5px 0'}">
-                <!--            <a-card hoverable class="info-card" title="医疗基本信息管理" :headStyle="{fontSize: '30px'}">-->
-                <!--                <a-collapse defaultActiveKey="1" :bordered="false">-->
-                <!--                    <a-collapse-panel key="1" :style="customStyle">-->
-                <!--                        <template slot="header">-->
-                <!--                            科室信息管理-->
-                <!--                            <a-icon type="question-circle-o"/>-->
-                <!--                        </template>-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                    <a-collapse-panel header="This is panel header 2" key="2" :style="customStyle">-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                    <a-collapse-panel header="This is panel header 3" key="3" :style="customStyle">-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                </a-collapse>-->
                 <a-row type="flex" align="middle" justify="center" style="margin: 5px 0 10px 0">
                     <a-col span="5">
                         <a-input-search
@@ -26,6 +10,10 @@
                                 @search="onSearch"
                                 enterButton></a-input-search>
                     </a-col>
+                    <a-button @click="addDepartment" type="primary" style="margin-left: 10px">
+                        <a-icon type="plus-circle"/>
+                        新建
+                    </a-button>
                 </a-row>
 
                 <a-table :columns="columns" :dataSource="data" :pagination="{defaultPageSize: 20}" rowKey="id"
@@ -92,7 +80,7 @@
                     dataIndex: 'departmentKind.kindName',
                     scopedSlots: {customRender: 'departmentKind.kindName'},
                     align: 'center',
-                    sorter: (a,b) => a.departmentKind.id - b.departmentKind.id
+                    sorter: (a, b) => a.departmentKind.id - b.departmentKind.id
 
                 }, {
                     title: '操作',
@@ -114,10 +102,14 @@
                     }
                 }
             ],
+            departmentKind: [],
             cacheData: null,
             deptLoading: true
         }),
         methods: {
+            addDepartment () {
+
+            },
             getDepartment () {
                 let that = this
                 this.$api.get("/department/get", null,
@@ -134,10 +126,38 @@
                         that.$message.error(res)
                     })
             },
+            getDepartmentKind () {
+                let that = this
+                this.$api.get("/department_kind/getAll", null,
+                    res => {
+                        if (res.code === "100") {
+                            that.departmentKind = res.data
+                        } else {
+                            that.$message.error(res)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
+            },
             onSearch (value) {
-                alert(value)
+                if (value === null || value === undefined)
+                    value = null
+                let that = this
+                this.$api.get("/department/getDepartmentList/" + value, null,
+                    res => {
+                        if (res.code === "100") {
+                            that.data = res.data
+                            that.cacheData = res.data.map(item => ({...item}))
+                            that.deptLoading = false
+                        } else {
+                            that.$message.error(res)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
             },
             handleChange (value, key, column) {
+                console.log(value)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
@@ -174,6 +194,7 @@
         },
         mounted () {
             this.getDepartment()
+            this.getDepartmentKind()
         },
     }
 </script>
