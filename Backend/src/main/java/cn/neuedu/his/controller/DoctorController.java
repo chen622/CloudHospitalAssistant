@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -227,8 +228,8 @@ public class DoctorController {
      * @param authentication
      * @return
      */
-    @GetMapping("/getAllWait/{time}")
-    public JSONObject getAllWaitingRegistration(@PathVariable("time") Date time, Authentication authentication) {
+    @GetMapping("/getAllRegistration/{time}")
+    public JSONObject getAllRegistration(@PathVariable("time") Date time, Authentication authentication) {
         Integer doctorID;
         try {
             doctorID = PermissionCheck.isOutpatientDoctor(authentication);
@@ -239,7 +240,25 @@ public class DoctorController {
         if (list == null) {
             list = new ArrayList<>();
         }
-        return CommonUtil.successJson(list);
+
+        List<Registration> list2=registrationService.getAllWaitingRegistration(doctorID, Constants.FIRST_DIAGNOSIS, time);
+        if(list2==null)
+            list2=new ArrayList<>();
+        List<Registration> te=registrationService.getAllWaitingRegistration(doctorID, Constants.SUSPECT, time);
+        if(te!=null)
+            list2.addAll(te);
+        te=registrationService.getAllWaitingRegistration(doctorID, Constants.FINAL_DIAGNOSIS, time);
+        if (te!=null)
+            list2.addAll(te);
+
+        List<Registration> finish=registrationService.getAllWaitingRegistration(doctorID, Constants.FINISH_DIAGNOSIS, time);
+       if(finish==null)
+           finish=new ArrayList<>();
+        HashMap<Integer ,List<Registration>> map=new HashMap<>();
+        map.put(Constants.WAITING_FOR_TREATMENT,list);
+        map.put(Constants.FIRST_DIAGNOSIS,list2);
+        map.put(Constants.FINISH_DIAGNOSIS, finish);
+        return CommonUtil.successJson(map);
     }
 
 

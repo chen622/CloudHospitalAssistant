@@ -245,7 +245,7 @@ public class DoctorControllerTest {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ParsePosition pos = new ParsePosition(0);
         Date time=formatter.parse("2019-05-31 10:10:47", pos);
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllWait/"+"2019-05-31 10:10:47")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRegistration/"+"2019-05-31 10:10:47")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

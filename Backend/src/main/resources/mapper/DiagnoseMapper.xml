@@ -14,6 +14,6 @@
     <association property="diseaseSecond" javaType="cn.neuedu.his.model.DiseaseSecond" column="disease_id" select="getD"/>
   </resultMap>
   <select id="getD" resultMap="cn.neuedu.his.mapper.DiseaseSecondMapper.BaseResultMap">
-    select * from disease_second where id=disease_id
+    select * from disease_second where id=#{disease_id}
   </select>
 </mapper>
