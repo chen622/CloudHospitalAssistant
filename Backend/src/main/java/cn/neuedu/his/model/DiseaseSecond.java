@@ -19,6 +19,17 @@ public class DiseaseSecond {
     @Column(name = "disease_first_id")
     private Integer diseaseFirstId;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     /**
      * @return id
      */

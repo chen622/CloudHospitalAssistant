@@ -1,9 +1,6 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "disease_first")
 public class DiseaseFirst {
@@ -12,6 +9,17 @@ public class DiseaseFirst {
     private Integer id;
 
     private String name;
+
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     /**
      * @return id

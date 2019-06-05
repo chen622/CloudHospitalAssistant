@@ -19,6 +19,17 @@ public class DepartmentKind {
 
     private ConstantVariable constantVariable;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     /**
      * @return id
      */

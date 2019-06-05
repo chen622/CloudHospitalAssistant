@@ -19,6 +19,17 @@ public class RegistrationType {
     @Column(name = "display_sequence_number")
     private Integer displaySequenceNumber;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     /**
      * @return id
      */

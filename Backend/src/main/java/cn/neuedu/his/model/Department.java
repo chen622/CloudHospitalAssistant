@@ -17,6 +17,17 @@ public class Department {
     @Column(name = "kind_id")
     private Integer kindId;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     private String code;
 
     /**

@@ -44,6 +44,17 @@ public class User {
 
     private ArrayList<Invoice> invoiceList;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     public Doctor getDoctor() {
         return doctor;
     }
