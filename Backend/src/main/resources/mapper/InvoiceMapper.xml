@@ -40,4 +40,12 @@
     <select id="getInvoiceAnewList" resultType="java.lang.Integer">
         select id from invoice where daily_settle_id = #{settleId} and anew_amount != 0
     </select>
+
+    <select id="getInvoiceNumberByDoctorId" resultType="java.lang.Integer">
+        select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and doctor_id = #{doctorId} and datediff(payment.create_time, #{startDate}) &gt;= 0 and datediff(payment.create_time, #{endDate}) &lt;= 0
+    </select>
+
+    <select id="getInvoiceNumberByProjectOperatorId" resultType="java.lang.Integer">
+        select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and datediff(payment.create_time, #{startDate}) &gt;= 0 and datediff(payment.create_time, #{endDate}) &lt;= 0
+    </select>
 </mapper>

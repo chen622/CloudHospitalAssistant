@@ -174,4 +174,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     public ArrayList<Integer> getInvoiceAnewIdList(Integer settleId) {
         return invoiceMapper.getInvoiceAnewList(settleId);
     }
+
+    @Override
+    public Integer getInvoiceNumberByDoctorId(Integer doctorId, Date start, Date end) {
+        return invoiceMapper.getInvoiceNumberByDoctorId(doctorId, start, end);
+    }
+
+    @Override
+    public Integer getInvoiceNumberByProjectOperatorId(Integer projectOperatorId, Date start, Date end) {
+        return invoiceMapper.getInvoiceNumberByProjectOperatorId(projectOperatorId, start, end);
+    }
 }

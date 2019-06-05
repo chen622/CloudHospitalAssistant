@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -30,5 +32,10 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
     @Override
     public Integer getTotalPaymentType(Integer typeId) {
         return findById(typeId).getType();
+    }
+
+    @Override
+    public ArrayList<PaymentType> findAllNotDelete() {
+        return paymentTypeMapper.getAllNotDelete();
     }
 }
