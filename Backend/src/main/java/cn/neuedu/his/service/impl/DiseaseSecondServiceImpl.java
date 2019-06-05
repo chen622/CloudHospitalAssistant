@@ -68,11 +68,13 @@ public class DiseaseSecondServiceImpl extends AbstractService<DiseaseSecond> imp
 
     @Override
     public void delateDiseaseSecond(Integer id) {
+        DiseaseSecond diseaseSecond = this.findById(id);
         //判断疾病是否存在
-        if (this.findById(id) == null)
+        if (diseaseSecond == null)
             throw new RuntimeException("625");
 
-        this.deleteById(id);
+        diseaseSecond.setDelete(true);
+        this.update(diseaseSecond);
     }
 
     @Override

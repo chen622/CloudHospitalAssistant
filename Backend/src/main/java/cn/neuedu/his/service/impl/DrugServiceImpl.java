@@ -99,7 +99,8 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
             throw new RuntimeException("626");
             //return CommonUtil.errorJson(ErrorEnum.E_626);
 
-        this.deleteById(id);
+        drug.setDelete(true);
+        this.update(drug);
     }
 
     @Override

@@ -95,7 +95,8 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
         if (nonDrug == null)
             throw new RuntimeException("608");
 
-        this.deleteById(id);
+        nonDrug.setDelete(true);
+        this.update(nonDrug);
     }
 
     @Override
