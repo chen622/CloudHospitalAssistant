@@ -95,15 +95,15 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Drug drug = drugService.findById(id);
-
-        //判断药物是否存在
-        if (drug == null)
-            return CommonUtil.errorJson(ErrorEnum.E_626);
-
-        drugService.deleteById(id);
-
-        return CommonUtil.successJson(id);
+        try{
+            drugService.deleteDrug(id);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("626"))
+                return CommonUtil.errorJson(ErrorEnum.E_626);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     @PostMapping("/modify")
@@ -116,24 +116,22 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
-
-        //判断药物是否存在
-        if (drugService.findById(drug.getId()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_626);
-
-        //判断药物类别是否正确
-        if (DRUG_TYPE_LIST.contains(drug))
-            return CommonUtil.errorJson(ErrorEnum.E_627);
-
-
-        //判断剂型是否正确
-        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
-            return CommonUtil.errorJson(ErrorEnum.E_628);
-
-        drugService.update(drug);
-
-        return CommonUtil.successJson(drug);
+        try{
+            Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+            drugService.modifyDrug(drug);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("626"))
+                return CommonUtil.errorJson(ErrorEnum.E_626);
+            else if (e.getMessage().equals("627"))
+                return CommonUtil.errorJson(ErrorEnum.E_627);
+            else if (e.getMessage().equals("628"))
+                return CommonUtil.errorJson(ErrorEnum.E_626);
+            else if (e.getMessage().equals("631"))
+                return CommonUtil.errorJson(ErrorEnum.E_631);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     @PostMapping("/insert")
@@ -146,19 +144,22 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+        try{
+            Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+            drugService.insertDrug(drug);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("631"))
+                return CommonUtil.errorJson(ErrorEnum.E_631);
+            else if (e.getMessage().equals("627"))
+                return CommonUtil.errorJson(ErrorEnum.E_627);
+            else if (e.getMessage().equals("628"))
+                return CommonUtil.errorJson(ErrorEnum.E_628);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
 
-        //判断药物类别是否正确
-        if (DRUG_TYPE_LIST.contains(drug))
-            return CommonUtil.errorJson(ErrorEnum.E_627);
+        }
 
-        //判断剂型是否正确
-        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
-            return CommonUtil.errorJson(ErrorEnum.E_628);
-
-        drugService.update(drug);
-
-        return CommonUtil.successJson(drug);
     }
 
 

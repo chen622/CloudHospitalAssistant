@@ -42,9 +42,9 @@ public class Constants {
     //所有药品类型
     public static final List<Integer> DRUG_TYPE_LIST = Arrays.asList(1101, 1102, 1103);
     //最大剂型
-    public static final Integer LARGEST_FORMULATION = 1432;
+    public static final Integer LARGEST_FORMULATION = 1440;
     //最小剂型
-    public static final Integer LEAST_FORMULATION = 1432;
+    public static final Integer LEAST_FORMULATION = 1401;
 
     //临床科室
     public static final Integer CLINICAL_DEPARTMENTS = 101;

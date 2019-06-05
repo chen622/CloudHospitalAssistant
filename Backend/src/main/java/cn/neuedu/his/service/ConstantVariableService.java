@@ -21,4 +21,6 @@ public interface ConstantVariableService extends Service<ConstantVariable> {
 
     void deleteConstant(Integer id);
 
+    void modifyConstant(ConstantVariable constantVariable);
+
 }

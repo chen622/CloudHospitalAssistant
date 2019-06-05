@@ -53,12 +53,26 @@ public class ConstantVariableController {
         }
     }
 
-
     @PostMapping("/delete")
     public JSONObject deleteConstant(@PathVariable("id") Integer id, Authentication authentication){
         try{
             PermissionCheck.isHosptialAdim(authentication);
             constantVariableService.deleteConstant(id);
+            return CommonUtil.successJson();
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("629"))
+                return CommonUtil.errorJson(ErrorEnum.E_629);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
+
+    @PostMapping("/modify")
+    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication){
+        try{
+            PermissionCheck.isHosptialAdim(authentication);
+            ConstantVariable constantVariable = jsonObject.toJavaObject(jsonObject,ConstantVariable.class);
+            constantVariableService.modifyConstant(constantVariable);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("629"))
