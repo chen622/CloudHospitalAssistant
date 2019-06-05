@@ -585,7 +585,7 @@ public class DoctorController {
     public JSONObject getHospitalCheckTemps(Authentication authentication) {
         try {
             Integer doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            return CommonUtil.successJson(doctorService.getHospitalCheckTemps(doctorID, Constants.HOSPITALLEVEL));
+            return doctorService.getHospitalCheckTemps(doctorID, Constants.HOSPITALLEVEL);
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
@@ -601,7 +601,7 @@ public class DoctorController {
     public JSONObject getDeptCheckTemps(Authentication authentication) {
         try {
             Integer doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            return CommonUtil.successJson(doctorService.getDeptCheckTemps(doctorID, Constants.DEPTLEVEL));
+            return (doctorService.getDeptCheckTemps(doctorID, Constants.DEPTLEVEL));
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
@@ -617,7 +617,7 @@ public class DoctorController {
     public JSONObject getPersonalInspectionTemps(Authentication authentication) {
         try {
             Integer doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            JSONObject object1 = CommonUtil.successJson(doctorService.getPersonalCheckTemps(doctorID, Constants.PERSONALLEVEL));
+            JSONObject object1 = (doctorService.getPersonalCheckTemps(doctorID, Constants.PERSONALLEVEL));
             return object1;
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
