@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -36,7 +37,6 @@ public class DepartmentController {
 
     /**
      * 获得部门的详细信息
-     *
      * @return
      */
     @GetMapping("/get")
@@ -108,8 +108,8 @@ public class DepartmentController {
         }
 
         try {
-            Department department = jsonObject.toJavaObject(jsonObject, Department.class);
-            departmentService.addDepartment(department);
+            Department department = JSONObject.toJavaObject(jsonObject, Department.class);
+            departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
         } catch (RuntimeException e) {
             if (e.getMessage().equals("610"))

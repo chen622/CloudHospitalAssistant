@@ -74,13 +74,13 @@ public class DepartmentControllerTest {
 
     @Test
     public void deleteDepartmentById() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.post("/department/delete/140")
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/delete/14000")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("610"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -88,7 +88,7 @@ public class DepartmentControllerTest {
     public void addDepartment() throws Exception{
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", "sdd");
+        jsonObject.put("name", "sddd");
         jsonObject.put("kindId", 2);
         jsonObject.put("code", "sdsdsd");
 
@@ -110,8 +110,8 @@ public class DepartmentControllerTest {
     public void modifyDepartment() throws Exception{
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id",141);
-        jsonObject.put("name", "s");
+        jsonObject.put("id",1);
+        jsonObject.put("name", "账户");
         jsonObject.put("kindId", 1);
         jsonObject.put("code", "s");
 
@@ -127,5 +127,30 @@ public class DepartmentControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void getDepartmentType() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/department/getAllDepartmentKind")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void getDepartmentList() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/department/getDepartmentList/外科")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 
 }
