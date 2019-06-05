@@ -2,10 +2,7 @@ package cn.neuedu.his.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "constant_variable")
 public class ConstantVariable {
@@ -19,6 +16,17 @@ public class ConstantVariable {
      * 0: 本表类别
      */
     private Integer type;
+
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     /**
      * @return id

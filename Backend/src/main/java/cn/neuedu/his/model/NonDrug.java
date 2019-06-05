@@ -24,6 +24,17 @@ public class NonDrug {
     @Column(name = "executive_department")
     private Integer executiveDepartment;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     public String getCode() {
         return code;
     }

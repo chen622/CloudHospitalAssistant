@@ -22,6 +22,17 @@ public class Doctor {
     @Column(name = "can_arrange")
     private Boolean canArrange;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
     /**
      * @return id
      */

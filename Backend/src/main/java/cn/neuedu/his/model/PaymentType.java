@@ -1,9 +1,6 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "payment_type")
 public class PaymentType {
@@ -21,6 +18,17 @@ public class PaymentType {
 2 -- 项目
      */
     private Integer type;
+
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     /**
      * @return id

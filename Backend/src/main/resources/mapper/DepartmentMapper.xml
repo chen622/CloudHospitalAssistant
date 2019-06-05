@@ -32,6 +32,7 @@
   <select id="getAllDepartmentInformation" resultMap="AllDepartmentInformation">
     select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName
     from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
+    where department.is_delete = 0 and dk.is_delete = 0 and constant_variable.is_delete = 0
   </select>
 
   <select id="getAllDepartmentInformationByClassificationId" resultMap="AllDepartmentInformation">

@@ -38,6 +38,17 @@ public class Drug {
     private Integer drugType;
     private Integer feeTypeId;
 
+    @Column(name = "is_delete")
+    private boolean isDelete;
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
+
 
     public Integer getFeeTypeId() {
         return feeTypeId;
