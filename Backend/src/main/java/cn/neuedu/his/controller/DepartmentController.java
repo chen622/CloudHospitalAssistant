@@ -109,7 +109,7 @@ public class DepartmentController {
 
         try{
             Department department = jsonObject.toJavaObject(jsonObject,Department.class);
-            departmentService.addDepartment(department);
+            departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("610"))

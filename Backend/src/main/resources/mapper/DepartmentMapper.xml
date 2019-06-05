@@ -9,6 +9,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="kind_id" jdbcType="INTEGER" property="kindId" />
     <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <resultMap id="AllDepartmentInformation" type="cn.neuedu.his.model.Department">
