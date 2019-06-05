@@ -311,7 +311,7 @@ public class UserController {
     @GetMapping("/findAll")
     public JSONObject findAll(){
         try{
-            List<User> users = userService.findAll();
+            List<User> users = userService.findAllWithName();
             return CommonUtil.successJson(users);
         }catch (RuntimeException e){
             return CommonUtil.errorJson(ErrorEnum.E_500);

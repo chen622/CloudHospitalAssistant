@@ -84,4 +84,38 @@
   </select>
 
 
+
+  <resultMap id="findAllWithName" type="cn.neuedu.his.model.User">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <association property="deptName" javaType="String" column="{id=department_id}" select="getDeptName"/>
+    <association property="type" javaType="String" column="type_id" select="getType"/>
+    <association property="title" javaType="String" column="id" select="getTile"/>
+  </resultMap>
+
+  <select id="findAllWithName" resultMap="findAllWithName">
+    select * from user;
+  </select>
+  <select id="getDeptName" resultType="String">
+    select name from department where id=#{id}
+  </select>
+  <select id="getType" resultType="String">
+    select name from  constant_variable where id=#{type_id}
+  </select>
+  <select id="getTile" resultType="String">
+    select c.name from  doctor ,constant_variable c where doctor.id=#{id} and title_id = c.id
+  </select>
+
+
 </mapper>
