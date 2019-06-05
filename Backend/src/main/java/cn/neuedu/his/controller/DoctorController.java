@@ -223,8 +223,9 @@ public class DoctorController {
      * @param authentication
      * @return
      */
-    @GetMapping("/getAllRegistration/{time}")
-    public JSONObject getAllRegistration(@PathVariable("time") Date time, Authentication authentication) {
+    @GetMapping("/getAllRegistration")
+    public JSONObject getAllRegistration( Authentication authentication) {
+        Date time = new Date(System.currentTimeMillis());
         Integer doctorID;
         try {
             doctorID = PermissionCheck.isOutpatientDoctor(authentication);
