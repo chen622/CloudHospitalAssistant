@@ -31,21 +31,6 @@ public class DepartmentKindController {
     @Autowired
     ConstantVariableService constantVariableService;
 
-    /*
-    @GetMapping("/get/{id}")
-    public JSONObject getDepartmentInformation(@PathVariable("id") Integer id, Authentication authentication){
-
-        //检查权限
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-
-        return CommonUtil.successJson(department);
-    }*/
-
     @PostMapping("/add")
     public JSONObject addDepartmentKind(@RequestBody JSONObject jsonObject, Authentication authentication){
 
@@ -113,6 +98,23 @@ public class DepartmentKindController {
         departmentKindService.deleteById(id);
 
         return CommonUtil.successJson(departmentKind);
+    }
+
+    /**
+     * 获得类型及其分类信息
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/getAll")
+    public JSONObject getDepartmentKindList(Authentication authentication){
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        return CommonUtil.successJson(departmentKindService.getDepartmentKindList());
     }
 
 }

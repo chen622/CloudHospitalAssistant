@@ -7,6 +7,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -22,5 +24,18 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
         return departmentKindMapper.getDepartmentKindByName(kindName);
     }
 
+    @Override
+    public List<DepartmentKind> getDepartmentKindList() {
+        return departmentKindMapper.getDepartmentKindList();
+    }
+
+    /**
+     * 获得所有分类及其类型信息
+     * @return
+     */
+    @Override
+    public List<DepartmentKind> getAllDepartmentKindList(){
+        return this.getDepartmentKindList();
+    }
 
 }
