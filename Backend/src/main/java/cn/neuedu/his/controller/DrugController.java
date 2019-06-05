@@ -117,7 +117,7 @@ public class DrugController {
         }
 
         try{
-            Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+            Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drugService.modifyDrug(drug);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
@@ -145,7 +145,7 @@ public class DrugController {
         }
 
         try{
-            Drug drug = jsonObject.toJavaObject(jsonObject,Drug.class);
+            Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drugService.insertDrug(drug);
             return CommonUtil.successJson();
         }catch (RuntimeException e){

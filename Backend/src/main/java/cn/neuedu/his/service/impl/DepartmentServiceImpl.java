@@ -91,7 +91,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     public void modifyDepartment(Department department) {
         //检测部门是否存在
         if (this.getDepartmentByName(department.getName()) != null)
-            throw new RuntimeException("610");
+            throw new RuntimeException("611");
 
         //检测部门类型是否存在
         if (this.findById(department.getKindId()) == null)

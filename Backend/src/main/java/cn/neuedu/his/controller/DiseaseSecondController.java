@@ -36,7 +36,7 @@ public class DiseaseSecondController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        DiseaseSecond diseaseSecond = jsonObject.toJavaObject(jsonObject,DiseaseSecond.class);
+        DiseaseSecond diseaseSecond = JSONObject.toJavaObject(jsonObject,DiseaseSecond.class);
 
         try{
             diseaseSecondService.insertDiseaseSecond(diseaseSecond);
@@ -105,7 +105,7 @@ public class DiseaseSecondController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        DiseaseSecond diseaseSecond = jsonObject.toJavaObject(jsonObject,DiseaseSecond.class);
+        DiseaseSecond diseaseSecond = JSONObject.toJavaObject(jsonObject,DiseaseSecond.class);
 
         try{
             diseaseSecondService.modifyDiseaseSecond(diseaseSecond);

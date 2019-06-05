@@ -178,7 +178,7 @@ public class UserController {
     public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
 
-        User user = jsonObject.toJavaObject(jsonObject, User.class);
+        User user = JSONObject.toJavaObject(jsonObject, User.class);
         //是否是个人账号
         try {
             PermissionCheck.isIndivual(authentication, user.getUsername());
@@ -207,7 +207,7 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
-        User user = jsonObject.toJavaObject(jsonObject, User.class);
+        User user = JSONObject.toJavaObject(jsonObject, User.class);
 
         return updateMessage(user, jsonObject);
     }

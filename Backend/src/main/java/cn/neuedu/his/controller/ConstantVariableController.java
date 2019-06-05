@@ -42,7 +42,7 @@ public class ConstantVariableController {
     public JSONObject insertConstant(@RequestBody JSONObject jsonObject, Authentication authentication){
         try{
             PermissionCheck.isHosptialAdim(authentication);
-            ConstantVariable constantVariable = jsonObject.toJavaObject(jsonObject,ConstantVariable.class);
+            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject,ConstantVariable.class);
             constantVariableService.insertConstant(constantVariable);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
@@ -71,7 +71,7 @@ public class ConstantVariableController {
     public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication){
         try{
             PermissionCheck.isHosptialAdim(authentication);
-            ConstantVariable constantVariable = jsonObject.toJavaObject(jsonObject,ConstantVariable.class);
+            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject,ConstantVariable.class);
             constantVariableService.modifyConstant(constantVariable);
             return CommonUtil.successJson();
         }catch (RuntimeException e){

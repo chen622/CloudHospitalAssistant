@@ -82,9 +82,8 @@ public class DepartmentController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Department department = jsonObject.toJavaObject(jsonObject,Department.class);
-
         try{
+            Department department = JSONObject.toJavaObject(jsonObject,Department.class);
             departmentService.addDepartment(department);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
@@ -108,12 +107,12 @@ public class DepartmentController {
         }
 
         try{
-            Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+            Department department = JSONObject.toJavaObject(jsonObject,Department.class);
             departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
-            if (e.getMessage().equals("610"))
-                return CommonUtil.errorJson(ErrorEnum.E_610);
+            if (e.getMessage().equals("611"))
+                return CommonUtil.errorJson(ErrorEnum.E_611);
             else if (e.getMessage().equals("612"))
                 return CommonUtil.errorJson(ErrorEnum.E_612);
             else

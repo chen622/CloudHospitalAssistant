@@ -38,7 +38,7 @@ public class NonDrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        NonDrug nonDrug = jsonObject.toJavaObject(NonDrug.class);
+        NonDrug nonDrug = JSONObject.toJavaObject(jsonObject,NonDrug.class);
 
         try{
             nonDrugService.insertNonDrug(nonDrug);
@@ -109,7 +109,7 @@ public class NonDrugController {
     }
 
     @GetMapping("/selectByCode/{code}")
-    public JSONObject selectNonDrugByCode(@PathVariable("name") String code, Authentication authentication){
+    public JSONObject selectNonDrugByCode(@PathVariable("code") String code, Authentication authentication){
 
         //检查权限
         try {
@@ -161,7 +161,7 @@ public class NonDrugController {
         }
 
         try {
-            NonDrug nonDrug = jsonObject.toJavaObject(jsonObject, NonDrug.class);
+            NonDrug nonDrug = JSONObject.toJavaObject(jsonObject, NonDrug.class);
             nonDrugService.modifyNonDrug(nonDrug);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
