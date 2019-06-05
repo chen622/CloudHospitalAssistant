@@ -114,5 +114,8 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     public JSONObject getDoctorTotal(Integer doctorId,String start,String end);
+
+    @Transactional
+    public Integer registrationNum(Integer doctorId, String start, String end);
 }
 
