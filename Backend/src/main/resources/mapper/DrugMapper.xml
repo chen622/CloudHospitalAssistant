@@ -17,6 +17,7 @@
     <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
     <result column="drug_type" javaType="INTEGER" property="drugType"/>
     <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <select id="getDrugByName" resultMap="BaseResultMap">
