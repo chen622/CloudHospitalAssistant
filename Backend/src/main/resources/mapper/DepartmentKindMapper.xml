@@ -8,6 +8,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
     <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <resultMap id="TypeAndKind" type="cn.neuedu.his.model.DepartmentKind">
@@ -17,9 +18,11 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
     <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
     <association property="constantVariable" javaType="cn.neuedu.his.model.ConstantVariable" >
       <id column="constantId" jdbcType="INTEGER" property="id" />
       <result column="constantName" jdbcType="VARCHAR" property="name" />
+      <result column="typeDelete" jdbcType="BIT" property="isDelete"/>
     </association>
   </resultMap>
 
@@ -36,7 +39,7 @@
   </select>
   
   <select id="getDepartmentKindList" resultMap="TypeAndKind">
-    select *,constant_variable.id as constantId, constant_variable.name as constantName
+    select *,constant_variable.id as constantId, constant_variable.name as constantName,constant_variable.is_delete as typeDelete
     from department_kind join constant_variable on department_kind.classification_id = constant_variable.id
   </select>
 </mapper>
