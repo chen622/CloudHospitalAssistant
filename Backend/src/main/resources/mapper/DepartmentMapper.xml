@@ -9,6 +9,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="kind_id" jdbcType="INTEGER" property="kindId" />
     <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <resultMap id="AllDepartmentInformation" type="cn.neuedu.his.model.Department">
@@ -18,27 +19,38 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
     <association property="departmentKind" javaType="cn.neuedu.his.model.DepartmentKind">
         <id column="departmentKindId" jdbcType="INTEGER" property="id" />
         <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+        <result column="kindisDelete" jdbcType="BIT" property="isDelete"/>
       <association property="constantVariable" javaType="cn.neuedu.his.model.ConstantVariable">
         <id column="constantId" jdbcType="INTEGER" property="id" />
         <result column="constantName" jdbcType="VARCHAR" property="name" />
+        <result column="typeIsDelete" jdbcType="BIT" property="isDelete"/>
       </association>
     </association>
   </resultMap>
 
 
   <select id="getAllDepartmentInformation" resultMap="AllDepartmentInformation">
-    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName
+    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName,dk.is_delete as kindisDelete, constant_variable.is_delete as constantVariable
     from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
     where department.is_delete = 0 and dk.is_delete = 0 and constant_variable.is_delete = 0
+    ORDER BY kind_id ASC
   </select>
 
   <select id="getAllDepartmentInformationByClassificationId" resultMap="AllDepartmentInformation">
-    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName
+    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName, dk.is_delete as kindisDelete, constant_variable.is_delete as constantVariable
     from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
     where classification_id = #{classificationId}
+  </select>
+
+  <select id="getDepartmentListByName" resultMap="AllDepartmentInformation">
+    select *,dk.id as departmentKindId ,constant_variable.id as constantId,constant_variable.name as constantName, dk.is_delete as kindisDelete, constant_variable.is_delete as typeIsDelete
+    from department join department_kind dk on department.kind_id = dk.id join constant_variable on dk.classification_id = constant_variable.id
+    where department.name like concat('%',#{name},'%')
+    ORDER BY kind_id ASC
   </select>
 
   <select id="getDepartmentByName" resultMap="BaseResultMap">
@@ -46,9 +58,6 @@
     from department
     where name=#{name}
   </select>
-
-
-
 
   <select id="getDepartmentByClassification" resultType="cn.neuedu.his.model.Department">
     select * from department where kind_id in (select dk.id from department_kind dk where classification_id = #{classification}) and is_delete = false ;

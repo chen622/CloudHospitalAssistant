@@ -20,13 +20,13 @@ public class DepartmentKind {
     private ConstantVariable constantVariable;
 
     @Column(name = "is_delete")
-    private boolean isDelete;
+    private Boolean isDelete;
 
-    public boolean isDelete() {
+    public Boolean getIsDelete() {
         return isDelete;
     }
 
-    public void setDelete(boolean delete) {
+    public void setIsDelete(Boolean delete) {
         isDelete = delete;
     }
 

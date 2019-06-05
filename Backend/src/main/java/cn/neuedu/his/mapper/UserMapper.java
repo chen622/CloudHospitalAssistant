@@ -16,5 +16,5 @@ public interface UserMapper extends MyMapper<User> {
     User getUserAndInvoiceAndPaymentDuringDate(@Param("userId") Integer userId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     User getUserAllInformationByUsername(String username);
-
+    ArrayList<User> findAllWithName();
 }

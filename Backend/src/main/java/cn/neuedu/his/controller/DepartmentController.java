@@ -108,10 +108,9 @@ public class DepartmentController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        Department department = jsonObject.toJavaObject(jsonObject,Department.class);
-
         try{
-            departmentService.addDepartment(department);
+            Department department = jsonObject.toJavaObject(jsonObject,Department.class);
+            departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("610"))
@@ -185,5 +184,22 @@ public class DepartmentController {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
     }
+    @GetMapping("/getDepartmentList/{name}")
+    public JSONObject getDepartmentListByname(@PathVariable("name")String name ,Authentication authentication){
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try{
+            List<Department> departments = departmentService.getDepartmentListByName(name);
+            return CommonUtil.successJson(departments);
+        }catch (RuntimeException e){
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
+
 
 }

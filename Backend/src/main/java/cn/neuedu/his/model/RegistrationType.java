@@ -20,13 +20,13 @@ public class RegistrationType {
     private Integer displaySequenceNumber;
 
     @Column(name = "is_delete")
-    private boolean isDelete;
+    private Boolean isDelete;
 
-    public boolean isDelete() {
+    public Boolean isDelete() {
         return isDelete;
     }
 
-    public void setDelete(boolean delete) {
+    public void setDelete(Boolean delete) {
         isDelete = delete;
     }
 

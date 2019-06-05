@@ -75,4 +75,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return userMapper.getUserByDepartmentId(departmentId);
     }
 
+    @Override
+    public ArrayList<User> findAllWithName() {
+        return userMapper.findAllWithName();
+    }
+
 }

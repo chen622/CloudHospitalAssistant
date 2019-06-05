@@ -293,7 +293,6 @@ public class UserControllerTest {
     @Test
     public void selectAdminUserInformation() throws Exception {
 
-        String requestJson ="ccmccm";
         mockMvc.perform(MockMvcRequestBuilders.get("/user/adminSelectUser/ccmccm")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content("username")
@@ -320,6 +319,21 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+    @Test
+    public void findAll() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/findAll")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
 }
 
 

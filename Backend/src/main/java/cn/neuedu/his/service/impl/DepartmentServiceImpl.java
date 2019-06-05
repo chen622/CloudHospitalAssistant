@@ -72,7 +72,9 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         if (department == null)
             throw new RuntimeException("610");
 
-        this.deleteById(id);
+        department.setDelete(true);
+
+        this.update(department);
 
     }
 
@@ -106,6 +108,10 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         this.update(department);
     }
 
+    @Override
+    public List<Department> getDepartmentListByName(String name) {
+        return departmentMapper.getDepartmentListByName(name);
+    }
 
     /**
      * 门诊科室工作量统计
@@ -162,7 +168,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
                 //计算发票总数
                 if(classification.equals(Constants.CLINICAL_DEPARTMENTS))
-                   invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByDoctorId(user.getId(), startDate, endDate);
+                    invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByDoctorId(user.getId(), startDate, endDate);
                 else if (classification.equals(Constants.TECHNICAL_DEPARTMENTS))
                     invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByProjectOperatorId(user.getId(), startDate, endDate);
 

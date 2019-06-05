@@ -47,6 +47,37 @@ public class User {
     @Column(name = "is_delete")
     private boolean isDelete;
 
+    //用户类型
+    private String type;
+    //科室名称
+    private Department dept;
+    //医生职称
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Department getDept() {
+        return dept;
+    }
+
+    public void setDept(Department dept) {
+        this.dept = dept;
+    }
+
     public boolean isDelete() {
         return isDelete;
     }

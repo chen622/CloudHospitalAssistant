@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Date;
+import javax.sql.rowset.serial.SerialStruct;
 import java.util.List;
 
 /**
@@ -28,6 +29,8 @@ public interface DepartmentService extends Service<Department> {
     void addDepartment(Department department);
 
     void modifyDepartment(Department department);
+
+    List<Department> getDepartmentListByName(String name);
 
 
 
