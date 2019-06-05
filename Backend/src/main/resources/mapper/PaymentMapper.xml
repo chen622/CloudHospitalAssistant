@@ -40,11 +40,7 @@
         select * from payment where  item_id=#{id} and  payment_type_id=#{type};
   </select>
 
-  <select id="getByDoctorId" resultMap="BaseResultMap">
-    select * from payment where doctor_id = #{doctorId} and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
-  </select>
-
-  <select id="getByProjectOperatorId" resultMap="BaseResultMap">
+  <select id="getByAllDoctor" resultMap="BaseResultMap">
     select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
   </select>
 

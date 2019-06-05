@@ -136,15 +136,6 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             }
         }
 
-        //使用map记录合计时每个paymentType对应的总额
-        Map<Integer, BigDecimal> feeMapTotal = new HashMap<>();
-        for(Integer id: paymentTypeMap.keySet()) {
-            feeMapTotal.put(id, new BigDecimal(0));
-        }
-        Integer invoiceNumberTotal = 0;
-        Integer doctorVisitNumberTotal = 0;
-
-
         for (Department department: departmentList) {
             //使用map记录每个科室的每个paymentType对应的总额
             Map<Integer, BigDecimal> feeMap = new HashMap<>();
@@ -153,24 +144,15 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             }
             Integer invoiceNumber = 0; //每个科室发票总数
             Integer doctorVisitNumber = 0; //每个科室医生看诊人数总数
+            BigDecimal totalFee = new BigDecimal(0); //科室总计金额
             for(User user: userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
-                //根据临床还是医技获取该医生所有payment
-                ArrayList<Payment> paymentList = new ArrayList<>();
-                if(classification.equals(Constants.CLINICAL_DEPARTMENTS))
-                    paymentList = paymentService.findByDoctorId(user.getId(), startDate, endDate);
-                else if (classification.equals(Constants.TECHNICAL_DEPARTMENTS))
-                    paymentList = paymentService.findByProjectOperatorId(user.getId(), startDate, endDate);
-
-                for (Payment payment: paymentList) {
+                for (Payment payment: paymentService.findByAllDoctor(user.getId(), startDate, endDate)) {
                     //更新某缴费项目类型的金额数据
                     feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
 
                 //计算发票总数
-                if(classification.equals(Constants.CLINICAL_DEPARTMENTS))
-                    invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByDoctorId(user.getId(), startDate, endDate);
-                else if (classification.equals(Constants.TECHNICAL_DEPARTMENTS))
-                    invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByProjectOperatorId(user.getId(), startDate, endDate);
+                invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByAllDoctor(user.getId(), startDate, endDate);
 
                 //计算医生看诊人数
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -180,28 +162,16 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             //将获得数据记录进JSONObject
             JSONObject detail = new JSONObject();
             detail.put("department", department);
+            detail.put("发票数", invoiceNumber);
+            detail.put("看诊人数", doctorVisitNumber);
             for(Integer key: feeMap.keySet()) {
-                feeMapTotal.put(key, feeMapTotal.get(key).add(feeMap.get(key)));
+                totalFee.add(feeMap.get(key));
                 detail.put(paymentTypeMap.get(key), feeMap.get(key));
             }
-            invoiceNumberTotal = invoiceNumberTotal + invoiceNumber;
-            detail.put("发票数", invoiceNumber);
-            doctorVisitNumberTotal = doctorVisitNumberTotal + doctorVisitNumber;
-            detail.put("看诊人数", doctorVisitNumber);
+            detail.put("合计", totalFee);
 
             result.add(detail);
         }
-
-        //记录合计的数据
-        JSONObject totalDetail = new JSONObject();
-        totalDetail.put("department", "合计");
-        for(Integer key: feeMapTotal.keySet()) {
-            totalDetail.put(paymentTypeMap.get(key), feeMapTotal.get(key));
-        }
-        totalDetail.put("发票数", invoiceNumberTotal);
-        totalDetail.put("看诊人数", doctorVisitNumberTotal);
-
-        result.add(totalDetail);
 
         return result;
     }

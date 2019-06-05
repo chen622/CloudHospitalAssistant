@@ -3,12 +3,14 @@ import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.inter.Service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -117,5 +119,7 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     public Integer registrationNum(Integer doctorId, String start, String end);
+
+    JSONArray doctorWorkCalculate(Date startDate, Date endDate);
 }
 
