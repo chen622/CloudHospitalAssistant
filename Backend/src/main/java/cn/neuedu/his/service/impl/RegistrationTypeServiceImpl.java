@@ -43,10 +43,12 @@ public class RegistrationTypeServiceImpl extends AbstractService<RegistrationTyp
     @Override
     public void deleteRegisterType(Integer id) {
         //判断挂号类型是否存在
-        if (this.findById(id) == null)
+        RegistrationType registrationType = this.findById(id);
+        if (registrationType == null)
             throw new RuntimeException("604");
 
-        this.deleteById(id);
+        registrationType.setDelete(true);
+        this.update(registrationType);
     }
 
     @Override

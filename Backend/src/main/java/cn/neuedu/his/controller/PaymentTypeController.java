@@ -48,8 +48,8 @@ public class PaymentTypeController {
         return CommonUtil.successJson(paymentType);
     }
 
-    @PostMapping("/deletePaymentType/{paymentTypeName}")
-    public JSONObject deletePaymentType(@PathVariable("paymentTypeName") String paymentTypeName, Authentication authentication){
+    @PostMapping("/deletePaymentType/{id}")
+    public JSONObject deletePaymentType(@PathVariable("id") Integer id, Authentication authentication){
 
         //检查权限
         try{
@@ -58,13 +58,15 @@ public class PaymentTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        PaymentType paymentType = paymentTypeService.getPaymentTypeByName(paymentTypeName);
+        PaymentType paymentType = paymentTypeService.findById(id);
 
         //检查结算类型是否存在
         if (paymentType == null)
             return CommonUtil.errorJson(ErrorEnum.E_606);
 
-        paymentTypeService.deleteById(paymentType.getId());
+        paymentType.setDelete(true);
+
+        paymentTypeService.update(paymentType);
 
         return CommonUtil.successJson(paymentType);
     }

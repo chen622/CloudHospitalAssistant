@@ -112,14 +112,14 @@ public class DepartmentKindController {
             //获得部门大类
             List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(1);
             JSONObject returnJSON = new JSONObject();
-            JSONArray departmentKinds = new JSONArray();
+            JSONObject departmentKinds = new JSONObject();
 
             if (constantVariables != null) {
                 returnJSON.put("type", constantVariables);
 
                 constantVariables.forEach(kind -> {
                     List<DepartmentKind> departmentKindList = departmentKindService.getDepartmentKindByClassificationId(kind.getId());
-                    departmentKinds.add(departmentKindList);
+                    departmentKinds.put(kind.getId().toString(),departmentKindList);
                 });
 
                 returnJSON.put("departmentKinds", departmentKinds);

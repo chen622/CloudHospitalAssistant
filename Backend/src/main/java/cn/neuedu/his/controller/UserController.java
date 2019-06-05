@@ -108,6 +108,9 @@ public class UserController {
         if (!Constants.USER_TYPE_LIST.contains(typeId))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
+        //储存user数据
+        userService.save(user);
+
         //类别属于医生
         if (Constants.DOCTOR_TYPE_LIST.contains(typeId)) {
             //取得当前user的id
@@ -125,9 +128,6 @@ public class UserController {
             //储存doctor数据
             doctorService.save(doctor);
         }
-
-        //储存user数据
-        userService.save(user);
 
         return CommonUtil.successJson(user);
     }
@@ -158,11 +158,14 @@ public class UserController {
 
         //判断是否要先将doctor表中的数据删除
         if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId()) == true) {
-            doctorService.deleteById(id);
+            Doctor doctor = doctorService.findById(id);
+            doctor.setDelete(true);
+            doctorService.update(doctor);
         }
 
         //删除用户表中的信息
-        userService.deleteById(id);
+        user.setDelete(true);
+        userService.update(user);
 
         return CommonUtil.successJson(user);
     }

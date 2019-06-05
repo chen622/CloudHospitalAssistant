@@ -59,10 +59,12 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
     @Override
     public void deleteConstant(Integer id){
 
-        if (this.findById(id) == null)
+        ConstantVariable constantVariable = this.findById(id);
+        if (constantVariable == null)
             throw new RuntimeException("629");
 
-        this.deleteById(id);
+        constantVariable.setDelete(true);
+        this.update(constantVariable);
     }
 
     @Override

@@ -2,6 +2,7 @@ package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DiseaseFirstMapper;
 import cn.neuedu.his.model.DiseaseFirst;
+import cn.neuedu.his.model.DiseaseSecond;
 import cn.neuedu.his.service.DiseaseFirstService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -45,11 +46,13 @@ public class DiseaseFirstServiceImpl extends AbstractService<DiseaseFirst> imple
 
     @Override
     public void deleteDiseaseFirst(Integer id) {
+
+        DiseaseFirst diseaseFirst = this.findById(id);
         //判断id是否存在（疾病是否存在）
-        if (this.findById(id) == null)
+        if (diseaseFirst == null)
             throw new RuntimeException("624");
 
-        this.deleteById(id);
+        this.update(diseaseFirst);
     }
 
     @Override
