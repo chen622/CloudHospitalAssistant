@@ -64,7 +64,9 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         if (department == null)
             throw new RuntimeException("610");
 
-        this.deleteById(id);
+        department.setDelete(true);
+
+        this.update(department);
 
     }
 
@@ -102,20 +104,6 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     public List<Department> getDepartmentListByName(String name) {
         return departmentMapper.getDepartmentListByName(name);
     }
-
-
-//    public JSONObject workCalculate(Integer classification) throws IllegalArgumentException{
-//        JSONObject result = new JSONObject();
-//        ArrayList<Department> departmentList = departmentMapper.getDepartmentByClassification(classification);
-//        if (departmentList.isEmpty())
-//            throw new IllegalArgumentException("classification");
-//
-//        for (Department department: departmentList) {
-//            for(User user: userService.findUserByDepartmentId(department.getId())) {
-//
-//            }
-//        }
-//    }
 
 
 }

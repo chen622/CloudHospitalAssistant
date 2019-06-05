@@ -10,9 +10,9 @@ import java.util.List;
 @Component
 public interface DepartmentMapper extends MyMapper<Department> {
 
-    List<Department> getAllDepartmentInformation();
+    List<Department> getAllDepartmentInformation();//获得所有部门的类别，分类及详细信息
 
-    Department getDepartmentByName(String name);
+    Department getDepartmentByName(String name);//根据准确名字获得部门
 
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
 
