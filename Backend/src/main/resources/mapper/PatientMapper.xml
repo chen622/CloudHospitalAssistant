@@ -52,37 +52,42 @@
 <!--  患者信息及所有未拿取的药单信息-->
 <!--  患者获取缴费单-->
   <resultMap id="patientAndPayment" type="cn.neuedu.his.model.Patient">
-    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotTakeDrugPaymentByPatientId" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state}">
-    </collection>
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="identity_id" jdbcType="VARCHAR" property="identityId" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectNotTakeDrugPaymentByPatientId" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state}"/>
   </resultMap>
 
 <!--  缴费单获取处方-->
   <resultMap id="paymentAndPrescription" type="cn.neuedu.his.model.Payment">
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <association property="prescription" javaType="cn.neuedu.his.model.Prescription" select="selectPrescriptionByPayment" column="item_id"/>
   </resultMap>
 
 <!--  处方获取药物信息-->
   <resultMap id="prescriptionAndNotTakeDrug" type="cn.neuedu.his.model.Prescription">
+    <result column="drug_id" jdbcType="INTEGER" property="drugId" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
     <association property="drug" javaType="cn.neuedu.his.model.Drug" select="selectDrugByPrescription" column="drug_id"/>
   </resultMap>
 
 
   <select id="searchPatientAndNotTakeDrug" resultMap="patientAndPayment">
-    select * , #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state from patient where id = #{patientId}
+    select id, identity_id, real_name , #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state from patient where id = #{patientId}
   </select>
 
   <select id="selectNotTakeDrugPaymentByPatientId" resultMap="paymentAndPrescription">
-    select * from payment
+    select item_id from payment
     where patient_id = #{patientId} and (select type from payment_type where payment_type_id = payment_type.id) = #{paymentTotalTypeId} and state = #{state}
     order by create_time desc
   </select>
 
   <select id="selectPrescriptionByPayment" resultMap="prescriptionAndNotTakeDrug">
-    select * from prescription where id = #{item_id}
+    select drug_id, amount from prescription where id = #{item_id}
   </select>
 
   <select id="selectDrugByPrescription" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap">
-    select * from drug where id = #{drug_id}
+    select code, name, factory from drug where id = #{drug_id}
   </select>
 
 

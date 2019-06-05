@@ -2,13 +2,20 @@ package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DepartmentMapper;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.model.Doctor;
+import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DepartmentService;
+import cn.neuedu.his.service.DoctorService;
+import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +27,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
     @Autowired
     private DepartmentMapper departmentMapper;
+    @Autowired
+    private UserService userService;
 
     @Override
     public List<Department> getAllDepartmentInformation(){
@@ -88,6 +97,21 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
         this.update(department);
     }
+
+
+
+//    public JSONObject workCalculate(Integer classification) throws IllegalArgumentException{
+//        JSONObject result = new JSONObject();
+//        ArrayList<Department> departmentList = departmentMapper.getDepartmentByClassification(classification);
+//        if (departmentList.isEmpty())
+//            throw new IllegalArgumentException("classification");
+//
+//        for (Department department: departmentList) {
+//            for(User user: userService.findUserByDepartmentId(department.getId())) {
+//
+//            }
+//        }
+//    }
 
 
 }

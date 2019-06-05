@@ -18,6 +18,7 @@
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
     <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
   </resultMap>
 
 
@@ -38,4 +39,8 @@
   <select id="getByRegistrationId" resultMap="BaseResultMap">
         select * from payment where  item_id=#{id} and  payment_type_id=#{type};
   </select>
+
+<!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->
+<!--    select sum(quantity * unit_price) from payment where -->
+<!--  </select>-->
 </mapper>

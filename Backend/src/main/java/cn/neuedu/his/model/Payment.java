@@ -59,6 +59,9 @@ public class Payment {
     @Column(name = "is_frozen")
     private Boolean isFrozen;
 
+    @Column(name = "doctor_id")
+    private Integer doctorId;
+
     private Prescription prescription;
     private InspectionApplication application;
 
@@ -268,5 +271,13 @@ public class Payment {
 
     public void setProjectOperatorId(Integer projectOperatorId) {
         this.projectOperatorId = projectOperatorId;
+    }
+
+    public Integer getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 }

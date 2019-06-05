@@ -4,6 +4,7 @@ import cn.neuedu.his.model.Department;
 import cn.neuedu.his.util.inter.MyMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -14,5 +15,7 @@ public interface DepartmentMapper extends MyMapper<Department> {
     Department getDepartmentByName(String name);
 
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
+
+    ArrayList<Department> getDepartmentByClassification(Integer classification);
 
 }
