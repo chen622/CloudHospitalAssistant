@@ -50,7 +50,7 @@ public class User {
     //用户类型
     private String type;
     //科室名称
-    private String deptName;
+    private Department dept;
     //医生职称
     private String title;
 
@@ -70,12 +70,12 @@ public class User {
         this.type = type;
     }
 
-    public String getDeptName() {
-        return deptName;
+    public Department getDept() {
+        return dept;
     }
 
-    public void setDeptName(String deptName) {
-        this.deptName = deptName;
+    public void setDept(Department dept) {
+        this.dept = dept;
     }
 
     public boolean isDelete() {
