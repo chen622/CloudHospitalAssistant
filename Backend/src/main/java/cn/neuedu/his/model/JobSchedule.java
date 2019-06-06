@@ -34,6 +34,7 @@ public class JobSchedule {
     private User user;
     private Doctor doctor;
     private RegistrationType registrationType;
+    private ConstantVariable constantVariable;
 
     /**
      * @return id
@@ -167,5 +168,13 @@ public class JobSchedule {
 
     public void setRegistrationType(RegistrationType registrationType) {
         this.registrationType = registrationType;
+    }
+
+    public ConstantVariable getConstantVariable() {
+        return constantVariable;
+    }
+
+    public void setConstantVariable(ConstantVariable constantVariable) {
+        this.constantVariable = constantVariable;
     }
 }

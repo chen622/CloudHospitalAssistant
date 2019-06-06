@@ -176,6 +176,22 @@ public class RedisServiceImpl{
         return false;
     }
 
+    /**
+     * 设置key的生存时间
+     * @param key
+     */
+    private void expire(String key) {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.expire(key, 30);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
     public  Map<String, Integer> getMapAll(String key ) throws Exception{
         Map<String, String> result = null;
         Map<String, Integer> resultMap= new HashMap<>();
@@ -271,6 +287,7 @@ public class RedisServiceImpl{
     public void setInvoiceSerialsNumberList(Integer start, Integer end) throws UnsupportedOperationException{
         try {
             setNumberList(invoiceKey, start, end);
+            expire("invoice-list");
         }catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }

@@ -50,7 +50,7 @@ public class JobScheduleControllerTest {
 
     @Test
     public void getSchedule() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/job_schedule/getSchedule/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/job_schedule/getSchedule/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
