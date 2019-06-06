@@ -1,7 +1,7 @@
 <template>
     <a-row type="flex" align="middle" justify="center" class="charge">
         <a-col span="20">
-            <a-card hoveracble title="查询" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
+            <a-card hoveracble title="收费" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
                 <a-row type="flex" align="top" justify="start" style="margin: 5px 0 10px 0;">
                     <a-col span="3">
                         <p style="font-size: 20px">病历信息查询:</p>
