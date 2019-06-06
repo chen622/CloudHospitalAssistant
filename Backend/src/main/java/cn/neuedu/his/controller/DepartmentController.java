@@ -56,8 +56,6 @@ public class DepartmentController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-
-
         try {
             departmentService.deleteDepartmentInformation(id);
             return CommonUtil.successJson();

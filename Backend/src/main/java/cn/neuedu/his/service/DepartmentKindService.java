@@ -13,7 +13,7 @@ public interface DepartmentKindService extends Service<DepartmentKind> {
 
     List<DepartmentKind> getDepartmentKindList();
 
-    List<DepartmentKind> getAllDepartmentKindList();
+    List<DepartmentKind> getDepartmentKindListWithoutDelete();
 
     List<DepartmentKind> getDepartmentKindByClassificationId(Integer id);
 }

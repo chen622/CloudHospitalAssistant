@@ -70,8 +70,10 @@ public class UserController {
             urls.add(new url("账户管理", "/admin/user", "admin"));
             urls.add(new url("排班管理", "/admin/rule", "rule"));
             urls.add(new url("医疗信息管理", "/admin/other", "other"));
-        }else if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())){
-            urls.add(new url("看诊","/doctor/index","doctor"));
+        } else if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())) {
+            urls.add(new url("看诊", "/doctor/index", "doctor"));
+        } else if (typeId.equals(601)) {
+            urls.add(new url("挂号", "/patient/register", "register"));
         }
         return CommonUtil.successJson(urls);
     }
@@ -315,12 +317,13 @@ public class UserController {
 
     /**
      * 模糊搜索用户
+     *
      * @param name
      * @param authentication
      * @return
      */
     @GetMapping("/findUser/{name}")
-    public JSONObject findUser(@PathVariable("name") String name, Authentication authentication){
+    public JSONObject findUser(@PathVariable("name") String name, Authentication authentication) {
 
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -328,21 +331,21 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
+        try {
             List<User> users = userService.findUser(name);
             return CommonUtil.successJson(users);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
 
     @GetMapping("/findAll")
-    public JSONObject findAll(){
-        try{
+    public JSONObject findAll() {
+        try {
             List<User> users = userService.findAllWithName();
             return CommonUtil.successJson(users);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }

@@ -49,13 +49,13 @@ export default new Router({
             component: Login
         },
         {
-            path:'/search',
-            name:'search',
-            component:Search
+            path: '/patient/register',
+            name: 'register',
+            component: () => import('./views/patient/Register')
         },
         {
-            path:'/charge',
-            name:'charge',
+            path: '/charge',
+            name: 'charge',
             component: Charge
         }
     ]

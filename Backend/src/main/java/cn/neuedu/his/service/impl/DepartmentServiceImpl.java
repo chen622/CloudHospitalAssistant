@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -41,11 +40,6 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private DepartmentKindService departmentKindService;
 
     @Override
-    public List<Department> getAllDepartmentInformation(){
-        return departmentMapper.getAllDepartmentInformation();
-    }
-
-    @Override
     public Department getDepartmentByName(String name) {
         return departmentMapper.getDepartmentByName(name);
     }
@@ -57,7 +51,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
     @Override
     public List<Department> getDepartmentInformation() {
-        List<Department> departments = this.getAllDepartmentInformation();
+        List<Department> departments = departmentMapper.getAllDepartmentInformation();
 
         if (departments == null)
             departments = new ArrayList<>();
@@ -99,7 +93,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Override
     public void modifyDepartment(Department department) throws RuntimeException {
         //检测部门是否存在
-        if (this.getDepartmentByName(department.getName()) != null)
+        Department aDept = this.getDepartmentByName(department.getName());
+        if (aDept != null && !aDept.getId().equals(department.getId()))
             throw new RuntimeException("611");
 
         //检测部门类型是否存在

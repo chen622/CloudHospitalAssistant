@@ -250,15 +250,33 @@
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     delete target.editable
-                    this.data = newData
-                    this.cacheData = newData.map(item => ({...item}))
+                    let that = this
+                    this.$api.post("/department/modify", target,
+                        res => {
+                            if (res.code === '100') {
+                                that.$message.success("修改成功")
+                                that.getDepartment()
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        },
+                        () => {
+                            that.$message.error("网络异常！")
+                        })
                 }
             },
             remove (key) {
                 let that = this
-                this.$api.post("/delete/" + key, null,
+                this.$api.post("/department/delete/" + key, null,
                     res => {
-                    }, res => {
+                        if (res.code === '100') {
+                            that.$message.success("删除成功")
+                            that.getDepartment()
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, () => {
+                        that.$message.error("网络异常！")
                     })
             },
             cancel (key) {

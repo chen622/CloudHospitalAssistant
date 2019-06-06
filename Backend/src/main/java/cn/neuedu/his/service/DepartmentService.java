@@ -16,8 +16,6 @@ import java.util.List;
  */
 public interface DepartmentService extends Service<Department> {
 
-    List<Department> getAllDepartmentInformation();
-
     Department getDepartmentByName(String name);
 
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);

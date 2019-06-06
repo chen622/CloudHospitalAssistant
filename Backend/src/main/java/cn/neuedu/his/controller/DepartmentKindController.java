@@ -6,6 +6,7 @@ import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static cn.neuedu.his.util.constants.Constants.DEPARTMENT_KIND_LIST;
 
 /**
  *
@@ -47,7 +47,7 @@ public class DepartmentKindController {
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
             return CommonUtil.errorJson(ErrorEnum.E_613);
 
-        if (!DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
+        if (!Constants.DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
 
         departmentKindService.save(departmentKind);
@@ -71,7 +71,7 @@ public class DepartmentKindController {
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
             return CommonUtil.errorJson(ErrorEnum.E_613);
 
-        if (!DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
+        if (!Constants.DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
 
         departmentKindService.update(departmentKind);
