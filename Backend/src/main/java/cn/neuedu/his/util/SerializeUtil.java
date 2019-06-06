@@ -56,6 +56,7 @@ public class SerializeUtil {
         return null;
     }
 
+
     /**	 * 序列化 list 集合
      * * @param list
      * * @return

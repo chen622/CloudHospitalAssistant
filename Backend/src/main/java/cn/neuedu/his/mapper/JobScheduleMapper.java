@@ -15,5 +15,5 @@ public interface JobScheduleMapper extends MyMapper<JobSchedule> {
     void updateHaveRegistrationAmountReduce(Integer id);
     void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
-    HashMap<String ,Integer> getRegistrationInof(Date time, Integer doctorId);
+     Integer getRegistrationInof(Date time, Integer doctorId);
 }

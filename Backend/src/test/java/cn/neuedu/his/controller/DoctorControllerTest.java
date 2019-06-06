@@ -4,6 +4,7 @@ import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.MedicalRecordService;
 import cn.neuedu.his.service.MedicalRecordTemplateService;
 import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import com.alibaba.fastjson.JSON;
@@ -29,9 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,6 +60,22 @@ public class DoctorControllerTest {
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
+
+
+    @Autowired
+    RedisServiceImpl redisService;
+
+    @Test
+    public void get() throws Exception {
+
+        Map<String, Integer> map=redisService.getMapAll("userType");
+        Set<String> set=map.keySet();
+        for (String  key:set){
+            System.out.println(key+" "+map.get(key));
+        }
+    }
+
+
 
     /**
      * 暂存病历

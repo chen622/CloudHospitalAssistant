@@ -14,5 +14,5 @@ public interface JobScheduleService extends Service<JobSchedule> {
     void reduceRegistrationAmount(Integer id);
     void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
-    HashMap<String ,Integer> getRegistrationInof(Date time, Integer doctorId);
+    Integer getRegistrationInof(Date time, Integer doctorId);
 }

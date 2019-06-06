@@ -205,5 +205,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         return registrationMapper.getAllByDoctor(doctorId, start, end,state);
     }
 
+    @Override
+    public Integer getRegistrationInof(Date time, Integer doctorId) {
+        return registrationMapper.getRegistrationInof(time, doctorId);
+    }
+
 
 }

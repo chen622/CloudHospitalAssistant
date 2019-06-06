@@ -15,13 +15,12 @@ import redis.clients.jedis.exceptions.JedisDataException;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.net.ConnectException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class RedisServiceImpl{
     private static Logger logger = Logger.getLogger(RedisServiceImpl.class);
+
     @Autowired
     private JedisPool jedisPool;    //jedisPool不属于springboot框架支持的redis类,所以需要自行注入到spring中。通过配置类RedisConfig类注入的
 
@@ -39,12 +38,6 @@ public class RedisServiceImpl{
             jedisPool.returnResourceObject(jedis);
     }
 
-    @SuppressWarnings("deprecation")
-    private void returnBrokenResource(Jedis jedis) {
-        if (jedis != null) {
-            jedisPool.returnBrokenResource(jedis);
-        }
-    }
 
     private void set(String key, String value) throws Exception{
         Jedis jedis=null;
@@ -130,6 +123,25 @@ public class RedisServiceImpl{
     }
 
 
+    public   Map<String, Integer> getMapAll(String key ) throws Exception{
+        Map<String, String> result = null;
+        Map<String, Integer> resultMap= new HashMap<>();
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            result = jedis.hgetAll(key);
+            Set<String> keys=result.keySet();
+            for (String  k:keys){
+                resultMap.put(k,Integer.parseInt(result.get(k)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new  Exception();
+        }finally{
+            returnResource(jedis);
+        }
+        return resultMap;
+    }
 
     //实现方法
     /**
@@ -330,5 +342,6 @@ public class RedisServiceImpl{
             returnResource(jedis);
         }
     }
+
 
 }

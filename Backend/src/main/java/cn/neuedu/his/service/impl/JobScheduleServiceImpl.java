@@ -49,10 +49,8 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     }
 
     @Override
-    public HashMap<String, Integer> getRegistrationInof(Date time, Integer doctorId) {
-        HashMap<String ,Integer> map = jobScheduleMapper.getRegistrationInof(time, doctorId);
-        if(map==null)
-            map=new HashMap<>();
-        return map;
+    public Integer getRegistrationInof(Date time, Integer doctorId) {
+        return jobScheduleMapper.getRegistrationInof(time,doctorId);
     }
+
 }

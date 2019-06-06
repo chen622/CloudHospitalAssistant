@@ -34,8 +34,8 @@
      select * from job_schedule where  to_days(date)=to_days(#{date}) and  doctor_id=#{doctorId}
   </select>
 
-  <select id="getRegistrationInof" resultType="java.util.HashMap">
-    select limit_registration_amount,have_registration_amount from job_schedule where  doctor_id=#{doctorId} and TO_DATS(date)=TO_DATS(#{time})
+  <select id="getRegistrationInof" resultType="INTEGER">
+    select limit_registration_amount from job_schedule where  doctor_id=#{doctorId} and TO_DATS(date)=TO_DATS(#{time})
   </select>
 </mapper>
 

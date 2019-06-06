@@ -73,7 +73,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     public JSONObject getRegistrationInof(Date time, Integer doctorId) {
-        return CommonUtil.successJson(scheduleService.getRegistrationInof(time,doctorId));
+        Integer limit=scheduleService.getRegistrationInof(time,doctorId);
+        Integer amount=registrationService.getRegistrationInof(time, doctorId);
+        JSONObject object=new JSONObject();
+        object.put("limitAmount", limit);
+        object.put("actualAmount", amount);
+        return CommonUtil.successJson(object);
     }
 
     /**
