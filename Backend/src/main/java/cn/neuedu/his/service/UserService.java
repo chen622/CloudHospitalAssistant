@@ -33,4 +33,6 @@ public interface UserService extends Service<User> {
 
     List<User> findUser(String name);
 
+    void deleteUser(Integer id) throws Exception;
+
 }

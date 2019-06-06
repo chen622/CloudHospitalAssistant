@@ -120,7 +120,7 @@ public class DepartmentKindControllerTest {
     @Test
     public void getDepartmentKindAndDepartment() throws Exception{
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/department_kind/getDepartmentKindAndDepartment")
+        mockMvc.perform(MockMvcRequestBuilders.get("/department_kind/getClinical")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

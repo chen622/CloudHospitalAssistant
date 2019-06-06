@@ -62,13 +62,11 @@ public class DepartmentController {
         }
         try {
             departmentService.deleteDepartmentInformation(id);
-            return CommonUtil.successJson();
         } catch (RuntimeException e) {
             if (e.getMessage().equals("610"))
                 return CommonUtil.errorJson(ErrorEnum.E_610);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
     @PostMapping("/add")
@@ -84,15 +82,13 @@ public class DepartmentController {
         try {
             Department department = JSONObject.toJavaObject(jsonObject, Department.class);
             departmentService.addDepartment(department);
-            return CommonUtil.successJson();
         } catch (RuntimeException e) {
             if (e.getMessage().equals("611"))
                 return CommonUtil.errorJson(ErrorEnum.E_611);
             else if (e.getMessage().equals("612"))
                 return CommonUtil.errorJson(ErrorEnum.E_612);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
     @PostMapping("/modify")
@@ -106,7 +102,6 @@ public class DepartmentController {
         try {
             Department department = JSONObject.toJavaObject(jsonObject, Department.class);
             departmentService.modifyDepartment(department);
-            return CommonUtil.successJson();
         } catch (Exception e) {
             if (e.getMessage().equals("611"))
                 return CommonUtil.errorJson(ErrorEnum.E_611);
@@ -115,9 +110,8 @@ public class DepartmentController {
             else  if(e.getMessage().equals("802")){
                 return CommonUtil.errorJson(ErrorEnum.E_802);
             }
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
     @GetMapping("/getAllDepartmentKind")

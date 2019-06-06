@@ -155,4 +155,22 @@ public class DepartmentKindController {
         return CommonUtil.successJson(departmentKindService.getKindAndDepartment());
     }
 
+    /**
+     * 获得部门小类及其部门信息
+     * @return
+     */
+    @GetMapping("/getClinical")
+    public JSONObject getClinical(){
+        Map<String ,Integer> map = null;
+        try {
+            map=redisService.getMapAll("departmentType");
+        } catch (Exception e) {
+            throw new RuntimeException("802");
+            //CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+        Integer id = map.get("临床科室");
+
+        return CommonUtil.successJson(departmentKindService.getKindAndDepartmentWithType(id));
+    }
+
 }

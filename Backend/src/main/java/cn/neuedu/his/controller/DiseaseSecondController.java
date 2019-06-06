@@ -128,7 +128,6 @@ public class DiseaseSecondController {
 
         try{
             diseaseSecondService.modifyDiseaseSecond(diseaseSecond);
-            return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("621"))
                 return CommonUtil.errorJson(ErrorEnum.E_621);
@@ -136,9 +135,8 @@ public class DiseaseSecondController {
                 return CommonUtil.errorJson(ErrorEnum.E_622);
             else if (e.getMessage().equals("624"))
                 return CommonUtil.errorJson(ErrorEnum.E_624);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
 }

@@ -75,4 +75,10 @@
     where department_kind.is_delete = 0 and d.is_delete = 0
   </select>
 
+  <select id="getKindAndDepartmentWithType" resultMap="TypeAndDepartment">
+    select *,d.id as department_id,d.is_delete as department_is_delete
+    from department_kind join department d on department_kind.id = d.kind_id
+    where department_kind.is_delete = 0 and d.is_delete = 0 and department_kind.classification_id = #{type}
+  </select>
+
 </mapper>
