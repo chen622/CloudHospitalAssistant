@@ -17,6 +17,11 @@ import redis.clients.jedis.exceptions.JedisException;
 import java.net.ConnectException;
 import java.util.*;
 
+/**
+ * default: DB0: constants
+ * DB1: list
+ * DB2: 暂存
+ */
 @Service
 public class RedisServiceImpl{
     private static Logger logger = Logger.getLogger(RedisServiceImpl.class);
@@ -121,6 +126,55 @@ public class RedisServiceImpl{
         return result;
     }
 
+    /**
+     * 清库
+     * @param DBNumber
+     * @throws Exception
+     */
+    private void clearDB(Integer DBNumber) throws Exception {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            jedis.select(DBNumber);
+            jedis.flushDB();
+        } catch (Exception e) {
+            throw new Exception();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    /**
+     * list的长度
+     * @param key
+     * @return
+     * @throws Exception
+     */
+    private Long listLength(String key){
+        Jedis jedis=null;
+        Long length = 0L;
+        try{
+            jedis = getResource();
+            length = jedis.llen(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            returnResource(jedis);
+        }
+        return length;
+    }
+
+    /**
+     * list是否为空
+     * @param key
+     * @return
+     */
+    private boolean isEmpty(String key) {
+        Long l = listLength(key);
+        if(l.equals(0L))
+            return true;
+        return false;
+    }
 
     public  Map<String, Integer> getMapAll(String key ) throws Exception{
         Map<String, String> result = null;
@@ -128,6 +182,7 @@ public class RedisServiceImpl{
         Jedis jedis=null;
         try{
             jedis = getResource();
+            jedis.select(0);
             result = jedis.hgetAll(key);
             Set<String> keys=result.keySet();
             for (String  k:keys){
@@ -277,6 +332,14 @@ public class RedisServiceImpl{
         }
     }
 
+    /**
+     * 挂号是否为空
+     * @param id
+     * @return
+     */
+    public boolean isRegistrationEmpty(Integer id) {
+        return isEmpty(id.toString() + "-" + registrationKey);
+    }
 
     /**
      * 病历暂存
@@ -308,7 +371,6 @@ public class RedisServiceImpl{
             returnResource(jedis);
         }
     }
-
 
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
         setObjectList(id.toString()+"applications", applications);
@@ -342,6 +404,15 @@ public class RedisServiceImpl{
         }
     }
 
+    /**
+     * 暂存病历清理
+     */
+    public void clearTemporaryMedical() {
+        try {
+            clearDB(2);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
+    }
 }

@@ -443,6 +443,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 Payment p=setPrescriptionPayment(p2, registration.getPatientId(),doctorId);
             }
         }
+
         return CommonUtil.successJson();
     }
 
@@ -957,6 +958,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 registrationTotal=registrationTotal.add(p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
             }
         return  registrationTotal;
+    }
+
+    @Override
+    public void clearTemporaryMedical() {
+        redisService.clearTemporaryMedical();
     }
 
 }

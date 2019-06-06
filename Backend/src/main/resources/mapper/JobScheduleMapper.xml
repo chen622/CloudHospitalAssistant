@@ -32,5 +32,30 @@
   <select id="getByDate" resultMap="BaseResultMap" >
     select * from job_schedule where TO_DAYS(date) = TO_DAYS(#{date})
   </select>
+
+  <resultMap id="scheduleInfo" type="cn.neuedu.his.model.JobSchedule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+    <result column="limit_registration_amount" jdbcType="INTEGER" property="limitRegistrationAmount" />
+    <result column="period" jdbcType="INTEGER" property="period" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="date" jdbcType="DATE" property="date"/>
+    <association property="user" javaType="cn.neuedu.his.model.User" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap"/>
+    <association property="doctor" javaType="cn.neuedu.his.model.Doctor" resultMap="cn.neuedu.his.mapper.DoctorMapper.BaseResultMap"/>
+    <association property="registrationType" javaType="cn.neuedu.his.model.RegistrationType" resultMap="cn.neuedu.his.mapper.RegistrationTypeMapper.BaseResultMap"/>
+  </resultMap>
+
+  <select id="getScheduleByPeriod" resultMap="scheduleInfo">
+    select j.*, d.*, u.*, r.* from job_schedule j join doctor d on doctor_id = d.id
+    join user u on j.doctor_id = u.id
+    join registration_type r on j.registration_type_id = r.id
+    where u.department_id = #{departmentId} and TO_DAYS(date) = TO_DAYS(#{date}) and (period = 302 or period = 303
+    <if test='hour &lt; 12'>
+      or period = 301
+    </if>
+    )
+  </select>
 </mapper>
 

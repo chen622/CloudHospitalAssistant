@@ -16,6 +16,7 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
     <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
   </resultMap>
 
   <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
@@ -30,6 +31,7 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
     <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
       <id column="id" jdbcType="INTEGER" property="id" />
       <result column="title_id" jdbcType="INTEGER" property="titleId" />
@@ -74,6 +76,7 @@
     <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
     <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
     <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectPaymentByInvoiceId" column="{invoiceId = id}"/>
   </resultMap>
 
@@ -106,6 +109,7 @@
     <result column="department_id" jdbcType="INTEGER" property="departmentId" />
     <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
     <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <association property="dept" javaType="cn.neuedu.his.model.Department" column="{id=department_id}" select="getDept"/>
     <association property="type" javaType="String" column="type_id" select="getType"/>
     <association property="title" javaType="String" column="id" select="getTile"/>

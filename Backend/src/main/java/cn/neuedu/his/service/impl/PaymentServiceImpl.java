@@ -56,7 +56,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer createRegistrationPayment(Integer registrationId) throws Exception {
+    public Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException {
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -74,9 +74,9 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         Map<String ,Integer> map;
         try {
-            map=redisService.getMapAll("paymentType");
+            map = redisService.getMapAll("paymentType");
         } catch (Exception e) {
-            throw  new Exception();
+            throw new UnsupportedOperationException("redis");
         }
         payment.setPaymentTypeId(map.get("挂号费"));
         payment.setState(Constants.PRODUCE_PAYMENT);
@@ -93,8 +93,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws RuntimeException
      */
     @Override
-    public void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IndexOutOfBoundsException {
+    public void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException {
         Payment payment = findById(paymentId);
+        if (payment == null)
+            throw new IllegalArgumentException("paymentId");
         payment.setSettlementTypeId(settlementTypeId);
         payment.setState(Constants.HAVE_PAID);
         update(payment);
@@ -162,20 +164,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         Payment originalPayment = findById(paymentId);
         if (originalPayment == null)
             throw new IllegalArgumentException("paymentId");
-        //获取所有payment（包括冲红）
-        ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
-
-        //获取目前患者已检查（挂号）数量，若为0，则表示已退费，抛出异常
-        Integer retreatIndex = 0;
-        for (Payment payment: paymentList) {
-            retreatIndex = retreatIndex + payment.getQuantity();
-        }
-        if (retreatIndex.equals(0))
-            throw new IndexOutOfBoundsException();
 
         //确定是否能退:1.未冻结 2.处于缴费未使用或还未退药状态（状态均指完成缴费）
-        if (originalPayment.getIsFrozen().equals(true) && !canRetreat(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), originalPayment.getState()))
+        if (originalPayment.getIsFrozen().equals(true) && !isAbleToRetreatState(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), originalPayment.getState()))
             throw new UnsupportedOperationException("payment");
+
+        //判断退费数量是否合法
+        if (!isValidQuantity(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), retreatQuantity))
+            throw new IndexOutOfBoundsException();
 
         //填入新的信息
         Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId);
@@ -203,23 +199,18 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         Payment originalPayment = findById(paymentId);
         if(originalPayment == null)
             throw new IllegalArgumentException("paymentId");
+
         //如果不是药物，则抛出异常
         Integer totalTypeId = paymentTypeService.getTotalPaymentType(originalPayment.getPaymentTypeId());
-        if (!totalTypeId.equals(DRUG_PAYMENT_TYPE ))
+        if (!totalTypeId.equals(Constants.DRUG_PAYMENT_TYPE ))
             throw new UnsupportedOperationException("paymentType");
-        //获取所有payment（包括冲红）
-        ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
 
-        //获取目前患者手中药物数量
-        Integer retreatIndex = 0;
-        for (Payment payment: paymentList) {
-            retreatIndex = retreatIndex + payment.getQuantity();
-        }
-        if (retreatQuantity > retreatIndex)
+        //判断数量是否溢出
+        if (isValidQuantity(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), retreatQuantity))
             throw new IndexOutOfBoundsException();
 
         //确定是否能退:1.未冻结 2.处于取完药状态
-        if (originalPayment.getIsFrozen().equals(true) || !originalPayment.getState().equals(HAVE_COMPLETED_PAID))
+        if (originalPayment.getIsFrozen().equals(true) || !originalPayment.getState().equals(Constants.HAVE_COMPLETED_PAID))
             throw new UnsupportedOperationException("paymentState");
 
         //填入新的信息
@@ -251,6 +242,45 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     /**
+     * 判断该payment是否可退
+     * @param itemId
+     * @param paymentType
+     * @param state
+     * @return
+     */
+    private boolean isAbleToRetreatState(Integer itemId, Integer paymentType, Integer state) {
+        if (paymentTypeService.getTotalPaymentType(paymentType).equals(REGISTRATION_PAYMENT_TYPE)) {
+            if (registrationService.getRegistrationState(itemId).equals(Constants.WAITING_FOR_TREATMENT))
+                return true;
+        }else {
+            if (state.equals(Constants.HAVE_PAID))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * 确定数量是否合法
+     * @param itemId
+     * @param paymentType
+     * @return
+     */
+    private boolean isValidQuantity(Integer itemId, Integer paymentType, Integer retreatQuantity) {
+        //获取所有payment（包括冲红）
+        ArrayList<Payment> paymentList = paymentMapper.selectAllByItemIdAndPaymentTypeId(itemId, paymentType);
+
+        //获取目前患者已检查（挂号）数量，若为0，则表示已退费，抛出异常
+        Integer retreatIndex = 0;
+        for (Payment payment: paymentList) {
+            retreatIndex = retreatIndex + payment.getQuantity();
+        }
+        if (retreatIndex < retreatQuantity)
+            return false;
+
+        return true;
+    }
+
+    /**
      * 生成新的退药缴费单
      * @param originalPayment
      * @param retreatQuantity
@@ -275,52 +305,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     }
 
-    /**
-     * 判断该payment是否可退
-     * @param itemId
-     * @param paymentType
-     * @param state
-     * @return
-     */
-    private boolean canRetreat(Integer itemId, Integer paymentType, Integer state) {
-        if (paymentTypeService.getTotalPaymentType(paymentType).equals(REGISTRATION_PAYMENT_TYPE)) {
-            if (registrationService.getRegistrationState(itemId).equals(Constants.WAITING_FOR_TREATMENT))
-                return true;
-        }else {
-            if (state.equals(Constants.HAVE_PAID))
-                return true;
-        }
-        return false;
-    }
 
-
-
-
-
-
-    /**
-     * 通过处方创建缴费单
-     * @param prescription
-     * @return
-     */
-    @Override
-    public Integer createDrugPayment(Prescription prescription) {
-        Payment payment = new Payment();
-        payment.setState(PRODUCE_PAYMENT);
-        Registration registration = registrationService.findById(medicalRecordService.findById(prescription.getId()).getRegistrationId());
-        payment.setOperatorId(registration.getDoctorId());
-        payment.setPatientId(registration.getPatientId());
-        payment.setCreateTime(new Date(System.currentTimeMillis()));
-        payment.setItemId(prescription.getId());
-        payment.setPaymentTypeId(DRUG_PAYMENT_TYPE);
-        Drug drug = drugService.findById(prescription.getDrugId());
-        payment.setPaymentTypeId(drug.getDrugType());
-        payment.setUnitPrice(drug.getPrice());
-        payment.setQuantity(prescription.getAmount());
-
-        save(payment);
-        return payment.getId();
-    }
 
 
 

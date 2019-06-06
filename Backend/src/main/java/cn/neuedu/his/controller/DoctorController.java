@@ -407,6 +407,14 @@ public class DoctorController {
         } catch (NumberFormatException n) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         }
+
+        //删除暂存病历
+//        try {
+//            redisService.deleteTemporaryMR(registrationID);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_803);
+//        }
+
         MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecordId").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
         ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
