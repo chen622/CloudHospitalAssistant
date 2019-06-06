@@ -174,7 +174,7 @@ public class DepartmentController {
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         } catch (Exception e) {
-            CommonUtil.errorJson(ErrorEnum.E_802);
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -201,7 +201,7 @@ public class DepartmentController {
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         } catch (Exception e) {
-            CommonUtil.errorJson(ErrorEnum.E_802);
+           return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
