@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
@@ -66,6 +67,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         if (registration.getNeedBook())
             payment.setUnitPrice(payment.getUnitPrice() .add(new BigDecimal(1)));
         payment.setCreateTime(new Date(System.currentTimeMillis()));
+
         payment.setPaymentTypeId(Constants.REGISTRATION_FEE_TYPE);
         payment.setState(Constants.PRODUCE_PAYMENT);
         payment.setDoctorId(registration.getDoctorId());

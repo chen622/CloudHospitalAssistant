@@ -29,7 +29,7 @@ public interface DepartmentService extends Service<Department> {
     void modifyDepartment(Department department) throws Exception;
 
     List<Department> getDepartmentListByName(String name);
-
+    public List<Department> getAllDepartmentInformation();
 
     JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException;
 
