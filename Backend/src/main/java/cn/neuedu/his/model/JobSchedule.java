@@ -12,9 +12,6 @@ public class JobSchedule {
     @Column(name = "doctor_id")
     private Integer doctorId;
 
-    @Column(name = "current_registration_amount")
-    private Integer currentRegistrationAmount;
-
     @Column(name = "registration_type_id")
     private Integer registrationTypeId;
 
@@ -24,13 +21,13 @@ public class JobSchedule {
     @Column(name = "limit_registration_amount")
     private Integer limitRegistrationAmount;
 
-    @Column(name = "have_registration_amount")
-    private Integer haveRegistrationAmount;
-
     /**
      * 午别，参照常量表
      */
     private Integer period;
+
+    @Column(name = "create_time")
+    private Date createTime = new Date(System.currentTimeMillis());
 
     private Date date;
 
@@ -60,20 +57,6 @@ public class JobSchedule {
      */
     public void setDoctorId(Integer doctorId) {
         this.doctorId = doctorId;
-    }
-
-    /**
-     * @return current_registration_amount
-     */
-    public Integer getCurrentRegistrationAmount() {
-        return currentRegistrationAmount;
-    }
-
-    /**
-     * @param currentRegistrationAmount
-     */
-    public void setCurrentRegistrationAmount(Integer currentRegistrationAmount) {
-        this.currentRegistrationAmount = currentRegistrationAmount;
     }
 
     /**
@@ -150,11 +133,11 @@ public class JobSchedule {
         this.date = date;
     }
 
-    public Integer getHaveRegistrationAmount() {
-        return haveRegistrationAmount;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setHaveRegistrationAmount(Integer haveRegistrationAmount) {
-        this.haveRegistrationAmount = haveRegistrationAmount;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }

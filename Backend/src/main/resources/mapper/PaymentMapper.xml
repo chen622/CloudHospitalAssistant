@@ -41,7 +41,7 @@
   </select>
 
   <select id="getByAllDoctor" resultMap="BaseResultMap">
-    select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and datediff(create_time, #{startDate}) &gt;= 0 and datediff(create_time, #{endDate}) &lt;= 0
+    select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and create_time <![CDATA[>=]]> #{startDate} and create_time <![CDATA[<=]]> #{endDate}
   </select>
 
 <!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->

@@ -5,6 +5,7 @@ import cn.neuedu.his.util.inter.MyMapper;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -15,5 +16,7 @@ public interface JobScheduleMapper extends MyMapper<JobSchedule> {
     void updateHaveRegistrationAmountReduce(Integer id);
     void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
+    HashMap<String ,Integer> getRegistrationInof(Date time, Integer doctorId);
+    ArrayList<JobSchedule> getByDate(Date date);
      Integer getRegistrationInof(Date time, Integer doctorId);
 }

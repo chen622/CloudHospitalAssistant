@@ -42,6 +42,6 @@
     </select>
 
     <select id="getInvoiceNumberByAllDoctor" resultType="java.lang.Integer">
-        select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and datediff(payment.create_time, #{startDate}) &gt;= 0 and datediff(payment.create_time, #{endDate}) &lt;= 0
+        select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and payment.create_time <![CDATA[>=]]> #{startDate} and payment.create_time <![CDATA[<=]]>#{endDate}
     </select>
 </mapper>

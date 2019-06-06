@@ -4,7 +4,6 @@ import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
-import javafx.util.Pair;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -26,6 +25,7 @@ public interface RegistrationService extends Service<Registration> {
     List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state);
     ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId);
     ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String end, Integer state);
-
+    void setRegistrationSequence();
     Integer getRegistrationInof(Date time, Integer doctorId);
+    Integer getRegistrationState(Integer id);
 }

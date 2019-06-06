@@ -257,8 +257,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Transactional
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses,Integer doctorId) throws Exception {
         JobSchedule schedule=scheduleService.getByDoctorId(doctorId, new Date(System.currentTimeMillis()));
-        if (schedule.getHaveRegistrationAmount()+1>schedule.getLimitRegistrationAmount())
-            return CommonUtil.errorJson(ErrorEnum.E_708.addErrorParamName(schedule.getLimitRegistrationAmount().toString()));
 
 
         Registration registration = registrationService.findById(registrationID);
@@ -283,7 +281,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         medicalRecord.setId(null);
         medicalRecordService.save(medicalRecord);
         ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecord.getId(),false,false);
-        schedule.setHaveRegistrationAmount(schedule.getHaveRegistrationAmount()+1);
         scheduleService.update(schedule);
         return CommonUtil.successJson();
     }

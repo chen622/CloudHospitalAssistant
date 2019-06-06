@@ -20,4 +20,5 @@ public interface RegistrationMapper extends MyMapper<Registration> {
      ArrayList<Registration> getAllRegistrationWaitingByPatientId(@Param("patientId") Integer patientId, @Param("state1") Integer state1, @Param("state2") Integer state2);
      ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String end, Integer state);
      Integer getRegistrationInof(Date time, Integer doctorId);
+     Integer getRegistrationState(Integer id);
 }
