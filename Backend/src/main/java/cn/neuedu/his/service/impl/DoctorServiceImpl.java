@@ -443,6 +443,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 Payment p=setPrescriptionPayment(p2, registration.getPatientId(),doctorId);
             }
         }
+
         return CommonUtil.successJson();
     }
 

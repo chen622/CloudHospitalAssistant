@@ -40,6 +40,8 @@ public class User {
     @Column(name = "identify_id")
     private String identifyId;
 
+    private String avatar;
+
     private Doctor doctor;
 
     private ArrayList<Invoice> invoiceList;
@@ -53,6 +55,15 @@ public class User {
     private Department dept;
     //医生职称
     private String title;
+
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
 
     public Boolean getDelete() {
         return isDelete;
