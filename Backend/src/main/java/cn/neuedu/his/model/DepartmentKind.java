@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "department_kind")
 public class DepartmentKind {
@@ -21,6 +22,24 @@ public class DepartmentKind {
 
     @Column(name = "is_delete")
     private Boolean isDelete;
+
+    private List<Department> departments;
+
+    public Boolean getDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
+    }
+
+    public List<Department> getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
+    }
 
     public Boolean getIsDelete() {
         return isDelete;
