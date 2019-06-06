@@ -1,8 +1,11 @@
 package cn.neuedu.his.util;
 
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.constants.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -11,7 +14,10 @@ import static cn.neuedu.his.util.constants.Constants.*;
 /**
  * 权限校验类
  */
+@Component
 public class PermissionCheck {
+    @Autowired
+    public static RedisServiceImpl redisService;
     /**
      * 通用的权限校验接口，所有类别都可通过
      *
@@ -30,10 +36,12 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByPaymentAdmin(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer getIdByPaymentAdmin(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.UserType.REGISTRATION_CLERK.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+
+        if (typeId.equals(map.get("挂号收费员"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -47,10 +55,12 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByAdminProducePayment(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer getIdByAdminProducePayment(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.UserType.REGISTRATION_CLERK.getId()) || typeId.equals(Constants.UserType.PHARMACY_OPERATOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+
+        if (typeId.equals(map.get("挂号收费员")) || typeId.equals(map.get("药房操作员"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -64,10 +74,11 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer isOutpatientDoctor(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("门诊医生"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("is not Outpatient Doctor ");
@@ -81,10 +92,11 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer isHosptialAdim(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(UserType.HOSPITAL_ADMINISTRATOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("医院管理员"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -97,10 +109,11 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isTechnicalDoctor(Authentication authentication) throws AuthenticationServiceException{
+    public static Integer isTechnicalDoctor(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(Constants.UserType.TECHNICAL_DOCTOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("医技医生"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -129,10 +142,11 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByDrugAdmin(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer getIdByDrugAdmin(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(UserType.PHARMACY_OPERATOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("药房操作员"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");
@@ -146,10 +160,11 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isFinancialOfficer(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer isFinancialOfficer(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        if (typeId.equals(UserType.FINANCIAL_MANAGER.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("财务管理员"))) {
             return (Integer) data.get("id");
         } else {
             throw new AuthenticationServiceException("");

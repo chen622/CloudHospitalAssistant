@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.PaymentTypeService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -11,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import static cn.neuedu.his.util.constants.Constants.PAYMENT_TYPE_LIST;
+import java.util.Map;
+
 
 /**
  *
@@ -23,9 +25,11 @@ public class PaymentTypeController {
 
     @Autowired
     PaymentTypeService paymentTypeService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @PostMapping("/insertPaymentType")
-    public JSONObject insertPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject insertPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
 
         //检查权限
         try{
@@ -36,8 +40,9 @@ public class PaymentTypeController {
 
         PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
 
+        Map<String ,Integer> payment=redisService.getMapAll("paymentType");
         //判断类型是否正确
-        if(PAYMENT_TYPE_LIST.contains(paymentType.getType()))
+        if(payment.containsValue(paymentType.getType()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
 
         try{

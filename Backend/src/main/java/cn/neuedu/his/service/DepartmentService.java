@@ -28,7 +28,7 @@ public interface DepartmentService extends Service<Department> {
 
     void addDepartment(Department department);
 
-    void modifyDepartment(Department department) throws RuntimeException;
+    void modifyDepartment(Department department) throws Exception;
 
     List<Department> getDepartmentListByName(String name);
 

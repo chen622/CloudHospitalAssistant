@@ -50,6 +50,8 @@ public class ConstantVariableController {
                 return CommonUtil.errorJson(ErrorEnum.E_629);
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
@@ -64,6 +66,8 @@ public class ConstantVariableController {
                 return CommonUtil.errorJson(ErrorEnum.E_629);
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
@@ -79,6 +83,8 @@ public class ConstantVariableController {
                 return CommonUtil.errorJson(ErrorEnum.E_629);
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 }

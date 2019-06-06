@@ -5,6 +5,7 @@ import cn.neuedu.his.model.Department;
 import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.service.DepartmentService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -34,6 +36,8 @@ public class DepartmentController {
     DepartmentKindService departmentKindService;
     @Autowired
     ConstantVariableService constantVariableService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     /**
      * 获得部门的详细信息
@@ -95,23 +99,24 @@ public class DepartmentController {
 
     @PostMapping("/modify")
     public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
-
         //检查权限
         try {
             PermissionCheck.isHosptialAdim(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-
         try {
             Department department = JSONObject.toJavaObject(jsonObject, Department.class);
             departmentService.modifyDepartment(department);
             return CommonUtil.successJson();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             if (e.getMessage().equals("611"))
                 return CommonUtil.errorJson(ErrorEnum.E_611);
             else if (e.getMessage().equals("612"))
                 return CommonUtil.errorJson(ErrorEnum.E_612);
+            else  if(e.getMessage().equals("802")){
+                return CommonUtil.errorJson(ErrorEnum.E_802);
+            }
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
         }
@@ -170,12 +175,17 @@ public class DepartmentController {
             PermissionCheck.isFinancialOfficer(authentication);
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        } catch (Exception e) {
+            CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
-            return CommonUtil.successJson(departmentService.workCalculate(Constants.CLINICAL_DEPARTMENTS, jsonObject.getDate("start"), jsonObject.getDate("end")));
+            Map<String ,Integer> map = redisService.getMapAll("departmentType");
+            return CommonUtil.successJson(departmentService.workCalculate(map.get("临床科室"), jsonObject.getDate("start"), jsonObject.getDate("end")));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
@@ -192,12 +202,17 @@ public class DepartmentController {
             PermissionCheck.isFinancialOfficer(authentication);
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        } catch (Exception e) {
+            CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
-            return CommonUtil.successJson(departmentService.workCalculate(Constants.TECHNICAL_DEPARTMENTS, jsonObject.getDate("start"), jsonObject.getDate("end")));
+            Map<String ,Integer> map = redisService.getMapAll("departmentType");
+            return CommonUtil.successJson(departmentService.workCalculate(map.get("医技科室"), jsonObject.getDate("start"), jsonObject.getDate("end")));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        } catch (Exception e) {
+            return  CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 

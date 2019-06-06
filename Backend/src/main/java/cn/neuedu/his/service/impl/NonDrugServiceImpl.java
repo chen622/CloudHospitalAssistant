@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static cn.neuedu.his.util.constants.Constants.NONDRUG_TYPE_LIST;
 
 /**
  *
@@ -24,6 +24,8 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
 
     @Autowired
     private NonDrugMapper nonDrugMapper;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @Override
     public NonDrug selectNonDrugByName(String name) {
@@ -51,9 +53,10 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
     }
 
     @Override
-    public void insertNonDrug(NonDrug nonDrug){
+    public void insertNonDrug(NonDrug nonDrug) throws Exception {
+        Map<String ,Integer> payment=redisService.getMapAll("paymentType");
         //检查费药品类型是否存在
-        if (NONDRUG_TYPE_LIST.contains(nonDrug.getFeeTypeId()))
+        if (payment.containsValue(nonDrug.getFeeTypeId()))
             throw new RuntimeException("608");
         //检查执行部门是否存在
         Integer excutiveDepartmentId = nonDrug.getExecutiveDepartment();

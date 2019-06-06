@@ -17,7 +17,7 @@ public interface NonDrugService extends Service<NonDrug> {
     List<NonDrug> findByName (String name);
     JSONObject getAll ();
 
-    void insertNonDrug(NonDrug nonDrug);
+    void insertNonDrug(NonDrug nonDrug) throws Exception;
 
     NonDrug selectNonDrugUsingName(String name);
 

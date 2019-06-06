@@ -36,6 +36,8 @@ public class PaymentController {
             PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -62,6 +64,8 @@ public class PaymentController {
             tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         JSONObject result;
@@ -87,6 +91,8 @@ public class PaymentController {
             tollKeeper = PermissionCheck.getIdByAdminProducePayment(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -119,6 +125,8 @@ public class PaymentController {
             tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {

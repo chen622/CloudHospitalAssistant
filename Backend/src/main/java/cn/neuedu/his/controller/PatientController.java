@@ -50,6 +50,8 @@ public class PatientController {
             PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         JSONObject result = new JSONObject();
@@ -81,6 +83,8 @@ public class PatientController {
             PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         Patient patient;
@@ -105,6 +109,8 @@ public class PatientController {
             PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         Patient patient;
@@ -129,6 +135,8 @@ public class PatientController {
             PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         Patient patient;

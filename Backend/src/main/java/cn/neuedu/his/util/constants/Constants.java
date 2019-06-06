@@ -1,6 +1,7 @@
 package cn.neuedu.his.util.constants;
 
 import cn.neuedu.his.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -26,50 +27,48 @@ public class Constants {
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
     //所有人员类型
-    public static final List<Integer> USER_TYPE_LIST = Arrays.asList(601, 602, 603, 604, 605, 606);
-    //所有医生类型
-    public static final List<Integer> DOCTOR_TYPE_LIST = Arrays.asList(602, 603);
+//    public static final List<Integer> USER_TYPE_LIST = Arrays.asList(601, 602, 603, 604, 605, 606);
+
+//    所有医生类型
+//    public static final List<Integer> DOCTOR_TYPE_LIST = Arrays.asList(602, 603);
     //所有医生职称
-    public static final List<Integer> DOCTOR_TITLE_TYPE_LIST = Arrays.asList(701, 702, 703, 704);
+//    public static final List<Integer> DOCTOR_TITLE_TYPE_LIST = Arrays.asList(701, 702, 703, 704);
     //所有结算类别
-    public static final List<Integer> PAYMENT_TYPE_LIST = Arrays.asList(201, 202, 203);
+//    public static final List<Integer> PAYMENT_TYPE_LIST = Arrays.asList(201, 202, 203);
     //所有非药品类别
-    public static final List<Integer> NONDRUG_TYPE_LIST = Arrays.asList(1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323, 1324, 1325, 1326);
+//    public static final List<Integer> NONDRUG_TYPE_LIST = Arrays.asList(1301, 1302, 1303, 1304, 1305, 1306, 1307, 1308, 1309, 1310, 1311, 1312, 1313, 1314, 1315, 1316, 1317, 1318, 1319, 1320, 1321, 1322, 1323, 1324, 1325, 1326);
     //所有部门分类
-    public static final List<Integer> DEPARTMENT_KIND_LIST = Arrays.asList(101, 102, 103, 104);
+//    public static final List<Integer> DEPARTMENT_KIND_LIST = Arrays.asList(101, 102, 103, 104);
     //所有午别分类
-    public static final List<Integer> Period_LIST = Arrays.asList(301, 302, 303);
+//    public static final List<Integer> Period_LIST = Arrays.asList(301, 302, 303);
     //所有药品类型
-    public static final List<Integer> DRUG_TYPE_LIST = Arrays.asList(1101, 1102, 1103);
-    //最大剂型
-    public static final Integer LARGEST_FORMULATION = 1440;
-    //最小剂型
-    public static final Integer LEAST_FORMULATION = 1401;
+//    public static final List<Integer> DRUG_TYPE_LIST = Arrays.asList(1101, 1102, 1103);
 
-    //临床科室
-    public static final Integer CLINICAL_DEPARTMENTS = 101;
-    //医技科室
-    public static final Integer TECHNICAL_DEPARTMENTS = 102;
 
-    public enum Period {
-        MORNING(301),
-        AFTERNOON(302),
-        ALLDAY(303);
+//    //临床科室
+//    public static final Integer CLINICAL_DEPARTMENTS = 101;
+//    //医技科室
+//    public static final Integer TECHNICAL_DEPARTMENTS = 102;
 
-        int id;
-
-        Period(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
+//    public enum Period {
+//        MORNING(301),
+//        AFTERNOON(302),
+//        ALLDAY(303);
+//
+//        int id;
+//
+//        Period(int id) {
+//            this.id = id;
+//        }
+//
+//        public int getId() {
+//            return id;
+//        }
+//
+//        public void setId(int id) {
+//            this.id = id;
+//        }
+//    }
 
     public enum Usage {
         //静脉滴注
@@ -108,41 +107,41 @@ public class Constants {
     public static final Integer PERSONALLEVEL = 503;
 
 
-    public static final Integer USERTYPE = 6;
-    public enum UserType {
-        REGISTRATION_CLERK(601),
-        OUT_PATIENT_DOCTOR(602),
-        TECHNICAL_DOCTOR(603),
-        PHARMACY_OPERATOR(604),
-        FINANCIAL_MANAGER(605),
-        HOSPITAL_ADMINISTRATOR(606);
+//    public static final Integer USERTYPE = 6;
+//    public enum UserType {
+//        REGISTRATION_CLERK(601),
+//        OUT_PATIENT_DOCTOR(602),
+//        TECHNICAL_DOCTOR(603),
+//        PHARMACY_OPERATOR(604),
+//        FINANCIAL_MANAGER(605),
+//        HOSPITAL_ADMINISTRATOR(606);
+//
+//        private int id;
+//
+//        UserType(int id) {
+//            this.id = id;
+//        }
+//
+//        public int getId() {
+//            return id;
+//        }
+//
+//        public void setId(int id) {
+//            this.id = id;
+//        }
+//    }
 
-        private int id;
 
-        UserType(int id) {
-            this.id = id;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-    }
-
-
-    //职称
-    public static final Integer TITLE = 7;
-    //主任医师
-    public static final Integer CHIEF_DOCTOR = 701;
-    //副主任医师
-    public static final Integer DEPUTY_CHIEF_DOCTOR = 702;
-    //主治医师
-    public static final Integer ATTENDING_DOCTOR = 703;
-    //住院医师
-    public static final Integer RESIDENT = 704;
+//    //职称
+//    public static final Integer TITLE = 7;
+//    //主任医师
+//    public static final Integer CHIEF_DOCTOR = 701;
+//    //副主任医师
+//    public static final Integer DEPUTY_CHIEF_DOCTOR = 702;
+//    //主治医师
+//    public static final Integer ATTENDING_DOCTOR = 703;
+//    //住院医师
+//    public static final Integer RESIDENT = 704;
 
 
     //看诊状态

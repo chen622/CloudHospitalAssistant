@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static cn.neuedu.his.util.constants.Constants.DRUG_TYPE_LIST;
 
 /**
  *
@@ -40,6 +39,8 @@ public class DrugController {
             drugAdmin = PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -66,6 +67,8 @@ public class DrugController {
             drugAdmin = PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -131,6 +134,8 @@ public class DrugController {
                 return CommonUtil.errorJson(ErrorEnum.E_631);
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
@@ -158,6 +163,8 @@ public class DrugController {
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
 
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
     }

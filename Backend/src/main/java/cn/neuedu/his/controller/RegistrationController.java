@@ -41,11 +41,13 @@ public class RegistrationController {
     @PostMapping("/registration")
     public JSONObject registration(@RequestBody JSONObject jsonObject, Authentication authentication) {
         //获取挂号收费员id
-        Integer registrarId;
+        Integer registrarId = null;
         try {
             registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -67,11 +69,13 @@ public class RegistrationController {
      */
     @PostMapping("/retreat/{registrationId}")
     public JSONObject retreatRegistration(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
-        Integer registrarId;
+        Integer registrarId=null;
         try {
             registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {

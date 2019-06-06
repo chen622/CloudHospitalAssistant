@@ -6,6 +6,7 @@ import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.UserService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -17,7 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.Inet4Address;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,17 +63,20 @@ public class UserController {
     DepartmentService departmentService;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @GetMapping("/function")
-    public JSONObject login(Authentication authentication) {
+    public JSONObject login(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         JSONArray urls = new JSONArray();
-        if (typeId.equals(Constants.UserType.HOSPITAL_ADMINISTRATOR.getId())) {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        if (typeId.equals(map.get("医院管理员"))) {
             urls.add(new url("账户管理", "/admin/user", "admin"));
             urls.add(new url("排班管理", "/admin/rule", "rule"));
             urls.add(new url("医疗信息管理", "/admin/other", "other"));
-        }else if (typeId.equals(Constants.UserType.OUT_PATIENT_DOCTOR.getId())){
+        }else if (typeId.equals(map.get("门诊医生"))){
             urls.add(new url("看诊","/doctor/index","doctor"));
         }
         return CommonUtil.successJson(urls);
@@ -83,7 +89,7 @@ public class UserController {
      * @return 是否成功
      */
     @PostMapping("/register")
-    public JSONObject register(@RequestBody JSONObject jsonObject) {
+    public JSONObject register(@RequestBody JSONObject jsonObject) throws Exception {
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
 
@@ -106,15 +112,20 @@ public class UserController {
         }
 
         Integer typeId = user.getTypeId();
+
+        Map<String ,Integer> map=redisService.getMapAll("userType");
+
         //判断输入type_id是否正确
-        if (!Constants.USER_TYPE_LIST.contains(typeId))
+        if (!map.containsValue(typeId))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
         //储存user数据
         userService.save(user);
 
+        Map<String , Integer> map2=redisService.getMapAll("doctor");
+
         //类别属于医生
-        if (Constants.DOCTOR_TYPE_LIST.contains(typeId)) {
+        if (map2.containsValue(typeId)) {
             //取得当前user的id
             Integer id = userService.getUserByUsername(user.getUsername()).getId();
 
@@ -122,7 +133,8 @@ public class UserController {
             Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
             //判断医生职称类型是否正确
 
-            if (!Constants.DOCTOR_TITLE_TYPE_LIST.contains(doctor.getTitleId())) {
+            Map<String ,Integer> title=redisService.getMapAll("title");
+            if (!title.containsValue(doctor.getTitleId())) {
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
             }
 
@@ -142,7 +154,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/delete/{id}")
-    public JSONObject deleteUserInformation(@PathVariable("id") Integer id, Authentication authentication) {
+    public JSONObject deleteUserInformation(@PathVariable("id") Integer id, Authentication authentication) throws Exception {
 
         //检查权限
         try {
@@ -158,8 +170,10 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
+        Map<String ,Integer> map=redisService.getMapAll("doctor");
+
         //判断是否要先将doctor表中的数据删除
-        if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId()) == true) {
+        if (map.containsValue(user.getTypeId()) == true) {
             Doctor doctor = doctorService.findById(id);
             doctor.setDelete(true);
             doctorService.update(doctor);
@@ -180,7 +194,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/modify")
-    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication) {
+    public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
 
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
@@ -204,7 +218,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/adminModify")
-    public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) {
+    public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) throws Exception {
 
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -224,13 +238,22 @@ public class UserController {
      * @param jsonObject
      * @return
      */
-    private JSONObject updateMessage(User user, JSONObject jsonObject) {
+    private JSONObject updateMessage(User user, JSONObject jsonObject) throws Exception {
         //判断用户名是否重复
         if (userService.getUserByUsername(user.getUsername()) == null)
             return CommonUtil.errorJson(ErrorEnum.E_600);
 
+        Map<String ,Integer> map = null;
+        try {
+            map=redisService.getMapAll("userType");
+        } catch (Exception e) {
+            e.printStackTrace();
+            CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+        if(map==null)
+            return   CommonUtil.errorJson(ErrorEnum.E_802);
         //判断type_id是否正确
-        if (!Constants.USER_TYPE_LIST.contains(user.getTypeId()))
+        if (!map.containsValue(user.getTypeId()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
         //判断user的身份证号是否正确
@@ -243,12 +266,15 @@ public class UserController {
 
         user = userService.getUserByUsername(user.getUsername());
 
+        Map<String ,Integer> map2=redisService.getMapAll("doctor");
+
         //修改医生信息
-        if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId())) {
+        if (map2.containsValue(user.getTypeId())) {
             Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
 
+            Map<String ,Integer> title=redisService.getMapAll("title");
             //判断医生职称是否正确
-            if (!Constants.DOCTOR_TITLE_TYPE_LIST.contains(doctor.getTitleId())) {
+            if (!title.containsValue(doctor.getTitleId())) {
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
             }
             doctor.setId(user.getId());
@@ -266,7 +292,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/selectUser/{username}")
-    public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication) {
+    public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication) throws Exception {
 
         //是否是个人账号
         try {
@@ -280,7 +306,9 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId()))
+        Map<String ,Integer> map=redisService.getMapAll("doctor");
+
+        if (map.containsValue(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);
@@ -295,7 +323,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/adminSelectUser/{username}")
-    public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication) {
+    public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication) throws Exception {
 
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -307,7 +335,8 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        if (Constants.DOCTOR_TYPE_LIST.contains(user.getTypeId()))
+        Map<String ,Integer> map=redisService.getMapAll("doctor");
+        if (map.containsValue(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);

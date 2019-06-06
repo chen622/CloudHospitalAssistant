@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Date;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,6 +37,7 @@ public class DepartmentKindControllerTest {
 
     @Before
     public void setUp() throws Exception {
+
         String token = Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
                 .setHeaderParam("typ", Constants.TOKEN_TYPE)
@@ -44,7 +46,7 @@ public class DepartmentKindControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", Constants.UserType.HOSPITAL_ADMINISTRATOR.getId())
+                .claim("typeId", 606)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();

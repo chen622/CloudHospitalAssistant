@@ -17,7 +17,7 @@ public interface DrugService extends Service<Drug> {
 
     void deleteDrug(Integer id);
 
-    void modifyDrug(Drug drug);
+    void modifyDrug(Drug drug) throws Exception;
 
-    void insertDrug(Drug drug);
+    void insertDrug(Drug drug) throws Exception;
 }

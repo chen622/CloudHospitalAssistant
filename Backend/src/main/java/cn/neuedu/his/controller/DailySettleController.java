@@ -35,6 +35,8 @@ public class DailySettleController {
             maker = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -53,6 +55,8 @@ public class DailySettleController {
             PermissionCheck.isFinancialOfficer(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         ArrayList<DailySettle> dailySettleList = dailySettleService.getSettleInfo(adminId);
@@ -77,6 +81,8 @@ public class DailySettleController {
             check = PermissionCheck.isFinancialOfficer(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {

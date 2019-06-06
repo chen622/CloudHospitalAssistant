@@ -4,6 +4,7 @@ import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.DepartmentKind;
 import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import static cn.neuedu.his.util.constants.Constants.DEPARTMENT_KIND_LIST;
 
 /**
  *
@@ -30,6 +31,8 @@ public class DepartmentKindController {
     DepartmentKindService departmentKindService;
     @Autowired
     ConstantVariableService constantVariableService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @PostMapping("/add")
     public JSONObject addDepartmentKind(@RequestBody JSONObject jsonObject, Authentication authentication){
@@ -47,11 +50,15 @@ public class DepartmentKindController {
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
             return CommonUtil.errorJson(ErrorEnum.E_613);
 
-        if (!DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("departmentType");
+            if (!map.containsValue(departmentKind.getClassificationId()))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
 
-        departmentKindService.save(departmentKind);
-
+            departmentKindService.save(departmentKind);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
         return CommonUtil.successJson(departmentKind);
     }
 
@@ -71,8 +78,14 @@ public class DepartmentKindController {
         if (departmentKindService.getDepartmentKindByName(departmentKind.getKindName()) != null)
             return CommonUtil.errorJson(ErrorEnum.E_613);
 
-        if (!DEPARTMENT_KIND_LIST.contains(departmentKind.getClassificationId()))
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("departmentType");
+            if (!map.containsValue(departmentKind.getClassificationId()))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
+
+        } catch (Exception e) {
+           return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
 
         departmentKindService.update(departmentKind);
 

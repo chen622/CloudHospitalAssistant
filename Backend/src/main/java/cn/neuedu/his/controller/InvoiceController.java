@@ -33,6 +33,8 @@ public class InvoiceController {
             PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -72,6 +74,8 @@ public class InvoiceController {
             admin = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {
@@ -96,6 +100,8 @@ public class InvoiceController {
             admin = PermissionCheck.getIdByPaymentAdmin(authentication);
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {

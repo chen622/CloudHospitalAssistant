@@ -36,6 +36,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private InvoiceService invoiceService;
     @Autowired
     private DoctorService doctorService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @Override
     public List<Department> getAllDepartmentInformation() {
@@ -94,15 +96,20 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     }
 
     @Override
-    public void modifyDepartment(Department department) throws RuntimeException {
+    public void modifyDepartment(Department department) throws Exception {
         //检测部门是否存在
         if (this.getDepartmentByName(department.getName()) != null)
             throw new RuntimeException("611");
 
-        //检测部门类型是否存在
-        if (!Constants.DEPARTMENT_KIND_LIST.contains(department.getKindId()))
-            throw new RuntimeException("612");
 
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("departmentType");
+            //检测部门类型是否存在
+            if (!map.containsValue(department.getKindId()))
+                throw new RuntimeException("612");
+        } catch (Exception e) {
+            throw new Exception("802");
+        }
         this.update(department);
     }
 

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import static cn.neuedu.his.util.constants.Constants.NONDRUG_TYPE_LIST;
+
 
 /**
  *
@@ -50,6 +50,9 @@ public class NonDrugController {
                 return CommonUtil.errorJson(ErrorEnum.E_609);
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
     }

@@ -6,12 +6,14 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.DrugService;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
@@ -22,6 +24,8 @@ import static cn.neuedu.his.util.constants.Constants.*;
 @Service
 public class DrugServiceImpl extends AbstractService<Drug> implements DrugService {
 
+    @Autowired
+    RedisServiceImpl redisService;
     @Autowired
     private DrugMapper drugMapper;
     @Autowired
@@ -104,7 +108,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     }
 
     @Override
-    public void modifyDrug(Drug drug) {
+    public void modifyDrug(Drug drug) throws Exception {
         //判断药物是否存在
         if (this.findById(drug.getId()) == null)
             throw new RuntimeException("626");
@@ -113,26 +117,38 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         if (this.getDrugByName(drug.getName()) != null)
             throw new RuntimeException("631");
 
-        //判断药物类别是否正确
-        if (DRUG_TYPE_LIST.contains(drug))
-            throw new RuntimeException("627");
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("drugType");
+            //判断药物类别是否正确
+            if (map.containsValue(drug.getDrugType()))
+                throw new RuntimeException("627");
+        } catch (Exception e) {
+            return;
+        }
 
-        //判断剂型是否正确
-        if (drug.getFormulation()>LARGEST_FORMULATION ||drug.getFormulation()<LEAST_FORMULATION)
-            throw new RuntimeException("628");
 
-        this.update(drug);
+            Map<String ,Integer> map=redisService.getMapAll("title");
+            //判断剂型是否正确
+            if (!map.containsValue(drug.getFormulation()))
+                throw new RuntimeException("628");
+
+            this.update(drug);
+
+
+
     }
 
     @Override
-    public void insertDrug(Drug drug) {
+    public void insertDrug(Drug drug) throws Exception {
         //判断药品名是否重复
         if (this.getDrugByName(drug.getName()) != null)
             throw new RuntimeException("631");
 
-        //判断药物类别是否正确
-        if (DRUG_TYPE_LIST.contains(drug))
-            throw new RuntimeException("627");
+            Map<String ,Integer> map=redisService.getMapAll("drugType");
+            //判断药物类别是否正确
+            if (map.containsValue(drug.getDrugType()))
+                throw new RuntimeException("627");
+
 
         //判断剂型是否正确
         if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
