@@ -81,11 +81,11 @@ public class UserControllerTest {
     public void insertProperNormalUserInformation() throws Exception {
         //json数据
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", "ys");
-        jsonObject.put("realName", "tys");
+        jsonObject.put("userName", "ccm3");
+        jsonObject.put("realName", "ccm");
         jsonObject.put("password", "123456");
         jsonObject.put("createTime", new Date(System.currentTimeMillis()));
-        jsonObject.put("typeId", 601);
+        jsonObject.put("typeId", 603);
         jsonObject.put("departmentId", 1);
         jsonObject.put("identifyId", "211002199709251979");
         jsonObject.put("titleId", 701);
@@ -323,7 +323,7 @@ public class UserControllerTest {
     @Test
     public void findAll() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/findAll")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/findUser/ccm")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

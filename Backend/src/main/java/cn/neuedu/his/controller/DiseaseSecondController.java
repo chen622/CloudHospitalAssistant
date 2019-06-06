@@ -76,8 +76,8 @@ public class DiseaseSecondController {
         }
     }
 
-    @PostMapping("/select/{name}")
-    public JSONObject selectDiseaseSecond(@PathVariable("name") String name, Authentication authentication){
+    @GetMapping("/selectByName/{name}")
+    public JSONObject selectDiseaseSecondByName(@PathVariable("name") String name, Authentication authentication){
 
         //检查权限
         try{
@@ -87,7 +87,26 @@ public class DiseaseSecondController {
         }
 
         try{
-            List<DiseaseSecond> diseaseSeconds = diseaseSecondService.selectDiseaseSecond(name);
+            List<DiseaseSecond> diseaseSeconds = diseaseSecondService.findByName(name);
+            return CommonUtil.successJson(diseaseSeconds);
+
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
+
+    @GetMapping("/selectByIcd/{icdId}")
+    public JSONObject selectDiseaseSecondByIcd(@PathVariable("icdId") String icdId, Authentication authentication){
+
+        //检查权限
+        try{
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try{
+            List<DiseaseSecond> diseaseSeconds = diseaseSecondService.findByIcdId(icdId);
             return CommonUtil.successJson(diseaseSeconds);
 
         }catch (Exception e){

@@ -4,6 +4,7 @@ import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.util.inter.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -14,4 +15,6 @@ public interface PatientService extends Service<Patient> {
     Patient findPatientAndNotConsumePayment(Integer patientId);
     Patient findPatientAndNotTakeDrug(Integer patientId);
     Patient findPatientAndDrugDuringDate(Integer patientId, Date startDate, Date endDate) throws IllegalArgumentException;
+
+    List<Patient> getPatientByIdentifyId(Integer id);
 }

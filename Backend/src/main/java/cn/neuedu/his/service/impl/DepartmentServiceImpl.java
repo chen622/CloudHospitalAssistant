@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
+ *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -36,9 +37,11 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private InvoiceService invoiceService;
     @Autowired
     private DoctorService doctorService;
+    @Autowired
+    private DepartmentKindService departmentKindService;
 
     @Override
-    public List<Department> getAllDepartmentInformation() {
+    public List<Department> getAllDepartmentInformation(){
         return departmentMapper.getAllDepartmentInformation();
     }
 
@@ -85,7 +88,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         //return CommonUtil.errorJson(ErrorEnum.E_611);
 
         //检测部门类型是否存在
-        if (this.findById(department.getKindId()) == null)
+        if (departmentKindService.findById(department.getKindId()) == null)
             throw new RuntimeException("612");
         //return CommonUtil.errorJson(ErrorEnum.E_612);
 
@@ -100,8 +103,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             throw new RuntimeException("611");
 
         //检测部门类型是否存在
-        if (!Constants.DEPARTMENT_KIND_LIST.contains(department.getKindId()))
-            throw new RuntimeException("612");
+        if (departmentKindService.findById(department.getKindId()) == null)
+            throw  new RuntimeException("612");
 
         this.update(department);
     }
