@@ -151,7 +151,6 @@ public class Constants {
     public static final Integer RESERVATION = 801;
     // 待诊
     public static final Integer WAITING_FOR_TREATMENT = 802;
-
     //进入诊室
     public static final Integer INSIDE_DOCTOR=809;
     //初诊

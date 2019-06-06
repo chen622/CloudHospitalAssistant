@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Map;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -35,5 +38,15 @@ public class RedisServiceImplTest {
 
     @Test
     public void addRegistrationSequenceList() {
+    }
+
+    @Test
+    public void getMapAll() throws Exception {
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        Set<String> set = map.keySet();
+        for (String key : set) {
+            System.out.println(key + " " + map.get(key));
+
+        }
     }
 }

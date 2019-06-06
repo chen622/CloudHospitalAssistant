@@ -7,22 +7,13 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
-    <result column="current_registration_amount" jdbcType="INTEGER" property="currentRegistrationAmount" />
     <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
     <result column="is_valid" jdbcType="BIT" property="isValid" />
     <result column="limit_registration_amount" jdbcType="INTEGER" property="limitRegistrationAmount" />
     <result column="period" jdbcType="INTEGER" property="period" />
-    <result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="have_registration_amount" jdbcType="INTEGER" property="haveRegistrationAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="date" jdbcType="DATE" property="date"/>
   </resultMap>
-
-  <update id="updateHaveRegistrationAmountAdd" parameterType="Integer">
-    update job_schedule set have_registration_amount=have_registration_amount + 1 where id = #{id}
-  </update>
-
-  <update id="updateHaveRegistrationAmountReduce" parameterType="Integer">
-    update job_schedule set have_registration_amount=have_registration_amount - 1 where id = #{id}
-  </update>
 
   <update id="uodateHaveRegistration">
     <if test="limit_registration_amount>=have_registration_amount+1">
@@ -36,6 +27,10 @@
 
   <select id="getRegistrationInof" resultType="INTEGER">
     select limit_registration_amount from job_schedule where  doctor_id=#{doctorId} and TO_DATS(date)=TO_DATS(#{time})
+  </select>
+
+  <select id="getByDate" resultMap="BaseResultMap" >
+    select * from job_schedule where TO_DAYS(date) = TO_DAYS(#{date})
   </select>
 </mapper>
 
