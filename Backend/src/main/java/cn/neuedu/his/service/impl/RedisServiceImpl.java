@@ -10,7 +10,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisConnectionException;
+import redis.clients.jedis.exceptions.JedisDataException;
+import redis.clients.jedis.exceptions.JedisException;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,32 +46,26 @@ public class RedisServiceImpl{
         }
     }
 
-    private void set(String key, String value) {
+    private void set(String key, String value) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
             jedis.set(key, value);
-            logger.info("Redis set success - " + key + ", value:" + value);
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
-            logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + value);
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
     }
 
-    private String get(String key) {
+    private String get(String key) throws Exception{
         String result = null;
         Jedis jedis=null;
         try{
             jedis = getResource();
             result = jedis.get(key);
-            logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
-            logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
@@ -81,8 +79,6 @@ public class RedisServiceImpl{
             jedis = getResource();
             jedis.set(key.getBytes(), SerializeUtil.serialize(value));
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
             throw new Exception();
         }finally{
             returnResource(jedis);
@@ -97,8 +93,6 @@ public class RedisServiceImpl{
             byte[] data = jedis.get(key.getBytes());
             result = SerializeUtil.unserialize(data);
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
             throw new  Exception();
         }finally{
             returnResource(jedis);
@@ -107,20 +101,19 @@ public class RedisServiceImpl{
         return result;
     }
 
-    private void setObjectList(String key, List<?> list) {
+    private void setObjectList(String key, List<?> list) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
             jedis.set(key.getBytes(), SerializeUtil.serializeList(list));
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
+           throw new Exception();
         }finally{
             returnResource(jedis);
         }
     }
 
-    private List<?> getObjectList(String key) {
+    private List<?> getObjectList(String key) throws Exception{
         List<?> result = null;
         Jedis jedis=null;
         try{
@@ -128,8 +121,7 @@ public class RedisServiceImpl{
             byte[] data = jedis.get(key.getBytes());
             result = SerializeUtil.unserializeList(data);
         } catch (Exception e) {
-            e.printStackTrace();
-            returnBrokenResource(jedis);
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
@@ -147,7 +139,7 @@ public class RedisServiceImpl{
      * @param end
      * @throws IllegalArgumentException
      */
-    private void setNumberList(String key, Integer start, Integer end) throws IllegalArgumentException{
+    private void setNumberList(String key, Integer start, Integer end) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
@@ -156,11 +148,8 @@ public class RedisServiceImpl{
             for (int i = startNum; i <= endNum; i++) {
                 jedis.lpush(key, String.valueOf(i));
             }
-            logger.info("Redis set success - " + key + ", start:" + start + ", end:" + end);
         } catch (Exception e) {
-            logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", start:" + start + ", end:" + end);
-            returnBrokenResource(jedis);
-            throw new IllegalArgumentException();
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
@@ -172,17 +161,14 @@ public class RedisServiceImpl{
      * @return
      * @throws IllegalArgumentException
      */
-    private Integer getNumberFromFront(String key) throws IllegalArgumentException{
-        Integer result = null;
+    private Integer getNumberFromFront(String key) throws Exception{
+        Integer result;
         Jedis jedis=null;
         try{
             jedis = getResource();
             result = Integer.valueOf(jedis.rpop(key));
-            logger.info("Redis get success - " + key + ", value:" + result);
         } catch (Exception e) {
-            logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", value:" + result);
-            returnBrokenResource(jedis);
-            throw new IllegalArgumentException();
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
@@ -190,51 +176,51 @@ public class RedisServiceImpl{
         return result;
     }
 
-    private void addNumberToList(String key, Integer sequence) throws IllegalArgumentException{
+    /**
+     * 加入值到某个list
+     * @param key
+     * @param sequence
+     * @throws JedisConnectionException
+     * @throws IllegalArgumentException
+     */
+    private void addNumberToList(String key, Integer sequence) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
             jedis.lpush(key, String.valueOf(sequence));
-            logger.info("Redis set success - " + key + ", sequence" + sequence);
         } catch (Exception e) {
-            logger.error("Redis set error: "+ e.getMessage() +" - " + key + ", sequence" + sequence);
-            returnBrokenResource(jedis);
-            throw new IllegalArgumentException();
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
     }
 
 
-
-
-
-
-
     /**
      * 设置发票号段
      * @param start
      * @param end
-     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
      */
-    public void setInvoiceSerialsNumberList(Integer start, Integer end) throws IllegalArgumentException{
+    public void setInvoiceSerialsNumberList(Integer start, Integer end) throws UnsupportedOperationException{
         try {
             setNumberList(invoiceKey, start, end);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+        }catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
         }
-
     }
 
     /**
      * 获得发票号段的第一个
      * @return
+     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
      */
-    public Integer getInvoiceSerialsNumberFromFront() {
+    public Integer getInvoiceSerialsNumberFromFront() throws IllegalArgumentException, UnsupportedOperationException{
         try {
             return getNumberFromFront(invoiceKey);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+        }catch (Exception e) {
+            throw new IllegalArgumentException("redis");
         }
     }
 
@@ -244,11 +230,11 @@ public class RedisServiceImpl{
      * @param amount
      * @throws IllegalArgumentException
      */
-    public void setRegistrationSequenceList(Integer id, Integer amount) throws IllegalArgumentException{
+    public void setRegistrationSequenceList(Integer id, Integer amount) throws UnsupportedOperationException{
         try {
-            setNumberList(id.toString() + "-" + registrationKey, 0, amount);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+            setNumberList(id.toString() + "-" + registrationKey, 1, amount);
+        }catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
         }
     }
 
@@ -261,8 +247,8 @@ public class RedisServiceImpl{
     public Integer getRegistrationSequenceFromFront(Integer id) throws IllegalArgumentException{
         try {
             return getNumberFromFront(id.toString() + "-" + registrationKey);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+        }catch (Exception e) {
+            throw new IllegalArgumentException("redis");
         }
     }
 
@@ -270,13 +256,13 @@ public class RedisServiceImpl{
      * 退号时处理顺序号
      * @param id
      * @param sequence
-     * @throws IllegalArgumentException
+     * @throws UnsupportedOperationException
      */
-    public void addRegistrationSequenceList(Integer id, Integer sequence) throws IllegalArgumentException {
+    public void addRegistrationSequenceList(Integer id, Integer sequence) throws UnsupportedOperationException {
         try {
             addNumberToList(id.toString() + "-" + registrationKey, sequence);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException();
+        }catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
         }
     }
 
@@ -328,6 +314,7 @@ public class RedisServiceImpl{
         ArrayList<Prescription> list= (ArrayList<Prescription>) getObjectList(id.toString()+"prescriptions");
         return  list;
     }
+
     public List<InspectionApplication> getTemporaryApplications(Integer id) throws Exception {
         return (ArrayList<InspectionApplication>)getObjectList(id.toString()+"applications");
     }
@@ -338,11 +325,10 @@ public class RedisServiceImpl{
             jedis.del(id.toString()+"applications");
             jedis.del(id.toString()+"prescriptions");
         }catch (Exception e) {
-            returnBrokenResource(jedis);
+            //returnBrokenResource(jedis);
         }finally {
             returnResource(jedis);
         }
-
     }
 
 }

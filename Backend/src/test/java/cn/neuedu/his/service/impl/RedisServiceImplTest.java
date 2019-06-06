@@ -26,7 +26,7 @@ public class RedisServiceImplTest {
 
     @Test
     public void setRegistrationSequenceList() {
-        redisService.setRegistrationSequenceList(1, 3);
+        redisService.setRegistrationSequenceList(2, 5);
     }
 
     @Test

@@ -48,7 +48,7 @@ public class RegistrationControllerTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 2)
+                .claim("id", 8)
                 .claim("typeId", 601)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
@@ -58,10 +58,9 @@ public class RegistrationControllerTest {
     @Test
     public void registration() throws Exception {
         JSONObject param = new JSONObject();
-        param.put("scheduleId", 1);
+        param.put("scheduleId", 2);
         param.put("needBook", 1);
-        param.put("patientId", 1);
-        param.put("settlementType", 202);
+        param.put("patientId", 2);
 
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/registration/registration")
