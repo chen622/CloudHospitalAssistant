@@ -146,4 +146,13 @@ public class DepartmentKindController {
         }
     }
 
+    /**
+     * 获得部门小类及其部门信息
+     * @return
+     */
+    @GetMapping("/getDepartmentKindAndDepartment")
+    public JSONObject getDepartmentKindAndDepartment(){
+        return CommonUtil.successJson(departmentKindService.getKindAndDepartment());
+    }
+
 }

@@ -117,4 +117,17 @@ public class DepartmentKindControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void getDepartmentKindAndDepartment() throws Exception{
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/department_kind/getDepartmentKindAndDepartment")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 }

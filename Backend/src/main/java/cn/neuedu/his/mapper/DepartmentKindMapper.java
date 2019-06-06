@@ -18,5 +18,5 @@ public interface DepartmentKindMapper extends MyMapper<DepartmentKind> {
 
     List<DepartmentKind> getDepartmentKindByClassificationId(Integer id);
 
-
+    List<DepartmentKind> getKindAndDepartment();//获得部门小类及其下属部门信息
 }

@@ -9,7 +9,6 @@ import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
-import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -18,9 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.Inet4Address;
-import java.util.Date;
-import java.util.HashMap;
+import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 
@@ -92,58 +89,24 @@ public class UserController {
     public JSONObject register(@RequestBody JSONObject jsonObject) throws Exception {
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
+        //创立医生对象
+        Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
 
-        //判断身份证信息长度
-        if (user.getIdentifyId().length() != 18) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
-        }
-
-        //创建用户对象
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        //
-        if (userService.getUserByUsername(user.getUsername()) != null)
-            return CommonUtil.errorJson(ErrorEnum.E_600);
-
-        //判断部门是否存在
-        Department department = departmentService.findById(user.getDepartmentId());
-        if (department == null) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门"));
-        }
-
-        Integer typeId = user.getTypeId();
-
-        Map<String ,Integer> map=redisService.getMapAll("userType");
-
-        //判断输入type_id是否正确
-        if (!map.containsValue(typeId))
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
-
-        //储存user数据
-        userService.save(user);
-
-        Map<String , Integer> map2=redisService.getMapAll("doctor");
-
-        //类别属于医生
-        if (map2.containsValue(typeId)) {
-            //取得当前user的id
-            Integer id = userService.getUserByUsername(user.getUsername()).getId();
-
-            //创立医生对象
-            Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
-            //判断医生职称类型是否正确
-
-            Map<String ,Integer> title=redisService.getMapAll("title");
-            if (!title.containsValue(doctor.getTitleId())) {
+        try{
+            userService.insertUser(user,doctor);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("501.1"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+            else if (e.getMessage().equals("600"))
+                return CommonUtil.errorJson(ErrorEnum.E_600);
+            else if (e.getMessage().equals("501.2"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门"));
+            else if (e.getMessage().equals("501.3"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
+            else if (e.getMessage().equals("501.4"))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
-            }
-
-            doctor.setId(id);
-            //储存doctor数据
-            doctorService.save(doctor);
         }
-
-        return CommonUtil.successJson(user);
+        return CommonUtil.successJson();
     }
 
     /**
@@ -196,7 +159,6 @@ public class UserController {
     @PostMapping("/modify")
     public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
 
-
         User user = JSONObject.toJavaObject(jsonObject, User.class);
         //是否是个人账号
         try {
@@ -206,7 +168,24 @@ public class UserController {
         }
         user.setId(PermissionCheck.getIdByUser(authentication));
 
-        return updateMessage(user, jsonObject);
+        Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
+        try{
+            userService.updateUser(user,doctor);
+        }catch (Exception e){
+            if (e.getMessage().equals("600"))
+                return CommonUtil.errorJson(ErrorEnum.E_600);
+            else if (e.getMessage().equals("802"))
+                return CommonUtil.errorJson(ErrorEnum.E_802);
+            else if (e.getMessage().equals("501.1"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
+            else if (e.getMessage().equals("501.2"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+            else if (e.getMessage().equals("501.3"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+
+        }
+
+        return CommonUtil.successJson();
     }
 
 
@@ -227,60 +206,23 @@ public class UserController {
         }
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
-
-        return updateMessage(user, jsonObject);
-    }
-
-    /**
-     * 更新消息（具体方法）
-     *
-     * @param user
-     * @param jsonObject
-     * @return
-     */
-    private JSONObject updateMessage(User user, JSONObject jsonObject) throws Exception {
-        //判断用户名是否重复
-        if (userService.getUserByUsername(user.getUsername()) == null)
-            return CommonUtil.errorJson(ErrorEnum.E_600);
-
-        Map<String ,Integer> map = null;
-        try {
-            map=redisService.getMapAll("userType");
-        } catch (Exception e) {
-            CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        if(map==null)
-            return   CommonUtil.errorJson(ErrorEnum.E_802);
-        //判断type_id是否正确
-        if (!map.containsValue(user.getTypeId()))
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
-
-        //判断user的身份证号是否正确
-        if (user.getIdentifyId().length() != 18)
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        userService.update(user);
-
-        user = userService.getUserByUsername(user.getUsername());
-
-        Map<String ,Integer> map2=redisService.getMapAll("doctor");
-
-        //修改医生信息
-        if (map2.containsValue(user.getTypeId())) {
-            Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
-
-            Map<String ,Integer> title=redisService.getMapAll("title");
-            //判断医生职称是否正确
-            if (!title.containsValue(doctor.getTitleId())) {
+        Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
+        try{
+            userService.updateUser(user,doctor);
+        }catch (Exception e){
+            if (e.getMessage().equals("600"))
+                return CommonUtil.errorJson(ErrorEnum.E_600);
+            else if (e.getMessage().equals("802"))
+                return CommonUtil.errorJson(ErrorEnum.E_802);
+            else if (e.getMessage().equals("501.1"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
+            else if (e.getMessage().equals("501.2"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+            else if (e.getMessage().equals("501.3"))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
-            }
-            doctor.setId(user.getId());
-            doctorService.update(doctor);
         }
 
-        return CommonUtil.successJson(user);
+        return CommonUtil.successJson();
     }
 
     /**

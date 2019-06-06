@@ -26,10 +26,28 @@
     </association>
   </resultMap>
 
+  <resultMap id="TypeAndDepartment" type="cn.neuedu.his.model.DepartmentKind">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="kind_name" jdbcType="VARCHAR" property="kindName" />
+    <result column="classification_id" jdbcType="INTEGER" property="classificationId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    <collection property="departments" ofType="cn.neuedu.his.model.Department" column="id" foreignColumn="kind_id">
+      <id column="department_id" jdbcType="INTEGER" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="kind_id" jdbcType="INTEGER" property="kindId" />
+      <result column="code" jdbcType="VARCHAR" property="code" />
+      <result column="department_is_delete" jdbcType="BIT" property="isDelete"/>
+    </collection>
+  </resultMap>
+
   <!-- 获得一个类型的全部部门分类-->
   <select id="getDepartmentKindByClassificationId" resultMap="BaseResultMap">
     select * from department_kind where classification_id =#{id}
   </select>
+
   <select id="getDepartmentKindByName" resultMap="BaseResultMap">
     select *
     from department_kind
@@ -49,4 +67,12 @@
   <select id="getDepartmentKindListWithoutDelete" resultMap="BaseResultMap">
     select * from department_kind where is_delete = false
   </select>
+
+  <!-- 获得小分类及其下属部门-->
+  <select id="getKindAndDepartment" resultMap="TypeAndDepartment">
+    select *,d.id as department_id,d.is_delete as department_is_delete
+    from department_kind join department d on department_kind.id = d.kind_id
+    where department_kind.is_delete = 0 and d.is_delete = 0
+  </select>
+
 </mapper>
