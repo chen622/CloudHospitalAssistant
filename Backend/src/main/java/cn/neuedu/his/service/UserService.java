@@ -1,7 +1,9 @@
 package cn.neuedu.his.service;
+import cn.neuedu.his.model.Doctor;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.util.inter.Service;
 
+import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,11 @@ import java.util.List;
 public interface UserService extends Service<User> {
     User getUserByUsername(String username);
 
-    void insertUserOperation(User user);
+    //插入用户
+    void insertUser(User user, Doctor doctor) throws Exception;
+
+    //更新用户
+    void updateUser(User user, Doctor doctor) throws Exception;
 
     User getUserAllInformationByName(String username);
 
