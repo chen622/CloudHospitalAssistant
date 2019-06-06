@@ -255,10 +255,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (schedule.getHaveRegistrationAmount()+1>schedule.getLimitRegistrationAmount())
             return CommonUtil.errorJson(ErrorEnum.E_708.addErrorParamName(schedule.getLimitRegistrationAmount().toString()));
 
+
         Registration registration = registrationService.findById(registrationID);
-        if(registration==null){
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        } else{
+        if(registration==null ){
+            return CommonUtil.errorJson(ErrorEnum.E_705.addErrorParamName("registrationId"));
+        } else  if(!registration.getState().equals(Constants.INSIDE_DOCTOR)){
+            return CommonUtil.errorJson(ErrorEnum.E_710.addErrorParamName(Constants.INSIDE_DOCTOR.toString()));
+        }
+        else{
             registration.setState(Constants.FIRST_DIAGNOSIS);
             registrationService.update(registration);
         }

@@ -56,7 +56,7 @@ public class UserControllerTest {
         jsonObject.put("realName", "tys");
         jsonObject.put("password", "123456");
         jsonObject.put("createTime", new Date(System.currentTimeMillis()));
-        jsonObject.put("typeId", 602);
+        jsonObject.put("typeId", 605);
         jsonObject.put("departmentId", 1);
         jsonObject.put("identifyId", "211002199709251979");
         jsonObject.put("titleId", 701);

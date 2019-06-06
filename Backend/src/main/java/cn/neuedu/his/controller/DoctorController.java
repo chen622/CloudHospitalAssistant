@@ -257,7 +257,22 @@ public class DoctorController {
         return CommonUtil.successJson(map);
     }
 
-
+    @GetMapping("/insideDoc/{registrationId}")
+    public JSONObject getInsideDoc(@PathVariable("registrationId")Integer registrationId,Authentication authentication){
+        Integer doctorID;
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        Registration r=registrationService.findById(registrationId);
+        if(r==null || !r.getState().equals(Constants.WAITING_FOR_TREATMENT)){
+            return CommonUtil.errorJson(ErrorEnum.E_705);
+        }
+        r.setState(Constants.INSIDE_DOCTOR);
+        registrationService.update(r);
+        return CommonUtil.successJson();
+    }
     /**
      * 门诊医生查看病例模板
      *

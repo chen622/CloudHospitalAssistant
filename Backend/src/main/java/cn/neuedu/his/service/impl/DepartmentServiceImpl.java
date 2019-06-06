@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -39,7 +38,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private DoctorService doctorService;
 
     @Override
-    public List<Department> getAllDepartmentInformation(){
+    public List<Department> getAllDepartmentInformation() {
         return departmentMapper.getAllDepartmentInformation();
     }
 
@@ -55,16 +54,15 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
     @Override
     public List<Department> getDepartmentInformation() {
-            List<Department> departments = this.getAllDepartmentInformation();
+        List<Department> departments = this.getAllDepartmentInformation();
 
-            if (departments == null)
-                throw new RuntimeException("610");
-
-            return departments;
+        if (departments == null)
+            departments = new ArrayList<>();
+        return departments;
     }
 
     @Override
-    public void deleteDepartmentInformation(Integer id){
+    public void deleteDepartmentInformation(Integer id) {
 
         Department department = this.findById(id);
 
@@ -84,26 +82,26 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         //检测部门是否存在
         if (this.getDepartmentByName(department.getName()) != null)
             throw new RuntimeException("611");
-            //return CommonUtil.errorJson(ErrorEnum.E_611);
+        //return CommonUtil.errorJson(ErrorEnum.E_611);
 
         //检测部门类型是否存在
         if (this.findById(department.getKindId()) == null)
             throw new RuntimeException("612");
-            //return CommonUtil.errorJson(ErrorEnum.E_612);
+        //return CommonUtil.errorJson(ErrorEnum.E_612);
 
         this.save(department);
 
     }
 
     @Override
-    public void modifyDepartment(Department department) {
+    public void modifyDepartment(Department department) throws RuntimeException {
         //检测部门是否存在
         if (this.getDepartmentByName(department.getName()) != null)
             throw new RuntimeException("611");
 
         //检测部门类型是否存在
-        if (this.findById(department.getKindId()) == null)
-            throw  new RuntimeException("612");
+        if (!Constants.DEPARTMENT_KIND_LIST.contains(department.getKindId()))
+            throw new RuntimeException("612");
 
         this.update(department);
     }
@@ -115,6 +113,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
     /**
      * 门诊科室工作量统计
+     *
      * @param classification：临床还是医技
      * @param startDate
      * @param endDate
@@ -122,7 +121,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
      * @throws IllegalArgumentException
      */
     @Override
-    public JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException{
+    public JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException {
         JSONArray result = new JSONArray();
         ArrayList<Department> departmentList = departmentMapper.getDepartmentByClassification(classification);
         if (departmentList.isEmpty())
@@ -130,23 +129,23 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
         //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        for (PaymentType paymentType: paymentTypeService.findAllNotDelete()) {
+        for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
             if (paymentType.getId() > 100) {
                 paymentTypeMap.put(paymentType.getId(), paymentType.getName());
             }
         }
 
-        for (Department department: departmentList) {
+        for (Department department : departmentList) {
             //使用map记录每个科室的每个paymentType对应的总额
             Map<Integer, BigDecimal> feeMap = new HashMap<>();
-            for(Integer id: paymentTypeMap.keySet()) {
+            for (Integer id : paymentTypeMap.keySet()) {
                 feeMap.put(id, new BigDecimal(0));
             }
             Integer invoiceNumber = 0; //每个科室发票总数
             Integer doctorVisitNumber = 0; //每个科室医生看诊人数总数
             BigDecimal totalFee = new BigDecimal(0); //科室总计金额
-            for(User user: userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
-                for (Payment payment: paymentService.findByAllDoctor(user.getId(), startDate, endDate)) {
+            for (User user : userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
+                for (Payment payment : paymentService.findByAllDoctor(user.getId(), startDate, endDate)) {
                     //更新某缴费项目类型的金额数据
                     feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
@@ -164,7 +163,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             detail.put("department", department);
             detail.put("发票数", invoiceNumber);
             detail.put("看诊人数", doctorVisitNumber);
-            for(Integer key: feeMap.keySet()) {
+            for (Integer key : feeMap.keySet()) {
                 totalFee.add(feeMap.get(key));
                 detail.put(paymentTypeMap.get(key), feeMap.get(key));
             }

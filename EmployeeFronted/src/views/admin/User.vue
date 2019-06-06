@@ -50,7 +50,7 @@
                             <template>{{new Date(text).toLocaleString()}}</template>
                         </div>
                     </template>
-                    <template slot="isDelete" slot-scope="text">
+                    <template slot="delete" slot-scope="text">
                         <div>
                             <a-tag v-if="text === false" color="green">未被删除</a-tag>
                             <a-tag v-else color="red">已删除</a-tag>
@@ -115,9 +115,9 @@
                     scopedSlots: {customRender: 'dept.name'},
                 }, {
                     title: '已被删除',
-                    dataIndex: 'isDelete',
+                    dataIndex: 'delete',
                     width: '10%',
-                    scopedSlots: {customRender: 'isDelete'},
+                    scopedSlots: {customRender: 'delete'},
                 }, {
                     title: '操作',
                     dataIndex: 'operation',

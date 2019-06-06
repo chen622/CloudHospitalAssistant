@@ -1,5 +1,6 @@
 import axios from 'axios'
 
+let that = this
 // global.baseURL = 'https://' + 'ccm.ink:8080'
 global.baseURL = 'http://' + 'localhost:8078'
 // 返回在vue模板中的调用接口
@@ -51,13 +52,15 @@ export default { // 自定义判断元素类型JS
             if (res.data.code === 401) {
                 location.href = '/#/login'
             }
+            if (url === "/user/login")
+                success(res)
             if (success) {
                 success(res.data)
             }
             // console.log(JSON.stringify(res.data))
         }).catch(function (err) {
             if (err) {
-                if (err.response && err.response.status === 403) {
+                if (url !== "/user/login" && err.response && err.response.status === 403) {
                     sessionStorage.removeItem("token")
                     location.href = '/#/login'
                     alert('API error: ' + err)
