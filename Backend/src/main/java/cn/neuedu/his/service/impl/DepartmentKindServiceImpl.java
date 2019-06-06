@@ -18,6 +18,8 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
 
     @Autowired
     private DepartmentKindMapper departmentKindMapper;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @Override
     public DepartmentKind getDepartmentKindByName (String kindName) {
@@ -46,6 +48,16 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
     @Override
     public List<DepartmentKind> getKindAndDepartment() {
         return departmentKindMapper.getKindAndDepartment();
+    }
+
+    /**
+     * 根据类型获得科室小类及其部门信息
+     * @param type
+     * @return
+     */
+    @Override
+    public List<DepartmentKind> getKindAndDepartmentWithType(Integer type) {
+        return departmentKindMapper.getKindAndDepartmentWithType(type);
     }
 
 }

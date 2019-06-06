@@ -126,27 +126,14 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
-        //获取user
-        User user = userService.findById(id);
-
-        //判断被删除用户是否存在
-        if (user == null)
-            return CommonUtil.errorJson(ErrorEnum.E_601);
-
-        Map<String ,Integer> map=redisService.getMapAll("doctor");
-
-        //判断是否要先将doctor表中的数据删除
-        if (map.containsValue(user.getTypeId()) == true) {
-            Doctor doctor = doctorService.findById(id);
-            doctor.setDelete(true);
-            doctorService.update(doctor);
+        try{
+            userService.deleteUser(id);
+        }catch (Exception e){
+            if (e.getMessage().equals("601"))
+                return CommonUtil.errorJson(ErrorEnum.E_601);
         }
 
-        //删除用户表中的信息
-        user.setDelete(true);
-        userService.update(user);
-
-        return CommonUtil.successJson(user);
+        return CommonUtil.successJson();
     }
 
     /**

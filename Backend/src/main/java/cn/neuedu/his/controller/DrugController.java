@@ -100,13 +100,11 @@ public class DrugController {
 
         try{
             drugService.deleteDrug(id);
-            return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("626"))
                 return CommonUtil.errorJson(ErrorEnum.E_626);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
     @PostMapping("/modify")
@@ -122,7 +120,6 @@ public class DrugController {
         try{
             Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drugService.modifyDrug(drug);
-            return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("626"))
                 return CommonUtil.errorJson(ErrorEnum.E_626);
@@ -132,11 +129,10 @@ public class DrugController {
                 return CommonUtil.errorJson(ErrorEnum.E_626);
             else if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+        return CommonUtil.successJson();
     }
 
     @PostMapping("/insert")
@@ -152,7 +148,6 @@ public class DrugController {
         try{
             Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drugService.insertDrug(drug);
-            return CommonUtil.successJson();
         }catch (RuntimeException e){
             if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
@@ -160,12 +155,11 @@ public class DrugController {
                 return CommonUtil.errorJson(ErrorEnum.E_627);
             else if (e.getMessage().equals("628"))
                 return CommonUtil.errorJson(ErrorEnum.E_628);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
 
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+        return CommonUtil.successJson();
 
     }
 
@@ -189,8 +183,6 @@ public class DrugController {
         }
 
         List<Drug> drugs = drugService.getDrugByName(name);
-        System.out.println("----------------");
-        System.out.println(drugs.size());
 
         //判断药物是否存在
         if (drugs == null)

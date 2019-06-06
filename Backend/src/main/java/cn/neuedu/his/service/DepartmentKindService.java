@@ -19,4 +19,6 @@ public interface DepartmentKindService extends Service<DepartmentKind> {
 
 
     List<DepartmentKind> getKindAndDepartment();
+
+    List<DepartmentKind> getKindAndDepartmentWithType(Integer type);//获得小类及其下属信息
 }
