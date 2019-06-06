@@ -102,6 +102,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
             paymentService.createRegistrationPayment(registration.getId());
         }catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

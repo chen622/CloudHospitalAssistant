@@ -113,47 +113,32 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         if (this.findById(drug.getId()) == null)
             throw new RuntimeException("626");
 
-        //判断药品名是否重复
-        if (this.getDrugByName(drug.getName()) != null)
-            throw new RuntimeException("631");
-
-        try {
-            Map<String ,Integer> map=redisService.getMapAll("drugType");
-            //判断药物类别是否正确
-            if (map.containsValue(drug.getDrugType()))
-                throw new RuntimeException("627");
-        } catch (Exception e) {
-            return;
-        }
-
-
-            Map<String ,Integer> map=redisService.getMapAll("title");
-            //判断剂型是否正确
-            if (!map.containsValue(drug.getFormulation()))
-                throw new RuntimeException("628");
-
+        if(judgeDrug(drug))
             this.update(drug);
-
-
 
     }
 
     @Override
     public void insertDrug(Drug drug) throws Exception {
+        if(judgeDrug(drug))
+            this.save(drug);
+    }
+
+    private boolean judgeDrug(Drug drug) throws Exception {
         //判断药品名是否重复
         if (this.getDrugByName(drug.getName()) != null)
             throw new RuntimeException("631");
 
-            Map<String ,Integer> map=redisService.getMapAll("drugType");
-            //判断药物类别是否正确
-            if (map.containsValue(drug.getDrugType()))
-                throw new RuntimeException("627");
+        Map<String ,Integer> map=redisService.getMapAll("drugType");
+        //判断药物类别是否正确
+        if (map.containsValue(drug.getDrugType()))
+            throw new RuntimeException("627");
 
 
+        Map<String ,Integer> map2=redisService.getMapAll("formulation");
         //判断剂型是否正确
-        if (drug.getFormulation()>1440 ||drug.getFormulation()<1401)
+        if (!map2.containsValue(drug.getFormulation()))
             throw new RuntimeException("628");
-
-        this.save(drug);
+        return true;
     }
 }

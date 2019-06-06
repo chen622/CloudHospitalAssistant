@@ -55,7 +55,7 @@ public class DoctorControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 605)
+                .claim("typeId", 602)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -261,7 +261,7 @@ public class DoctorControllerTest {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ParsePosition pos = new ParsePosition(0);
         Date time=formatter.parse("2019-05-31 10:10:47", pos);
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRegistration/"+"2019-05-31 10:10:47")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRegistration")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

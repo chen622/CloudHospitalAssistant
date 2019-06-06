@@ -247,7 +247,6 @@ public class UserController {
         try {
             map=redisService.getMapAll("userType");
         } catch (Exception e) {
-            e.printStackTrace();
             CommonUtil.errorJson(ErrorEnum.E_802);
         }
         if(map==null)
