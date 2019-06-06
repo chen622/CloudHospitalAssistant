@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static cn.neuedu.his.util.constants.Constants.*;
@@ -16,8 +17,17 @@ import static cn.neuedu.his.util.constants.Constants.*;
  */
 @Component
 public class PermissionCheck {
-    @Autowired
+
     public static RedisServiceImpl redisService;
+
+    @Autowired
+    RedisServiceImpl redisService1;
+
+    @PostConstruct
+    public void init(){
+        redisService = redisService1;
+    }
+
     /**
      * 通用的权限校验接口，所有类别都可通过
      *
@@ -78,6 +88,7 @@ public class PermissionCheck {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         Map<String, Integer> map = redisService.getMapAll("userType");
+        System.out.println(map.get("门诊医生"));
         if (typeId.equals(map.get("门诊医生"))) {
             return (Integer) data.get("id");
         } else {
