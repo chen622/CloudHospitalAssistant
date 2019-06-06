@@ -75,7 +75,7 @@ public class RegistrationController {
         }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
-            CommonUtil.errorJson(ErrorEnum.E_802);
+            return  CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         try {

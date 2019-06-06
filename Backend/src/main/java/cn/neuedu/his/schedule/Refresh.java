@@ -18,7 +18,7 @@ public class Refresh {
     @Autowired
     DoctorService doctorService;
 
-    @Scheduled(cron = "0 0/1 * * * ? ")
+//    @Scheduled(cron = "0 0/1 * * * ? ")
     public void refreshConstant() {
         registrationService.setRegistrationSequence();
         doctorService.clearTemporaryMedical();

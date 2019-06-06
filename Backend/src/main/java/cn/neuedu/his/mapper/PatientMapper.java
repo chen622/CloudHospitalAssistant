@@ -21,4 +21,6 @@ public interface PatientMapper extends MyMapper<Patient> {
     List<Patient> selectPatientByName(String name);
     //根据电话获得病人信息
     List<Patient> selectPatientByPhone(String phoneNumber);
+
+    List<Patient> selectPatientByIdentifyIdAndNameAndPhone(String identifyId,String name, String phone);
 }

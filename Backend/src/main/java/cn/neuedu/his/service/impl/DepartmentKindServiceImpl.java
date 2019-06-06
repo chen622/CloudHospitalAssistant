@@ -43,4 +43,9 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
         return departmentKindMapper.getDepartmentKindByClassificationId(id);
     }
 
+    @Override
+    public List<DepartmentKind> getKindAndDepartment() {
+        return departmentKindMapper.getKindAndDepartment();
+    }
+
 }

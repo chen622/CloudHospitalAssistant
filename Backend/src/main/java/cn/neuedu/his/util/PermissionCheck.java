@@ -87,6 +87,7 @@ public class PermissionCheck {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         Map<String, Integer> map = redisService.getMapAll("userType");
+        System.out.println(map.get("门诊医生"));
         if (typeId.equals(map.get("门诊医生"))) {
             return (Integer) data.get("id");
         } else {

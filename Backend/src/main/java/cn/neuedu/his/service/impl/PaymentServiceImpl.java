@@ -6,7 +6,9 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.model.Registration;
 import cn.neuedu.his.service.*;
+import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.Constants;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     private RegistrationTypeService registrationTypeService;
     @Autowired
     private JobScheduleService jobScheduleService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     /**
      * 生成挂号缴费单
@@ -52,7 +56,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException{
+    public Integer createRegistrationPayment(Integer registrationId) throws Exception {
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -68,7 +72,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             payment.setUnitPrice(payment.getUnitPrice() .add(new BigDecimal(1)));
         payment.setCreateTime(new Date(System.currentTimeMillis()));
 
-        payment.setPaymentTypeId(Constants.REGISTRATION_FEE_TYPE);
+        Map<String ,Integer> map;
+        try {
+            map=redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw  new Exception();
+        }
+        payment.setPaymentTypeId(map.get("挂号费"));
         payment.setState(Constants.PRODUCE_PAYMENT);
         payment.setDoctorId(registration.getDoctorId());
         save(payment);

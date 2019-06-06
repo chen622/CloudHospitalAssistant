@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * Created by ccm on 2019/05/26.
  */
 @RestController
@@ -34,16 +33,16 @@ public class PatientController {
     @Autowired
     PatientService patientService;
 
-    @PostMapping("/registerPatient")
+    @PostMapping("/add")
     public JSONObject registerPatient(@RequestBody JSONObject jsonObject) {
-        Patient patient = jsonObject.getJSONObject("Patient").toJavaObject(Patient.class);
-        patient.setCreateTime(new Date(System.currentTimeMillis()));
+        Patient patient = jsonObject.toJavaObject(Patient.class);
         patientService.save(patient);
         return CommonUtil.successJson();
     }
 
     /**
      * 查询病患个人信息及所有未缴费信息
+     *
      * @param patientId
      * @return
      */
@@ -51,7 +50,7 @@ public class PatientController {
     public JSONObject getUnpaidPaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
             PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -61,13 +60,13 @@ public class PatientController {
         Patient patient;
         try {
             patient = patientService.findPatientAndPaymentInfo(patientId);
-        }catch (IllegalArgumentException e) {
-           return  CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         result.put("patient", patient);
         BigDecimal totalAmount = new BigDecimal(0);
-        for(Payment payment: patient.getPaymentList()) {
+        for (Payment payment : patient.getPaymentList()) {
             totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         }
         result.put("totalAmount", totalAmount);
@@ -76,6 +75,7 @@ public class PatientController {
 
     /**
      * 查看患者信息及其项目缴费信息
+     *
      * @param patientId
      * @param authentication
      * @return
@@ -84,7 +84,7 @@ public class PatientController {
     public JSONObject getNotConsumePaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
             PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -93,7 +93,7 @@ public class PatientController {
         Patient patient;
         try {
             patient = patientService.findPatientAndNotConsumePayment(patientId);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
@@ -102,6 +102,7 @@ public class PatientController {
 
     /**
      * 获取患者需要取的药物信息
+     *
      * @param patientId
      * @param authentication
      * @return
@@ -110,7 +111,7 @@ public class PatientController {
     public JSONObject getDrugTakenInfo(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -119,7 +120,7 @@ public class PatientController {
         Patient patient;
         try {
             patient = patientService.findPatientAndNotTakeDrug(patientId);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
@@ -128,6 +129,7 @@ public class PatientController {
 
     /**
      * 获取患者某一时期药物信息
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -136,7 +138,7 @@ public class PatientController {
     public JSONObject getDrugDuringDateInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -145,84 +147,98 @@ public class PatientController {
         Patient patient;
         try {
             patient = patientService.findPatientAndDrugDuringDate(jsonObject.getInteger("patientId"), jsonObject.getDate("startDate"), jsonObject.getDate("endDate"));
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson(patient);
     }
 
+    @GetMapping("/getAll")
+
     /**
-     * 根据身份证id获得病人信息
-     * @param id
-     * @return
+     *
      */
-    @GetMapping("/getByIdentify/{id}")
-    public JSONObject selectPatientByIdentifyId(@PathVariable("id") String id){
-        if (id == null)
-            id = "";
+    @PostMapping("/searchByMulti")
+    public JSONObject selectPatientByIdentifyId(@RequestBody JSONObject json) {
+        String identifyId = json.getString("id");
+        String name = json.getString("name");
+        String phone = json.getString("phone");
+        if (identifyId == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_501);
+        }
+        name = name == null ? "" : name;
+        phone = phone == null ? "" : name;
+        List<Patient> patients = patientService.selectPatientByIdentifyIdAndNameAndPhone(identifyId, name, phone);
 
-
-        List<Patient> patients = patientService.selectPatientByIdentifyId(id);
-
-        JSONArray jsonArray = setAge(patients);
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = setAge(patients);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
 
         return CommonUtil.successJson(jsonArray);
     }
 
-    /**
-     * 根据真实姓名获得病人信息
-     * @param name
-     * @return
-     */
-    @GetMapping("/getByName/{name}")
-    public JSONObject selectPatientByName(@PathVariable("name") String name){
-        if (name == null)
-            name = "";
+    @GetMapping
 
-
-        List<Patient> patients = patientService.selectPatientByName(name);
-
-        JSONArray jsonArray = setAge(patients);
-
-        return CommonUtil.successJson(jsonArray);
-    }
-
-    /**
-     * 根据电话号获得病人信息
-     * @param phoneNumber
-     * @return
-     */
-    @GetMapping("/getByPhone/{phoneNumber}")
-    public JSONObject selectPatientByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber){
-        if (phoneNumber == null)
-            phoneNumber = "";
-
-
-        List<Patient> patients = patientService.selectPatientByPhone(phoneNumber);
-
-        JSONArray jsonArray = setAge(patients);
-
-        return CommonUtil.successJson(jsonArray);
-    }
+//    /**
+//     * 根据真实姓名获得病人信息
+//     *
+//     * @param name
+//     * @return
+//     */
+//    @GetMapping("/getByName/{name}")
+//    public JSONObject selectPatientByName(@PathVariable("name") String name) {
+//        if (name == null)
+//            name = "";
+//
+//
+//        List<Patient> patients = patientService.selectPatientByName(name);
+//
+//        JSONArray jsonArray = setAge(patients);
+//
+//        return CommonUtil.successJson(jsonArray);
+//    }
+//
+//    /**
+//     * 根据电话号获得病人信息
+//     *
+//     * @param phoneNumber
+//     * @return
+//     */
+//    @GetMapping("/getByPhone/{phoneNumber}")
+//    public JSONObject selectPatientByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber) {
+//        if (phoneNumber == null)
+//            phoneNumber = "";
+//
+//
+//        List<Patient> patients = patientService.selectPatientByPhone(phoneNumber);
+//
+//        JSONArray jsonArray = setAge(patients);
+//
+//        return CommonUtil.successJson(jsonArray);
+//    }
 
     /**
      * 设置年龄
+     *
      * @param patients
      * @return
      */
-    private JSONArray setAge(List<Patient> patients){
+    private JSONArray setAge(List<Patient> patients) throws Exception {
         JSONArray jsonArray = new JSONArray();
-        patients.forEach(patient -> {
+        for (Patient patient : patients) {
             try {
                 Integer age = StringUtils.identityIdTransferToAge(patient.getIdentityId());
                 JSONObject jsonObject = (JSONObject) JSONObject.toJSON(patient);
-                jsonObject.put("age",age);
+                jsonObject.put("age", age);
                 jsonArray.add(jsonObject);
             } catch (ParseException e) {
-                e.printStackTrace();
+                throw new Exception();
             }
-        });
+        }
         return jsonArray;
     }
 }

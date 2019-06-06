@@ -16,4 +16,7 @@ public interface DepartmentKindService extends Service<DepartmentKind> {
     List<DepartmentKind> getDepartmentKindListWithoutDelete();
 
     List<DepartmentKind> getDepartmentKindByClassificationId(Integer id);
+
+
+    List<DepartmentKind> getKindAndDepartment();
 }
