@@ -108,6 +108,22 @@
     order by create_time
   </select>
 
-  <!>
+  <!--根据身份证号模糊查询获得病人-->
+  <select id="getPatientByIdentifyId" resultMap="BaseResultMap">
+    select *
+  from patient
+  where identity_id like concat('%',#{identifyId},'%')
+  </select>
+  <!--根据姓名来模糊查询获得病人姓名-->
+  <select id="getPatientByName" resultMap="BaseResultMap">
+    select *
+  from patient
+  where real_name like concat('%',#{name},'%')
+  </select>
+  <select id="selectPatientByPhone" resultMap="BaseResultMap">
+    select *
+    from patient
+    where phone_number like concat('%',#{phoneNumber},'%')
+  </select>
 
 </mapper>

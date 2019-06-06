@@ -5,9 +5,11 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -19,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -139,5 +142,79 @@ public class PatientController {
         }
 
         return CommonUtil.successJson(patient);
+    }
+
+    /**
+     * 根据身份证id获得病人信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/getByIdentify/{id}")
+    public JSONObject selectPatientByIdentifyId(@PathVariable("id") String id){
+        if (id == null)
+            id = "";
+
+
+        List<Patient> patients = patientService.selectPatientByIdentifyId(id);
+
+        JSONArray jsonArray = setAge(patients);
+
+        return CommonUtil.successJson(jsonArray);
+    }
+
+    /**
+     * 根据真实姓名获得病人信息
+     * @param name
+     * @return
+     */
+    @GetMapping("/getByName/{name}")
+    public JSONObject selectPatientByName(@PathVariable("name") String name){
+        if (name == null)
+            name = "";
+
+
+        List<Patient> patients = patientService.selectPatientByName(name);
+
+        JSONArray jsonArray = setAge(patients);
+
+        return CommonUtil.successJson(jsonArray);
+    }
+
+    /**
+     * 根据电话号获得病人信息
+     * @param phoneNumber
+     * @return
+     */
+    @GetMapping("/getByPhone/{phoneNumber}")
+    public JSONObject selectPatientByPhoneNumber(@PathVariable("phoneNumber") String phoneNumber){
+        if (phoneNumber == null)
+            phoneNumber = "";
+
+
+        List<Patient> patients = patientService.selectPatientByPhone(phoneNumber);
+
+        JSONArray jsonArray = setAge(patients);
+
+        return CommonUtil.successJson(jsonArray);
+    }
+
+    /**
+     * 设置年龄
+     * @param patients
+     * @return
+     */
+    private JSONArray setAge(List<Patient> patients){
+        JSONArray jsonArray = new JSONArray();
+        patients.forEach(patient -> {
+            try {
+                Integer age = StringUtils.identityIdTransferToAge(patient.getIdentityId());
+                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(patient);
+                jsonObject.put("age",age);
+                jsonArray.add(jsonObject);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+        return jsonArray;
     }
 }
