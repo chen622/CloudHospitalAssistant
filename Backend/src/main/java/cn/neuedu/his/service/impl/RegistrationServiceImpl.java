@@ -62,7 +62,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public void registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException{
+    public void registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException{
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
@@ -107,8 +107,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
             paymentService.createRegistrationPayment(registration.getId());
         }catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+        } catch (UnsupportedOperationException e) {
+            throw new UnsupportedOperationException(e.getMessage());
         }
     }
 

@@ -56,7 +56,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer createRegistrationPayment(Integer registrationId) throws Exception {
+    public Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException {
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -74,9 +74,9 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         Map<String ,Integer> map;
         try {
-            map=redisService.getMapAll("paymentType");
+            map = redisService.getMapAll("paymentType");
         } catch (Exception e) {
-            throw  new Exception();
+            throw new UnsupportedOperationException("redis");
         }
         payment.setPaymentTypeId(map.get("挂号费"));
         payment.setState(Constants.PRODUCE_PAYMENT);
