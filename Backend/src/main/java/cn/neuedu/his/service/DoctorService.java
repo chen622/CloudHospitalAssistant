@@ -121,5 +121,7 @@ public interface DoctorService extends Service<Doctor> {
     public Integer registrationNum(Integer doctorId, String start, String end);
 
     JSONArray doctorWorkCalculate(Date startDate, Date endDate);
+
+    void clearTemporaryMedical();
 }
 

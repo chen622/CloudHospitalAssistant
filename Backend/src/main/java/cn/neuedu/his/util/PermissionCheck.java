@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static cn.neuedu.his.util.constants.Constants.*;
@@ -17,7 +18,15 @@ import static cn.neuedu.his.util.constants.Constants.*;
 @Component
 public class PermissionCheck {
     @Autowired
-    public static RedisServiceImpl redisService;
+    public RedisServiceImpl redisServiceTemp;
+
+    private static RedisServiceImpl redisService;
+
+    @PostConstruct
+    public void init() {
+        redisService = redisServiceTemp;
+    }
+
     /**
      * 通用的权限校验接口，所有类别都可通过
      *

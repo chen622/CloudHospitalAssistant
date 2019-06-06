@@ -17,14 +17,11 @@ import java.util.List;
  */
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
-    void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws RuntimeException;
+    void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
     void retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void retreatDrugFee(Integer paymentId, Integer paymentAdminId);
-
-
-    Integer createDrugPayment(Prescription prescription);
 
 
     Payment findByRegistrationId(Integer registrationId);

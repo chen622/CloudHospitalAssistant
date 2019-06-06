@@ -1,9 +1,15 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.service.JobScheduleService;
+import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,14 +24,21 @@ public class JobScheduleController {
     @Autowired
     JobScheduleService jobScheduleService;
 
-    /**
-     * 获取
-     * @return
-     */
-//    @GetMapping("/getScheduleInfo")
-//    public JSONObject getScheduleInfo() {
-//        JSONObject result;
-//        return
-//    }
+    @GetMapping("/getSchedule/{departmentId}")
+    public JSONObject getSchedule(@PathVariable("departmentId") Integer departmentId, Authentication authentication) {
+        JSONObject result = new JSONObject();
+        //获取挂号收费员id
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        }catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        result.put("schedule", jobScheduleService.getScheduleToday(departmentId));
+
+        return CommonUtil.successJson(result);
+    }
 
 }

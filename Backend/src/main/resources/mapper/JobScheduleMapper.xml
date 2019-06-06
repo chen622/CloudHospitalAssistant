@@ -32,5 +32,22 @@
   <select id="getByDate" resultMap="BaseResultMap" >
     select * from job_schedule where TO_DAYS(date) = TO_DAYS(#{date})
   </select>
+
+  <resultMap id="scheduleInfo" type="cn.neuedu.his.model.JobSchedule">
+    <association property="user" javaType="cn.neuedu.his.model.User"/>
+    <association property="doctor" javaType="cn.neuedu.his.model.Doctor"/>
+    <association property="registrationType" javaType="cn.neuedu.his.model.RegistrationType"/>
+  </resultMap>
+
+  <select id="getScheduleByPeriod" resultMap="BaseResultMap">
+    select j.*, d.* from job_schedule j join doctor d on doctor_id = d.id
+    join user u on j.doctor_id = u.id
+    join registration_type r on j.registration_type_id = r.id
+    where u.department_id = #{departmentId} and TO_DAYS(date) = TO_DAYS(#{date}) and (period = 302 or period = 303
+    <if test='hour &lt; 12'>
+      or period = 301
+    </if>
+    )
+  </select>
 </mapper>
 

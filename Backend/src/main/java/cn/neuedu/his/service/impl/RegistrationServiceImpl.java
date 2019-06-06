@@ -95,8 +95,13 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         }
         //todo:设置挂号码（serialNumber）
         registration.setSerialNumber(1);
-
         save(registration);
+
+        //若去完号码后队列为空，则更新代码
+        if (redisService.isRegistrationEmpty(schedule.getId())) {
+            schedule.setIsValid(false);
+            jobScheduleService.update(schedule);
+        }
 
         try {
             paymentService.createRegistrationPayment(registration.getId());
@@ -124,6 +129,15 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         registration.setState(CANCEL);
         update(registration);
         redisService.addRegistrationSequenceList(registration.getScheduleId(), registration.getSequence());
+
+        //若该schedule被设为invalid，则改变
+        if (redisService.isRegistrationEmpty(registration.getScheduleId())) {
+            JobSchedule schedule = jobScheduleService.findById(registration.getScheduleId());
+            if (schedule.getIsValid().equals(false)) {
+                schedule.setIsValid(true);
+                jobScheduleService.update(schedule);
+            }
+        }
 
         //形成冲红缴费单及发票
         Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();

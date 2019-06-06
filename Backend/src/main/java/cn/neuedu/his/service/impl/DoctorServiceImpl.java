@@ -69,6 +69,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     UserService userService;
     @Autowired
     InvoiceService invoiceService;
+    @Autowired
+    RedisServiceImpl redisService;
 
 
     @Override
@@ -942,6 +944,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 registrationTotal=registrationTotal.add(p.getUnitPrice().multiply(BigDecimal.valueOf(p.getQuantity())));
             }
         return  registrationTotal;
+    }
+
+    @Override
+    public void clearTemporaryMedical() {
+        redisService.clearTemporaryMedical();
     }
 
 }
