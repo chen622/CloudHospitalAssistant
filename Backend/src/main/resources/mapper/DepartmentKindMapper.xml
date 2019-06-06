@@ -46,4 +46,7 @@
     select *,constant_variable.id as constantId, constant_variable.name as constantName,constant_variable.is_delete as typeDelete
     from department_kind join constant_variable on department_kind.classification_id = constant_variable.id
   </select>
+  <select id="getDepartmentKindListWithoutDelete" resultMap="BaseResultMap">
+    select * from department_kind where is_delete = false
+  </select>
 </mapper>

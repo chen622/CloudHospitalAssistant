@@ -41,9 +41,7 @@ public class PaymentController {
         }
 
         try {
-            paymentService.createRegistrationPayment(jsonObject.getInteger("registrationId"), jsonObject.getInteger("settlementType"));
-        }catch (IllegalArgumentException e1) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
+            paymentService.payRegistrationPayment(jsonObject.getInteger("paymentId"), jsonObject.getInteger("settlementType"));
         }catch (IndexOutOfBoundsException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_509);
         }

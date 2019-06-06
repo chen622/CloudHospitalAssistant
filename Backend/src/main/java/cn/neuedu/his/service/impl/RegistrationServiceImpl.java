@@ -4,6 +4,7 @@ import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
@@ -37,11 +38,18 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Autowired
     private PaymentService paymentService;
     @Autowired
-    private RegistrationTypeService registrationTypeService;
-    @Autowired
-    private InvoiceService invoiceService;
-    @Autowired
     private RedisServiceImpl redisService;
+
+    /**
+     * 将两天后挂号顺序号加入redis
+     */
+    @Override
+    public void setRegistrationSequence() {
+        ArrayList<JobSchedule> jobScheduleList = jobScheduleService.getAfterThreeDays();
+        for (JobSchedule jobSchedule: jobScheduleList) {
+            redisService.setRegistrationSequenceList(jobSchedule.getId(), jobSchedule.getLimitRegistrationAmount());
+        }
+    }
 
     /**
      * 现场挂号
@@ -65,7 +73,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         registration.setPatientId(patient.getId());
         //获取患者年龄
         try {
-            registration.setAge(identityIdTransferToAge(patient.getIdentityId()));
+            registration.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
         }catch (ParseException | InvalidParameterException e) {
             throw new IllegalArgumentException("IdentityId");
         }
@@ -77,7 +85,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
-        registration.setState(WAITING_FOR_TREATMENT);
+        registration.setState(Constants.WAITING_FOR_TREATMENT);
         registration.setNeedBook(needBook);
         //从redis中获取顺序号
         try {
@@ -90,50 +98,11 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         save(registration);
 
-        //改变已挂号人数
-        jobScheduleService.addHaveRegistrationAmount(schedule.getId());
-    }
-
-    /**
-     * 通过身份证获取年龄
-     * @param identifyId
-     * @return
-     * @throws ParseException
-     * @throws InvalidParameterException
-     */
-    private Integer identityIdTransferToAge(String identifyId) throws ParseException, InvalidParameterException {
-        //通过身份证获取生日
-        String birthdayStr = identifyId.substring(6, 14);
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        Date birthday;
         try {
-            birthday = format.parse(birthdayStr);
-        } catch (ParseException e) {
-            throw e;
+            paymentService.createRegistrationPayment(registration.getId());
+        }catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-        System.out.println(birthday);
-
-        ////通过生日获取年龄
-        Calendar calendar = Calendar.getInstance();
-        if(calendar.getTimeInMillis() - birthday.getTime() < 0L)
-            throw new InvalidParameterException();
-
-        int yearNow = calendar.get(Calendar.YEAR);
-        int monthNow = calendar.get(Calendar.MONTH);
-        int dayOfMonthNow = calendar.get(Calendar.DAY_OF_MONTH);
-
-        calendar.setTime(birthday);
-        int yearBirthday = calendar.get(Calendar.YEAR);
-        int monthBirthday = calendar.get(Calendar.MONTH);
-        int dayOfMonthBirthday = calendar.get(Calendar.DAY_OF_MONTH);
-
-        int age = yearNow - yearBirthday;
-
-        if (monthNow < monthBirthday || (monthNow == monthBirthday && dayOfMonthNow < dayOfMonthBirthday)) {
-            age--;
-        }
-
-        return age;
     }
 
     /**
@@ -155,9 +124,6 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         registration.setState(CANCEL);
         update(registration);
         redisService.addRegistrationSequenceList(registration.getScheduleId(), registration.getSequence());
-
-        //改变已挂号人数
-        jobScheduleService.reduceRegistrationAmount(registration.getScheduleId());
 
         //形成冲红缴费单及发票
         Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();
@@ -210,5 +176,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         return registrationMapper.getRegistrationInof(time, doctorId);
     }
 
-
+    @Override
+    public Integer getRegistrationState(Integer id) {
+        return registrationMapper.getRegistrationState(id);
+    }
 }

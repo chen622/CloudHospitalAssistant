@@ -34,8 +34,8 @@ public class DepartmentKindServiceImpl extends AbstractService<DepartmentKind> i
      * @return
      */
     @Override
-    public List<DepartmentKind> getAllDepartmentKindList(){
-        return this.getDepartmentKindList();
+    public List<DepartmentKind> getDepartmentKindListWithoutDelete(){
+        return departmentKindMapper.getDepartmentKindListWithoutDelete();
     }
 
     @Override

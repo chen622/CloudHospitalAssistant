@@ -113,7 +113,7 @@ public class DepartmentControllerTest {
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id",1);
-        jsonObject.put("name", "账户");
+        jsonObject.put("name", "账户sk");
         jsonObject.put("kindId", 1);
         jsonObject.put("code", "s");
 

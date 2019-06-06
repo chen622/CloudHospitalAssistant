@@ -61,9 +61,12 @@
     </if>
   </select>
 
-
   <select id="getRegistrationInof" resultType="INTEGER">
     select count(*) from registration where  doctor_id=#{doctorId} and TO_DATS(create_time)=TO_DATS(#{time})
+  </select>
+
+  <select id="getRegistrationState" resultType="java.lang.Integer">
+    select state from registration where registrar_id = {id}
   </select>
 
 </mapper>

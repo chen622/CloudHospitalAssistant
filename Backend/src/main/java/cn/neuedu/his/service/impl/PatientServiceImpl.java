@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
@@ -82,4 +83,36 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
         return patient;
     }
+
+    /**
+     * 根据身份证号模糊查询
+     * @param id
+     * @return
+     */
+    @Override
+    public List<Patient> selectPatientByIdentifyId(String id) {
+        return patientMapper.selectPatientByIdentifyId(id);
+    }
+
+    /**
+     * 根据真实姓名模糊查询
+     * @param name
+     * @return
+     */
+    @Override
+    public List<Patient> selectPatientByName(String name) {
+        return patientMapper.selectPatientByName(name);
+    }
+
+    /**
+     * 根据电话查找病人信息
+     * @param phoneNumber
+     * @return
+     */
+    @Override
+    public List<Patient> selectPatientByPhone(String phoneNumber) {
+        return patientMapper.selectPatientByPhone(phoneNumber);
+    }
+
+
 }

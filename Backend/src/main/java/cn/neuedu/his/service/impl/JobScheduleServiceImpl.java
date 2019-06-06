@@ -7,6 +7,7 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -19,24 +20,6 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
 
     @Autowired
     private JobScheduleMapper jobScheduleMapper;
-
-    /**
-     * 增加某专家已挂号人数
-     * @param id
-     */
-    @Override
-    public void addHaveRegistrationAmount(Integer id) {
-        jobScheduleMapper.updateHaveRegistrationAmountAdd(id);
-    }
-
-    /**
-     * 减少某专家已挂号人数
-     * @param id
-     */
-    @Override
-    public void reduceRegistrationAmount(Integer id) {
-        jobScheduleMapper.updateHaveRegistrationAmountReduce(id);
-    }
 
     @Override
     public void uodateHaveRegistration(Integer doctorId, Date date) {
@@ -53,4 +36,9 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
         return jobScheduleMapper.getRegistrationInof(time,doctorId);
     }
 
+    @Override
+    public ArrayList<JobSchedule> getAfterThreeDays() {
+        Date date = new Date(System.currentTimeMillis() + 2 * 24 * 60 * 60 * 1000);
+        return jobScheduleMapper.getByDate(date);
+    }
 }

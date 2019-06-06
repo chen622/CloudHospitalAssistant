@@ -38,7 +38,6 @@ public class RedisServiceImpl{
             jedisPool.returnResourceObject(jedis);
     }
 
-
     private void set(String key, String value) throws Exception{
         Jedis jedis=null;
         try{
@@ -123,7 +122,7 @@ public class RedisServiceImpl{
     }
 
 
-    public   Map<String, Integer> getMapAll(String key ) throws Exception{
+    public  Map<String, Integer> getMapAll(String key ) throws Exception{
         Map<String, String> result = null;
         Map<String, Integer> resultMap= new HashMap<>();
         Jedis jedis=null;
@@ -342,6 +341,7 @@ public class RedisServiceImpl{
             returnResource(jedis);
         }
     }
+
 
 
 }

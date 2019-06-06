@@ -81,6 +81,8 @@ public class RegistrationController {
         try {
             registrationService.retreatRegistrationInfo(registrationId, registrarId);
         }catch (UnsupportedOperationException e) {
+            if (e.getMessage().equals("redis"))
+                return CommonUtil.errorJson(ErrorEnum.E_511);
             return CommonUtil.errorJson(ErrorEnum.E_503);
         }catch (IllegalArgumentException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));

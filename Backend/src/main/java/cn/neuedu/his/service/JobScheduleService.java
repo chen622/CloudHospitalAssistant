@@ -2,6 +2,7 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.JobSchedule;
 import cn.neuedu.his.util.inter.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -14,5 +15,7 @@ public interface JobScheduleService extends Service<JobSchedule> {
     void reduceRegistrationAmount(Integer id);
     void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
+    HashMap<String ,Integer> getRegistrationInof(Date time, Integer doctorId);
+    ArrayList<JobSchedule> getAfterThreeDays();
     Integer getRegistrationInof(Date time, Integer doctorId);
 }
