@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login'
 import Search from './views/Search'
+import Charge from './views/Charge'
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
             path:'/search',
             name:'search',
             component:Search
+        },
+        {
+            path:'/charge',
+            name:'charge',
+            component: Charge
         }
     ]
 })

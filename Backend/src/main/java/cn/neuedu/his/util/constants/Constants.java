@@ -108,6 +108,7 @@ public class Constants {
     public static final Integer PERSONALLEVEL = 503;
 
 
+    public static final Integer USERTYPE = 6;
     public enum UserType {
         REGISTRATION_CLERK(601),
         OUT_PATIENT_DOCTOR(602),
@@ -170,7 +171,7 @@ public class Constants {
     //费用类型
     //挂号费用类型
     public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
-    //处方项目费用类型
+    //处值项目费用类型
     public static final Integer NON_DRUG_PAYMENT_TYPE = 1;
     //处方费用类型
     public static final Integer DRUG_PAYMENT_TYPE = 2;
