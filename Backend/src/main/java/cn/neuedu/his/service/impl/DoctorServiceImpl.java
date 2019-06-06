@@ -69,6 +69,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     UserService userService;
     @Autowired
     InvoiceService invoiceService;
+    @Autowired
+    RedisServiceImpl redisService;
 
 
     @Override
@@ -754,7 +756,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject getAllPaymentDetails(Integer medicalRecordId,Integer registrationId) {
         List<Prescription> prescriptions=prescriptionService.getByMedicalRecordId(medicalRecordId);
         List<InspectionApplication> applications=inspectionApplicationService.getByMedicalRecordId(medicalRecordId);
-        List<Payment> payments=paymentService.getByRegistrationId(registrationId,Constants.REGISTRATION_FEE_TYPE);
+        Map<String ,Integer> map;
+        try {
+            map=redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        List<Payment> payments=paymentService.getByRegistrationId(registrationId,map.get("挂号费"));
         BigDecimal total= BigDecimal.valueOf(0);
         if(prescriptions==null)
             prescriptions=new ArrayList<>();
@@ -814,7 +823,13 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
             List<Prescription> prescriptions=prescriptionService.getByMedicalRecordId(record.getId());
             List<InspectionApplication> applications=inspectionApplicationService.getByMedicalRecordId(record.getId());
-            List<Payment> payments=paymentService.getByRegistrationId(registrationId,Constants.REGISTRATION_FEE_TYPE);
+            Map<String ,Integer> map;
+            try {
+                map=redisService.getMapAll("paymentType");
+            } catch (Exception e) {
+                return CommonUtil.errorJson(ErrorEnum.E_802);
+            }
+            List<Payment> payments=paymentService.getByRegistrationId(registrationId,map.get("挂号费"));
 
             if(prescriptions==null)
                 prescriptions=new ArrayList<>();
