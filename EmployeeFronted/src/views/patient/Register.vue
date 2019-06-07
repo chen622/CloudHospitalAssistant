@@ -102,21 +102,31 @@
             <a-spin tip="正在挂号..." size="large">
             </a-spin>
         </a-modal>
-<!--        <a-modal-->
-<!--                v-model="showPayment"-->
-<!--                :footer="false"-->
-<!--                :closable="false"-->
-<!--                :maskClosable="false"-->
-<!--                :bodyStyle="{textAlign: 'center'}"-->
-<!--        >-->
-<!--            <a-spin tip="正在挂号..." size="large">-->
-<!--            </a-spin>-->
-<!--        </a-modal>-->
+        <a-modal
+                v-model="showPayment"
+                :closable="false"
+                :maskClosable="false"
+                :bodyStyle="{textAlign: 'center'}"
+        >
+            <a-form>
+                <a-form-item :label-col="{ span: 5,offset: 7 }"
+                             :wrapper-col="{ span: 5}">
+                    <span slot="label" class="payment">缴费类型</span>
+                    <span class="payment">挂号费</span>
+                </a-form-item>
+            </a-form>
+            <template slot="footer">
+                <a-button @click="showPayment =false">缴费</a-button>
+            </template>
+        </a-modal>
     </a-row>
 </template>
 <script>
 
+    import AFormItem from "ant-design-vue/es/form/FormItem";
+
     export default {
+        components: {AFormItem},
         data () {
             return {
                 load: {
@@ -159,17 +169,12 @@
                         scopedSlots: {customRender: 'action'},
                         align: 'center'
                     }],
-                patient: [{
-                    id: 123,
-                    name: "畅晨铭",
-                    phone: 18698006515,
-                    age: 18,
-                    sex: true,
-                }],
-                departmentKind: [{id: 1, name: "内科", departments: [{id: 1, name: "内内科"}]}],
+                patient: [],
+                departmentKind: [],
                 registration: this.$form.createForm(this),
                 showRegister: false,
                 showDoctor: false,
+                showPayment: false,
                 doctor: [],
                 periodName: "上午",
                 requestObject: {
@@ -207,6 +212,7 @@
                         that.load.register = false
                         if (res.code === "100") {
                             that.$message.success("挂号成功，请缴费！")
+                            that.showPayment = true
                         } else {
                             that.$message.error(res.msg)
                         }
@@ -310,5 +316,10 @@
         font-size: 18px;
         font-weight: bold;
 
+    }
+
+    .payment {
+        font-size: 18px;
+        font-weight: bold;
     }
 </style>
