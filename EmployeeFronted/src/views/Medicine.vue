@@ -20,7 +20,7 @@
                         <a-button @click="saveAll" type="primary"><a-icon type="plus-circle"/>保存所有更改</a-button>
                     </a-col>
                 </a-row>
-
+            
 
             <a-table :columns="columns" :dataSource="data" bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
                 <template v-for="coll in  ['code', 'name', 'standard','packageCompany','price','drugType','factory','spell']" :slot="coll" slot-scope="text, record">
@@ -34,7 +34,7 @@
                     <template v-else>{{text}}</template>
                 </div>
                 </template>
-                
+
                 <template slot="formulation" slot-scope="text,record">
                     <a-select
                     v-if="record.editable"
@@ -46,7 +46,7 @@
                     </a-select>
                      <template v-else >{{text}}</template>
                 </template>
-               
+
                 
                 <template slot="action" slot-scope="text, record">
                 <div class='editable-row-operations'>
@@ -66,6 +66,7 @@
                 </template>
             </a-table>
 
+                
             </a-card>
         </a-col>
     </a-row>
@@ -102,7 +103,7 @@ import { constants } from 'crypto';
                     title:'单位',
                     dataIndex: 'packageCompany',
                     key:'packageCompany',
-                    
+
                     sorter:true,
                     scopedSlots:{customRender:'packageCompany'}
                 },{
@@ -204,13 +205,13 @@ import { constants } from 'crypto';
                                      console.log(res.msg)
                                     that.$message.error(res.msg)
                                 }
-                              
+
                             }, () => {
                             that.$message.error("网络异常！")
                         })
 
                 }
-                
+
             },
             cancel (key) {
                 const newData = [...this.data]
@@ -220,14 +221,14 @@ import { constants } from 'crypto';
                     delete target.editable
                     this.data = newData
                 }
-            }, 
+            },
              getForm () {
                 this.$api.get("/constant_variable/getForm", null,
-                
+
                 res => {
-                let a=res.data 
+                let a=res.data
                 let i=0
-                for(i =0;i< a.name.length; i++){              
+                for(i =0;i< a.name.length; i++){
                 this.formulation.push({
                     value:a.name[i],
                     key: a.id[i]
@@ -252,7 +253,7 @@ import { constants } from 'crypto';
                 for(;i<this.formulation.length;i++){
                     if(this.formulation[i].key==value){
                         name=this.formulation[i].value;
-                        break;            
+                        break;
                     }
                 }
                 const newData = [...this.data]
