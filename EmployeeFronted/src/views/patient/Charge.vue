@@ -25,13 +25,13 @@
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">患者消费信息:</p>
-                <temple>
+                <template>
                     <a-table :columns="columns" :dataSource="data" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
                         <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                         <span slot="customTitle">姓名</span>
                     </a-table>
                     <a-button type="primary">收费结算</a-button>
-                </temple>
+                </template>
             </a-card>
         </a-col>
     </a-row>

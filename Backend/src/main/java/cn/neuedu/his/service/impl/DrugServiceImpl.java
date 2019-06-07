@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,24 +121,32 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
 
     @Override
     public void insertDrug(Drug drug) throws Exception {
+
+        //判断药品名是否重复
+        if (this.getDrugByName(drug.getName()) != null)
+            throw new RuntimeException("631");
         if(judgeDrug(drug))
             this.save(drug);
     }
 
+    @Override
+    public ArrayList<Drug> getAllDrug() {
+        return drugMapper.getAllDrug();
+    }
+
     private boolean judgeDrug(Drug drug) throws Exception {
-        //判断药品名是否重复
-        if (this.getDrugByName(drug.getName()) != null)
-            throw new RuntimeException("631");
+
 
         Map<String ,Integer> map=redisService.getMapAll("drugType");
+        System.out.println(drug.getDrugType());
         //判断药物类别是否正确
-        if (map.containsValue(drug.getDrugType()))
+        if (map.values().contains(drug.getDrugType()))
             throw new RuntimeException("627");
 
 
         Map<String ,Integer> map2=redisService.getMapAll("formulation");
         //判断剂型是否正确
-        if (!map2.containsValue(drug.getFormulation()))
+        if (!map2.values().contains(drug.getFormulation()))
             throw new RuntimeException("628");
         return true;
     }

@@ -52,7 +52,7 @@ public class DepartmentKindController {
 
         try {
             Map<String ,Integer> map=redisService.getMapAll("departmentType");
-            if (!map.containsValue(departmentKind.getClassificationId()))
+            if (!map.values().contains(departmentKind.getClassificationId()))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
 
             departmentKindService.save(departmentKind);
@@ -80,7 +80,7 @@ public class DepartmentKindController {
 
         try {
             Map<String ,Integer> map=redisService.getMapAll("departmentType");
-            if (!map.containsValue(departmentKind.getClassificationId()))
+            if (!map.values().contains(departmentKind.getClassificationId()))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门分类"));
 
         } catch (Exception e) {

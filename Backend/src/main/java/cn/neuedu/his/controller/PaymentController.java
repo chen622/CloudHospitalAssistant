@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -40,15 +41,16 @@ public class PaymentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            paymentService.payRegistrationPayment(jsonObject.getInteger("paymentId"), jsonObject.getInteger("settlementType"));
+            invoice = paymentService.payRegistrationPayment(jsonObject.getInteger("paymentId"), jsonObject.getInteger("settlementType"));
         }catch (IndexOutOfBoundsException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_509);
         } catch (IllegalArgumentException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
     }
 
     /**

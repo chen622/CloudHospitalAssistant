@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -98,10 +100,15 @@ public class ConstantVariableController {
     public JSONObject getDrugForm(){
         try {
             Map<String ,Integer> map=redisService.getMapAll("formulation");
-            JSONObject object=new JSONObject();
-            object.put("name", map.keySet());
-            object.put("id", map.values());
-            return CommonUtil.successJson(object);
+            ArrayList<Map> list=new ArrayList<>();
+            for (String string:map.keySet()){
+                Map map1 = new HashMap();
+                map1.put("name", string);
+                map1.put("id", map.get(string));
+                list.add(map1);
+            }
+
+            return CommonUtil.successJson(list);
         } catch (Exception e) {
             return  CommonUtil.errorJson(ErrorEnum.E_802);
         }

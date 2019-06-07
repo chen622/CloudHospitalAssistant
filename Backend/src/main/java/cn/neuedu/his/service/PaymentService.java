@@ -1,8 +1,5 @@
 package cn.neuedu.his.service;
-import cn.neuedu.his.model.Drug;
-import cn.neuedu.his.model.Payment;
-import cn.neuedu.his.model.Prescription;
-import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
 
@@ -17,9 +14,9 @@ import java.util.List;
  */
 public interface PaymentService extends Service<Payment> {
     Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
-    void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
+    Invoice payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
-    void retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
+    Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void retreatDrugFee(Integer paymentId, Integer paymentAdminId);
 
