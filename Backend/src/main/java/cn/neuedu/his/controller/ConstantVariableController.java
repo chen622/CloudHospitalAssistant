@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.service.ConstantVariableService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -20,6 +23,8 @@ public class ConstantVariableController {
 
     @Autowired
     ConstantVariableService constantVariableService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @GetMapping("/get")
     public JSONObject get(Authentication authentication) {
@@ -87,4 +92,19 @@ public class ConstantVariableController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
+
+
+    @GetMapping("/getUnit")
+    public JSONObject getDrugUnit(){
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("formulation");
+            JSONObject object=new JSONObject();
+            object.put("name", map.keySet());
+            object.put("id", map.values());
+            return CommonUtil.successJson(object);
+        } catch (Exception e) {
+            return  CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+    }
+
 }
