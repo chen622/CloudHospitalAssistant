@@ -94,8 +94,8 @@ public class ConstantVariableController {
     }
 
 
-    @GetMapping("/getUnit")
-    public JSONObject getDrugUnit(){
+    @GetMapping("/getForm")
+    public JSONObject getDrugForm(){
         try {
             Map<String ,Integer> map=redisService.getMapAll("formulation");
             JSONObject object=new JSONObject();
