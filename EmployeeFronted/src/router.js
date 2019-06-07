@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login'
-import Charge from './views/Charge'
+import Charge from './views/patient/Charge'
 import Medicine from './views/Medicine'
 import test from './views/test'
 
