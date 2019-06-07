@@ -23,7 +23,7 @@
             
 
             <a-table :columns="columns" :dataSource="data" bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
-                <template v-for="coll in  ['code', 'name', 'standard','packageCompany','price','drugType','factory','spell']" :slot="coll" slot-scope="text, record">
+                <template v-for="coll in  ['code', 'name', 'standard','packageCompany','price','factory','spell']" :slot="coll" slot-scope="text, record">
                 <div :key="coll">
                     <a-input
                     v-if="record.editable"
@@ -35,18 +35,29 @@
                 </div>
                 </template>
 
-                <template slot="formulation" slot-scope="text,record">
+                <template slot="formulationName" slot-scope="text,record">
                     <a-select
                     v-if="record.editable"
                     defaultVaule="散剂"
                     style="width:100px"
-                    @change="e => formChange(e,record.key)"
+                    @change="e => formChange(e,record.id)"
                     >
-                     <a-select-option v-for="d in formulation" :key="d.key">{{d.value}}</a-select-option>
+                     <a-select-option v-for="d in formulation" :key="d.id">{{d.name}}</a-select-option>
                     </a-select>
                      <template v-else >{{text}}</template>
                 </template>
 
+                <template slot="drugTypeName" slot-scope="text,record">
+                    <a-select
+                    v-if="record.editable"
+                    defaultVaule="散剂"
+                    style="width:100px"
+                    @change="e => drugTypeChange(e,record.id)"
+                    >
+                     <a-select-option v-for="d in durgType" :key="d.id">{{d.name}}</a-select-option>
+                    </a-select>
+                     <template v-else >{{text}}</template>
+                </template>
                 
                 <template slot="action" slot-scope="text, record">
                 <div class='editable-row-operations'>
@@ -78,8 +89,11 @@ import { constants } from 'crypto';
 
     export default {
         data() {
+          
             return {
-                saveformulation:[],
+                drugTypeMap:{},
+                durgType:[],
+                formulationName:{},
                 formulation:[],
                 columns:[{
                     title:'编码',
@@ -120,16 +134,16 @@ import { constants } from 'crypto';
                     scopedSlots:{customRender:'price'}
                 },{
                     title:'剂型',
-                    dataIndex: 'formulation',
-                    key:'formulation',
+                    dataIndex: 'formulationName',
+                    key:'formulationName',
                     sorter:true,
-                    scopedSlots:{customRender:'formulation'}
+                    scopedSlots:{customRender:'formulationName'}
                 },{
                     title:'药品类型',
-                    dataIndex: 'drugType',
-                    key:'drugType',
+                    dataIndex: 'drugTypeName',
+                    key:'drugTypeName',
                     sorter:true,
-                    scopedSlots:{customRender:'drugType'}
+                    scopedSlots:{customRender:'drugTypeName'}
                 },{
                     title:'拼音',
                     dataIndex: 'spell',
@@ -153,20 +167,65 @@ import { constants } from 'crypto';
         computed:{
 
         },created(){
-            this.getData()
+            this.getForm();
+            this.getDrugType();
+            this.getData();
+            
         },
         methods: {
             getData(){
-                console.log("??")
                 let that = this
                 this.$api.get("/drug/getAllDrug", null,
                     res => {
                         if (res.code === "100") {
-                           this.data=res.data
+                           that.data=res.data
+                           for(let i=0;i<that.data.length;i++){
+                              that.data[i].formulationName=that.formulationName.get(that.data[i].formulation)
+                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].durgType)
+                           }
                         }
                     }, res => {
                         that.$message.error(res)
                     })
+            },
+             getForm () {
+                let that=this
+                this.$api.get("/constant_variable/getForm", null,
+
+                res => {
+                let a=res.data
+                console.log(a)
+                let i=0
+                that.formulation=a
+                that.formulationName
+                var tem=new Map()
+                for(let i=0;i<a.length;i++){
+                    tem.set(a[i].id,a[i].name) 
+                }
+                that.formulationName=tem
+                }, res => {
+                this.$message.error(res)
+                })
+            },getDrugType(){
+                let that=this
+                 this.$api.get("/drug/getAllDrugType", null,
+                 res => {
+                        if (res.code === "100") {
+                           var map=new Map();
+                           var name=res.data.name
+                           var id=res.data.id
+                           for(let i=0;i<name.length;i++){
+                              that.durgType.push({
+                                  name:name[i],
+                                  id:id[i]
+                              })
+                              map.set(id,name)
+                           }
+                           that.drugTypeMap=map
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                })
             },
             onSearch(value){
                 alert(value)
@@ -193,8 +252,8 @@ import { constants } from 'crypto';
                 console.log(target)
                  if (target) {
                     delete target.editable
-                    this.data = newData
-                    this.cacheData = newData.map(item => ({ ...item }))
+                    that.data = newData
+                    that.cacheData = newData.map(item => ({ ...item }))
 
                     this.$api.post("/drug/modify", target,
                             res => {
@@ -217,27 +276,11 @@ import { constants } from 'crypto';
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
-                    Object.assign(target, this.cacheData.filter(item => key === item.id)[0])
+                    // Object.assign(target, this.cacheData.filter(item => key === item.id)[0])
                     delete target.editable
                     this.data = newData
                 }
             },
-             getForm () {
-                this.$api.get("/constant_variable/getForm", null,
-
-                res => {
-                let a=res.data
-                let i=0
-                for(i =0;i< a.name.length; i++){
-                this.formulation.push({
-                    value:a.name[i],
-                    key: a.id[i]
-                    });
-                }
-                }, res => {
-                this.$message.error(res)
-                })
-                },
             edit (key) {
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
@@ -245,19 +288,19 @@ import { constants } from 'crypto';
                     target.editable = true
                     this.data = newData
                 }
-                this.getForm();
+            
             },formChange(value,key){
                 console.log(key)
                 let i=0
                 let name=""
                 for(;i<this.formulation.length;i++){
-                    if(this.formulation[i].key==value){
-                        name=this.formulation[i].value;
+                    if(this.formulation[i].id==value){
+                        name=this.formulation[i].name;
                         break;
                     }
                 }
                 const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
+                const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target.editable = true
                     target.formulation=name
@@ -265,6 +308,10 @@ import { constants } from 'crypto';
                 }
             },delete(key){
 
+            },getName(value){
+                console.log(value)
+                console.log(this.formulationName.get(value))
+                return this.formulationName.get(value)
             }
         }
     }
