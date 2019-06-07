@@ -69,12 +69,14 @@ public class UserController {
         Integer typeId = (Integer) data.get("typeId");
         JSONArray urls = new JSONArray();
         Map<String, Integer> map = redisService.getMapAll("userType");
-        if (typeId.equals(map.get("医院管理员"))) {
+        if (typeId.equals(map.get("医院管理员"))) {//606
             urls.add(new url("账户管理", "/admin/user", "admin"));
             urls.add(new url("排班管理", "/admin/rule", "rule"));
             urls.add(new url("医疗信息管理", "/admin/other", "other"));
-        }else if (typeId.equals(map.get("门诊医生"))){
-            urls.add(new url("看诊","/doctor/index","doctor"));
+        } else if (typeId.equals(map.get("门诊医生"))) {//602
+            urls.add(new url("看诊", "/doctor/index", "doctor"));
+        } else if (typeId.equals(map.get("挂号收费员"))) {//601
+            urls.add(new url("挂号", "/patient/register", "register"));
         }
         return CommonUtil.successJson(urls);
     }
@@ -92,9 +94,9 @@ public class UserController {
         //创立医生对象
         Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
 
-        try{
-            userService.insertUser(user,doctor);
-        }catch (RuntimeException e){
+        try {
+            userService.insertUser(user, doctor);
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("501.1"))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
             else if (e.getMessage().equals("600"))
@@ -146,6 +148,7 @@ public class UserController {
     @PostMapping("/modify")
     public JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
 
+
         User user = JSONObject.toJavaObject(jsonObject, User.class);
         //是否是个人账号
         try {
@@ -156,9 +159,9 @@ public class UserController {
         user.setId(PermissionCheck.getIdByUser(authentication));
 
         Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
-        try{
-            userService.updateUser(user,doctor);
-        }catch (Exception e){
+        try {
+            userService.updateUser(user, doctor);
+        } catch (Exception e) {
             if (e.getMessage().equals("600"))
                 return CommonUtil.errorJson(ErrorEnum.E_600);
             else if (e.getMessage().equals("802"))
@@ -194,9 +197,9 @@ public class UserController {
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
         Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
-        try{
-            userService.updateUser(user,doctor);
-        }catch (Exception e){
+        try {
+            userService.updateUser(user, doctor);
+        } catch (Exception e) {
             if (e.getMessage().equals("600"))
                 return CommonUtil.errorJson(ErrorEnum.E_600);
             else if (e.getMessage().equals("802"))
@@ -208,7 +211,6 @@ public class UserController {
             else if (e.getMessage().equals("501.3"))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
         }
-
         return CommonUtil.successJson();
     }
 
@@ -220,7 +222,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/selectUser/{username}")
-    public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication authentication) throws Exception {
+    public JSONObject selectUserInformation(@PathVariable("username") String username, Authentication
+            authentication) throws Exception {
 
         //是否是个人账号
         try {
@@ -234,7 +237,7 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        Map<String ,Integer> map=redisService.getMapAll("doctor");
+        Map<String, Integer> map = redisService.getMapAll("doctor");
 
         if (map.containsValue(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
@@ -251,7 +254,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/adminSelectUser/{username}")
-    public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication authentication) throws Exception {
+    public JSONObject adminSelectUserInformation(@PathVariable("username") String username, Authentication
+            authentication) throws Exception {
 
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -263,7 +267,7 @@ public class UserController {
         if (user == null)
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
-        Map<String ,Integer> map=redisService.getMapAll("doctor");
+        Map<String, Integer> map = redisService.getMapAll("doctor");
         if (map.containsValue(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
@@ -272,12 +276,13 @@ public class UserController {
 
     /**
      * 模糊搜索用户
+     *
      * @param name
      * @param authentication
      * @return
      */
     @GetMapping("/findUser/{name}")
-    public JSONObject findUser(@PathVariable("name") String name, Authentication authentication){
+    public JSONObject findUser(@PathVariable("name") String name, Authentication authentication) {
 
         try {
             PermissionCheck.isHosptialAdim(authentication);
@@ -285,21 +290,21 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
+        try {
             List<User> users = userService.findUser(name);
             return CommonUtil.successJson(users);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
 
     @GetMapping("/findAll")
-    public JSONObject findAll(){
-        try{
+    public JSONObject findAll() {
+        try {
             List<User> users = userService.findAllWithName();
             return CommonUtil.successJson(users);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }

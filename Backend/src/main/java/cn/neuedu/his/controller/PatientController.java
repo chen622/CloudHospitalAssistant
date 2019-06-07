@@ -155,6 +155,14 @@ public class PatientController {
     }
 
     @GetMapping("/getAll")
+    public JSONObject findAll() {
+        List<Patient> patients = patientService.findAll();
+        try {
+            return CommonUtil.successJson(setAge(patients));
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
 
     /**
      *
