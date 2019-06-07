@@ -21,28 +21,28 @@ public class InvoiceController {
     @Autowired
     InvoiceService invoiceService;
 
-    /**
-     * 打印发票
-     * @param invoiceId
-     * @param authentication
-     * @return
-     */
-    @GetMapping("/print/{invoiceId}")
-    public JSONObject printVoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
-        try {
-            PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-
-        try {
-            return CommonUtil.successJson(invoiceService.getInvoiceInfo(invoiceId));
-        }catch (IllegalArgumentException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
+//    /**
+//     * 打印发票
+//     * @param invoiceId
+//     * @param authentication
+//     * @return
+//     */
+//    @GetMapping("/print/{invoiceId}")
+//    public JSONObject printVoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
+//        try {
+//            PermissionCheck.getIdByPaymentAdmin(authentication);
+//        }catch (AuthenticationServiceException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
+//
+//        try {
+//            return CommonUtil.successJson(invoiceService.getInvoiceInfo(invoiceId));
+//        }catch (IllegalArgumentException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+//        }
+//    }
 
     /**
      * 将发票字段存入redis中

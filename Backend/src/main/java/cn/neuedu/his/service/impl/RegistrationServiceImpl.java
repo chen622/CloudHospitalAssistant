@@ -57,12 +57,14 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      * @param patientId
      * @param scheduleId
      * @param needBook
+     * @return
      * @throws IllegalArgumentException
      * @throws IndexOutOfBoundsException
+     * @throws UnsupportedOperationException
      */
     @Transactional
     @Override
-    public void registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException{
+    public Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException{
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
@@ -103,24 +105,29 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
             jobScheduleService.update(schedule);
         }
 
+        Integer paymentId;
         try {
-            paymentService.createRegistrationPayment(registration.getId());
+            paymentId = paymentService.createRegistrationPayment(registration.getId());
         }catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage());
         } catch (UnsupportedOperationException e) {
             throw new UnsupportedOperationException(e.getMessage());
         }
+
+        return paymentService.findById(paymentId);
     }
 
     /**
      * 退号
      * @param registrationId
      * @param registrarId
-     * @throws RuntimeException
+     * @return
+     * @throws UnsupportedOperationException
+     * @throws IllegalArgumentException
      */
     @Transactional
     @Override
-    public void retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException{
+    public Invoice retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException{
         Registration registration = findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -143,7 +150,9 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         //形成冲红缴费单及发票
         Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();
-        paymentService.retreatPayment(paymentId, registrarId, 1);
+        Invoice invoice = paymentService.retreatPayment(paymentId, registrarId, 1);
+
+        return invoice;
     }
 
     /**
