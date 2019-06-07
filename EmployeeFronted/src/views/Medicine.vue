@@ -16,7 +16,7 @@
             
 
             <a-table :columns="columns" :dataSource="data" bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
-                <template v-for="coll in  ['id','unit','price','form','type']" :slot="coll" slot-scope="text, record">
+                <template v-for="coll in  ['id','specification','unit','price','type']" :slot="coll" slot-scope="text, record">
                 <div :key="coll">
                     <a-input
                     v-if="record.editable"
@@ -27,13 +27,20 @@
                     <template v-else>{{text}}</template>
                 </div>
                 </template>
-                <template :slot="specification" slot-scope="text, record">
-                    <div :key="coll">
-                    
-                    <template>{{text}}</template>
-                    </div>
+                
+                <template slot="form" slot-scope="text,record">
+                    <a-select
+                    v-if="record.editable"
+                    defaultValue="散剂"
+                    style="width:100px"
+                    >
+                      <a-select-option v-for="d in formulation" :key="d.key">{{d.value}}</a-select-option>
+                    </a-select>
+                <template v-else>{{text}}</template>
+            
                 </template>
                 <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
+                
                 <template slot="action" slot-scope="text, record">
                 <div class='editable-row-operations'>
                     <span v-if="record.editable">
@@ -60,10 +67,13 @@
 
 
 <script>
+
+
     export default {
         data() {
             return {
-                columns:[{
+                formulation:[]
+                ,columns:[{
                     title:'药品编码',
                     dataIndex: 'id',
                     key:'id',
@@ -178,14 +188,6 @@
                     this.data = newData
                 }
             },
-            edit (key) {
-                const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
-                if (target) {
-                    target.editable = true
-                    this.data = newData
-                }
-            },
             save (key) {
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.key)[0]
@@ -203,7 +205,39 @@
                     delete target.editable
                     this.data = newData
                 }
-            },
+            }, getPatient () {
+            this.$api.get("/constant_variable/getUnit", null,
+                
+                res => {
+                    console.log(res)
+                      let a=res.data              
+                      let i=0
+                      for(i =0;i< a.name.length; i++){
+                          console.log(a.name[i])
+                          this.formulation.push({
+                              value:a.name[i],
+                              key: a.id[i]
+                        
+                          });
+                      }
+                    
+                
+                }, res => {
+                    that.$message.error(res)
+                })
+        },
+            edit (key) {
+                const newData = [...this.data]
+                const target = newData.filter(item => key === item.key)[0]
+                if (target) {
+                    target.editable = true
+                    this.data = newData
+                }
+                this.getPatient();
+
+            }
+        
+        
         }
     }
     
