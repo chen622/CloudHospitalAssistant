@@ -30,6 +30,7 @@
       <id property="id" column="id"></id>
       <result property="realName" column="real_name"></result>
       <result property="identityId" column="identity_id"></result>
+      <result column="sex" jdbcType="BIT" property="sex"/>
     </association>
   </resultMap>
 
