@@ -57,6 +57,8 @@ public class RegistrationController {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }catch (IndexOutOfBoundsException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_510);
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
 
         return CommonUtil.successJson(payment);

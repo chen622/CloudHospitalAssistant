@@ -84,6 +84,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         JobSchedule schedule = jobScheduleService.findById(scheduleId);
         if (schedule == null)
             throw new IllegalArgumentException("scheduleId");
+        if (schedule.getIsValid().equals(false))
+            throw new UnsupportedOperationException("schedule");
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
