@@ -68,7 +68,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Map<String ,Integer> map=redisService.getMapAll("userType");
 
         //判断输入type_id是否正确
-        if (!map.containsValue(typeId))
+        if (!map.values().contains(typeId))
             throw new RuntimeException("501.3");
             //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
@@ -78,13 +78,13 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Map<String , Integer> map2=redisService.getMapAll("doctor");
 
         //类别属于医生
-        if (map2.containsValue(typeId)) {
+        if (map2.values().contains(typeId)) {
             //取得当前user的id
             Integer id = userMapper.getUserByUsername(user.getUsername()).getId();
 
             //判断医生职称类型是否正确
             Map<String ,Integer> title=redisService.getMapAll("title");
-            if (!title.containsValue(doctor.getTitleId())) {
+            if (!title.values().contains(doctor.getTitleId())) {
                 throw new RuntimeException("501.4");
             }
 
@@ -120,7 +120,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             throw new RuntimeException("802");
             //return   CommonUtil.errorJson(ErrorEnum.E_802);
         //判断type_id是否正确
-        if (!map.containsValue(user.getTypeId()))
+        if (!map.values().contains(user.getTypeId()))
             throw new RuntimeException("501.1");
             //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
@@ -138,10 +138,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Map<String ,Integer> map2=redisService.getMapAll("doctor");
 
         //修改医生信息
-        if (map2.containsValue(user.getTypeId())) {
+        if (map2.values().contains(user.getTypeId())) {
             Map<String ,Integer> title=redisService.getMapAll("title");
             //判断医生职称是否正确
-            if (!title.containsValue(doctor.getTitleId())) {
+            if (!title.values().contains(doctor.getTitleId())) {
                 throw new RuntimeException("501.3");
                 //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
             }
@@ -168,7 +168,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         Map<String ,Integer> map=redisService.getMapAll("doctor");
 
         //判断是否要先将doctor表中的数据删除
-        if (map.containsValue(user.getTypeId()) == true) {
+        if (map.values().contains(user.getTypeId()) == true) {
             Doctor doctor = doctorService.findById(id);
             doctor.setDelete(true);
             doctorService.update(doctor);

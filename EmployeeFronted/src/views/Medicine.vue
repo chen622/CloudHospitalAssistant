@@ -249,11 +249,11 @@ import { constants } from 'crypto';
                 console.log(key)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
-                console.log(target)
                  if (target) {
                     delete target.editable
                     that.data = newData
-                    that.cacheData = newData.map(item => ({ ...item }))
+                    console.log(target)
+                    // that.cacheData = newData.map(item => ({ ...item }))
 
                     this.$api.post("/drug/modify", target,
                             res => {
@@ -267,8 +267,9 @@ import { constants } from 'crypto';
 
                             }, () => {
                             that.$message.error("网络异常！")
-                        })
+                         })
 
+                
                 }
 
             },
@@ -291,19 +292,27 @@ import { constants } from 'crypto';
             
             },formChange(value,key){
                 console.log(key)
+                console.log(value)
                 let i=0
-                let name=""
-                for(;i<this.formulation.length;i++){
-                    if(this.formulation[i].id==value){
-                        name=this.formulation[i].name;
-                        break;
-                    }
-                }
+                let name=this.formulationName.get(value)
+                console.log(name)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target.editable = true
-                    target.formulation=name
+                    target.formulationName=name
+                    target.formulation=value
+                    this.data = newData
+                }
+            },drugTypeChange(value,key){ 
+                let i=0
+                let name=this.drugTypeMap.get(value)
+                const newData = [...this.data]
+                const target = newData.filter(item => key === item.id)[0]
+                if (target) {
+                    target.editable = true
+                    target.drugTypeName=name
+                    target.durgType=value
                     this.data = newData
                 }
             },delete(key){

@@ -42,7 +42,7 @@ public class PaymentTypeController {
 
         Map<String ,Integer> payment=redisService.getMapAll("paymentType");
         //判断类型是否正确
-        if(payment.containsValue(paymentType.getType()))
+        if(payment.values().contains(paymentType.getType()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
 
         try{

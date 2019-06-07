@@ -138,14 +138,15 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
 
 
         Map<String ,Integer> map=redisService.getMapAll("drugType");
+        System.out.println(drug.getDrugType());
         //判断药物类别是否正确
-        if (map.containsValue(drug.getDrugType()))
+        if (map.values().contains(drug.getDrugType()))
             throw new RuntimeException("627");
 
 
         Map<String ,Integer> map2=redisService.getMapAll("formulation");
         //判断剂型是否正确
-        if (!map2.containsValue(drug.getFormulation()))
+        if (!map2.values().contains(drug.getFormulation()))
             throw new RuntimeException("628");
         return true;
     }

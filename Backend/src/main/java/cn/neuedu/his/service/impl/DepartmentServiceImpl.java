@@ -105,7 +105,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         try {
             Map<String ,Integer> map=redisService.getMapAll("departmentType");
             //检测部门类型是否存在
-            if (!map.containsValue(department.getKindId()))
+            if (!map.values().contains(department.getKindId()))
                 throw new RuntimeException("612");
         } catch (Exception e) {
             throw new Exception("802");
