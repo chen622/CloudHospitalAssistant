@@ -22,6 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static cn.neuedu.his.util.StringUtils.identityIdTransferToAge;
+
 /**
  * Created by ccm on 2019/05/24.
  */
@@ -260,6 +262,29 @@ public class DoctorController {
         if (finish == null)
             finish = new ArrayList<>();
         JSONObject map = new JSONObject();
+
+        //设置年龄
+        list.forEach(registration -> {
+            try {
+                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+        list2.forEach(registration -> {
+            try {
+                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
+        finish.forEach(registration -> {
+            try {
+                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        });
         map.put("wait", list);
         map.put("in", list2);
         map.put("out", finish);
