@@ -1,5 +1,5 @@
 <template>
-    <a-row type="flex" align="middle" justify="center" class="info-card">
+    <a-row type="flex" align="middle" justify="center" class="info-card" rowKey="id">
         <a-modal
                 v-if="newDepartment.isCreating"
                 :confirmLoading="newDepartment.createLoading"
