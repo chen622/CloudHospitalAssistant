@@ -1,10 +1,7 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.PaymentMapper;
-import cn.neuedu.his.model.Drug;
-import cn.neuedu.his.model.Payment;
-import cn.neuedu.his.model.Prescription;
-import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.Constants;
@@ -93,7 +90,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws RuntimeException
      */
     @Override
-    public void payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException {
+    public Invoice payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException {
         Payment payment = findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException("paymentId");
@@ -102,11 +99,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         update(payment);
 
         //生成发票
+        Integer invoiceId;
         try {
-            invoiceService.addInvoiceByPayment(payment.getId());
+            invoiceId = invoiceService.addInvoiceByPayment(payment.getId());
         }catch (IndexOutOfBoundsException e) {
             throw new IndexOutOfBoundsException("invoice");
         }
+
+        return invoiceService.findById(invoiceId);
     }
 
     /**
@@ -159,7 +159,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @return
      */
     @Override
-    public void retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+    public Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
         if (originalPayment == null)
@@ -177,11 +177,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId);
 
         //生成冲红发票，若无法生成，抛出异常
+        Integer invoiceId;
         try {
-            invoiceService.addInvoiceByPayment(newPaymentId);
+            invoiceId = invoiceService.addInvoiceByPayment(newPaymentId);
         }catch (RuntimeException e) {
             throw new UnsupportedOperationException("invoice");
         }
+
+        return invoiceService.findById(invoiceId);
     }
 
     /**

@@ -118,14 +118,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         }
     }
 
-    @Override
-    public Invoice getInvoiceInfo(Integer invoiceId) throws  IllegalArgumentException{
-        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
-        if (invoice == null)
-            throw new IllegalArgumentException("invoiceId");
-
-        return invoice;
-    }
+//    @Override
+//    public Invoice getInvoiceInfo(Integer invoiceId) throws  IllegalArgumentException{
+//        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
+//        if (invoice == null)
+//            throw new IllegalArgumentException("invoiceId");
+//
+//        return invoice;
+//    }
 
     /**
      * 发票重打

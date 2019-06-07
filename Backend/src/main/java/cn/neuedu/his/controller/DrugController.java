@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.service.DrugService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -24,6 +26,8 @@ public class DrugController {
 
     @Autowired
     DrugService drugService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     /**
      * 发药
@@ -189,5 +193,31 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_626);
 
         return CommonUtil.successJson(drugs);
+    }
+
+    /***
+     * @return
+     */
+    @GetMapping("/getAllDrugType")
+    public JSONObject getAllDrugType(){
+        try {
+            Map<String, Integer> map = redisService.getMapAll("drugType");
+            JSONObject object = new JSONObject();
+            object.put("name",map.keySet());
+            object.put("id",map.values());
+            return CommonUtil.successJson(object);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+    }
+
+
+    @GetMapping("/getAllDrug")
+    public JSONObject getAllDrug(){
+        try {
+            return CommonUtil.successJson(drugService.getAllDrug());
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
     }
 }

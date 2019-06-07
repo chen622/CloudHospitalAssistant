@@ -50,15 +50,18 @@ public class RegistrationController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Payment payment;
         try {
-            registrationService.registerRegistrationInfo(registrarId, jsonObject.getInteger("patientId"), jsonObject.getInteger("scheduleId"), jsonObject.getBoolean("needBook"));
+            payment = registrationService.registerRegistrationInfo(registrarId, jsonObject.getInteger("patientId"), jsonObject.getInteger("scheduleId"), jsonObject.getBoolean("needBook"));
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }catch (IndexOutOfBoundsException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_510);
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(payment);
     }
 
     /**
@@ -78,8 +81,9 @@ public class RegistrationController {
             return  CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            registrationService.retreatRegistrationInfo(registrationId, registrarId);
+            invoice = registrationService.retreatRegistrationInfo(registrationId, registrarId);
         }catch (UnsupportedOperationException e) {
             if (e.getMessage().equals("redis"))
                 return CommonUtil.errorJson(ErrorEnum.E_511);
@@ -87,7 +91,7 @@ public class RegistrationController {
         }catch (IllegalArgumentException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
         }
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
     }
 
     /**
