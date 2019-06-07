@@ -5,6 +5,7 @@ import Login from './views/Login'
 import Search from './views/Search'
 import Charge from './views/Charge'
 import Medicine from './views/Medicine'
+import test from './views/test'
 
 Vue.use(Router)
 
@@ -63,6 +64,11 @@ export default new Router({
             path:'/medicine',
             name:'medicine',
             component: Medicine
+        },
+        {
+            path:'/test',
+            name:'test',
+            component: test
         }
     ]
 })
