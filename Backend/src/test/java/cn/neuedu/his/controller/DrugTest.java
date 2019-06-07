@@ -50,7 +50,7 @@ public class DrugTest {
     @Test
     public void get() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/drug/select/药")
+        mockMvc.perform(MockMvcRequestBuilders.get("/drug/getAllDrugType")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

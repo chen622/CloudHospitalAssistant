@@ -170,7 +170,10 @@ public class DepartmentKindController {
         }
         Integer id = map.get("临床科室");
 
+        List<DepartmentKind> departmentKinds = departmentKindService.getKindAndDepartmentWithType(id);
+
         return CommonUtil.successJson(departmentKindService.getKindAndDepartmentWithType(id));
+
     }
 
 }
