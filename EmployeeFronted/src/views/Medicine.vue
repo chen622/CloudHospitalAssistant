@@ -27,7 +27,7 @@
                     <template v-else>{{text}}</template>
                 </div>
                 </template>
-                <template :slot="specification" slot-scope="text, record">
+                <template :slot="specification" slot-scope="text">
                     <div :key="coll">
                     
                     <template>{{text}}</template>
