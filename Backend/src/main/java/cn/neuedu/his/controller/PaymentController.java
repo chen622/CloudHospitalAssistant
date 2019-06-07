@@ -42,8 +42,10 @@ public class PaymentController {
 
         try {
             paymentService.payRegistrationPayment(jsonObject.getInteger("paymentId"), jsonObject.getInteger("settlementType"));
-        }catch (IndexOutOfBoundsException e2) {
+        }catch (IndexOutOfBoundsException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_509);
+        } catch (IllegalArgumentException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
         }
 
         return CommonUtil.successJson();
@@ -95,15 +97,14 @@ public class PaymentController {
 
         try {
             paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
-        }catch (IllegalArgumentException e1) {
+        } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
-        }catch (UnsupportedOperationException e2) {
+        } catch (UnsupportedOperationException e2) {
             if (e2.getMessage().equals("payment"))
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("invoice"))
                 return CommonUtil.errorJson(ErrorEnum.E_505);
-        }
-        catch (IndexOutOfBoundsException e3) {
+        } catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
         }
 
@@ -111,7 +112,7 @@ public class PaymentController {
     }
 
     /**
-     * 药品类退费
+     * 药品类(已取药）退费
      * @param paymentId
      * @param authentication
      * @return

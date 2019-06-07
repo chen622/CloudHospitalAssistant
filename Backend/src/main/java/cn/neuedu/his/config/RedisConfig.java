@@ -17,6 +17,7 @@ public class RedisConfig {
     private String password;
     private int port;
     private int timeout;
+    private int database;
 
     public JedisPoolConfig getRedisConfig(){
         JedisPoolConfig config = new JedisPoolConfig();
@@ -26,7 +27,7 @@ public class RedisConfig {
     @Bean//@Bean注解将一个配置类的方法的返回值定义为一个bean，注册到spring里面
     public JedisPool getJedisPool(){
         JedisPoolConfig config = getRedisConfig();
-        JedisPool pool = new JedisPool(config,hostName,port,timeout,password);
+        JedisPool pool = new JedisPool(config,hostName,port,timeout,password, database);
         logger.info("init JredisPool ...");
         return pool;
     }
@@ -61,5 +62,13 @@ public class RedisConfig {
 
     public void setTimeout(int timeout) {
         this.timeout = timeout;
+    }
+
+    public int getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(int database) {
+        this.database = database;
     }
 }

@@ -32,5 +32,43 @@
   <select id="getByDate" resultMap="BaseResultMap" >
     select * from job_schedule where TO_DAYS(date) = TO_DAYS(#{date})
   </select>
+
+  <resultMap id="scheduleInfo" type="cn.neuedu.his.model.JobSchedule">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
+    <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
+    <result column="is_valid" jdbcType="BIT" property="isValid" />
+    <result column="limit_registration_amount" jdbcType="INTEGER" property="limitRegistrationAmount" />
+    <result column="period" jdbcType="INTEGER" property="period" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="date" jdbcType="DATE" property="date"/>
+    <association property="constantVariable" javaType="cn.neuedu.his.model.ConstantVariable" resultMap="cn.neuedu.his.mapper.ConstantVariableMapper.BaseResultMap"/>
+    <association property="user" javaType="cn.neuedu.his.model.User" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap"/>
+    <association property="doctor" javaType="cn.neuedu.his.model.Doctor" resultMap="doctorAndTitle"/>
+    <association property="registrationType" javaType="cn.neuedu.his.model.RegistrationType" resultMap="cn.neuedu.his.mapper.RegistrationTypeMapper.BaseResultMap"/>
+  </resultMap>
+  
+  <resultMap id="doctorAndTitle" type="cn.neuedu.his.model.Doctor">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title_id" jdbcType="INTEGER" property="titleId" />
+    <result column="can_arrange" jdbcType="BIT" property="canArrange" />
+    <association property="titleName" javaType="java.lang.String" select="getTitle" column="title_id"/>
+  </resultMap>
+
+  <select id="getScheduleByPeriod" resultMap="scheduleInfo">
+    select j.*, c.*, d.*, u.*, r.* from job_schedule j join doctor d on doctor_id = d.id
+    join user u on j.doctor_id = u.id
+    join registration_type r on j.registration_type_id = r.id
+    join constant_variable c on c.id = j.period
+    where u.department_id = #{departmentId} and TO_DAYS(date) = TO_DAYS(#{date}) and (period = 302 or period = 303
+    <if test='hour &lt; 12'>
+      or period = 301
+    </if>
+    )
+  </select>
+
+  <select id="getTitle" resultType="java.lang.String">
+    select name from constant_variable where id = #{title_id}
+  </select>
 </mapper>
 

@@ -960,4 +960,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return  registrationTotal;
     }
 
+    @Override
+    public void clearTemporaryMedical() {
+        redisService.clearTemporaryMedical();
+    }
+
 }

@@ -7,6 +7,7 @@ import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.UserService;
+import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -152,6 +153,30 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
                 doctor1.setDelete(true);
             doctorService.update(doctor1);
         }
+    }
+
+    @Override
+    public void deleteUser(Integer id) throws Exception{
+
+        //获取user
+        User user = this.findById(id);
+
+        //判断被删除用户是否存在
+        if (user == null)
+            throw new RuntimeException("601");
+
+        Map<String ,Integer> map=redisService.getMapAll("doctor");
+
+        //判断是否要先将doctor表中的数据删除
+        if (map.containsValue(user.getTypeId()) == true) {
+            Doctor doctor = doctorService.findById(id);
+            doctor.setDelete(true);
+            doctorService.update(doctor);
+        }
+
+        //删除用户表中的信息
+        user.setDelete(true);
+        this.update(user);
     }
 
 

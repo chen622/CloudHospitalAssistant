@@ -25,6 +25,8 @@ public class Doctor {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
+    private String titleName;
+
     public Boolean isDelete() {
         return isDelete;
     }
@@ -81,5 +83,13 @@ public class Doctor {
      */
     public void setCanArrange(Boolean canArrange) {
         this.canArrange = canArrange;
+    }
+
+    public String getTitleName() {
+        return titleName;
+    }
+
+    public void setTitleName(String titleName) {
+        this.titleName = titleName;
     }
 }

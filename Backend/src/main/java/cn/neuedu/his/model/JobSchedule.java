@@ -31,6 +31,11 @@ public class JobSchedule {
 
     private Date date;
 
+    private User user;
+    private Doctor doctor;
+    private RegistrationType registrationType;
+    private ConstantVariable constantVariable;
+
     /**
      * @return id
      */
@@ -139,5 +144,37 @@ public class JobSchedule {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public RegistrationType getRegistrationType() {
+        return registrationType;
+    }
+
+    public void setRegistrationType(RegistrationType registrationType) {
+        this.registrationType = registrationType;
+    }
+
+    public ConstantVariable getConstantVariable() {
+        return constantVariable;
+    }
+
+    public void setConstantVariable(ConstantVariable constantVariable) {
+        this.constantVariable = constantVariable;
     }
 }

@@ -17,15 +17,14 @@ import static cn.neuedu.his.util.constants.Constants.*;
  */
 @Component
 public class PermissionCheck {
-
-    public static RedisServiceImpl redisService;
-
     @Autowired
-    RedisServiceImpl redisService1;
+    public RedisServiceImpl redisServiceTemp;
+
+    private static RedisServiceImpl redisService;
 
     @PostConstruct
-    public void init(){
-        redisService = redisService1;
+    public void init() {
+        redisService = redisServiceTemp;
     }
 
     /**

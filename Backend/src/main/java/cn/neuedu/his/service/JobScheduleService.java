@@ -16,4 +16,5 @@ public interface JobScheduleService extends Service<JobSchedule> {
     JobSchedule getByDoctorId(Integer doctorId, Date date);
     ArrayList<JobSchedule> getAfterThreeDays();
     Integer getRegistrationInof(Date time, Integer doctorId);
+    ArrayList<JobSchedule> getScheduleToday(Integer departmentId);
 }

@@ -7,9 +7,11 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.SimpleFormatter;
 
 /**
  *
@@ -34,6 +36,18 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     @Override
     public Integer getRegistrationInof(Date time, Integer doctorId) {
         return jobScheduleMapper.getRegistrationInof(time,doctorId);
+    }
+
+    /**
+     * 获取排班信息
+     * @return
+     */
+    @Override
+    public ArrayList<JobSchedule> getScheduleToday(Integer departmentId) {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat formatter = new SimpleDateFormat("HH");
+        Integer hour = Integer.parseInt(formatter.format(date));
+        return jobScheduleMapper.getScheduleByPeriod(date, hour, departmentId);
     }
 
     @Override
