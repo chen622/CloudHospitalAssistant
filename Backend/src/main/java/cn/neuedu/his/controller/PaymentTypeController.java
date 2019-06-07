@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -121,5 +122,18 @@ public class PaymentTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_606);
 
         return CommonUtil.successJson(paymentType);
+    }
+
+    @GetMapping("/getAll")
+    public JSONObject getAll(){
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("paymentType");
+            JSONObject object=new JSONObject();
+            object.put("name", map.keySet());
+            object.put("id", map.values());
+            return CommonUtil.successJson(object);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
     }
 }

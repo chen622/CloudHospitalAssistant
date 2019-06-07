@@ -29,4 +29,5 @@
   <select id="getAllDrug" resultMap="BaseResultMap">
     select * from drug where  is_delete=false ;
   </select>
+
 </mapper>

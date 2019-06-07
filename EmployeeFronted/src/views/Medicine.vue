@@ -1,13 +1,13 @@
 <template>
-    <a-row type="flex" align="middle" justify="center" class="info-medicine" style="width:1500px">
+    <a-row type="flex" align="middle" justify="center" class="info-medicine" style="width:1510px">
         <a-col span="20">
             <a-card hoveracble title="药品管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
                 <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;">
                     <a-col span="5" style="margin-left:20px;" >
-                        <a-input-search placeholder="请输入药品助记码" @search="onSearch" enterButton></a-input-search>
+                        <a-input-search placeholder="请输入药品助记码" @search="onSearchByCode" enterButton></a-input-search>
                     </a-col>
                     <a-col span="5"  >
-                        <a-input-search placeholder="请输入药品名称" @search="onSearch" enterButton></a-input-search>
+                        <a-input-search placeholder="请输入药品名称" @search="onSearchByName" enterButton></a-input-search>
                     </a-col>
                     <a-col span="3" >
                         <a-button  @click="add" type="primary"><a-icon type="edit" />新增药品</a-button>
@@ -37,9 +37,9 @@
 
                 <template slot="formulationName" slot-scope="text,record">
                     <a-select
-                    v-if="record.editable"
-                    defaultVaule="散剂"
+                    :defaultValue="text"
                     style="width:100px"
+                     v-if="record.editable"
                     @change="e => formChange(e,record.id)"
                     >
                      <a-select-option v-for="d in formulation" :key="d.id">{{d.name}}</a-select-option>
@@ -49,12 +49,24 @@
 
                 <template slot="drugTypeName" slot-scope="text,record">
                     <a-select
-                    v-if="record.editable"
-                    defaultVaule="散剂"
+                    :defaultValue="text"
                     style="width:100px"
+                    v-if="record.editable"
                     @change="e => drugTypeChange(e,record.id)"
                     >
-                     <a-select-option v-for="d in durgType" :key="d.id">{{d.name}}</a-select-option>
+                     <a-select-option v-for="d in durgTypeList" :key="d.id">{{d.name}}</a-select-option>
+                    </a-select>
+                     <template v-else >{{text}}</template>
+                </template>
+
+                <template slot="paymentType" slot-scope="text,record">
+                    <a-select
+                    :defaultValue="text"
+                    style="width:100px"
+                    v-if="record.editable"
+                    @change="e => paymentTypeChange(e,record.id)"
+                    >
+                     <a-select-option v-for="d in durgTypeList" :key="d.id">{{d.name}}</a-select-option>
                     </a-select>
                      <template v-else >{{text}}</template>
                 </template>
@@ -71,7 +83,7 @@
                     <span v-else>
                     <a @click="() => edit(record.id)">编辑</a>
                       <a-divider type="vertical" />
-                     <a @click="() => delete(record.id)" style="color:red">删除</a>
+                     <a @click="() => deleteRow(record.id)" style="color:red">删除</a>
                     </span>
                 </div>
                 </template>
@@ -91,8 +103,10 @@ import { constants } from 'crypto';
         data() {
           
             return {
+                paymentTypeMap:{},
+                paymentTypeList:[],
                 drugTypeMap:{},
-                durgType:[],
+                durgTypeList:[],
                 formulationName:{},
                 formulation:[],
                 columns:[{
@@ -143,6 +157,7 @@ import { constants } from 'crypto';
                     dataIndex: 'drugTypeName',
                     key:'drugTypeName',
                     sorter:true,
+                    width:"8%",
                     scopedSlots:{customRender:'drugTypeName'}
                 },{
                     title:'拼音',
@@ -151,12 +166,19 @@ import { constants } from 'crypto';
                     sorter:true,
                     scopedSlots:{customRender:'spell'}
                 },{
+                    title:'支付类型',
+                    dataIndex: 'paymentType',
+                    key:'paymentType',
+                    sorter:true,
+                    scopedSlots:{customRender:'paymentType'}
+                },{
                     title:'操作',
                     key:'action',
                     dataIndex:'action',
                     width: '10%',
                     scopedSlots:{customRender:'action'}
                 }],
+                wholeData:[],
                 data:[]
 
             }
@@ -169,6 +191,7 @@ import { constants } from 'crypto';
         },created(){
             this.getForm();
             this.getDrugType();
+            this.getPaymentType();
             this.getData();
             
         },
@@ -178,11 +201,13 @@ import { constants } from 'crypto';
                 this.$api.get("/drug/getAllDrug", null,
                     res => {
                         if (res.code === "100") {
-                           that.data=res.data
-                           for(let i=0;i<that.data.length;i++){
+                           that.data=res.data        
+                           for(let i=0;i<that.data.length;i++){          
                               that.data[i].formulationName=that.formulationName.get(that.data[i].formulation)
-                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].durgType)
+                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].drugType)
+                              that.data[i].paymentType=that.paymentTypeMap.get(that.data[i].feeTypeId)               
                            }
+                            that.wholeData=that.data
                         }
                     }, res => {
                         that.$message.error(res)
@@ -194,8 +219,6 @@ import { constants } from 'crypto';
 
                 res => {
                 let a=res.data
-                console.log(a)
-                let i=0
                 that.formulation=a
                 that.formulationName
                 var tem=new Map()
@@ -215,13 +238,33 @@ import { constants } from 'crypto';
                            var name=res.data.name
                            var id=res.data.id
                            for(let i=0;i<name.length;i++){
-                              that.durgType.push({
+                              that.durgTypeList.push({
                                   name:name[i],
                                   id:id[i]
                               })
-                              map.set(id,name)
+                              map.set(id[i],name[i])
                            }
                            that.drugTypeMap=map
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                })
+            },getPaymentType(){
+                let that=this
+                this.$api.get("/payment_type/getAll", null,
+                 res => {
+                        if (res.code === "100") {
+                           var map=new Map();
+                           var name=res.data.name
+                           var id=res.data.id
+                           for(let i=0;i<name.length;i++){
+                                that.paymentTypeList.push({
+                                  name:name[i],
+                                  id:id[i]
+                              })
+                              map.set(id[i],name[i])
+                           }
+                           that.paymentTypeMap=map
                         }
                     }, res => {
                         that.$message.error(res)
@@ -234,7 +277,8 @@ import { constants } from 'crypto';
 
             },
             insert(value){
-
+                var list=[{id:-1,code:null,name:null,delete:false,drugType:1103,drugTypeName:'西药',factory:null,feeTypeId:201,formulation:1401,formulationName:'散剂'
+                ,packageCompany:null,price:0.0,spell:null,standard:null}]
             },
             handleChange (value, key, column) {
                 const newData = [...this.data]
@@ -246,22 +290,19 @@ import { constants } from 'crypto';
             },
             saveRow (key) {
                 let that=this
-                console.log(key)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                  if (target) {
                     delete target.editable
                     that.data = newData
-                    console.log(target)
-                    // that.cacheData = newData.map(item => ({ ...item }))
 
                     this.$api.post("/drug/modify", target,
                             res => {
                                 if (res.code === "100") {
-                                    constants.log("成功")
+                                   
                                     that.$message.success("更新成功！")
                                 } else {
-                                     console.log(res.msg)
+                                   
                                     that.$message.error(res.msg)
                                 }
 
@@ -290,12 +331,9 @@ import { constants } from 'crypto';
                     this.data = newData
                 }
             
-            },formChange(value,key){
-                console.log(key)
-                console.log(value)
+            },formChange(value,key){   
                 let i=0
                 let name=this.formulationName.get(value)
-                console.log(name)
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
@@ -312,15 +350,48 @@ import { constants } from 'crypto';
                 if (target) {
                     target.editable = true
                     target.drugTypeName=name
-                    target.durgType=value
+                    target.drugType=value
                     this.data = newData
                 }
-            },delete(key){
+            },paymentTypeChange(value,key){
 
+            },deleteRow(key){
+                let that=this
+                 this.$api.post("/drug/delete/"+key, null,
+                            res => {
+                                  console.log(key)
+                                if (res.code === "100") {                                  
+                                    that.$message.success("删除成功！")
+                                    const newData = [...that.data]
+                                    this.data = newData.filter(item => key !== item.id)[0]
+                                    this.wholeData=this.data
+                                } else {
+                                   
+                                    that.$message.error(res.msg)
+                                }
+                            }, () => {
+                            that.$message.error("网络异常！")
+                         })
             },getName(value){
-                console.log(value)
-                console.log(this.formulationName.get(value))
                 return this.formulationName.get(value)
+            },onSearchByName(value){
+                   var tem = []
+                   var i=0
+                   for(;i<this.wholeData.length;i++){
+                       if(this.wholeData[i].name.indexOf(value)>=0){
+                           tem.push(this.wholeData[i])
+                    }
+                    this.data=tem   
+                }
+            },onSearchByCode(value){
+                   var tem = []
+                   var i=0
+                   for(;i<this.wholeData.length;i++){
+                       if(this.wholeData[i].code.indexOf(value)>=0){
+                           tem.push(this.wholeData[i])
+                    }
+                    this.data=tem   
+                }
             }
         }
     }

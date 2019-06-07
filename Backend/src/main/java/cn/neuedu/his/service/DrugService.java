@@ -23,4 +23,6 @@ public interface DrugService extends Service<Drug> {
     void insertDrug(Drug drug) throws Exception;
 
     ArrayList<Drug> getAllDrug();
+
+
 }
