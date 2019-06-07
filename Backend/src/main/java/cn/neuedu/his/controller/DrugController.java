@@ -210,4 +210,14 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
+
+
+    @GetMapping("/getAllDrug")
+    public JSONObject getAllDrug(){
+        try {
+            return CommonUtil.successJson(drugService.getAllDrug());
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+    }
 }

@@ -1,6 +1,6 @@
 <template>
   <a-table :columns="columns" :dataSource="data" bordered>
-    <template v-for="col in  ['id', 'name', 'specification','unit','price','form','type']" :slot="col" slot-scope="text, record, index">
+    <template v-for="col in ['name', 'age', 'address']" :slot="col" slot-scope="text, record, index">
       <div :key="col">
         <a-input
           v-if="record.editable"
@@ -11,7 +11,7 @@
         <template v-else>{{text}}</template>
       </div>
     </template>
-    <template slot="operation" slot-scope="text, record">
+    <template slot="action" slot-scope="text, record">
       <div class='editable-row-operations'>
         <span v-if="record.editable">
           <a @click="() => save(record.key)">Save</a>
@@ -27,106 +27,81 @@
   </a-table>
 </template>
 <script>
-  const columns=[{
-                    title:'药品编码',
-                    dataIndex: 'id1',
-                    key:'id',
-                    sorter:true,
-                    scopedSlots:{customRender:'id'}
-                },{
-                    title:'药品名称',
-                    dataIndex: 'name',
-                    key:'name',
-                    sorter:true,
-                    scopedSlots:{customRender:'name'}
-                },{
-                    title:'药品规格',
-                    dataIndex: 'specification',
-                    key:'specification',
-                    sorter:true,
-                    scopedSlots:{customRender:'specification'}
-                },{
-                    title:'药品单位',
-                    dataIndex: 'unit',
-                    key:'unit',
-                    sorter:true,
-                    scopedSlots:{customRender:'unit'}
-                },{
-                    title:'药品单价',
-                    dataIndex: 'price',
-                    key:'price',
-                    sorter:true,
-                    scopedSlots:{customRender:'price'}
-                },{
-                    title:'药品剂型',
-                    dataIndex: 'form',
-                    key:'form',
-                    sorter:true,
-                    scopedSlots:{customRender:'form'}
-                },{
-                    title:'药品类型',
-                    dataIndex: 'type',
-                    key:'type',
-                    sorter:true,
-                    scopedSlots:{customRender:'type'}
-                },{
-                    title:'操作',
-                    key:'action',
-                    dataIndex:'action',
-                    scopedSlots:{customRender:'action'}
-                }]
-const  data=[{
-                    key:'1',
-                    id:'8697474000208',
-                    name:'注射用甲氨喋呤',
-                    specification:'1gx1支',
-                    unit:'支',
-                    price:15.73,
-                    form:'针剂',
-                    type:'西药'
-                },{
-                    key:'2',
-                    id:'8697474000208',
-                    name:'注射用甲氨喋呤',
-                    specification:'1gx1支',
-                    unit:'支',
-                    price:15.73,
-                    form:'针剂',
-                    type:'西药'
-                },{
-                    key:'3',
-                    id:'8697474000208',
-                    name:'注射用甲氨喋呤',
-                    specification:'1gx1支',
-                    unit:'支',
-                    price:15.73,
-                    form:'针剂',
-                    type:'西药'
-                },{
-                    key:'4',
-                    id:'8697474000208',
-                    name:'注射用甲氨喋呤',
-                    specification:'1gx1支',
-                    unit:'支',
-                    price:15.73,
-                    form:'针剂',
-                    type:'西药'
-                }]
+const columns = [{
+  title: 'name1',
+  dataIndex: 'name',
+  width: '25%',
+  scopedSlots: { customRender: 'name1' },
+}, {
+  title: 'age',
+  dataIndex: 'age',
+  width: '15%',
+  scopedSlots: { customRender: 'age' },
+}, {
+  title: 'address',
+  dataIndex: 'address',
+  width: '40%',
+  scopedSlots: { customRender: 'address' },
+}, {
+  title: 'operation',
+  dataIndex: 'operation',
+  scopedSlots: { customRender: 'operation' },
+}]
 
-// for (let i = 0; i < 100; i++) {
-//   data.push({
-//     key: i.toString(),
-//     name: `Edrward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`,
-//   })
-// }
+const data = []
+for (let i = 0; i < 100; i++) {
+  data.push({
+    key: i.toString(),
+    name: `Edrward ${i}`,
+    age: 32,
+    address: `London Park no. ${i}`,
+  })
+}
 export default {
   data () {
     this.cacheData = data.map(item => ({ ...item }))
     return {
       data,
-      columns,
+      columns:[{
+                    title:'药品编码',
+                    dataIndex: 'id',
+                    sorter:true,
+                    scopedSlots:{customRender:'id'}
+                },{
+                    title:'药品名称',
+                    dataIndex: 'name',
+                    sorter:true,
+                    scopedSlots:{customRender:'name'}
+                },{
+                    title:'药品规格',
+                    dataIndex: 'specification',
+                    sorter:true,
+                    scopedSlots:{customRender:'specification'}
+                },{
+                    title:'药品单位',
+                    dataIndex: 'unit',
+                    sorter:true,
+                    scopedSlots:{customRender:'unit'}
+                },{
+                    title:'药品单价',
+                    dataIndex: 'price',
+                    sorter:true,
+                    scopedSlots:{customRender:'price'}
+                },{
+                    title:'药品剂型',
+                    dataIndex: 'form',
+                    sorter:true,
+                    scopedSlots:{customRender:'form'}
+                },{
+                    title:'药品类型',
+                    dataIndex: 'type',
+                    sorter:true,
+                    scopedSlots:{customRender:'type'}
+                },{
+                    title:'操作',
+                    dataIndex:'action',
+                    scopedSlots:{customRender:'action'}
+                }],
     }
   },
   methods: {
