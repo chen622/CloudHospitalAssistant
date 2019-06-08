@@ -9,18 +9,12 @@ import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.security.InvalidParameterException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -158,7 +152,7 @@ public class PatientController {
     public JSONObject findAll() {
         List<Patient> patients = patientService.findAll();
         try {
-            return CommonUtil.successJson(setAge(patients));
+            return CommonUtil.successJson(StringUtils.setAgeForPatientArray(patients));
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
@@ -181,7 +175,7 @@ public class PatientController {
 
         JSONArray jsonArray = null;
         try {
-            jsonArray = setAge(patients);
+            jsonArray = StringUtils.setAgeForPatientArray(patients);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
@@ -189,7 +183,6 @@ public class PatientController {
         return CommonUtil.successJson(jsonArray);
     }
 
-    @GetMapping
 
 //    /**
 //     * 根据真实姓名获得病人信息
@@ -229,24 +222,4 @@ public class PatientController {
 //        return CommonUtil.successJson(jsonArray);
 //    }
 
-    /**
-     * 设置年龄
-     *
-     * @param patients
-     * @return
-     */
-    private JSONArray setAge(List<Patient> patients) throws Exception {
-        JSONArray jsonArray = new JSONArray();
-        for (Patient patient : patients) {
-            try {
-                Integer age = StringUtils.identityIdTransferToAge(patient.getIdentityId());
-                JSONObject jsonObject = (JSONObject) JSONObject.toJSON(patient);
-                jsonObject.put("age", age);
-                jsonArray.add(jsonObject);
-            } catch (ParseException e) {
-                throw new Exception();
-            }
-        }
-        return jsonArray;
-    }
 }

@@ -262,12 +262,17 @@
                 this.load.loadDoctor = true
                 this.registration.validateFields((err) => {
                     if (!err) {
-                        this.showDoctor = true
                         this.$api.get("/job_schedule/getSchedule/" + this.registration.getFieldsValue().department, null,
                             res => {
                                 if (res.code === "100") {
-                                    that.doctor = res.data.schedule
+                                    if (res.data.schedule.length > 0) {
+                                        that.showDoctor = true
+                                        that.doctor = res.data.schedule
+                                    } else {
+                                        that.$message.info("该科室暂无值班医生")
+                                    }
                                     that.load.loadDoctor = false
+
                                 } else {
                                     that.$message.error(res.msg)
                                 }

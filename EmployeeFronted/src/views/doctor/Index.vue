@@ -1,7 +1,10 @@
 <template>
     <a-row type="flex" align="middle" justify="space-around" class="info-card">
         <a-col span="6">
-            <a-card title="患者列表" :body-style="{padding: '10px 0 0 0'}">
+            <a-card :body-style="{padding: '10px 0 0 0'}">
+                <span slot="title" style="font-size: 22px">患者列表
+                    <a-button @click="getPatient" type="primary" shape="circle" icon="reload" style="float: right;"></a-button>
+                </span>
                 <a-collapse defaultActiveKey="1" :bordered="false">
                     <a-collapse-panel header="待诊患者" key="1">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="waitPatient"
@@ -11,8 +14,8 @@
                                 <span slot="title"
                                       style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
                                     <span slot="description">
-                                        <p>年龄: {{item.patient.age}}</p>
-                                        <p>性别: {{item.patient.sex}}</p>
+                                        <span>年龄: {{item.age}}岁</span>
+                                        <span>性别: {{item.patient.sex?'男':'女'}}</span>
                                     </span>
                                 </a-list-item-meta>
                             </a-list-item>
@@ -78,7 +81,7 @@
         margin-bottom: 20px;
     }
 
-    .ant-list-item-meta-description > span > p {
-        margin: 2px 0;
+    .ant-list-item-meta-description > span > span {
+        margin: 0px 4px;
     }
 </style>

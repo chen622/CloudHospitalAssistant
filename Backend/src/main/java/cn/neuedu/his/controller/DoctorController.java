@@ -7,9 +7,9 @@ import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -21,8 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static cn.neuedu.his.util.StringUtils.identityIdTransferToAge;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -44,156 +42,6 @@ public class DoctorController {
     RedisServiceImpl redisService;
 
     /**
-     * 暂存病历
-     *
-     * @param object
-     * @return
-     */
-    @PostMapping("/saveTemporaryMR")
-    public JSONObject saveTemporaryMR(@RequestBody JSONObject object) {
-        Integer id = Integer.parseInt(object.get("registrationId").toString());
-        MedicalRecord record = JSONObject.parseObject(object.get("record").toString(), MedicalRecord.class);
-        try {
-            redisService.setTemporaryMedicalRecord(id, record);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_801);
-        }
-        return CommonUtil.successJson();
-    }
-
-    /**
-     * 获得暂存病历
-     *
-     * @param registrationId
-     * @return
-     */
-    @GetMapping("/getTemporaryMR/{registrationId}")
-    public JSONObject getTemporaryMR(@PathVariable("registrationId") Integer registrationId) {
-        try {
-            MedicalRecord record = redisService.getTemporaryMedicalRecord(registrationId);
-            if (record == null)
-                record = new MedicalRecord();
-            return CommonUtil.successJson(record);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-    }
-
-    /**
-     * 获得暂存病历
-     *
-     * @param registrationId
-     * @return
-     */
-    @GetMapping("/deleteTemporaryMR/{registrationId}")
-    public JSONObject deleteTemporaryMR(@PathVariable("registrationId") Integer registrationId) {
-        try {
-            redisService.deleteTemporaryMR(registrationId);
-            return CommonUtil.successJson();
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_803);
-        }
-    }
-
-    /**
-     * 暂存检查/处置
-     *
-     * @param object
-     * @return
-     */
-    @PostMapping("/saveTemporaryInspection")
-    public JSONObject saveTemporaryInspection(@RequestBody JSONObject object) {
-        Integer id = Integer.parseInt(object.get("registrationId").toString());
-        List<InspectionApplication> record = JSONObject.parseArray(object.get("inspections").toString(), InspectionApplication.class);
-        List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
-        try {
-            redisService.setTemporaryInspection(id, record, prescriptions);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_801);
-        }
-        return CommonUtil.successJson();
-    }
-
-
-    /**
-     * 获得暂存检查/处置
-     *
-     * @param registrationId
-     * @return
-     */
-    @GetMapping("/getTemporaryInspection/{registrationId}")
-    public JSONObject getTemporaryInspection(@PathVariable("registrationId") Integer registrationId) {
-        JSONObject object = new JSONObject();
-        try {
-            List<Prescription> prescriptions = redisService.getTemporaryPrescription(registrationId);
-            if (prescriptions == null)
-                prescriptions = new ArrayList<>();
-            object.put("prescriptions", prescriptions);
-            List<InspectionApplication> applications = redisService.getTemporaryApplications(registrationId);
-            if (applications == null)
-                applications = new ArrayList<>();
-            object.put("applications", applications);
-            return CommonUtil.successJson(object);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-    }
-
-    /**
-     * 获得暂存病历
-     *
-     * @param registrationId
-     * @return
-     */
-    @GetMapping("/deleteTemporaryInspection/{registrationId}")
-    public JSONObject deleteTemporaryInspection(@PathVariable("registrationId") Integer registrationId) {
-        try {
-            redisService.deleteTemporaryInspection(registrationId);
-            return CommonUtil.successJson();
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_803);
-        }
-    }
-
-    private  JSONObject permissionCheck(Authentication authentication){
-        Integer doctorID;
-        try {
-            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        JSONObject object=new JSONObject();
-        object.put("id", doctorID);
-        return object;
-    }
-    //PARTONE-门诊病例首页
-
-    /**
-     * 通过患者id获得该患者所有的病历
-     *
-     * @param patientID
-     * @param authentication
-     * @return
-     * @throws AuthenticationServiceException
-     */
-    @GetMapping("/getAllRecord/{patientID}")
-    public JSONObject getAllRecordByPatientId(@PathVariable("patientID") Integer patientID, Authentication authentication)
-            throws AuthenticationServiceException {
-        JSONObject object=permissionCheck(authentication);
-        if(object.get("id")==null)
-            return  object;
-
-        List<MedicalRecord> list = medicalRecordService.getAllByPatientId(patientID);
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        return CommonUtil.successJson(list);
-    }
-
-    /**
      * 通过患者名字找到所有挂在该医生的待诊挂号
      * use patient name to registration
      *
@@ -204,11 +52,11 @@ public class DoctorController {
     @GetMapping("/getByName/{name}")
     public JSONObject getRegistrationByPatientName(@PathVariable("name") String name, Authentication authentication) {
         Integer doctorID;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorID=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         List<Registration> list = registrationService.getRegistrationByPatientName(name, doctorID, Constants.WAITING_FOR_TREATMENT);
         if (list == null) {
             list = new ArrayList<>();
@@ -216,14 +64,14 @@ public class DoctorController {
         return CommonUtil.successJson(list);
     }
 
-    @GetMapping("/getRegistrationInof/{time}")
-    public JSONObject getRegistrationInof(@PathVariable("time") Date time, Authentication authentication) {
+    @GetMapping("/getRegistrationInfo/{time}")
+    public JSONObject getRegistrationInfo(@PathVariable("time") Date time, Authentication authentication) {
         Integer doctorID;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorID=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         return doctorService.getRegistrationInof(time, doctorID);
     }
 
@@ -234,14 +82,14 @@ public class DoctorController {
      * @return
      */
     @GetMapping("/getAllRegistration")
-    public JSONObject getAllRegistration( Authentication authentication) {
+    public JSONObject getAllRegistration(Authentication authentication) {
         Date time = new Date(System.currentTimeMillis());
         Integer doctorID;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorID=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         List<Registration> list = registrationService.getAllWaitingRegistration(doctorID, Constants.WAITING_FOR_TREATMENT, time);
 
         if (list == null) {
@@ -263,50 +111,29 @@ public class DoctorController {
             finish = new ArrayList<>();
         JSONObject map = new JSONObject();
 
-        //设置年龄
-        list.forEach(registration -> {
-            try {
-                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        });
-        list2.forEach(registration -> {
-            try {
-                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        });
-        finish.forEach(registration -> {
-            try {
-                registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        });
-        map.put("wait", list);
-        map.put("in", list2);
-        map.put("out", finish);
+        map.put("wait", StringUtils.setAgeForRegistrationArray(list));
+        map.put("in", StringUtils.setAgeForRegistrationArray(list2));
+        map.put("out", StringUtils.setAgeForRegistrationArray(finish));
         return CommonUtil.successJson(map);
     }
 
     @GetMapping("/insideDoc/{registrationId}")
-    public JSONObject getInsideDoc(@PathVariable("registrationId")Integer registrationId,Authentication authentication){
+    public JSONObject getInsideDoc(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         Integer doctorID;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorID=Integer.parseInt(object2.get("id").toString());
-        Registration r=registrationService.findById(registrationId);
-        if(r==null || !r.getState().equals(Constants.WAITING_FOR_TREATMENT)){
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Registration r = registrationService.findById(registrationId);
+        if (r == null || !r.getState().equals(Constants.WAITING_FOR_TREATMENT)) {
             return CommonUtil.errorJson(ErrorEnum.E_705);
         }
         r.setState(Constants.INSIDE_DOCTOR);
         registrationService.update(r);
         return CommonUtil.successJson();
     }
+
     /**
      * 门诊医生查看病例模板
      *
@@ -323,8 +150,6 @@ public class DoctorController {
                 return CommonUtil.errorJson(ErrorEnum.E_709);
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
@@ -412,23 +237,22 @@ public class DoctorController {
     /**
      * 医生初诊提交，更新该挂号状态
      * update the registration state as first diagnose which is 803
-     *+
+     * +
+     *
      * @param object
      * @return
      */
     @PostMapping("/firstDiagnose")
     public JSONObject setFirstDiagnose(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        Integer doctorID;
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         Integer registrationID = null;
         try {
             registrationID = Integer.parseInt(object.get("registrationId").toString());
-            if (registrationID == null)
-                throw new NumberFormatException();
         } catch (NumberFormatException n) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         }
@@ -440,14 +264,14 @@ public class DoctorController {
 //            return CommonUtil.errorJson(ErrorEnum.E_803);
 //        }
 
-        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecordId").toString(), MedicalRecord.class);
+        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
         ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
         if (diagnoses == null || diagnoses.size() == 0)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
         JSONObject object1;
         try {
-            object1 = doctorService.setFirstDiagnose(registrationID, medicalRecord, diagnoses, doctorId);
+            object1 = doctorService.setFirstDiagnose(registrationID, medicalRecord, diagnoses, doctorID);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
         }
@@ -577,7 +401,7 @@ public class DoctorController {
     public boolean isChiefDoctor(Integer id) throws Exception {
         Doctor doctor = doctorService.findById(id);
         try {
-            Map<String ,Integer> map=redisService.getMapAll("title");
+            Map<String, Integer> map = redisService.getMapAll("title");
             if (doctor.getTitleId().equals(map.get("主任医师"))) {
                 return true;
             } else {
@@ -601,15 +425,15 @@ public class DoctorController {
     public boolean aboveDeputyChiefDoctor(Integer id) throws Exception {
         Doctor doctor = doctorService.findById(id);
         try {
-            Map<String ,Integer> map=redisService.getMapAll("title");
+            Map<String, Integer> map = redisService.getMapAll("title");
 
             if (doctor.getTitleId().equals(map.get("副主任医师")) || doctor.getTitleId().equals(map.get("主任医师"))) {
                 return true;
             } else {
                 throw new AuthenticationServiceException("DeputyChiefDocto");
             }
-        }catch(Exception e){
-            throw new  Exception(e.getMessage());
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
         }
     }
 
@@ -625,15 +449,15 @@ public class DoctorController {
     public boolean aboveATTENDING_DOCTOR(Integer id) throws Exception {
         Doctor doctor = doctorService.findById(id);
         try {
-            Map<String ,Integer> map=redisService.getMapAll("title");
+            Map<String, Integer> map = redisService.getMapAll("title");
 
             if (doctor.getTitleId().equals(map.get("副主任医师")) || doctor.getTitleId().equals(map.get("主任医师")) || doctor.getTitleId().equals(map.get("主治医师"))) {
                 return true;
             } else {
                 throw new AuthenticationServiceException("ATTENDING_DOCTOR");
             }
-        }catch (Exception e){
-            throw  new Exception();
+        } catch (Exception e) {
+            throw new Exception();
         }
     }
 
@@ -802,8 +626,6 @@ public class DoctorController {
             doctorId = PermissionCheck.isOutpatientDoctor(authentication);
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
         InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
         Integer crearedById = template.getCreatedById();
@@ -845,11 +667,11 @@ public class DoctorController {
     @GetMapping("/getResult/{id}")
     public JSONObject getInspectionResult(@PathVariable("id") Integer id, Authentication authentication) {
         Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         return doctorService.getInspectionResult(id);
     }
 
@@ -863,23 +685,19 @@ public class DoctorController {
     @PostMapping("/finalDiagnose")
     public JSONObject saveFinalDiagnose(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         Integer registrationID = null, medicalRecordId;
         try {
             registrationID = Integer.parseInt(object.get("registrationId").toString());
-            if (registrationID == null)
-                throw new NumberFormatException();
         } catch (NumberFormatException n) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
         }
         try {
             medicalRecordId = Integer.parseInt(object.get("medicalRecordId").toString());
-            if (registrationID == null)
-                throw new NumberFormatException();
         } catch (NumberFormatException n) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecordId"));
         }
@@ -946,11 +764,11 @@ public class DoctorController {
     @PostMapping("/savePrescriptionTemp")
     public JSONObject savePrescriptionsTemp(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
         Integer medicalId = Integer.parseInt(object.get("medicalRecordId").toString());
 //        Integer registationId=Integer.parseInt(object.get("registrationId").toString());
@@ -986,34 +804,33 @@ public class DoctorController {
     @GetMapping("/finishDiagnose/{registrationId}")
     public JSONObject finishDiagnose(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         return doctorService.finishDiagnose(registrationId);
     }
 
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
     public JSONObject getAllPaymentDetails(@PathVariable("registrationId") Integer registrationId, @PathVariable("medicalRecordId") Integer medicalRecordId, Authentication authentication) {
         Integer doctorId;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         return doctorService.getAllPaymentDetails(medicalRecordId, registrationId);
     }
 
     @PostMapping("/getDoctorTotal")
     public JSONObject getDoctorTotal(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId = null;
-        JSONObject object2=permissionCheck(authentication);
-        if(object2.get("id")==null)
-            return  object2;
-        else
-            doctorId=Integer.parseInt(object2.get("id").toString());
-
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
         SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Date start = null, end = null;
         try {
