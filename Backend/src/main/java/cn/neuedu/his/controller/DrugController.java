@@ -149,9 +149,12 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
+        Integer id = null;
         try{
             Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
+            drug.setId(null);
             drugService.insertDrug(drug);
+            id=drug.getId();
         }catch (RuntimeException e){
             if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
@@ -163,7 +166,7 @@ public class DrugController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(id);
 
     }
 

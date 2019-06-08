@@ -15,4 +15,5 @@ public interface DrugMapper extends MyMapper<Drug> {
     ArrayList<Drug> getAllDrug();
     ArrayList<Drug> getByCode(String code);
     ArrayList<Drug> getByName(String name);
+    ArrayList<Drug> getDrugByPartName(String name);
 }

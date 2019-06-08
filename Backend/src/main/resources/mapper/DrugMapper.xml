@@ -23,11 +23,17 @@
   <select id="getDrugByName" resultMap="BaseResultMap">
     select *
     from drug
+    where name like #{name}
+  </select>
+
+  <select id="getDrugByPartName" resultMap="BaseResultMap">
+    select *
+    from drug
     where name like concat('%',#{name},'%')
   </select>
 
   <select id="getAllDrug" resultMap="BaseResultMap">
-    select * from drug where  is_delete=false ;
+    select * from drug where  is_delete=false limit 0,100;
   </select>
 
 </mapper>

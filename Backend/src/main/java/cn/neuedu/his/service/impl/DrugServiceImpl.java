@@ -134,6 +134,11 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
         return drugMapper.getAllDrug();
     }
 
+    @Override
+    public ArrayList<Drug> getDrugByPartName(String name) {
+        return drugMapper.getDrugByPartName(name);
+    }
+
     private boolean judgeDrug(Drug drug) throws Exception {
 
 

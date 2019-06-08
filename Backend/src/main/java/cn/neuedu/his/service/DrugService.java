@@ -24,5 +24,7 @@ public interface DrugService extends Service<Drug> {
 
     ArrayList<Drug> getAllDrug();
 
+    ArrayList<Drug> getDrugByPartName(String name);
+
 
 }
