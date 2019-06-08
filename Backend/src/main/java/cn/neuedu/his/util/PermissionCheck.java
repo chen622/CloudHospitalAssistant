@@ -45,16 +45,25 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer getIdByPaymentAdmin(Authentication authentication) throws Exception {
+    public static Integer getIdByPaymentAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        Map<String, Integer> map = redisService.getMapAll("userType");
-
-        if (typeId.equals(map.get("挂号收费员"))) {
-            return (Integer) data.get("id");
-        } else {
+        try {
+            Map<String, Integer> map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("挂号收费员"))) {
+                Integer id = (Integer) data.get("id");
+                if (id == null)
+                    throw new Exception();
+                else
+                    return id;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             throw new AuthenticationServiceException("");
         }
+
+
     }
 
     /**
@@ -83,15 +92,23 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isOutpatientDoctor(Authentication authentication) throws Exception {
+    public static Integer isOutpatientDoctor(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        Map<String, Integer> map = redisService.getMapAll("userType");
-        System.out.println(map.get("门诊医生"));
-        if (typeId.equals(map.get("门诊医生"))) {
-            return (Integer) data.get("id");
-        } else {
-            throw new AuthenticationServiceException("is not Outpatient Doctor ");
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("门诊医生"))) {
+                Integer id = (Integer) data.get("id");
+                if (id == null)
+                    throw new Exception();
+                else
+                    return id;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("");
         }
     }
 
@@ -102,19 +119,30 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isHosptialAdim(Authentication authentication) throws Exception {
+    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        Map<String, Integer> map = redisService.getMapAll("userType");
-        if (typeId.equals(map.get("医院管理员"))) {
-            return (Integer) data.get("id");
-        } else {
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("医院管理员"))) {
+                Integer id = (Integer) data.get("id");
+                if (id == null)
+                    throw new Exception();
+                else
+                    return id;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
             throw new AuthenticationServiceException("");
         }
+
     }
 
     /**
      * 医院管理员权限检验
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
