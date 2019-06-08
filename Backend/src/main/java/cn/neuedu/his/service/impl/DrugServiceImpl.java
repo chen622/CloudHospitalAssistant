@@ -120,13 +120,13 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     }
 
     @Override
-    public void insertDrug(Drug drug) throws Exception {
-
+    public Integer insertDrug(Drug drug) throws Exception {
         //判断药品名是否重复
-        if (this.getDrugByName(drug.getName()) != null)
+        if (this.getDrugByName(drug.getName()).size()>0)
             throw new RuntimeException("631");
         if(judgeDrug(drug))
             this.save(drug);
+        return drug.getId();
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface DrugService extends Service<Drug> {
 
     void modifyDrug(Drug drug) throws Exception;
 
-    void insertDrug(Drug drug) throws Exception;
+    Integer insertDrug(Drug drug) throws Exception;
 
     ArrayList<Drug> getAllDrug();
 

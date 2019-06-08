@@ -152,10 +152,11 @@ public class DrugController {
         Integer id = null;
         try{
             Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
+            drug.setDelete(false);
             drug.setId(null);
-            drugService.insertDrug(drug);
-            id=drug.getId();
+            id=drugService.insertDrug(drug);
         }catch (RuntimeException e){
+            e.printStackTrace();
             if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
             else if (e.getMessage().equals("627"))

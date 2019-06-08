@@ -1,7 +1,7 @@
 <template>
     <div>
-    <a-row type="flex"  class="info-medicine" style="width:1500px;margin-left:10px">
-        <a-col span="24">
+    <a-row type="flex"  align="middle" justify="center" class="info-medicine" >
+        <a-col span="20">
             <a-card hoveracble title="药品管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
                 <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;">
                     <a-col span="5" style="margin-left:20px;" >
@@ -18,12 +18,12 @@
                     </a-col>
 
                     <a-col span="3"  >
-                        <a-button @click="saveAll" type="primary"><a-icon type="plus-circle"/>保存所有更改</a-button>
+                        <a-button @click="deleteAll" type="danger"><a-icon type="plus-circle"/>全部删除</a-button>
                     </a-col>
                 </a-row>
             
 
-            <a-table :columns="columns" :dataSource="data" bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
+            <a-table :columns="columns" :dataSource="data" :scroll="{ x: 1500 }"  bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
                 <template slot="action" slot-scope="text, record">
                 <div class='editable-row-operations'>
                     <span v-if="record.editable">
@@ -41,9 +41,6 @@
                 </div>
                 </template>
             </a-table>
-
-
-
                 
             </a-card>
         </a-col>
@@ -127,7 +124,7 @@
                         v-decorator="[
                         'price',
                         {
-                            initialValue: [this.drugTemp.price],
+                            initialValue: this.drugTemp.price,
                             rules: [{ required: true, validator:checkPrice }],
                         }
                         ]"
@@ -230,6 +227,7 @@ import { constants } from 'crypto';
         data() {
           
             return {
+                rowKeys:[],
                 wholeData:[],
                 count:0,
                 form: this.$form.createForm(this),
@@ -248,7 +246,7 @@ import { constants } from 'crypto';
                     dataIndex: 'code',
                     key:'code',
                     sorter:true,
-                  
+                    width: '150px',
                     scopedSlots:{
                         customRender:'code'}
                 },{
@@ -256,55 +254,65 @@ import { constants } from 'crypto';
                     dataIndex: 'name',
                     key:'name',
                     sorter:true,
+                    width: '200px',
                     scopedSlots:{customRender:'name'}
                 },{
                     title:'规格',
                     dataIndex: 'standard',
                     key:'standard',
+                    width: '150px',
                     scopedSlots:{customRender:'standard'}
                 },{
                     title:'单位',
                     dataIndex: 'packageCompany',
                     key:'packageCompany',
+                    width: '100px',
                     scopedSlots:{customRender:'packageCompany'}
                 },{
                     title:'生产厂家',
                     dataIndex: 'factory',
                     key:'factory',
+                    width: '300px',
                     scopedSlots:{customRender:'factory'}
                 },{
                     title:'单价',
                     dataIndex: 'price',
                     key:'price',
+                    width: '150px',
                     sorter:true,
                     scopedSlots:{customRender:'price'}
                 },{
                     title:'剂型',
                     dataIndex: 'formulationName',
                     key:'formulationName',
+                    width: '150px',
                     scopedSlots:{customRender:'formulationName'}
                 },{
                     title:'药品类型',
                     dataIndex: 'drugTypeName',
                     key:'drugTypeName',
                     sorter:true,
-                    width:"8%",
+                    width: '150px',
                     scopedSlots:{customRender:'drugTypeName'}
                 },{
                     title:'拼音',
                     dataIndex: 'spell',
+                     width: '150px',
                     key:'spell',
                     scopedSlots:{customRender:'spell'}
                 },{
                     title:'支付类型',
                     dataIndex: 'paymentType',
+                     width: '150px',
                     key:'paymentType',
                     scopedSlots:{customRender:'paymentType'}
                 },{
                     title:'操作',
                     key:'action',
                     dataIndex:'action',
-                    width: '10%',
+                    width: '120px',
+                    align:'middle',
+                    fixed:'right',
                     scopedSlots:{customRender:'action'}
                 }],
                 data:[]
@@ -317,75 +325,13 @@ import { constants } from 'crypto';
         computed:{
 
         },created() {
-            
-            // this.setModal1Visible(true)
-            // this.setForm(this.data[0])
-            
-        },mounted() {
-             this.getData();
-        //    this.setModal1Visible(false)
-        },watch(){
-            
-           
-
+            this.getData(); 
         },methods: {
             getData(){
-                this.getForm();
-                this.getDrugType();
-                this.getPaymentType();
+                
                 let that = this
-                this.$api.get("/drug/getAllDrug", null,
-                    res => {
-                        if (res.code === "100") {
-                           that.data=res.data        
-                           for(let i=0;i<that.data.length;i++){                           
-                              that.data[i].formulationName=that.formulationNameMap.get(that.data[i].formulation)
-                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].drugType)
-                              that.data[i].paymentType=that.paymentTypeMap.get(that.data[i].feeTypeId)               
-                           }
-                        }
-                    }, res => {
-                        that.$message.error(res)
-                    })
-            },
-             getForm () {
-                let that=this
-                this.$api.get("/constant_variable/getForm", null,
-
-                res => {
-                let a=res.data
-                that.formulation=a
-                that.formulationNameMap
-                var tem=new Map()
-                for(let i=0;i<a.length;i++){
-                    tem.set(a[i].id,a[i].name) 
-                }
-                that.formulationNameMap=tem
-                }, res => {
-                this.$message.error(res)
-                })
-            },getDrugType(){
-                let that=this
-                 this.$api.get("/drug/getAllDrugType", null,
-                 res => {
-                        if (res.code === "100") {
-                           var map=new Map();
-                           var name=res.data.name
-                           var id=res.data.id
-                           for(let i=0;i<name.length;i++){
-                              that.durgTypeList.push({
-                                  name:name[i],
-                                  id:id[i]
-                              })
-                              map.set(id[i],name[i])
-                           }
-                           that.drugTypeMap=map
-                        }
-                    }, res => {
-                        that.$message.error(res)
-                })
-            },getPaymentType(){
-                let that=this
+                
+                // this.getPaymentType();
                 this.$api.get("/payment_type/getAll", null,
                  res => {
                         if (res.code === "100") {
@@ -404,19 +350,90 @@ import { constants } from 'crypto';
                     }, res => {
                         that.$message.error(res)
                 })
+
+                // this.getForm();
+                this.$api.get("/constant_variable/getForm", null,
+
+                    res => {
+                    let a=res.data
+                    that.formulation=a
+                    that.formulationNameMap
+                    var tem=new Map()
+                    for(let i=0;i<a.length;i++){
+                        tem.set(a[i].id,a[i].name) 
+                    }
+                    that.formulationNameMap=tem
+                    }, res => {
+                    this.$message.error(res)
+                })
+
+
+                 // this.getDrugType();
+                 this.$api.get("/drug/getAllDrugType", null,
+                 res => {
+                        if (res.code === "100") {
+                           var map=new Map();
+                           var name=res.data.name
+                           var id=res.data.id
+                           for(let i=0;i<name.length;i++){
+                              that.durgTypeList.push({
+                                  name:name[i],
+                                  id:id[i]
+                              })
+                              map.set(id[i],name[i])
+                           }
+                           that.drugTypeMap=map
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                })
+
+
+                
+                this.$api.get("/drug/getAllDrug", null,
+                    res => {
+                        if (res.code === "100") {
+                           that.data=res.data        
+                           for(let i=0;i<that.data.length;i++){
+                              that.data[i].key=that.data[i].id                           
+                              that.data[i].formulationName=that.formulationNameMap.get(that.data[i].formulation)
+                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].drugType)
+                              that.data[i].paymentType=that.paymentTypeMap.get(that.data[i].feeTypeId)               
+                           }
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
+            },
+             getForm () {
+               
+            },getDrugType(){
+               
+            },getPaymentType(){
+
             },
             onSearch(value){
                 alert(value)
             },
             add(value){ 
-                this.drugTemp={id:null,code:null,name:'',delete:false,drugType:1103,drugTypeName:'西药',factory:null,feeTypeId:13,paymentType:'西药费',formulation:1401,formulationName:'散剂'
-                ,packageCompany:null,price:0.0,spell:null,standard:null}
+                this.drugTemp={id:0,code:null,name:'',delete:false,drugType:1103,drugTypeName:'西药',factory:null,feeTypeId:13,paymentType:'西药费',formulation:1401,formulationName:'散剂'
+                ,packageCompany:null,price:2.0,spell:null,standard:null}
                 this.modelVisiable=true
                 this.drugTemp.isCancel=false
                 this.drugTemp.add=true
             },
             insert(value){
                
+            },deleteAll(){
+                if(this.rowKeys.length>0){
+                    for(var i=0;i<this.rowKeys.length;i++){
+                        console.log(this.rowKeys)
+                        this.deleteRow(this.rowKeys[i])
+                    }
+                }
+                this.rowKeys=[]
+            },onSelectChange(rowKeys){
+                this.rowKeys=rowKeys
             },
             handleChange (value, key, column) {
                 const newData = [...this.data]
@@ -502,15 +519,15 @@ import { constants } from 'crypto';
                     this.data = newData
                 }
             },deleteRow(key){
-                let that=this
+                let that=this  
                  this.$api.post("/drug/delete/"+key, null,
                             res => {
-                                if (res.code === "100") {                                  
-                                    that.$message.success("删除成功！")
+                                if (res.code === "100") {
                                     const newData = [...that.data]
-                                    this.data = newData.filter(item => key !== item.id)[0]
+                                    const tem = newData.filter(item => key !== item.id)
+                                    that.data=tem           
+                                    that.$message.success("删除成功！")
                                 } else {
-                                   
                                     that.$message.error(res.msg)
                                 }
                             }, () => {
@@ -524,28 +541,33 @@ import { constants } from 'crypto';
                 }else{
                     this.data=this.wholeData
                 }
-                var tem = []
-                var i=0
-                for(;i<this.data.length;i++){
-                    if(this.data[i].name.indexOf(value)>=0){
-                        tem.push(this.data[i])
+                if(value){
+                    var tem = []
+                    var i=0
+                    for(;i<this.data.length;i++){
+                        if(this.data[i].name.indexOf(value)>=0){
+                            tem.push(this.data[i])
+                    }
+                    this.data=tem  
+                    }   
                 }
-                this.data=tem   
-            }
             },onSearchByCode(value){
                 if(this.wholeData.length==0){
                     this.wholeData=this.data
                 }else{
                     this.data=this.wholeData
-                }               
-                var tem = []
-                var i=0
-                for(;i<this.data.length;i++){
-                    if(this.data[i].code.indexOf(value)>=0){
-                        tem.push(this.data[i])
                 }
-                this.data=tem   
-            }
+                if(value){
+                    var tem = []
+                    var i=0
+                    for(;i<this.data.length;i++){
+                        if(this.data[i].code.indexOf(value)>=0){
+                            tem.push(this.data[i])
+                        }
+                 
+                    }
+                    this.data=tem                  
+                }
             },setModal1Visible(value){
                 this.modelVisiable=value
             },ok(){                
@@ -558,7 +580,6 @@ import { constants } from 'crypto';
                  this.drugTemp.spell=this.form.getFieldValue('spell')
                 this.setModal1Visible(false)
                 if(this.drugTemp.add){
-                    this.drugTemp.id=null
                     this.$api.post("/drug/insert", this.drugTemp,
                     res => {
                         if (res.code === "100") {                                  
@@ -596,4 +617,6 @@ import { constants } from 'crypto';
         margin-top: 40px;
         margin-bottom: 20px;
     }
+
+
 </style>
