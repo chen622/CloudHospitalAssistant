@@ -183,7 +183,6 @@ public class PatientController {
         return CommonUtil.successJson(jsonArray);
     }
 
-    @GetMapping
 
 //    /**
 //     * 根据真实姓名获得病人信息
