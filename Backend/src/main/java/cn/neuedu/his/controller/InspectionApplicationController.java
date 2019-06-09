@@ -85,4 +85,7 @@ public class InspectionApplicationController {
             return CommonUtil.errorJson(ErrorEnum.E_803);
         }
     }
+    /**患者查询
+     *
+     */
 }

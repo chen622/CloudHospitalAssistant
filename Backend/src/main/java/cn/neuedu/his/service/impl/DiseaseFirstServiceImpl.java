@@ -10,6 +10,8 @@ import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  *
  * Created by ccm on 2019/05/24.
@@ -64,5 +66,10 @@ public class DiseaseFirstServiceImpl extends AbstractService<DiseaseFirst> imple
             throw new RuntimeException("620");
 
         return diseaseFirst;
+    }
+
+    @Override
+    public List<DiseaseFirst> getAllDiseaseType(Boolean authenication, String name) {
+        return diseaseFirstMapper.getAllDiseaseType(authenication,name);
     }
 }

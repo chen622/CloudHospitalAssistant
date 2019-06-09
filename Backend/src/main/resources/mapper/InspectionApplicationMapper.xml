@@ -71,4 +71,24 @@
     select * from  non_drug where  id=#{non_drug_id}
   </select>
 
+  <!--通过病历和姓名的模糊查询获得患者信息-->
+  <resultMap id="patientInformationAndInspectionAppilication" type="cn.neuedu.his.model.InspectionApplication">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
+    <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
+    <result column="is_done" jdbcType="BIT" property="isDone"/>
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+    <result column="is_check" jdbcType="BIT" property="isCheck"/>
+    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+  </resultMap>
+
+
+
 </mapper>

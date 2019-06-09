@@ -13,12 +13,12 @@ public class DiseaseFirst {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    public Boolean isDelete() {
-        return isDelete;
-    }
-
     public void setDelete(Boolean delete) {
         isDelete = delete;
+    }
+
+    public Boolean getDelete() {
+        return isDelete;
     }
 
     /**
