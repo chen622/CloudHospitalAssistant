@@ -44,7 +44,7 @@ public class PatientControllerTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 6)
+                .claim("id", 9)
                 .claim("typeId", 604)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
@@ -52,8 +52,39 @@ public class PatientControllerTest {
     }
 
     @Test
-    public void getUnpaidPaymentAndPatient() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getUnpaidPayment/1")
+    public void getAllPayment() throws Exception {
+        JSONObject param = new JSONObject();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = formatter.parse("2019-05-29 06:11:29");
+            end = formatter.parse("2019-06-04 00:18:35");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        param.put("patientId", 1);
+        param.put("startDate", start);
+//        param.put("endDate", end);
+////        param.put("startDate", null);
+        param.put("endDate", null);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getAllPayment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    public void getNotPaidPayment() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getNotPaidPayment/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -65,7 +96,7 @@ public class PatientControllerTest {
 
     @Test
     public void getNotConsumePaymentAndPatient() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getUnConsumePayment/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getNotConsumePayment/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

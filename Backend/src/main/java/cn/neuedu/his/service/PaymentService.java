@@ -13,7 +13,7 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface PaymentService extends Service<Payment> {
-    Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
+    Payment createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
     Invoice payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
     Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;

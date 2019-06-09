@@ -29,11 +29,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Autowired
     private PaymentMapper paymentMapper;
     @Autowired
-    private MedicalRecordService medicalRecordService;
-    @Autowired
     private RegistrationService registrationService;
-    @Autowired
-    private DrugService drugService;
     @Autowired
     private InvoiceService invoiceService;
     @Autowired
@@ -53,7 +49,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer createRegistrationPayment(Integer registrationId) throws IllegalArgumentException {
+    public Payment createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, UnsupportedOperationException {
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -76,11 +72,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new UnsupportedOperationException("redis");
         }
         payment.setPaymentTypeId(map.get("挂号费"));
+
         payment.setState(Constants.PRODUCE_PAYMENT);
         payment.setDoctorId(registration.getDoctorId());
         save(payment);
 
-        return payment.getId();
+        return payment;
     }
 
     /**
@@ -99,14 +96,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         update(payment);
 
         //生成发票
-        Integer invoiceId;
-        try {
-            invoiceId = invoiceService.addInvoiceByPayment(payment.getId());
-        }catch (IndexOutOfBoundsException e) {
-            throw new IndexOutOfBoundsException("invoice");
-        }
-
-        return invoiceService.findById(invoiceId);
+        return invoiceService.addInvoiceByPayment(payment.getId());
     }
 
     /**
@@ -177,14 +167,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId);
 
         //生成冲红发票，若无法生成，抛出异常
-        Integer invoiceId;
-        try {
-            invoiceId = invoiceService.addInvoiceByPayment(newPaymentId);
-        }catch (RuntimeException e) {
-            throw new UnsupportedOperationException("invoice");
-        }
-
-        return invoiceService.findById(invoiceId);
+        return  invoiceService.addInvoiceByPayment(newPaymentId);
     }
 
     /**

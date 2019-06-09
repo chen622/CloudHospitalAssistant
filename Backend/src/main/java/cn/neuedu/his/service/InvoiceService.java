@@ -11,7 +11,7 @@ import java.util.Date;
  * Created by ccm on 2019/05/24.
  */
 public interface InvoiceService extends Service<Invoice> {
-    Integer addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException;
+    Invoice addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException;
     Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList);
     void setInvoiceNumberToRedis(Integer start, Integer end) throws IllegalArgumentException;
 //    Invoice getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException;

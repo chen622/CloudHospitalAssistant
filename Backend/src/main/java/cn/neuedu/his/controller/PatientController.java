@@ -41,13 +41,34 @@ public class PatientController {
     }
 
     /**
+     * 患者(某段时间内)所有缴费单信息
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getAllPayment")
+    public JSONObject getAllPayment(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        Patient patient = patientService.findAllPayment(jsonObject.getInteger("patientId"), jsonObject.getDate("startDate"), jsonObject.getDate("endDate"));
+
+        return CommonUtil.successJson(patient);
+    }
+
+    /**
      * 查询病患个人信息及所有未缴费信息
      *
      * @param patientId
      * @return
      */
-    @GetMapping("/getUnpaidPayment/{patientId}")
-    public JSONObject getUnpaidPaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+    @GetMapping("/getNotPaidPayment/{patientId}")
+    public JSONObject getNotPaidPayment(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
             PermissionCheck.getIdByPaymentAdmin(authentication);
         } catch (AuthenticationServiceException e) {
@@ -59,7 +80,7 @@ public class PatientController {
         JSONObject result = new JSONObject();
         Patient patient;
         try {
-            patient = patientService.findPatientAndPaymentInfo(patientId);
+            patient = patientService.findNotPaidPayment(patientId);
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
@@ -80,7 +101,7 @@ public class PatientController {
      * @param authentication
      * @return
      */
-    @GetMapping("/getUnConsumePayment/{patientId}")
+    @GetMapping("/getNotConsumePayment/{patientId}")
     public JSONObject getNotConsumePaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
             PermissionCheck.getIdByPaymentAdmin(authentication);
@@ -92,7 +113,7 @@ public class PatientController {
 
         Patient patient;
         try {
-            patient = patientService.findPatientAndNotConsumePayment(patientId);
+            patient = patientService.findNotConsumePayment(patientId);
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }

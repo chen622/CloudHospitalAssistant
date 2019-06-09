@@ -15,12 +15,9 @@ public class Refresh {
     ConstantVariableService constantVariableService;
     @Autowired
     RegistrationService registrationService;
-    @Autowired
-    DoctorService doctorService;
 
 //    @Scheduled(cron = "0 0/1 * * * ? ")
     public void refreshConstant() {
         registrationService.setRegistrationSequence();
-        doctorService.clearTemporaryMedical();
     }
 }

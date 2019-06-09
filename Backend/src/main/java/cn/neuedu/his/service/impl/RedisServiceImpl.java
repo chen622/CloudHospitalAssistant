@@ -30,7 +30,10 @@ public class RedisServiceImpl{
     private JedisPool jedisPool;    //jedisPool不属于springboot框架支持的redis类,所以需要自行注入到spring中。通过配置类RedisConfig类注入的
 
     private String invoiceKey = "invoice-list";
-    private String registrationKey = "registration-list";
+    private String registrationKey = "-registration-list";
+    private String medicalRecordKey = "MR";
+    private String prescriptionKey = "prescriptions";
+    private String applicationKey = "applications";
 
     //基础方法
     private Jedis getResource() {
@@ -127,24 +130,6 @@ public class RedisServiceImpl{
     }
 
     /**
-     * 清库
-     * @param DBNumber
-     * @throws Exception
-     */
-    private void clearDB(Integer DBNumber) throws Exception {
-        Jedis jedis=null;
-        try{
-            jedis = getResource();
-            jedis.select(DBNumber);
-            jedis.flushDB();
-        } catch (Exception e) {
-            throw new Exception();
-        }finally{
-            returnResource(jedis);
-        }
-    }
-
-    /**
      * list的长度
      * @param key
      * @return
@@ -180,11 +165,11 @@ public class RedisServiceImpl{
      * 设置key的生存时间
      * @param key
      */
-    private void expire(String key) {
+    private void expire(String key, Integer day) {
         Jedis jedis=null;
         try{
             jedis = getResource();
-            jedis.expire(key, 30);
+            jedis.expire(key, day * 24 * 60 * 60);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -192,7 +177,7 @@ public class RedisServiceImpl{
         }
     }
 
-    public  Map<String, Integer> getMapAll(String key ) throws Exception{
+    public Map<String, Integer> getMapAll(String key ) throws Exception{
         Map<String, String> result = null;
         Map<String, Integer> resultMap= new HashMap<>();
         Jedis jedis=null;
@@ -287,7 +272,6 @@ public class RedisServiceImpl{
     public void setInvoiceSerialsNumberList(Integer start, Integer end) throws UnsupportedOperationException{
         try {
             setNumberList(invoiceKey, start, end);
-            expire("invoice-list");
         }catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }
@@ -315,7 +299,8 @@ public class RedisServiceImpl{
      */
     public void setRegistrationSequenceList(Integer id, Integer amount) throws UnsupportedOperationException{
         try {
-            setNumberList(id.toString() + "-" + registrationKey, 1, amount);
+            setNumberList(id.toString() + registrationKey, 1, amount);
+            expire(id.toString() + registrationKey, 3);
         }catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }
@@ -327,11 +312,11 @@ public class RedisServiceImpl{
      * @return
      * @throws IllegalArgumentException
      */
-    public Integer getRegistrationSequenceFromFront(Integer id) throws IllegalArgumentException{
+    public Integer getRegistrationSequenceFromFront(Integer id) throws IndexOutOfBoundsException{
         try {
-            return getNumberFromFront(id.toString() + "-" + registrationKey);
+            return getNumberFromFront(id.toString() + registrationKey);
         }catch (Exception e) {
-            throw new IllegalArgumentException("redis");
+            throw new IndexOutOfBoundsException();
         }
     }
 
@@ -343,7 +328,7 @@ public class RedisServiceImpl{
      */
     public void addRegistrationSequenceList(Integer id, Integer sequence) throws UnsupportedOperationException {
         try {
-            addNumberToList(id.toString() + "-" + registrationKey, sequence);
+            addNumberToList(id.toString() + registrationKey, sequence);
         }catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }
@@ -355,8 +340,9 @@ public class RedisServiceImpl{
      * @return
      */
     public boolean isRegistrationEmpty(Integer id) {
-        return isEmpty(id.toString() + "-" + registrationKey);
+        return isEmpty(id.toString() + registrationKey);
     }
+
 
     /**
      * 病历暂存
@@ -365,7 +351,9 @@ public class RedisServiceImpl{
      * @throws Exception
      */
     public void setTemporaryMedicalRecord(Integer id, MedicalRecord record) throws Exception {
-        setObject(id.toString()+"MR", record);
+        setObject(id.toString()+medicalRecordKey, record);
+        expire(id.toString()+medicalRecordKey, 1);
+
     }
 
     /**
@@ -375,13 +363,13 @@ public class RedisServiceImpl{
      * @throws Exception
      */
     public MedicalRecord getTemporaryMedicalRecord(Integer id) throws Exception {
-        return (MedicalRecord) getObject(id.toString()+"MR");
+        return (MedicalRecord) getObject(id.toString()+medicalRecordKey);
     }
 
     public void deleteTemporaryMR(Integer id) throws Exception {
         Jedis jedis=getResource();
         try{
-            jedis.del(id.toString()+"MR");
+            jedis.del(id.toString()+medicalRecordKey);
         }catch (Exception e){
             throw  new Exception();
         }finally {
@@ -390,8 +378,10 @@ public class RedisServiceImpl{
     }
 
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
-        setObjectList(id.toString()+"applications", applications);
-        setObjectList(id.toString()+"prescriptions", prescriptions);
+        setObjectList(id.toString()+applicationKey, applications);
+        setObjectList(id.toString()+prescriptionKey, prescriptions);
+        expire(id.toString()+applicationKey, 1);
+        expire(id.toString()+prescriptionKey, 1);
     }
 
     /**
@@ -401,35 +391,23 @@ public class RedisServiceImpl{
      * @throws Exception
      */
     public List<Prescription> getTemporaryPrescription(Integer id) throws Exception {
-        ArrayList<Prescription> list= (ArrayList<Prescription>) getObjectList(id.toString()+"prescriptions");
+        ArrayList<Prescription> list= (ArrayList<Prescription>) getObjectList(id.toString()+prescriptionKey);
         return  list;
     }
 
     public List<InspectionApplication> getTemporaryApplications(Integer id) throws Exception {
-        return (ArrayList<InspectionApplication>)getObjectList(id.toString()+"applications");
+        return (ArrayList<InspectionApplication>)getObjectList(id.toString()+applicationKey);
     }
 
     public void  deleteTemporaryInspection(Integer id){
         Jedis jedis=getResource();
         try{
-            jedis.del(id.toString()+"applications");
-            jedis.del(id.toString()+"prescriptions");
+            jedis.del(id.toString()+applicationKey);
+            jedis.del(id.toString()+prescriptionKey);
         }catch (Exception e) {
             //returnBrokenResource(jedis);
         }finally {
             returnResource(jedis);
         }
-    }
-
-    /**
-     * 暂存病历清理
-     */
-    public void clearTemporaryMedical() {
-        try {
-            clearDB(2);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }

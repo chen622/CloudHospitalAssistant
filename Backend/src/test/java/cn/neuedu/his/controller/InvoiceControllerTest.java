@@ -64,7 +64,7 @@ public class InvoiceControllerTest {
 
     @Test
     public void setInvoiceNumberPhase() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/invoice/setPhase/131/132")
+        mockMvc.perform(MockMvcRequestBuilders.post("/invoice/setPhase/140/200")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

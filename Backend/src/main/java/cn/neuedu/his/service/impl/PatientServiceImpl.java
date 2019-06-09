@@ -22,6 +22,18 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     private PatientMapper patientMapper;
 
     /**
+     * 查找患者(某时间段内)所有缴费信息
+     * @param patientId
+     * @param start
+     * @param end
+     * @return
+     */
+    @Override
+    public Patient findAllPayment(Integer patientId, Date start, Date end) {
+        return patientMapper.getPatientAndAllPayment(patientId, start, end);
+    }
+
+    /**
      * 查找未缴费缴费单（未冻结）
      *
      * @param patientId
@@ -29,8 +41,8 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      * @throws IllegalArgumentException
      */
     @Override
-    public Patient findPatientAndPaymentInfo(Integer patientId) throws IllegalArgumentException {
-        Patient patient = patientMapper.searchPatientAndFrozenPayment(patientId, REGISTRATION_PAYMENT_TYPE, PRODUCE_PAYMENT);
+    public Patient findNotPaidPayment(Integer patientId) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndPaymentByState(patientId, PRODUCE_PAYMENT);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -45,8 +57,8 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      * @throws IllegalArgumentException
      */
     @Override
-    public Patient findPatientAndNotConsumePayment(Integer patientId) throws IllegalArgumentException {
-        Patient patient = patientMapper.searchPatientAndNotConsumePayment(patientId, REGISTRATION_PAYMENT_TYPE, PRODUCE_PAYMENT, HAVE_PAID, HAVE_COMPLETED_PAID);
+    public Patient findNotConsumePayment(Integer patientId) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndNotConsumePayment(patientId, REGISTRATION_PAYMENT_TYPE);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -62,7 +74,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      */
     @Override
     public Patient findPatientAndNotTakeDrug(Integer patientId) throws IllegalArgumentException {
-        Patient patient = patientMapper.searchPatientAndNotTakeDrug(patientId, DRUG_PAYMENT_TYPE, HAVE_PAID);
+        Patient patient = patientMapper.getPatientAndDrugByTypeAndState(patientId, DRUG_PAYMENT_TYPE, HAVE_PAID);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 

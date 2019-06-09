@@ -36,7 +36,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Integer addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException{
+    public Invoice addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException{
         Payment payment = paymentService.findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException("paymentId");
@@ -46,7 +46,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         try {
             invoiceId = redisService.getInvoiceSerialsNumberFromFront();
         }catch (IllegalArgumentException e) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("invoice");
         }
         //todo:invoiceId设为规律码（可以直接在model类进行处理）
 
@@ -60,7 +60,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         payment.setInvoiceId(invoiceId);
         paymentService.update(payment);
 
-        return invoiceId;
+        return invoice;
     }
 
     /**

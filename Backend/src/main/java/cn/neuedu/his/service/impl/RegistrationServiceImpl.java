@@ -92,11 +92,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         registration.setState(Constants.WAITING_FOR_TREATMENT);
         registration.setNeedBook(needBook);
         //从redis中获取顺序号
-        try {
-            registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
-        }catch (IllegalArgumentException e) {
-            throw new IndexOutOfBoundsException("sequence");
-        }
+        registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
+
         //todo:设置挂号码（serialNumber）
         registration.setSerialNumber(1);
         save(registration);
@@ -107,16 +104,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
             jobScheduleService.update(schedule);
         }
 
-        Integer paymentId;
-        try {
-            paymentId = paymentService.createRegistrationPayment(registration.getId());
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        } catch (UnsupportedOperationException e) {
-            throw new UnsupportedOperationException(e.getMessage());
-        }
-
-        return paymentService.findById(paymentId);
+        return paymentService.createRegistrationPayment(registration.getId());
     }
 
     /**
