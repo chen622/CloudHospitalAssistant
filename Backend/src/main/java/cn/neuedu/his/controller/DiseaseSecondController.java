@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.DiseaseSecond;
 import cn.neuedu.his.service.DiseaseFirstService;
 import cn.neuedu.his.service.DiseaseSecondService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -25,6 +27,8 @@ public class DiseaseSecondController {
     DiseaseSecondService diseaseSecondService;
     @Autowired
     DiseaseFirstService diseaseFirstService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @PostMapping("/insert")
     public JSONObject insertDiseaseSecond(@RequestBody JSONObject jsonObject, Authentication authentication){
@@ -139,4 +143,34 @@ public class DiseaseSecondController {
         return CommonUtil.successJson();
     }
 
+    /**
+     * 1. 医院管理员获得所有数据
+     * 2. 普通医生只能获得未删除的数据
+     * 3. type为空获得所有数据
+     * @param type
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/getDiseaseByType/{type}","/getDiseaseByType"})
+    JSONObject getDiseaseByType(@PathVariable(value = "type",required = false) Integer type, Authentication authentication){
+
+        Boolean auth;
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("医院管理员"))) {
+                auth = true;
+            } else {
+                auth = false;
+            }
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        List<DiseaseSecond> diseaseSeconds = diseaseSecondService.findByDiseaseFirstid(auth,type);
+
+        return CommonUtil.successJson(diseaseSeconds);
+    }
 }

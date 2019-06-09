@@ -27,4 +27,6 @@ public interface DiseaseSecondMapper extends MyMapper<DiseaseSecond> {
 
     //准确查询
     DiseaseSecond selectByName(String name);
+
+    List<DiseaseSecond> findByDiseaseFirstid(Boolean authenication, Integer type);
 }

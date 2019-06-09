@@ -40,4 +40,16 @@ where icd_id like concat('%',#{icdId},'%')
     from disease_second
     where disease_coding = #{diseaseCoding} and is_delete=false ;
   </select>
+  <!--查询某种类别的所有疾病-->
+  <select id="findByDiseaseFirstid" resultMap="BaseResultMap">
+    select * from disease_second
+    <where>
+      <if test="type !=null">
+      disease_second.disease_first_id= #{type}
+      </if>
+      <if test="authenication != true">
+        and disease_second.is_delete = 0
+      </if>
+    </where>
+  </select>
 </mapper>

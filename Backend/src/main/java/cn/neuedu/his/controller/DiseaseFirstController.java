@@ -117,7 +117,16 @@ public class DiseaseFirstController {
         }
     }
 
-    @GetMapping({"/getType/{name}","/getType"})
+    /**
+     * 1. 按照类别姓名来模糊查询
+     * 2. 医院管理员获得所有数据
+     * 3. 普通医生只能获得未删除的数据
+     * 4. name为空获得所有数据
+     * @param name
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/getDiseae/{name}","/getType"})
     JSONObject getAllDiseaseType(@PathVariable(value = "name",required = false) String name, Authentication authentication){
 
         Boolean auth;

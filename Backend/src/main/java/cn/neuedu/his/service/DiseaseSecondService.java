@@ -22,4 +22,7 @@ public interface DiseaseSecondService extends Service<DiseaseSecond> {
 
     void modifyDiseaseSecond(DiseaseSecond diseaseSecond);
 
+    List<DiseaseSecond> findByDiseaseFirstid(Boolean authenication,Integer type);
+
+
 }

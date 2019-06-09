@@ -139,4 +139,9 @@ public class DiseaseSecondServiceImpl extends AbstractService<DiseaseSecond> imp
 
         this.update(diseaseSecond);
     }
+
+    @Override
+    public List<DiseaseSecond> findByDiseaseFirstid(Boolean authenication, Integer type) {
+        return diseaseSecondMapper.findByDiseaseFirstid(authenication,type);
+    }
 }
