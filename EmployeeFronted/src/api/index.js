@@ -60,15 +60,18 @@ export default { // 自定义判断元素类型JS
             // console.log(JSON.stringify(res.data))
         }).catch(function (err) {
             if (err) {
-                if (url !== "/user/login" && err.response && err.response.status === 403) {
-                    sessionStorage.removeItem("token")
-                    location.href = '/#/login'
-                    alert('API error: ' + err)
+                if (err) {
+                    if (url !== "/user/login" && err.response && err.response.status === 403) {
+                        sessionStorage.removeItem("token")
+                        location.href = '/#/login'
+                        alert("登录超时")
 
+                    } else {
+                        // eslint-disable-next-line
+                        console.log('API error: ' + err)
+                        failure(err)
+                    }
                 }
-                // eslint-disable-next-line
-                console.log('API error: ' + err)
-                failure(err)
             }
         })
     },
