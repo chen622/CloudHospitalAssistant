@@ -1,47 +1,208 @@
 <template>
     <div>
     <a-row type="flex"  align="middle" justify="center" class="info-medicine" >
-        <a-col span="20">
-            <a-card hoveracble title="药品管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
-                <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;">
-                    <a-col span="5" style="margin-left:20px;" >
-                        <a-input-search placeholder="请输入药品助记码" @search="onSearchByCode" enterButton></a-input-search>
-                    </a-col>
-                    <a-col span="5"  >
-                        <a-input-search placeholder="请输入药品名称" @search="onSearchByName" enterButton></a-input-search>
-                    </a-col>
-                    <a-col span="3" >
-                        <a-button  @click="add" type="primary"><a-icon type="edit" />新增药品</a-button>
-                    </a-col>
-                    <a-col span="3" >
-                        <a-button  @click="insert" type="primary"><a-icon type="plus-circle"/>导入药品</a-button>
-                    </a-col>
+        <a-col span="22">
+            <a-card hoveracble title="药房工作站" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
+                  <a-tabs>
+                    <a-tab-pane tab="药品管理" key="1">
+                        <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;text-align: center">
+                            <a-col span="5" style="margin-left:20px;" >
+                                <a-input-search placeholder="请输入药品助记码" @search="onSearchByCode" enterButton></a-input-search>
+                            </a-col>
+                            <a-col span="5"  >
+                                <a-input-search placeholder="请输入药品名称" @search="onSearchByName" enterButton></a-input-search>
+                            </a-col>
+                            <a-col span="3" >
+                                <a-button  @click="add" style="color:#1890FF"><a-icon type="edit" />新增药品</a-button>
+                            </a-col>
+                          
+                            <a-col span="3"  >
+                                <a-button @click="deleteAll" type="danger"><a-icon type="plus-circle"/>全部删除</a-button>
+                            </a-col>
 
-                    <a-col span="3"  >
-                        <a-button @click="deleteAll" type="danger"><a-icon type="plus-circle"/>全部删除</a-button>
-                    </a-col>
-                </a-row>
+                              <a-col span="3" >
+                                <a-button  @click="insert" type="primary"><a-icon type="plus-circle"/>导入药品</a-button>
+                            </a-col>
+                        </a-row>
             
 
-            <a-table :columns="columns" :dataSource="data" :scroll="{ x: 1500 }"  bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
-                <template slot="action" slot-scope="text, record">
-                <div class='editable-row-operations'>
-                    <span v-if="record.editable">
-                    <a @click="() => saveRow(record.id)">保存</a>
-                    <a-divider type="vertical" />
-                    <!-- <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record.id)"> -->
-                    <a style="color:red"  @click="() => cancel(record.id)">取消</a>
-                    <!-- </a-popconfirm> -->
-                    </span>
-                    <span v-else>
-                    <a @click="() => edit(record.id)">编辑</a>
-                      <a-divider type="vertical" />
-                     <a @click="() => deleteRow(record.id)" style="color:red">删除</a>
-                    </span>
-                </div>
-                </template>
-            </a-table>
+                        <a-table :columns="columns" :dataSource="data" :scroll="{ x: 1500 }"  bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                            <template slot="action" slot-scope="text, record">
+                            <div class='editable-row-operations'>
+                                <span v-if="record.editable">
+                                <a @click="() => saveRow(record.id)">保存</a>
+                                <a-divider type="vertical" />
+                                <!-- <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record.id)"> -->
+                                <a style="color:red"  @click="() => cancel(record.id)">取消</a>
+                                <!-- </a-popconfirm> -->
+                                </span>
+                                <span v-else>
+                                <a @click="() => edit(record.id)">编辑</a>
+                                <a-divider type="vertical" />
+                                <a @click="() => deleteRow(record.id)" style="color:red">删除</a>
+                                </span>
+                            </div>
+                            </template>
+                        </a-table>
+                    </a-tab-pane>
+                    
+                    <a-tab-pane tab="发药管理" key="2">
+
+                        <a-row type="flex" align="top" justify="space-around" class="info-card">
+                            <a-col :span="showList?3:3" :xl="showList?6:2" style="width:18%;" >
+                                <a-card v-if="showList" hoverable :body-style="{padding: '2px 0 0 0'}">
+                                    <span slot="title" style="font-size: 22px">
+                                        <sapn style="margin-left:35px">患者列表</sapn>
+                                         <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
+                                                style="float:right;margin-top:12px" size="small"></a-button>
+                                    </span>
+                                   
+
+                                    <a-collapse defaultActiveKey="1" :bordered="false">
+                                    
+                                         <a-col span="5"  >
+                                            <a-input-search placeholder="请输入患者病历id" @search="onSearchByPid" enterButton></a-input-search>
+                                        </a-col>
+                    
+                                        <a-collapse-panel header="待诊患者" key="1">
+                                            <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.waitPatient"
+                                                    style="overflow: auto;height: 400px">
+                                                <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(item)">
+                                                    <a-list-item-meta>
+                                                    <span slot="title"
+                                                        style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
+                                                        <span slot="description">
+                                                            <span>年龄: {{item.age}}岁</span>
+                                                            <span>性别: {{item.patient.sex?'男':'女'}}</span>
+                                                        </span>
+                                                    </a-list-item-meta>
+                                                </a-list-item>
+                                            </a-list>
+                                        </a-collapse-panel>
+
+                                    </a-collapse>
+                                </a-card>
+                                <a-affix v-else :offsetTop="50">
+                                    <a-button type="primary" @click="showList = true">患者列表</a-button>
+                                </a-affix>
+                            </a-col>
+
+                            <a-col :span="showList?16:21" :xl="showList?30:30" style="width:80%;padding:0 0 0 0 ; margin:0 0 0 0">
+                                <a-card :body-style="{padding: 0}">
+                                    <span slot="title" style="font-size: 22px">
+                                      
+                                    <a-form :layout="formLayout" style="text-align: center">
+                                        
+                                        <a-form-item>
+                                            <a-icon type="user" />
+                                        </a-form-item>
+
+
+                                        <a-form-item
+                                            label="姓名"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                            <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">小米</a-button> 
+                                        </a-form-item>
+
+
+                                        <a-form-item
+                                            label="性别"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">女</a-button> 
+                                        </a-form-item>
+
+                                         <a-form-item
+                                            label="年龄"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">20</a-button> 
+                                        </a-form-item>
+
+                                         <a-form-item
+                                            label="ID"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px">1</a-button> 
+                                        </a-form-item>
+
+                                        <a-form-item>
+                                             
+                                            <a-button   style="width:100px;margin-left:120px;color:#1890FF">全部取药</a-button>                          
+                                            
+                                        </a-form-item>
+
+                                        <a-form-item>
+                                            <a-button style="width:100px"  type="danger" >全部退药</a-button>            
+                                            
+                                        </a-form-item>
+                                       
+                                    </a-form>
+
+                                    
+                                    <a-divider style="margin-top:20px;font-size:20px;">取药品信息</a-divider>
+                                    
+                                    <a-table :columns="paymentColumns" :dataSource="paymentData"     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                                        
+                                        <template slot="state" slot-scope="text">
+                                            
+                                             <a-tag color="green" style="font-size:15px" v-if="text=='已取药'">{{text}}</a-tag>
+                                              <a-tag color="orange" style="font-size:15px" v-if="text=='未取药'">{{text}}</a-tag>
+                                        </template>
+                                        
+                                        <template slot="actionc" slot-scope="text, record">
+                                            <div class='editable-row-operations'>
+                                                <a @click="() => sendDrug(record.id)">发药</a>
+                                                <a-divider type="vertical" />
+                                                <a-popover 
+                                                trigger="click" >
+                                                    <template slot="title" style="text-align:center">
+                                                        <span style="text-align:center;display:block">请输入退药数量</span>
+                                                    </template>
+
+                                                    <template slot="content" >
+                                                          <a-input 
+                                                            :defaultValue=1
+                                                            style="width:70px"
+                                                            v-model="quantity"/>
+                                                            <a-button  type="primary" style="margin-left:20px">确认</a-button>
+                                                    </template>
+                                                    
+                                                    <a @click="() => returnDrug(record.id)" style="color:red">退药</a>     
+                                                </a-popover>
+                                            
+                                            </div>
+                                        </template>
+
+                           
+                                    </a-table>         
+
+                                                             
+                                    </span>
+                                    
+                                   
+                                </a-card>
+                            </a-col>
+                        </a-row>
+
+
+
+
+                    </a-tab-pane>
+                    
+
+                </a-tabs>
                 
+
+                        
+                
+                
+                    
             </a-card>
         </a-col>
     </a-row>
@@ -222,11 +383,28 @@
 
 <script>
 import { constants } from 'crypto';
+import { Promise, resolve, reject } from 'q';
 
     export default {
         data() {
           
-            return {
+        return {
+            quantity:1,
+              formLayout: 'inline',
+                load: {
+                patient: true
+            },
+            patient: {
+                waitPatient: [],//仍在排号
+                inPatient: [],//在诊
+                outPatient: [],
+            },
+            currentPatient: {
+                name: "当前患者"
+            },
+            rules: {},
+            record: null,
+            showList: true,
                 rowKeys:[],
                 wholeData:[],
                 count:0,
@@ -241,6 +419,61 @@ import { constants } from 'crypto';
                 durgTypeList:[],
                 formulationNameMap:{},
                 formulation:[],
+                paymentColumns:[
+                    {
+                    title:'编码',
+                    dataIndex: 'code',
+                    key:'code',
+                    sorter:true,
+                    width: '150px',
+                    scopedSlots:{
+                        customRender:'code'}
+                    },{
+                        title:'名称',
+                        dataIndex: 'name',
+                        key:'name',
+                        width: '200px',
+                        scopedSlots:{customRender:'name'}
+                    },{
+                        title:'数量',
+                        dataIndex: 'quantity',
+                        key:'quantity',
+                        width: '150px',
+                        scopedSlots:{customRender:'quantity'}
+                    },{
+                        title:'单价',
+                        dataIndex: 'unit_price',
+                        key:'unit_price',
+                        width: '150px',
+                        scopedSlots:{customRender:'unit_price'}
+                    },{
+                        title:'总价',
+                        dataIndex: 'totalPrice',
+                        key:'totalPrice',
+                        width: '150px',
+                        scopedSlots:{customRender:'totalPrice'}
+                    },{
+                        title:'状态',
+                        dataIndex: 'state',
+                        key:'state',
+                        width: '100px',
+                        scopedSlots:{customRender:'state'}
+                    },{
+                        title:'支付时间',
+                        dataIndex: 'create_time',
+                        key:'create_time',
+                        width: '150px',
+                        scopedSlots:{customRender:'create_time'}
+                    },{
+                        title:'操作',
+                        key:'actionc',
+                        dataIndex:'actionc',
+                        width: '1px',
+                        align:'middle',
+                        fixed:'right',
+                        scopedSlots:{customRender:'actionc'}
+                    }
+                ],
                 columns:[{
                     title:'编码',
                     dataIndex: 'code',
@@ -249,73 +482,91 @@ import { constants } from 'crypto';
                     width: '150px',
                     scopedSlots:{
                         customRender:'code'}
-                },{
-                    title:'名称',
-                    dataIndex: 'name',
-                    key:'name',
-                    sorter:true,
-                    width: '200px',
-                    scopedSlots:{customRender:'name'}
-                },{
-                    title:'规格',
-                    dataIndex: 'standard',
-                    key:'standard',
-                    width: '150px',
-                    scopedSlots:{customRender:'standard'}
-                },{
-                    title:'单位',
-                    dataIndex: 'packageCompany',
-                    key:'packageCompany',
-                    width: '100px',
-                    scopedSlots:{customRender:'packageCompany'}
-                },{
-                    title:'生产厂家',
-                    dataIndex: 'factory',
-                    key:'factory',
-                    width: '300px',
-                    scopedSlots:{customRender:'factory'}
-                },{
-                    title:'单价',
-                    dataIndex: 'price',
-                    key:'price',
-                    width: '150px',
-                    sorter:true,
-                    scopedSlots:{customRender:'price'}
-                },{
-                    title:'剂型',
-                    dataIndex: 'formulationName',
-                    key:'formulationName',
-                    width: '150px',
-                    scopedSlots:{customRender:'formulationName'}
-                },{
-                    title:'药品类型',
-                    dataIndex: 'drugTypeName',
-                    key:'drugTypeName',
-                    sorter:true,
-                    width: '150px',
-                    scopedSlots:{customRender:'drugTypeName'}
-                },{
-                    title:'拼音',
-                    dataIndex: 'spell',
-                     width: '150px',
-                    key:'spell',
-                    scopedSlots:{customRender:'spell'}
-                },{
-                    title:'支付类型',
-                    dataIndex: 'paymentType',
-                     width: '150px',
-                    key:'paymentType',
-                    scopedSlots:{customRender:'paymentType'}
-                },{
-                    title:'操作',
-                    key:'action',
-                    dataIndex:'action',
-                    width: '120px',
-                    align:'middle',
-                    fixed:'right',
-                    scopedSlots:{customRender:'action'}
+                    },{
+                        title:'名称',
+                        dataIndex: 'name',
+                        key:'name',
+                        sorter:true,
+                        width: '200px',
+                        scopedSlots:{customRender:'name'}
+                    },{
+                        title:'规格',
+                        dataIndex: 'standard',
+                        key:'standard',
+                        width: '150px',
+                        scopedSlots:{customRender:'standard'}
+                    },{
+                        title:'单位',
+                        dataIndex: 'packageCompany',
+                        key:'packageCompany',
+                        width: '100px',
+                        scopedSlots:{customRender:'packageCompany'}
+                    },{
+                        title:'生产厂家',
+                        dataIndex: 'factory',
+                        key:'factory',
+                        width: '300px',
+                        scopedSlots:{customRender:'factory'}
+                    },{
+                        title:'单价',
+                        dataIndex: 'price',
+                        key:'price',
+                        width: '150px',
+                        sorter:true,
+                        scopedSlots:{customRender:'price'}
+                    },{
+                        title:'剂型',
+                        dataIndex: 'formulationName',
+                        key:'formulationName',
+                        width: '150px',
+                        scopedSlots:{customRender:'formulationName'}
+                    },{
+                        title:'药品类型',
+                        dataIndex: 'drugTypeName',
+                        key:'drugTypeName',
+                        sorter:true,
+                        width: '150px',
+                        scopedSlots:{customRender:'drugTypeName'}
+                    },{
+                        title:'拼音',
+                        dataIndex: 'spell',
+                        width: '150px',
+                        key:'spell',
+                        scopedSlots:{customRender:'spell'}
+                    },{
+                        title:'支付类型',
+                        dataIndex: 'paymentType',
+                        width: '150px',
+                        key:'paymentType',
+                        scopedSlots:{customRender:'paymentType'}
+                    },{
+                        title:'操作',
+                        key:'action',
+                        dataIndex:'action',
+                        width: '120px',
+                        align:'middle',
+                        fixed:'right',
+                        scopedSlots:{customRender:'action'}
                 }],
-                data:[]
+                data:[],
+                paymentData:[{
+                        code:1,
+                        name:'a',
+                        quantity:1,
+                        unit_price:15.2,
+                        totalPrice:15.2,
+                        create_time:'2019-09-09',
+                        state:'未取药',
+                    },{
+                        code:2,
+                        name:'aq',
+                        quantity:10,
+                        unit_price:15.2,
+                        totalPrice:152,
+                        create_time:'2019-09-09',
+                        state:'已取药',
+                    }
+                ],showList:[],
 
             }
         },
@@ -323,15 +574,89 @@ import { constants } from 'crypto';
 
         },
         computed:{
-
+            formItemLayout () {
+                const { formLayout } = this;
+                return formLayout === 'horizontal' ? {
+                    labelCol: { span: 4 },
+                    wrapperCol: { span: 14 },
+                } : {};
+            },
+            buttonItemLayout () {
+                const { formLayout } = this;
+                return formLayout === 'horizontal' ? {
+                    wrapperCol: { span: 14, offset: 4 },
+                } : {};
+            },
         },created() {
             this.getData(); 
         },methods: {
-            getData(){
+            async  getData(){
                 
                 let that = this
                 
                 // this.getPaymentType();
+                await this.getPaymentType()
+     
+                this.paymentTypeMap=that.paymentTypeMap
+
+                // this.getForm();
+                await this.getForm()
+
+                 // this.getDrugType();
+                await this.getDrugType()
+
+                
+            },
+             getForm () {
+                let that=this
+               var p=new Promise((resolve,reject) => {
+                   this.$api.get("/constant_variable/getForm", null,
+
+                    res => {
+                    let a=res.data
+                    that.formulation=a
+                    that.formulationNameMap
+                    var tem=new Map()
+                    for(let i=0;i<a.length;i++){
+                        tem.set(a[i].id,a[i].name) 
+                    }
+                    that.formulationNameMap=tem
+                    }, res => {
+                    this.$message.error(res)
+                    })
+               })
+               
+ 
+            },getDrugType(){
+               let that=this
+                var p=new Promise((resolve,reject) => {
+                    this.$api.get("/drug/getAllDrugType", null,
+                    res => {
+                            if (res.code === "100") {
+                            var map=new Map();
+                            var name=res.data.name
+                            var id=res.data.id
+                            for(let i=0;i<name.length;i++){
+                                that.durgTypeList.push({
+                                    name:name[i],
+                                    id:id[i]
+                                })
+                                map.set(id[i],name[i])
+                            }
+                            that.drugTypeMap=map
+                            resolve('')
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                    })
+                  })
+                  .then(r=>{
+                      this.getAllDrug();
+                  })
+                  
+            }, getPaymentType(){
+                let that=this
+                var p=new Promise((resolve,reject) => {
                 this.$api.get("/payment_type/getAll", null,
                  res => {
                         if (res.code === "100") {
@@ -349,47 +674,12 @@ import { constants } from 'crypto';
                         }
                     }, res => {
                         that.$message.error(res)
+                  })
+
                 })
-
-                // this.getForm();
-                this.$api.get("/constant_variable/getForm", null,
-
-                    res => {
-                    let a=res.data
-                    that.formulation=a
-                    that.formulationNameMap
-                    var tem=new Map()
-                    for(let i=0;i<a.length;i++){
-                        tem.set(a[i].id,a[i].name) 
-                    }
-                    that.formulationNameMap=tem
-                    }, res => {
-                    this.$message.error(res)
-                })
-
-
-                 // this.getDrugType();
-                 this.$api.get("/drug/getAllDrugType", null,
-                 res => {
-                        if (res.code === "100") {
-                           var map=new Map();
-                           var name=res.data.name
-                           var id=res.data.id
-                           for(let i=0;i<name.length;i++){
-                              that.durgTypeList.push({
-                                  name:name[i],
-                                  id:id[i]
-                              })
-                              map.set(id[i],name[i])
-                           }
-                           that.drugTypeMap=map
-                        }
-                    }, res => {
-                        that.$message.error(res)
-                })
-
-
-                
+            },getAllDrug(){
+                let that=this
+                var p=new Promise((resolve,reject) => {
                 this.$api.get("/drug/getAllDrug", null,
                     res => {
                         if (res.code === "100") {
@@ -404,13 +694,8 @@ import { constants } from 'crypto';
                     }, res => {
                         that.$message.error(res)
                     })
-            },
-             getForm () {
-               
-            },getDrugType(){
-               
-            },getPaymentType(){
-
+                  })
+            
             },
             onSearch(value){
                 alert(value)
@@ -427,7 +712,6 @@ import { constants } from 'crypto';
             },deleteAll(){
                 if(this.rowKeys.length>0){
                     for(var i=0;i<this.rowKeys.length;i++){
-                        console.log(this.rowKeys)
                         this.deleteRow(this.rowKeys[i])
                     }
                 }
@@ -585,12 +869,12 @@ import { constants } from 'crypto';
                         if (res.code === "100") {                                  
                             this.$message.success("插入成功！")
                             this.drugTemp.id=res.data
-                            console.log(res.data)
+             
                             this.data.unshift(this.drugTemp)             
                             if (this.data[0]) {
                                 this.data[0].add=true
                                 this.data[0].editable = true
-                                console.log(this.data[0])
+                            
                             }
                         } else {
                             this.$message.error(res.msg)
@@ -606,7 +890,15 @@ import { constants } from 'crypto';
                 return;
                 }
                 callback('单价应大于0!');
-            }
+            },selectPatient(item){
+
+            }, getPatient(value){
+
+            },sendDrug(id){
+
+            },returnDrug(id){
+
+            },onSearchByPid(value){}
         }
     }
     

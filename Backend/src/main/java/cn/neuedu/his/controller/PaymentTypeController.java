@@ -128,6 +128,7 @@ public class PaymentTypeController {
     public JSONObject getAll(){
         try {
             Map<String ,Integer> map=redisService.getMapAll("paymentType");
+            System.out.println(map.size()+"***********************");
             JSONObject object=new JSONObject();
             object.put("name", map.keySet());
             object.put("id", map.values());
