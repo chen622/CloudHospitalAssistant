@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DrugMapper">
   <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Drug">
-    <!--
+    <!--modifyDrug
       WARNING - @mbg.generated
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
@@ -20,9 +20,46 @@
     <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
+  <!--药物信息和type-->
+  <resultMap id="drugAndType" type="cn.neuedu.his.model.ConstantVariable">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <collection property="drug" ofType="cn.neuedu.his.model.Drug">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="formulation" jdbcType="INTEGER" property="formulation" />
+      <result column="factory" jdbcType="VARCHAR" property="factory" />
+      <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
+      <result column="spell" jdbcType="VARCHAR" property="spell" />
+      <result column="standard" jdbcType="VARCHAR" property="standard" />
+      <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="code" jdbcType="VARCHAR" property="code" />
+      <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
+      <result column="drug_type" javaType="INTEGER" property="drugType"/>
+      <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
+      <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </collection>
+  </resultMap>
+
   <select id="getDrugByName" resultMap="BaseResultMap">
+    select *
+    from drug
+    where name like #{name}
+  </select>
+
+  <select id="getDrugByPartName" resultMap="BaseResultMap">
     select *
     from drug
     where name like concat('%',#{name},'%')
   </select>
+
+  <select id="getAllDrug" resultMap="BaseResultMap">
+    select * from drug where  is_delete=false limit 0,100;
+  </select>
+
+
 </mapper>

@@ -149,10 +149,14 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
+        Integer id = null;
         try{
             Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
-            drugService.insertDrug(drug);
+            drug.setDelete(false);
+            drug.setId(null);
+            id=drugService.insertDrug(drug);
         }catch (RuntimeException e){
+            e.printStackTrace();
             if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
             else if (e.getMessage().equals("627"))
@@ -163,7 +167,7 @@ public class DrugController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(id);
 
     }
 
@@ -210,4 +214,15 @@ public class DrugController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
-}
+
+
+    @GetMapping("/getAllDrug")
+    public JSONObject getAllDrug(){
+        try {
+            return CommonUtil.successJson(drugService.getAllDrug());
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+    }
+
+  }

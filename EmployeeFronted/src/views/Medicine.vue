@@ -1,253 +1,914 @@
 <template>
-    <a-row type="flex" align="middle" justify="center" class="info-medicine">
-        <a-col span="20">
-            <a-card hoveracble title="药品管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
-                <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;">
-                    <a-col span="5">
-                        <a-input-search placeholder="请输入药品助记码" @search="onSearch" enterButton></a-input-search>
-                    </a-col>
-                    <a-col span="5">
-                        <a-button @click="add" type="primary">
-                            <a-icon type="edit"/>
-                            新增药品
-                        </a-button>
-                    </a-col>
-                    <a-col span="5">
-                        <a-button @click="insert" type="primary">
-                            <a-icon type="plus-circle"/>
-                            导入药品
-                        </a-button>
-                    </a-col>
-                </a-row>
+    <div>
+    <a-row type="flex"  align="middle" justify="center" class="info-medicine" >
+        <a-col span="22">
+            <a-card hoveracble title="药房工作站" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
+                  <a-tabs>
+                    <a-tab-pane tab="药品管理" key="1">
+                        <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;text-align: center">
+                            <a-col span="5" style="margin-left:20px;" >
+                                <a-input-search placeholder="请输入药品助记码" @search="onSearchByCode" enterButton></a-input-search>
+                            </a-col>
+                            <a-col span="5"  >
+                                <a-input-search placeholder="请输入药品名称" @search="onSearchByName" enterButton></a-input-search>
+                            </a-col>
+                            <a-col span="3" >
+                                <a-button  @click="add" style="color:#1890FF"><a-icon type="edit" />新增药品</a-button>
+                            </a-col>
+                          
+                            <a-col span="3"  >
+                                <a-button @click="deleteAll" type="danger"><a-icon type="plus-circle"/>全部删除</a-button>
+                            </a-col>
+
+                              <a-col span="3" >
+                                <a-button  @click="insert" type="primary"><a-icon type="plus-circle"/>导入药品</a-button>
+                            </a-col>
+                        </a-row>
+            
+
+                        <a-table :columns="columns" :dataSource="data" :scroll="{ x: 1500 }"  bordered  :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                            <template slot="action" slot-scope="text, record">
+                            <div class='editable-row-operations'>
+                                <span v-if="record.editable">
+                                <a @click="() => saveRow(record.id)">保存</a>
+                                <a-divider type="vertical" />
+                                <!-- <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record.id)"> -->
+                                <a style="color:red"  @click="() => cancel(record.id)">取消</a>
+                                <!-- </a-popconfirm> -->
+                                </span>
+                                <span v-else>
+                                <a @click="() => edit(record.id)">编辑</a>
+                                <a-divider type="vertical" />
+                                <a @click="() => deleteRow(record.id)" style="color:red">删除</a>
+                                </span>
+                            </div>
+                            </template>
+                        </a-table>
+                    </a-tab-pane>
+                    
+                    <a-tab-pane tab="发药管理" key="2">
+
+                        <a-row type="flex" align="top" justify="space-around" class="info-card">
+                            <a-col :span="showList?3:3" :xl="showList?6:2" style="width:18%;" >
+                                <a-card v-if="showList" hoverable :body-style="{padding: '2px 0 0 0'}">
+                                    <span slot="title" style="font-size: 22px">
+                                        <sapn style="margin-left:35px">患者列表</sapn>
+                                         <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
+                                                style="float:right;margin-top:12px" size="small"></a-button>
+                                    </span>
+                                   
+
+                                    <a-collapse defaultActiveKey="1" :bordered="false">
+                                    
+                                         <a-col span="5"  >
+                                            <a-input-search placeholder="请输入患者病历id" @search="onSearchByPid" enterButton></a-input-search>
+                                        </a-col>
+                    
+                                        <a-collapse-panel header="待诊患者" key="1">
+                                            <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.waitPatient"
+                                                    style="overflow: auto;height: 400px">
+                                                <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(item)">
+                                                    <a-list-item-meta>
+                                                    <span slot="title"
+                                                        style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
+                                                        <span slot="description">
+                                                            <span>年龄: {{item.age}}岁</span>
+                                                            <span>性别: {{item.patient.sex?'男':'女'}}</span>
+                                                        </span>
+                                                    </a-list-item-meta>
+                                                </a-list-item>
+                                            </a-list>
+                                        </a-collapse-panel>
+
+                                    </a-collapse>
+                                </a-card>
+                                <a-affix v-else :offsetTop="50">
+                                    <a-button type="primary" @click="showList = true">患者列表</a-button>
+                                </a-affix>
+                            </a-col>
+
+                            <a-col :span="showList?16:21" :xl="showList?30:30" style="width:80%;padding:0 0 0 0 ; margin:0 0 0 0">
+                                <a-card :body-style="{padding: 0}">
+                                    <span slot="title" style="font-size: 22px">
+                                      
+                                    <a-form :layout="formLayout" style="text-align: center">
+                                        
+                                        <a-form-item>
+                                            <a-icon type="user" />
+                                        </a-form-item>
 
 
-                <a-table :columns="columns" :dataSource="data" bordered
-                         :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
-                    <template v-for="coll in  ['id','specification','unit','price','type']" :slot="coll"
-                              slot-scope="text, record">
-                        <div :key="coll">
-                            <a-input
-                                    v-if="record.editable"
-                                    style="margin: -5px 0"
-                                    :value="text"
-                                    @change="e => handleChange(e.target.value, record.key, coll)"
-                            />
-                            <template v-else>{{text}}</template>
-                        </div>
-                    </template>
-
-                    <template slot="form" slot-scope="text,record">
-                        <a-select
-                                v-if="record.editable"
-                                defaultValue="散剂"
-                                style="width:100px"
-                        >
-                            <a-select-option v-for="d in formulation" :key="d.key">{{d.value}}</a-select-option>
-                        </a-select>
-                        <template v-else>{{text}}</template>
-
-                    </template>
-                    <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
-
-                    <template slot="action" slot-scope="text, record">
-                        <div class='editable-row-operations'>
-                    <span v-if="record.editable">
-                    <a @click="() => save(record.key)">保存</a>
-                    <a-divider type="vertical"/>
-                    <a-popconfirm title='确定取消?' @confirm="() => cancel(record.key)">
-                        <a>取消</a>
-                    </a-popconfirm>
-                    </span>
-                            <span v-else>
-                    <a @click="() => edit(record.key)">编辑</a>
-                    <a-divider type="vertical"/>
-                    <a href="javascript:;">删除</a>
-                    </span>
-                        </div>
-                    </template>
-                </a-table>
+                                        <a-form-item
+                                            label="姓名"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                            <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">小米</a-button> 
+                                        </a-form-item>
 
 
+                                        <a-form-item
+                                            label="性别"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">女</a-button> 
+                                        </a-form-item>
+
+                                         <a-form-item
+                                            label="年龄"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px;margin-right:20px">20</a-button> 
+                                        </a-form-item>
+
+                                         <a-form-item
+                                            label="ID"
+                                            :label-col="formItemLayout.labelCol"
+                                            :wrapper-col="formItemLayout.wrapperCol"
+                                        >
+                                           <a-button type="dashed" disabled style="color:black;width:100px">1</a-button> 
+                                        </a-form-item>
+
+                                        <a-form-item>
+                                             
+                                            <a-button   style="width:100px;margin-left:120px;color:#1890FF">全部取药</a-button>                          
+                                            
+                                        </a-form-item>
+
+                                        <a-form-item>
+                                            <a-button style="width:100px"  type="danger" >全部退药</a-button>            
+                                            
+                                        </a-form-item>
+                                       
+                                    </a-form>
+
+                                    
+                                    <a-divider style="margin-top:20px;font-size:20px;">取药品信息</a-divider>
+                                    
+                                    <a-table :columns="paymentColumns" :dataSource="paymentData"     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                                        
+                                        <template slot="state" slot-scope="text">
+                                            
+                                             <a-tag color="green" style="font-size:15px" v-if="text=='已取药'">{{text}}</a-tag>
+                                              <a-tag color="orange" style="font-size:15px" v-if="text=='未取药'">{{text}}</a-tag>
+                                        </template>
+                                        
+                                        <template slot="actionc" slot-scope="text, record">
+                                            <div class='editable-row-operations'>
+                                                <a @click="() => sendDrug(record.id)">发药</a>
+                                                <a-divider type="vertical" />
+                                                <a-popover 
+                                                trigger="click" >
+                                                    <template slot="title" style="text-align:center">
+                                                        <span style="text-align:center;display:block">请输入退药数量</span>
+                                                    </template>
+
+                                                    <template slot="content" >
+                                                          <a-input 
+                                                            :defaultValue=1
+                                                            style="width:70px"
+                                                            v-model="quantity"/>
+                                                            <a-button  type="primary" style="margin-left:20px">确认</a-button>
+                                                    </template>
+                                                    
+                                                    <a @click="() => returnDrug(record.id)" style="color:red">退药</a>     
+                                                </a-popover>
+                                            
+                                            </div>
+                                        </template>
+
+                           
+                                    </a-table>         
+
+                                                             
+                                    </span>
+                                    
+                                   
+                                </a-card>
+                            </a-col>
+                        </a-row>
+
+
+
+
+                    </a-tab-pane>
+                    
+
+                </a-tabs>
+                
+
+                        
+                
+                
+                    
             </a-card>
         </a-col>
     </a-row>
+
+
+
+    <template>
+        
+        <div id="components-modal-demo-position" style="width:700px">
+            <a-modal
+            title="药品信息"
+            bodyStyle="top: 20px;width:450px"
+            width="500px"
+            :visible="modelVisiable"
+            @ok="() => ok()"
+            @cancel="() => cancel(this.drugTemp)"
+            
+            >
+            <a-form  :columns="columns" :dataSource="drugTemp" :form="form" style="width:500px" layout="inline">
+                <a-form-item label="药品编码" >
+                    <a-input  
+                    style="width:300px"
+                    v-decorator="[
+                        'code',
+                        {
+                            initialValue: [this.drugTemp.code],
+                            rules: [{ required: true, message: '请输入药品编码!' }],
+                        }
+                        ]" 
+                    getFieldDecorator="('code',)"
+                    />
+                </a-form-item>
+
+                <a-form-item label="药品名称" style="margin:5px 5px 0 0">
+                     <a-input  
+                     style="width:300px"
+                      
+                        v-decorator="[
+                        'name',
+                        {
+                            initialValue: [this.drugTemp.name],
+                            rules: [{ required: true, message: '请输入药品名称!' }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                
+                <a-form-item label="药品规格">
+                     <a-input  
+                    
+                        style="width:300px"
+                        v-decorator="[
+                        'standard',
+                        {
+                            initialValue: [this.drugTemp.standard],
+                            rules: [{ required: true, message: '请输入药品规格!' }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                <a-form-item label="药品单位">
+                     <a-input  
+                      
+                        style="width:300px"
+                        v-decorator="[
+                        'packageCompany',
+                        {
+                            initialValue: [this.drugTemp.packageCompany],
+                            rules: [{ required: true, message: '请输入药品单位!' }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                <a-form-item label="药品单价">
+                     <a-input  
+                        style="width:300px"
+                        v-decorator="[
+                        'price',
+                        {
+                            initialValue: this.drugTemp.price,
+                            rules: [{ required: true, validator:checkPrice }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                <a-form-item label="生产厂家">
+                     <a-input  
+                       
+                        style="width:300px"
+                        v-decorator="[
+                        'factory',
+                        {
+                            initialValue: [this.drugTemp.factory],
+                            rules: [{ required: true, message: '请输入生产厂家!' }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                <a-form-item label="药品拼音">
+                     <a-input  
+                     
+                        style="width:300px"
+                        v-decorator="[
+                        'spell',
+                        {
+                            initialValue: [this.drugTemp.spell],
+                            rules: [{ required: true, message: '请输入拼音!' }],
+                        }
+                        ]"
+                    />
+                </a-form-item>
+
+                <a-form-item label="药品剂型">
+                      <a-select
+                      v-decorator="[
+                        'formulationName',
+                        {
+                            initialValue: [this.drugTemp.formulationName],
+                            rules: [{ required: true, message: '请输入药品剂型!' }]}
+                        ]" 
+                        style="width:300px"
+                        @change="e => formChange(e)"
+                        >
+                        <a-select-option v-for="d in formulation" :key="d.id">{{d.name}}</a-select-option>
+                    </a-select>
+                </a-form-item>
+
+
+                <a-form-item label="药品类型">
+                      <a-select
+                       v-decorator="[
+                        'drugTypeName',
+                        {
+                            initialValue: [this.drugTemp.drugTypeName],
+                            rules: [{ required: true, message: '请输入药品类型!' }]}
+                        ]"
+                        style="width:300px"
+                        @change="e => drugTypeChange(e)"
+                        >
+                        <a-select-option v-for="d in durgTypeList" :key="d.id">{{d.name}}</a-select-option>
+                    </a-select>
+                </a-form-item>
+
+                <a-form-item label="费用类型">
+                      <a-select
+                        v-decorator="[
+                        'paymentType',
+                        {
+                            initialValue: [this.drugTemp.paymentType],
+                            rules: [{ required: true, message: '请输入费用类型!' }]}
+                        ]"
+                        style="width:300px"
+                        @change="e => paymentTypeChange(e)"
+                        >
+                         <a-select-option v-for="d in paymentTypeList" :key="d.id">{{d.name}}</a-select-option>
+                    </a-select>
+                </a-form-item>
+
+            </a-form>
+                
+            </a-modal>
+        </div>
+    
+    
+    </template>
+
+
+
+
+    </div>
 </template>
 
 
 <script>
-
+import { constants } from 'crypto';
+import { Promise, resolve, reject } from 'q';
 
     export default {
-        data () {
-            return {
-                formulation: []
-                , columns: [{
-                    title: '药品编码',
-                    dataIndex: 'id',
-                    key: 'id',
-                    sorter: true,
-                    scopedSlots: {customRender: 'id'}
-                }, {
-                    title: '药品名称',
-                    dataIndex: 'name',
-                    key: 'name',
-                    sorter: true,
-                    scopedSlots: {customRender: 'name'}
-                }, {
-                    title: '药品规格',
-                    dataIndex: 'specification',
-                    key: 'specification',
-                    sorter: true,
-                    scopedSlots: {customRender: 'specification'}
-                }, {
-                    title: '药品单位',
-                    dataIndex: 'unit',
-                    key: 'unit',
-                    sorter: true,
-                    scopedSlots: {customRender: 'unit'}
-                }, {
-                    title: '药品单价',
-                    dataIndex: 'price',
-                    key: 'price',
-                    sorter: true,
-                    scopedSlots: {customRender: 'price'}
-                }, {
-                    title: '药品剂型',
-                    dataIndex: 'form',
-                    key: 'form',
-                    sorter: true,
-                    scopedSlots: {customRender: 'form'}
-                }, {
-                    title: '药品类型',
-                    dataIndex: 'type',
-                    key: 'type',
-                    sorter: true,
-                    scopedSlots: {customRender: 'type'}
-                }, {
-                    title: '操作',
-                    key: 'action',
-                    dataIndex: 'action',
-                    width: '10%',
-                    scopedSlots: {customRender: 'action'}
+        data() {
+          
+        return {
+            quantity:1,
+              formLayout: 'inline',
+                load: {
+                patient: true
+            },
+            patient: {
+                waitPatient: [],//仍在排号
+                inPatient: [],//在诊
+                outPatient: [],
+            },
+            currentPatient: {
+                name: "当前患者"
+            },
+            rules: {},
+            record: null,
+            showList: true,
+                rowKeys:[],
+                wholeData:[],
+                count:0,
+                form: this.$form.createForm(this),
+                drugTemp:{
+                   id:'',code:'',name:'',delete:false,drugType:'',drugTypeName:'',factory:'',feeTypeId:'',paymentType:'',formulation:1401,formulationName:''
+                ,packageCompany:'',price:0.0,spell:'',standard:''},
+                modelVisiable:false,
+                paymentTypeMap:{},
+                paymentTypeList:[],
+                drugTypeMap:{},
+                durgTypeList:[],
+                formulationNameMap:{},
+                formulation:[],
+                paymentColumns:[
+                    {
+                    title:'编码',
+                    dataIndex: 'code',
+                    key:'code',
+                    sorter:true,
+                    width: '150px',
+                    scopedSlots:{
+                        customRender:'code'}
+                    },{
+                        title:'名称',
+                        dataIndex: 'name',
+                        key:'name',
+                        width: '200px',
+                        scopedSlots:{customRender:'name'}
+                    },{
+                        title:'数量',
+                        dataIndex: 'quantity',
+                        key:'quantity',
+                        width: '150px',
+                        scopedSlots:{customRender:'quantity'}
+                    },{
+                        title:'单价',
+                        dataIndex: 'unit_price',
+                        key:'unit_price',
+                        width: '150px',
+                        scopedSlots:{customRender:'unit_price'}
+                    },{
+                        title:'总价',
+                        dataIndex: 'totalPrice',
+                        key:'totalPrice',
+                        width: '150px',
+                        scopedSlots:{customRender:'totalPrice'}
+                    },{
+                        title:'状态',
+                        dataIndex: 'state',
+                        key:'state',
+                        width: '100px',
+                        scopedSlots:{customRender:'state'}
+                    },{
+                        title:'支付时间',
+                        dataIndex: 'create_time',
+                        key:'create_time',
+                        width: '150px',
+                        scopedSlots:{customRender:'create_time'}
+                    },{
+                        title:'操作',
+                        key:'actionc',
+                        dataIndex:'actionc',
+                        width: '1px',
+                        align:'middle',
+                        fixed:'right',
+                        scopedSlots:{customRender:'actionc'}
+                    }
+                ],
+                columns:[{
+                    title:'编码',
+                    dataIndex: 'code',
+                    key:'code',
+                    sorter:true,
+                    width: '150px',
+                    scopedSlots:{
+                        customRender:'code'}
+                    },{
+                        title:'名称',
+                        dataIndex: 'name',
+                        key:'name',
+                        sorter:true,
+                        width: '200px',
+                        scopedSlots:{customRender:'name'}
+                    },{
+                        title:'规格',
+                        dataIndex: 'standard',
+                        key:'standard',
+                        width: '150px',
+                        scopedSlots:{customRender:'standard'}
+                    },{
+                        title:'单位',
+                        dataIndex: 'packageCompany',
+                        key:'packageCompany',
+                        width: '100px',
+                        scopedSlots:{customRender:'packageCompany'}
+                    },{
+                        title:'生产厂家',
+                        dataIndex: 'factory',
+                        key:'factory',
+                        width: '300px',
+                        scopedSlots:{customRender:'factory'}
+                    },{
+                        title:'单价',
+                        dataIndex: 'price',
+                        key:'price',
+                        width: '150px',
+                        sorter:true,
+                        scopedSlots:{customRender:'price'}
+                    },{
+                        title:'剂型',
+                        dataIndex: 'formulationName',
+                        key:'formulationName',
+                        width: '150px',
+                        scopedSlots:{customRender:'formulationName'}
+                    },{
+                        title:'药品类型',
+                        dataIndex: 'drugTypeName',
+                        key:'drugTypeName',
+                        sorter:true,
+                        width: '150px',
+                        scopedSlots:{customRender:'drugTypeName'}
+                    },{
+                        title:'拼音',
+                        dataIndex: 'spell',
+                        width: '150px',
+                        key:'spell',
+                        scopedSlots:{customRender:'spell'}
+                    },{
+                        title:'支付类型',
+                        dataIndex: 'paymentType',
+                        width: '150px',
+                        key:'paymentType',
+                        scopedSlots:{customRender:'paymentType'}
+                    },{
+                        title:'操作',
+                        key:'action',
+                        dataIndex:'action',
+                        width: '120px',
+                        align:'middle',
+                        fixed:'right',
+                        scopedSlots:{customRender:'action'}
                 }],
-                data: [{
-                    key: '1',
-                    id: '8697474000208',
-                    name: '注射用甲氨喋呤',
-                    specification: '1gx1支',
-                    unit: '支',
-                    price: 15.73,
-                    form: '针剂',
-                    type: '西药'
-                }, {
-                    key: '2',
-                    id: '8697474000208',
-                    name: '注射用甲氨喋呤',
-                    specification: '1gx1支',
-                    unit: '支',
-                    price: 15.73,
-                    form: '针剂',
-                    type: '西药'
-                }, {
-                    key: '3',
-                    id: '8697474000208',
-                    name: '注射用甲氨喋呤',
-                    specification: '1gx1支',
-                    unit: '支',
-                    price: 15.73,
-                    form: '针剂',
-                    type: '西药'
-                }, {
-                    key: '4',
-                    id: '8697474000208',
-                    name: '注射用甲氨喋呤',
-                    specification: '1gx1支',
-                    unit: '支',
-                    price: 15.73,
-                    form: '针剂',
-                    type: '西药'
-                }]
-
+                data:[],
+                paymentData:[{
+                        code:1,
+                        name:'a',
+                        quantity:1,
+                        unit_price:15.2,
+                        totalPrice:15.2,
+                        create_time:'2019-09-09',
+                        state:'未取药',
+                    },{
+                        code:2,
+                        name:'aq',
+                        quantity:10,
+                        unit_price:15.2,
+                        totalPrice:152,
+                        create_time:'2019-09-09',
+                        state:'已取药',
+                    }
+                ],showList:[],
 
             }
         },
-        components: {},
-        computed: {},
-        methods: {
+        components: {
 
-            onSearch (value) {
+        },
+        computed:{
+            formItemLayout () {
+                const { formLayout } = this;
+                return formLayout === 'horizontal' ? {
+                    labelCol: { span: 4 },
+                    wrapperCol: { span: 14 },
+                } : {};
+            },
+            buttonItemLayout () {
+                const { formLayout } = this;
+                return formLayout === 'horizontal' ? {
+                    wrapperCol: { span: 14, offset: 4 },
+                } : {};
+            },
+        },created() {
+            this.getData(); 
+        },methods: {
+            async  getData(){
+                
+                let that = this
+                
+                // this.getPaymentType();
+                await this.getPaymentType()
+     
+                this.paymentTypeMap=that.paymentTypeMap
+
+                // this.getForm();
+                await this.getForm()
+
+                 // this.getDrugType();
+                await this.getDrugType()
+
+                
+            },
+             getForm () {
+                let that=this
+               var p=new Promise((resolve,reject) => {
+                   this.$api.get("/constant_variable/getForm", null,
+
+                    res => {
+                    let a=res.data
+                    that.formulation=a
+                    that.formulationNameMap
+                    var tem=new Map()
+                    for(let i=0;i<a.length;i++){
+                        tem.set(a[i].id,a[i].name) 
+                    }
+                    that.formulationNameMap=tem
+                    }, res => {
+                    this.$message.error(res)
+                    })
+               })
+               
+ 
+            },getDrugType(){
+               let that=this
+                var p=new Promise((resolve,reject) => {
+                    this.$api.get("/drug/getAllDrugType", null,
+                    res => {
+                            if (res.code === "100") {
+                            var map=new Map();
+                            var name=res.data.name
+                            var id=res.data.id
+                            for(let i=0;i<name.length;i++){
+                                that.durgTypeList.push({
+                                    name:name[i],
+                                    id:id[i]
+                                })
+                                map.set(id[i],name[i])
+                            }
+                            that.drugTypeMap=map
+                            resolve('')
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                    })
+                  })
+                  .then(r=>{
+                      this.getAllDrug();
+                  })
+                  
+            }, getPaymentType(){
+                let that=this
+                var p=new Promise((resolve,reject) => {
+                this.$api.get("/payment_type/getAll", null,
+                 res => {
+                        if (res.code === "100") {
+                           var map=new Map();
+                           var name=res.data.name
+                           var id=res.data.id
+                           for(let i=0;i<name.length;i++){
+                                that.paymentTypeList.push({
+                                  name:name[i],
+                                  id:id[i]
+                              })
+                              map.set(id[i],name[i])
+                           }
+                           that.paymentTypeMap=map
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                  })
+
+                })
+            },getAllDrug(){
+                let that=this
+                var p=new Promise((resolve,reject) => {
+                this.$api.get("/drug/getAllDrug", null,
+                    res => {
+                        if (res.code === "100") {
+                           that.data=res.data        
+                           for(let i=0;i<that.data.length;i++){
+                              that.data[i].key=that.data[i].id                           
+                              that.data[i].formulationName=that.formulationNameMap.get(that.data[i].formulation)
+                              that.data[i].drugTypeName=that.drugTypeMap.get(that.data[i].drugType)
+                              that.data[i].paymentType=that.paymentTypeMap.get(that.data[i].feeTypeId)               
+                           }
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
+                  })
+            
+            },
+            onSearch(value){
                 alert(value)
             },
-            add (value) {
-                alert(value)
+            add(value){ 
+                this.drugTemp={id:0,code:null,name:'',delete:false,drugType:1103,drugTypeName:'西药',factory:null,feeTypeId:13,paymentType:'西药费',formulation:1401,formulationName:'散剂'
+                ,packageCompany:null,price:2.0,spell:null,standard:null}
+                this.modelVisiable=true
+                this.drugTemp.isCancel=false
+                this.drugTemp.add=true
             },
-            insert (value) {
-                alert(value)
+            insert(value){
+               
+            },deleteAll(){
+                if(this.rowKeys.length>0){
+                    for(var i=0;i<this.rowKeys.length;i++){
+                        this.deleteRow(this.rowKeys[i])
+                    }
+                }
+                this.rowKeys=[]
+            },onSelectChange(rowKeys){
+                this.rowKeys=rowKeys
             },
             handleChange (value, key, column) {
                 const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
+                const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target[column] = value
                     this.data = newData
                 }
             },
-            save (key) {
+            saveRow () {
+                let target=this.drugTemp
+                let that=this
                 const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
-                if (target) {
-                    delete target.editable
-                    this.data = newData
-                    this.cacheData = newData.map(item => ({...item}))
+                const target2 = newData.filter(item => target.id === item.id)[0]
+                 if (target2) {
+                    if(!target.isCancel){
+                        this.$api.post("/drug/modify", target,
+                        res => {
+                            if (res.code === "100") {
+                                Object.assign(target2,target)
+                                delete target2.editable
+                                that.data=newData         
+                                that.$message.success("更新成功！")      
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, () => {
+                        that.$message.error("网络异常！")
+                        })
+                    }    
                 }
+
             },
             cancel (key) {
+               this.drugTemp.isCancel=true
+               this.modelVisiable=false
+               let that=this
                 const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
+                const a=newData.filter(item => key !== item.id)
+                const target = newData.filter(item => key === item.id)[0]
                 if (target) {
-                    Object.assign(target, this.cacheData.filter(item => key === item.key)[0])
-                    delete target.editable
-                    this.data = newData
+                        if(target.add){
+                            that.data=a
+                        } else{
+                            // Object.assign(target, this.cacheData.filter(item => key === item.id)[0])
+                            delete target.editable
+                            this.data = newData
+                        }             
+                    
                 }
-            }, getPatient () {
-                let that = this
-                this.$api.get("/constant_variable/getUnit", null,
-                    res => {
-                        let a = res.data
-                        let i = 0
-                        for (i = 0; i < a.name.length; i++) {
-                            this.formulation.push({
-                                value: a.name[i],
-                                key: a.id[i]
-
-                            });
-                        }
-
-
-                    }, res => {
-                        that.$message.error(res)
-                    })
             },
             edit (key) {
                 const newData = [...this.data]
-                const target = newData.filter(item => key === item.key)[0]
+                const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target.editable = true
+                    this.data = newData  
+                    this.setModal1Visible(true)
+                    this.drugTemp=target
+                     this.drugTemp.isCancel=false
+                    this.preDrugTemp=target
+                }     
+            },formChange(value){       
+                let name=this.formulationNameMap.get(value)
+                 this.drugTemp.formulation=value
+                this.drugTemp.formulationName=name
+            },drugTypeChange(value){     
+                let name=this.drugTypeMap.get(value)              
+                this.drugTemp.drugTypeName=name
+                this.drugTemp.drugType=value
+            },paymentTypeChange(value){       
+                let name=this.paymentTypeMap.get(value)   
+                this.drugTemp.feeTypeId=value
+                this.drugTemp.paymentType=name
+            },codeChange(value,key){
+                let i=0
+                let name=this.drugTypeMap.get(value)
+                const newData = [...this.data]
+                const target = newData.filter(item => key === item.id)[0]
+                if (target) {
+                    target.editable = true
+                    target.code=value
                     this.data = newData
                 }
-                this.getPatient();
+            },deleteRow(key){
+                let that=this  
+                 this.$api.post("/drug/delete/"+key, null,
+                            res => {
+                                if (res.code === "100") {
+                                    const newData = [...that.data]
+                                    const tem = newData.filter(item => key !== item.id)
+                                    that.data=tem           
+                                    that.$message.success("删除成功！")
+                                } else {
+                                    that.$message.error(res.msg)
+                                }
+                            }, () => {
+                            that.$message.error("网络异常！")
+                         })
+            },getName(value){
+                return this.formulationNameMap.get(value)
+            },onSearchByName(value){
+                if(this.wholeData.length==0){
+                    this.wholeData=this.data
+                }else{
+                    this.data=this.wholeData
+                }
+                if(value){
+                    var tem = []
+                    var i=0
+                    for(;i<this.data.length;i++){
+                        if(this.data[i].name.indexOf(value)>=0){
+                            tem.push(this.data[i])
+                    }
+                    this.data=tem  
+                    }   
+                }
+            },onSearchByCode(value){
+                if(this.wholeData.length==0){
+                    this.wholeData=this.data
+                }else{
+                    this.data=this.wholeData
+                }
+                if(value){
+                    var tem = []
+                    var i=0
+                    for(;i<this.data.length;i++){
+                        if(this.data[i].code.indexOf(value)>=0){
+                            tem.push(this.data[i])
+                        }
+                 
+                    }
+                    this.data=tem                  
+                }
+            },setModal1Visible(value){
+                this.modelVisiable=value
+            },ok(){                
+                this.drugTemp.code=this.form.getFieldValue('code')
+                this.drugTemp.name=this.form.getFieldValue('name')
+                this.drugTemp.factory=this.form.getFieldValue('factory')
+                this.drugTemp.packageCompany=this.form.getFieldValue('packageCompany')
+                this.drugTemp.price=this.form.getFieldValue('price')
+                this.drugTemp.standard=this.form.getFieldValue('standard')
+                 this.drugTemp.spell=this.form.getFieldValue('spell')
+                this.setModal1Visible(false)
+                if(this.drugTemp.add){
+                    this.$api.post("/drug/insert", this.drugTemp,
+                    res => {
+                        if (res.code === "100") {                                  
+                            this.$message.success("插入成功！")
+                            this.drugTemp.id=res.data
+             
+                            this.data.unshift(this.drugTemp)             
+                            if (this.data[0]) {
+                                this.data[0].add=true
+                                this.data[0].editable = true
+                            
+                            }
+                        } else {
+                            this.$message.error(res.msg)
+                        }
+                    }, () => {
+                    this.$message.error("网络异常！")
+                })
+                delete this.drugTemp.add
+                }
+            },checkPrice(rule, value, callback){
+                if (value.number > 0) {
+                callback();
+                return;
+                }
+                callback('单价应大于0!');
+            },selectPatient(item){
 
-            }
+            }, getPatient(value){
 
+            },sendDrug(id){
 
+            },returnDrug(id){
+
+            },onSearchByPid(value){}
         }
     }
-
+    
 </script>
 
 <style scoped>
-    .info-medicine {
+    .info-medicine{
         margin-top: 40px;
         margin-bottom: 20px;
     }
+
+
 </style>

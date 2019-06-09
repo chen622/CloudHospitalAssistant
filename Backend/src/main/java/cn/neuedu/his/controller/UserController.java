@@ -239,7 +239,7 @@ public class UserController {
 
         Map<String, Integer> map = redisService.getMapAll("doctor");
 
-        if (map.containsValue(user.getTypeId()))
+        if (map.values().contains(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);
@@ -268,7 +268,7 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_601);
 
         Map<String, Integer> map = redisService.getMapAll("doctor");
-        if (map.containsValue(user.getTypeId()))
+        if (map.values().contains(user.getTypeId()))
             user = userService.getUserAllInformationByName(username);
 
         return CommonUtil.successJson(user);

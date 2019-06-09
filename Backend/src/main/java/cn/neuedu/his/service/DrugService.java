@@ -2,6 +2,7 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.util.inter.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,5 +20,11 @@ public interface DrugService extends Service<Drug> {
 
     void modifyDrug(Drug drug) throws Exception;
 
-    void insertDrug(Drug drug) throws Exception;
+    Integer insertDrug(Drug drug) throws Exception;
+
+    ArrayList<Drug> getAllDrug();
+
+    ArrayList<Drug> getDrugByPartName(String name);
+
+
 }

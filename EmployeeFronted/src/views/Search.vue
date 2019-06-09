@@ -1,7 +1,7 @@
 <template>
-    <a-row type="flex" align="middle" justify="center" class="charge">
+    <a-row type="flex" align="middle" justify="center" class="info-search">
         <a-col span="20">
-            <a-card hoverable title="收费" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
+            <a-card hoverable title="查询" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
                 <p style="font-size: 20px">病历信息查询:</p>
                 <a-row type="flex" align="top" justify="start" style="margin: 5px 0 10px 0;">
                     <a-col>
@@ -24,14 +24,16 @@
                         <a-textarea v-decorator="['家庭住址',{rules:[{required:false,message:''}]}]" placeholder="家庭住址" autosize style="width: 300px"/>
                     </a-form-item>
                 </a-form>
-                <p style="font-size: 20px">患者消费信息:</p>
-                <template>
-                    <a-table :columns="columns" :dataSource="data" :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}">
-                        <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
-                        <span slot="customTitle">姓名</span>
-                    </a-table>
-                    <a-button type="primary">收费结算</a-button>
-                </template>
+                <p style="font-size: 20px">患者挂号信息：</p>
+                <a-table :columns="columns" :dataSource="data">
+                    <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
+                    <span slot="customTitle">姓名</span>
+                    <span slot="action" slot-scope="text, record">
+                <a href="javascript:;">退号</a>
+                <a-divider type="vertical" />
+                <a href="javascript:;">删除</a>
+              </span>
+                </a-table>
             </a-card>
         </a-col>
     </a-row>
@@ -56,63 +58,46 @@
                     key: 'name',
                     scopedSlots: { customRender: 'name' },
                 }, {
-                    title: '项目名称',
-                    dataIndex: 'Project',
-                    key: 'Project',
-                    scopedSlots:{customRender:'Project'}
+                    title: '身份证号',
+                    dataIndex: 'IdNumber',
+                    key: 'IdNumber',
+                    scopedSlots:{customRender:'IdNumber'}
                 }, {
-                    title: '单价',
-                    key: 'price',
-                    dataIndex: 'price',
-                    scopedSlots: { customRender: 'price' },
+                    title: '挂号日期',
+                    key: 'date',
+                    dataIndex: 'date',
+                    scopedSlots: { customRender: 'date' },
                 }, {
-                    title: '数量',
-                    key: 'Number',
-                    dataIndex:'Number',
-                    scopedSlots: { customRender: 'Number' },
+                    title: '挂号午别',
+                    key: 'NoonBreak',
+                    dataIndex:'NoonBreak',
+                    scopedSlots: { customRender: 'NoonBreak' },
                 },{
-                    title:'开立时间',
-                    key:'date',
-                    dataIndex:'date',
-                    scopedSlots:{customRender:'date'}
+                    title:'看诊科室',
+                    key:'office',
+                    dataIndex:'office',
+                    scopedSlots:{customRender:'offfice'}
                 },{
-                    title:'状态',
+                    title:'看诊状态',
                     key:'state',
                     dataIndex:'state',
                     scopedSlots:{customRender:'state'}
+                },{
+                    title:'操作',
+                    key:'action',
+                    dataIndex:'action',
+                    scopedSlots:{customRender:'action'}
                 }],
                 data:[{
                     key:'1',
-                    id:'600615',
+                    id:'1',
                     name:'john Brown',
-                    Project: 'C型臂术中透视',
-                    price:150,
-                    Number:1,
-                    date:'2019-04-01 16:12:05',
-                    state:'已开立'
-                },{
-                    key:'2',
-                    id:'600615',
-                    name:'john Brown',
-                    Project: '气脑造影',
-                    price:80,
-                    Number:1,
-                    date:'2019-04-01 16:14:34',
-                    state:'已开立'
-                },{
-                    key:'3',
-                    id:'600615',
-                    name:'john Brown',
-                    Project: '肠镜',
-                    price:200,
-                    Number:1,
-                    date:'2019-04-01 16:20:25',
-                    state:'已开立'
-                }],
-                selectedRowKeys: [],
-                loading:false,
-
-
+                    IdNumber: 22222222,
+                    date:'2019-5-6',
+                    NoonBreak:'全天',
+                    office:'咽喉科',
+                    state:'确诊'
+                }]
             }
         },
         components: {
@@ -120,22 +105,32 @@
             ACol,
             AFormItem
         },
-        computed: {
-
-
-        },
         methods: {
-            onSelectChange(selectedRowKeys){
-                console.log('selectedRowKeys changed: ',selectedRowKeys);
-                this.selectedRowKeys = selectedRowKeys
-            }
+            getInfo(){
+                let that = this
+                this.$api.get("",null,
+                res=>{
+                    if (res.code === ""){
+                        that.data = res.data
+
+                    }
+                    else {
+                        that.$message.error(res)
+                    }
+                })
+
+            },
+            onSearch(value){
+                alert(value)
+            },
 
         },
     };
 </script>
+
 <style>
-    .charge{
-        margin-top: 40px;
-        margin-bottom: 20px;
-    }
+.info-search{
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
 </style>

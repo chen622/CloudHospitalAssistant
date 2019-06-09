@@ -103,7 +103,9 @@
             </a-spin>
         </a-modal>
         <a-modal
+                v-if="showPayment"
                 v-model="showPayment"
+                title="缴费清单"
                 :closable="false"
                 :maskClosable="false"
                 :bodyStyle="{textAlign: 'center'}"
@@ -114,19 +116,28 @@
                     <span slot="label" class="payment">缴费类型</span>
                     <span class="payment">挂号费</span>
                 </a-form-item>
+                <a-form-item :label-col="{ span: 5,offset: 7 }"
+                             :wrapper-col="{ span: 5}">
+                    <span slot="label" class="payment">金额</span>
+                    <span class="payment">{{payment.unitPrice}} 元</span>
+                </a-form-item>
+                <a-form-item :label-col="{ span: 5,offset: 7 }"
+                             :wrapper-col="{ span: 5}">
+                    <span slot="label" class="payment">缴费类别</span>
+                    <a-select v-model="settle">
+                        <a-select-option v-for="type in settlementType" :key="type.id">{{type.name}}</a-select-option>
+                    </a-select>
+                </a-form-item>
             </a-form>
             <template slot="footer">
-                <a-button @click="showPayment =false">缴费</a-button>
+                <a-button type="primary" @click="pay">缴费</a-button>
             </template>
         </a-modal>
     </a-row>
 </template>
 <script>
 
-    import AFormItem from "ant-design-vue/es/form/FormItem";
-
     export default {
-        components: {AFormItem},
         data () {
             return {
                 load: {
@@ -171,20 +182,44 @@
                     }],
                 patient: [],
                 departmentKind: [],
+                settlementType: [],
                 registration: this.$form.createForm(this),
                 showRegister: false,
                 showDoctor: false,
                 showPayment: false,
                 doctor: [],
-                periodName: "上午",
                 requestObject: {
                     patientId: null,
                     scheduleId: null,
                     needBook: null,
-                }
+                },
+                payment: null,
+                settle: null,
             }
         },
         methods: {
+            pay () {
+                let that = this
+                let data = {
+                    paymentId: this.payment.id,
+                    settlementType: this.settle
+                }
+                if (this.settle === null) {
+                    this.$message.error("请选择缴费类别！")
+                    return
+                }
+                this.$api.post("/payment/payRegistration", data,
+                    res => {
+                        if (res.code === "100") {
+                            that.$message.success("缴费成功")
+                            that.showPayment = false
+                        } else {
+                            that.$message.error("res.msg")
+                        }
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
+            },
             register () {
                 let that = this
                 this.registration.validateFields((err) => {
@@ -211,6 +246,7 @@
                     res => {
                         that.load.register = false
                         if (res.code === "100") {
+                            that.payment = res.data
                             that.$message.success("挂号成功，请缴费！")
                             that.showPayment = true
                         } else {
@@ -226,12 +262,17 @@
                 this.load.loadDoctor = true
                 this.registration.validateFields((err) => {
                     if (!err) {
-                        this.showDoctor = true
                         this.$api.get("/job_schedule/getSchedule/" + this.registration.getFieldsValue().department, null,
                             res => {
                                 if (res.code === "100") {
-                                    that.doctor = res.data.schedule
+                                    if (res.data.schedule.length > 0) {
+                                        that.showDoctor = true
+                                        that.doctor = res.data.schedule
+                                    } else {
+                                        that.$message.info("该科室暂无值班医生")
+                                    }
                                     that.load.loadDoctor = false
+
                                 } else {
                                     that.$message.error(res.msg)
                                 }
@@ -277,6 +318,19 @@
                 })
             }
             ,
+            getSettlementType () {
+                let that = this
+                this.$api.get("/constant_variable/getSettlementType", null,
+                    res => {
+                        if (res.code === "100") {
+                            that.settlementType = res.data
+                            that.settle = that.settlementType[0].id
+                        } else
+                            that.$message.error(res.msg)
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
+            },
             getDepartment () {
                 let that = this
                 this.$api.get("/department_kind/getClinical", null,
@@ -292,6 +346,7 @@
         mounted () {
             this.getAllPatient()
             this.getDepartment()
+            this.getSettlementType()
         }
     }
     ;

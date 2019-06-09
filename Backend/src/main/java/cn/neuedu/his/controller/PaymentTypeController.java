@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -42,7 +43,7 @@ public class PaymentTypeController {
 
         Map<String ,Integer> payment=redisService.getMapAll("paymentType");
         //判断类型是否正确
-        if(payment.containsValue(paymentType.getType()))
+        if(!payment.values().contains(paymentType.getType()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
 
         try{
@@ -121,5 +122,19 @@ public class PaymentTypeController {
             return CommonUtil.errorJson(ErrorEnum.E_606);
 
         return CommonUtil.successJson(paymentType);
+    }
+
+    @GetMapping("/getAll")
+    public JSONObject getAll(){
+        try {
+            Map<String ,Integer> map=redisService.getMapAll("paymentType");
+            System.out.println(map.size()+"***********************");
+            JSONObject object=new JSONObject();
+            object.put("name", map.keySet());
+            object.put("id", map.values());
+            return CommonUtil.successJson(object);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
     }
 }

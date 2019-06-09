@@ -7,11 +7,25 @@
     -->
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <select id="getDiseaseByname" resultMap="BaseResultMap">
     select *
     from disease_first
     where name = #{name}
+  </select>
+
+  <!-- 获取所有未被删除的疾病名称-->
+  <select id="getAllDiseaseType" resultMap="BaseResultMap">
+    select * from disease_first
+    <where>
+      <if test="authenication != true">
+        disease_first.is_delete = 0
+      </if>
+      <if test="name != null">
+        and disease_first.name like concat('%',#{name},'%')
+      </if>
+    </where>
   </select>
 </mapper>

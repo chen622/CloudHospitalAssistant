@@ -2,13 +2,18 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.DiseaseFirst;
 import cn.neuedu.his.service.DiseaseFirstService;
+import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,6 +25,8 @@ public class DiseaseFirstController {
 
     @Autowired
     DiseaseFirstService diseaseFirstService;
+    @Autowired
+    RedisServiceImpl redisService;
 
     @PostMapping("/delete/{id}")
     public JSONObject deleteDiseaseFirst(@PathVariable Integer id, Authentication authentication){
@@ -108,6 +115,38 @@ public class DiseaseFirstController {
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+    }
+
+    /**
+     * 1. 按照类别姓名来模糊查询
+     * 2. 医院管理员获得所有数据
+     * 3. 普通医生只能获得未删除的数据
+     * 4. name为空获得所有数据
+     * @param name
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/getDiseae/{name}","/getType"})
+    JSONObject getAllDiseaseType(@PathVariable(value = "name",required = false) String name, Authentication authentication){
+
+        Boolean auth;
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("医院管理员"))) {
+                auth = true;
+            } else {
+                auth = false;
+            }
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        List<DiseaseFirst> diseaseFirsts = diseaseFirstService.getAllDiseaseType(auth,name);
+
+        return CommonUtil.successJson(diseaseFirsts);
     }
 
 }
