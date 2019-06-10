@@ -2,12 +2,14 @@ package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.InspectionApplicationMapper;
 import cn.neuedu.his.model.InspectionApplication;
+import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InspectionApplicationService;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -32,5 +34,10 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public ArrayList<InspectionApplication> getByMedicalRecordId(Integer id) {
         return inspectionApplicationMapper.getByMedicalRecordId(id);
+    }
+
+    @Override
+    public List<Payment> selectPatientInformationByNameOrId(String name, Integer id, Integer department_id, Boolean auth) {
+        return inspectionApplicationMapper.selectPatientInformationByNameOrId(name,id,department_id,auth);
     }
 }
