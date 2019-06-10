@@ -139,7 +139,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 Iterator<InspectionApplication> iterator1=template.getApplications().iterator();
                 while (iterator1.hasNext()){
                     InspectionApplication p=iterator1.next();
-                    if(p.getNonDrug().isDelete()==true){
+                    if(p.getNonDrug().getDelete()==true){
                         iterator1.remove();
                     }
                 }
@@ -501,7 +501,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             for (InspectionApplication r : applicationList){
 
                 NonDrug drug=nonDrugService.findById(r.getNonDrugId());
-                if(r.getNonDrugId()==null || drug==null || drug.isDelete()==true){
+                if(r.getNonDrugId()==null || drug==null || drug.getDelete()==true){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true,drug.getFeeTypeId());

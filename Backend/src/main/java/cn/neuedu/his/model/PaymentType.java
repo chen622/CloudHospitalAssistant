@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Table(name = "payment_type")
 public class PaymentType {
@@ -22,8 +23,18 @@ public class PaymentType {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    public Boolean isDelete() {
+    private List<NonDrug> nonDrugs;
+
+    public Boolean getDelete() {
         return isDelete;
+    }
+
+    public List<NonDrug> getNonDrugs() {
+        return nonDrugs;
+    }
+
+    public void setNonDrugs(List<NonDrug> nonDrugs) {
+        this.nonDrugs = nonDrugs;
     }
 
     public void setDelete(Boolean delete) {

@@ -1,5 +1,6 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.NonDrug;
+import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
 
@@ -26,4 +27,6 @@ public interface NonDrugService extends Service<NonDrug> {
     void deleteNonDrug(Integer id);
 
     void modifyNonDrug(NonDrug nonDrug);
+
+    List<PaymentType> getTypeAndNonDrug(String name, String code, Boolean auth);
 }

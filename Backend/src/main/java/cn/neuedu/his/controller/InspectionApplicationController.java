@@ -114,4 +114,11 @@ public class InspectionApplicationController {
 
         return CommonUtil.successJson(payments);
     }
+
+
+    @PostMapping("confirmApplication/{id}")
+    JSONObject confirmApplication(JSONObject jsonObject){
+
+        return CommonUtil.successJson();
     }
+}
