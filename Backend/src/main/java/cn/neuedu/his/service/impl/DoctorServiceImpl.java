@@ -645,6 +645,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             if (!check.equals("")) {
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
             }
+            Drug drug = drugService.findById(p.getDrugId());
+            p.setFeeTypeId(drug.getFeeTypeId());
             prescriptionService.save(p);
             DrugTemplateRelationship relationship = new DrugTemplateRelationship();
             relationship.setTemplateId(template.getId());

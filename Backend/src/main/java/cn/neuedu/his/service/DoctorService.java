@@ -63,7 +63,7 @@ public interface DoctorService extends Service<Doctor> {
 
 
     @Transactional
-    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, List<Integer> diagnoses,Integer doctorId) throws RuntimeException;
+    public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord, List<Integer> diagnoses,Integer doctorId) throws Exception;
 
     @Transactional
     public JSONObject saveMRTemplate(MedicalRecord record,Integer doctorID,String name,Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;

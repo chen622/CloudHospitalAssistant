@@ -186,6 +186,8 @@ public class MedicalRecordController {
             object1 = doctorService.setFirstDiagnose(registrationID, medicalRecord, diagnosesIds, doctorID);
         } catch (RuntimeException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+        } catch (Exception e) {
+            return  CommonUtil.errorJson(ErrorEnum.E_500);
         }
         return object1;
     }

@@ -740,6 +740,7 @@ public class DoctorController {
             try {
                 return doctorService.savePrescriptionsTemp(template, medicalId, doctorId);
             } catch (Exception e) {
+                e.printStackTrace();
                 return CommonUtil.errorJson(ErrorEnum.E_500.addErrorParamName(e.getMessage()));
             }
         } else {
@@ -819,6 +820,7 @@ public class DoctorController {
         } catch (AuthenticationServiceException ex) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(ex.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("level"));
         }
         return null;
