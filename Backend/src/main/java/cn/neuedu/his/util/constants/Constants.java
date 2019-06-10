@@ -109,6 +109,10 @@ public class Constants {
     public static final Integer HAVE_RETURN_DRUG = 1204;
     //已退费
     public static final Integer HAVE_RETREAT = 1205;
+    //出现退的情况
+    public static final Integer HAPPEN_RETREAT = 1206;
+    //已全部退完
+    public static final Integer HAPPEN_RETREAT_ALL = 1207;
 
 
 

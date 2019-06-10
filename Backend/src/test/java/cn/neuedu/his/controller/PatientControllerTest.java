@@ -108,8 +108,24 @@ public class PatientControllerTest {
 
     @Test
     public void getDrugTakenInfo() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getDrugTaken/1")
+        JSONObject param = new JSONObject();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = new Date();
+        Date end = new Date();
+        try {
+            start = formatter.parse("2019-05-29");
+            end = formatter.parse("2019-06-04");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        param.put("patientId", 1);
+        param.put("start", start);
+        param.put("end", end);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getDrug")
                 .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )
@@ -121,21 +137,21 @@ public class PatientControllerTest {
     @Test
     public void getDrugDuringDateInfo() throws Exception {
         JSONObject param = new JSONObject();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date start = new Date();
         Date end = new Date();
         try {
-            start = formatter.parse("2019-05-29 06:11:29");
-            end = formatter.parse("2019-06-04 00:18:35");
+            start = formatter.parse("2019-05-29");
+            end = formatter.parse("2019-06-04");
         } catch (ParseException e) {
             e.printStackTrace();
         }
         param.put("patientId", 1);
-        param.put("startDate", start);
-        param.put("endDate", end);
+        param.put("start", start);
+        param.put("end", end);
 
         String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getDrugDuringDate")
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/retreatDrug")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

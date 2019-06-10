@@ -29,7 +29,7 @@ public class StringUtils {
      * @throws ParseException
      * @throws InvalidParameterException
      */
-    public static Integer identityIdTransferToAge(String identifyId) {
+    public static Integer identityIdTransferToAge(String identifyId){
         //通过身份证获取生日
         String birthdayStr = identifyId.substring(6, 14);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");

@@ -6,6 +6,7 @@ import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.*;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,11 +86,11 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
             if (invoice.getPaymentList().isEmpty())
                 throw new IllegalArgumentException("invoiceId");
             Integer totalType = paymentTypeService.getTotalPaymentType(invoice.getPaymentList().get(0).getPaymentTypeId());
-            if (totalType.equals(REGISTRATION_PAYMENT_TYPE))
+            if (totalType.equals(Constants.REGISTRATION_PAYMENT_TYPE))
                 registrationFee = registrationFee.add(invoice.getPriceAmount());
-            else if (totalType.equals(NON_DRUG_PAYMENT_TYPE))
+            else if (totalType.equals(Constants.NON_DRUG_PAYMENT_TYPE))
                 inspectionFee = inspectionFee.add(invoice.getPriceAmount());
-            else if (totalType.equals(DRUG_PAYMENT_TYPE ))
+            else if (totalType.equals(Constants.DRUG_PAYMENT_TYPE ))
                 drugFee = drugFee.add(invoice.getPriceAmount());
 
             //冻结所有缴费单

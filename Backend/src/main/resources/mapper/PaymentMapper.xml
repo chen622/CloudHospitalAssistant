@@ -44,6 +44,10 @@
     select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and create_time <![CDATA[>=]]> #{startDate} and create_time <![CDATA[<=]]> #{endDate}
   </select>
 
+  <select id="getAllByItemIdAndPaymentTypeIdAndState" resultMap="BaseResultMap">
+    select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId} and state = #{state}
+  </select>
+
 <!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->
 <!--    select sum(quantity * unit_price) from payment where -->
 <!--  </select>-->
