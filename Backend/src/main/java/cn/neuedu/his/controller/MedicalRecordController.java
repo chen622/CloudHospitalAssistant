@@ -1,10 +1,13 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.MedicalRecord;
+import cn.neuedu.his.model.*;
+import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.MedicalRecordService;
+import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,10 @@ public class MedicalRecordController {
     MedicalRecordService medicalRecordService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    DoctorService doctorService;
+    @Autowired
+    RegistrationService registrationService;
 
     /**
      * 暂存病历
@@ -100,5 +107,86 @@ public class MedicalRecordController {
             list = new ArrayList<>();
         }
         return CommonUtil.successJson(list);
+    }
+
+
+    /**
+     * 检查病历是否存在
+     *
+     * @param registrationId
+     * @return
+     */
+    @GetMapping("/check/{registrationId}")
+    public JSONObject check(@PathVariable("registrationId") Integer registrationId) {
+        MedicalRecord medicalRecord = medicalRecordService.getByRegistrationId(registrationId);
+        if (medicalRecord == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_710);
+        } else {
+            return CommonUtil.successJson(medicalRecord);
+        }
+    }
+
+    /**
+     * 修改挂号状态
+     *
+     * @param registrationId
+     * @return
+     */
+    @PostMapping("/comein/{registrationId}")
+    public JSONObject comein(@PathVariable("registrationId") Integer registrationId) {
+        Registration registration = registrationService.findById(registrationId);
+        if (registration == null || !registration.getState().equals(Constants.WAITING_FOR_TREATMENT)) {
+            return CommonUtil.errorJson(ErrorEnum.E_710);
+        } else {
+            registration.setState(Constants.INSIDE_DOCTOR);
+            registrationService.update(registration);
+            return CommonUtil.successJson();
+        }
+    }
+
+    /**
+     * 医生初诊提交，更新该挂号状态
+     * update the registration state as first diagnose which is 803
+     * +
+     *
+     * @param object
+     * @return
+     */
+    @PostMapping("/firstDiagnose")
+    public JSONObject setFirstDiagnose(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorID;
+        try {
+            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Integer registrationID = null;
+        try {
+            registrationID = Integer.parseInt(object.get("registrationId").toString());
+        } catch (NumberFormatException n) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
+
+        //删除暂存病历
+//        try {
+//            redisService.deleteTemporaryMR(registrationID);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_803);
+//        }
+
+        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
+        medicalRecord.setRegistrationId(registrationID);
+        ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
+        ArrayList<Integer> diagnosesIds = new ArrayList<>();
+        diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
+        if (diagnoses.size() == 0)
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
+        JSONObject object1;
+        try {
+            object1 = doctorService.setFirstDiagnose(registrationID, medicalRecord, diagnosesIds, doctorID);
+        } catch (RuntimeException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+        }
+        return object1;
     }
 }
