@@ -106,9 +106,7 @@ public class InspectionApplicationController {
 
             //设定部门ID
             Integer userId = Integer.valueOf(e.getMessage());
-            User user = userService.findById(userId);
-            System.out.println("------------------------------------------");
-            System.out.println(userId);
+            departmentId= userService.findById(userId).getDepartmentId();
         }
 
 

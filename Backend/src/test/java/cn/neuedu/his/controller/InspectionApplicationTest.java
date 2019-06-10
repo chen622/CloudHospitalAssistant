@@ -38,7 +38,7 @@ public class InspectionApplicationTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 1)
+                .claim("id", 3)
                 .claim("typeId", 606)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
