@@ -128,15 +128,7 @@
                         </a-form>
                     </a-tab-pane>
                     <a-tab-pane tab="检查申请" key="2">
-                        <a-row type="flex" align="middle" justify="center">
-                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%">暂存</a-button>
-                            </a-col>
-                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%">增加</a-button>
-                            </a-col>
-                        </a-row>
-                        <a-table></a-table>
+                        <inspection></inspection>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
                         <a-row type="flex" align="middle" justify="space-around">
@@ -190,11 +182,13 @@
 <script>
 
     import Diagnose from '../../components/Diagnose'
+    import Inpsection from '../../components/Inspection'
 
     export default {
         name: "Index",
         components: {
-            'diagnose': Diagnose
+            'diagnose': Diagnose,
+            'inspection': Inpsection
         },
         data: () => ({
             load: {
