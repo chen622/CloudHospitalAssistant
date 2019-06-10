@@ -22,7 +22,7 @@
         </if>
     </update>
 
-    <select id="getByDoctorId">
+    <select id="getByDoctorId" resultMap="BaseResultMap">
         select *
         from job_schedule
         where to_days(date) = to_days(#{date})

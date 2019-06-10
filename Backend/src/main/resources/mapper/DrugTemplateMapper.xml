@@ -15,7 +15,7 @@
   </resultMap>
   
   <select id="getItems" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap">
-    select * from prescription where  item_id=#{id} and  is_template=true ;
+    select * from drug_template_relationship d,prescription p where   d.template_id=#{id} and  d.item_id=p.id and  is_template=true ;
   </select>
 
 

@@ -3,28 +3,19 @@ package cn.neuedu.his.service.impl;
 import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
-import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.Constants;
-import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.math.BigDecimal;
-import java.security.InvalidParameterException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -46,13 +37,14 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Override
     public void setRegistrationSequence() {
         ArrayList<JobSchedule> jobScheduleList = jobScheduleService.getAfterThreeDays();
-        for (JobSchedule jobSchedule: jobScheduleList) {
+        for (JobSchedule jobSchedule : jobScheduleList) {
             redisService.setRegistrationSequenceList(jobSchedule.getId(), jobSchedule.getLimitRegistrationAmount());
         }
     }
 
     /**
      * 现场挂号
+     *
      * @param registrarId
      * @param patientId
      * @param scheduleId
@@ -64,7 +56,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException{
+    public Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException {
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
@@ -74,11 +66,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         registration.setPatientId(patient.getId());
         //获取患者年龄
-        try {
-            registration.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
-        }catch (InvalidParameterException e) {
-            throw new IllegalArgumentException("IdentityId");
-        }
+        registration.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
 
         //获取时间表内信息
         JobSchedule schedule = jobScheduleService.findById(scheduleId);
@@ -109,6 +97,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
     /**
      * 退号
+     *
      * @param registrationId
      * @param registrarId
      * @return
@@ -151,8 +140,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      * @param state
      * @return
      */
-    public List<Registration> getAllWaitingRegistration(Integer doctorID,Integer state,Date time){
-        return registrationMapper.getAllWaitingRegistration(doctorID,state,time);
+    public List<Registration> getAllWaitingRegistration(Integer doctorID, Integer state, Date time) {
+        return registrationMapper.getAllWaitingRegistration(doctorID, state, time);
     }
 
     @Override
@@ -167,13 +156,14 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
     /**
      * 通过用户名查找所有带诊患者
+     *
      * @param name
      * @param doctorID
      * @param state
      * @return
      */
-    public  List<Registration> getRegistrationByPatientName(String name,Integer doctorID,Integer state){
-        return registrationMapper.getRegistrationByPatientName(name,doctorID, Constants.WAITING_FOR_TREATMENT);
+    public List<Registration> getRegistrationByPatientName(String name, Integer doctorID, Integer state) {
+        return registrationMapper.getRegistrationByPatientName(name, doctorID, Constants.WAITING_FOR_TREATMENT);
     }
 
     @Override
@@ -182,8 +172,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     }
 
     @Override
-    public ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String  end, Integer state) {
-        return registrationMapper.getAllByDoctor(doctorId, start, end,state);
+    public ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String end, Integer state) {
+        return registrationMapper.getAllByDoctor(doctorId, start, end, state);
     }
 
     @Override

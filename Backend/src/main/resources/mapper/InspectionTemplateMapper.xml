@@ -34,11 +34,11 @@
 
 <!-- Relationship collection-->
   <select id="getPrescription" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap" >
-        select * from prescription where item_id=#{id} and  is_template=true ;
+        select * from inspection_template_relationship r,prescription p where r.item_id=p.id and  p.is_template=true and  r.template_id=#{id};
   </select>
 <!-- Relationship collection-->
   <select id="getInspection" resultMap="cn.neuedu.his.mapper.InspectionApplicationMapper.withItem" >
-        select * from inspection_application  where item_id=#{id} and  is_template=true ;
+        select * from inspection_template_relationship r,inspection_application a where r.item_id=a.id and r.template_id=#{id} and  a.is_template=true ;
   </select>
 
   <select id="getDeptCheckTemps" resultMap="withRelationship">

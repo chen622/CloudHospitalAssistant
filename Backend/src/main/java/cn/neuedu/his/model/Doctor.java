@@ -1,9 +1,6 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 public class Doctor {
     @Id
@@ -25,6 +22,7 @@ public class Doctor {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
+    @Transient
     private String titleName;
 
     public Boolean isDelete() {

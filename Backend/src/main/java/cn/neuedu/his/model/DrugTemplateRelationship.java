@@ -8,8 +8,8 @@ public class DrugTemplateRelationship {
     @Column(name = "template_id")
     private Integer templateId;
 
-    @Column(name = "drug_id")
-    private Integer drugId;
+    @Column(name = "item_id")
+    private Integer itemId;
 
     /**
      * @return template_id
@@ -25,17 +25,11 @@ public class DrugTemplateRelationship {
         this.templateId = templateId;
     }
 
-    /**
-     * @return drug_id
-     */
-    public Integer getDrugId() {
-        return drugId;
+    public Integer getItemId() {
+        return itemId;
     }
 
-    /**
-     * @param drugId
-     */
-    public void setDrugId(Integer drugId) {
-        this.drugId = drugId;
+    public void setItemId(Integer itemId) {
+        this.itemId = itemId;
     }
 }

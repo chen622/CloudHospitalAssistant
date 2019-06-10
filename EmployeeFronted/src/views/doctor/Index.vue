@@ -60,7 +60,12 @@
         </a-col>
         <a-col :span="showList?16:21" :xl="showList?16:22">
             <a-card :body-style="{padding: 0}">
-                <span slot="title" style="font-size: 22px">{{currentPatient.name}}</span>
+                <div slot="title" v-if="currentPatient">
+                    <span style="font-size: 22px">{{currentPatient.patient.realName}}</span>
+                    <span style="margin: 0 10px">年龄: {{currentPatient.age}}岁</span>
+                    <span>性别: {{currentPatient.patient.sex?'男':'女'}}</span>
+                </div>
+                <span slot="title" style="font-size: 22px" v-else>当前患者</span>
                 <a-tabs defaultActiveKey="1" tabPosition="top" :style="{padding: '0 10px 20px 10px'}"
                         @prevClick="callback"
                         @nextClick="callback">
@@ -77,61 +82,53 @@
                             <a-divider>病历内容</a-divider>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 5}">
                                 <span slot="label" class="form-label">是否怀孕</span>
-                                <a-select defaultValue="false">
+                                <a-select v-decorator="['isPregnant',{initialValue: 'false'}]">
                                     <a-select-option value="false">未怀孕</a-select-option>
                                     <a-select-option value="true">怀孕</a-select-option>
                                 </a-select>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">主诉</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"
-                                            v-decorator="['phone',{rules: [{type: 'number',message: '手机号非法', trigger: 'blur'}]}]"/>
+                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2}"
+                                            v-decorator="['selfDescription',{rules: rules.selfDescription}]"></a-textarea>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">现病史</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"/>
+                                <a-textarea placeholder="现病史" :autosize="{ minRows: 2}"
+                                            v-decorator="['currentSymptom',{rules: rules.currentSymptom}]"></a-textarea>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">现病治疗情况</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"/>
+                                <a-textarea placeholder="现病治疗情况" :autosize="{ minRows: 2}"
+                                            v-decorator="['previousTreatment',{rules: rules.previousTreatment}]"></a-textarea>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">既往史</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"/>
+                                <a-textarea placeholder="既往史" :autosize="{ minRows: 2}"
+                                            v-decorator="['historySymptom',{rules: rules.historySymptom}]"></a-textarea>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">过敏史</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"/>
+                                <a-textarea placeholder="过敏史" :autosize="{ minRows: 2}"
+                                            v-decorator="['allergyHistory',{rules: rules.allergyHistory}]"></a-textarea>
                             </a-form-item>
                             <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
                                 <span slot="label" class="form-label">体格检查</span>
-                                <a-textarea placeholder="患者自述病况" :autosize="{ minRows: 2, maxRows: 6 }"/>
+                                <a-textarea placeholder="体格检查" :autosize="{ minRows: 2}"
+                                            v-decorator="['bodyExamination',{rules: rules.bodyExamination}]"></a-textarea>
                             </a-form-item>
                             <a-divider>初步诊断</a-divider>
-                            <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
-                                <span slot="label" class="form-label">诊断类型</span>
-                                <a-radio-group style="white-space: nowrap;text-align: center" defaultValue="0"
-                                               buttonStyle="solid">
-                                    <a-radio-button value="0">西医诊断</a-radio-button>
-                                    <a-radio-button value="1">中医诊断</a-radio-button>
-                                </a-radio-group>
-                            </a-form-item>
-                            <a-form-item :labelCol="{span: 2}" :wrapperCol="{span: 22}">
-                                <a-button type="primary">提交病历</a-button>
+
+                            <diagnose></diagnose>
+
+                            <a-form-item style="text-align: center;margin-top: 20px">
+                                <a-button type="primary" @click="submitRecord">提交病历</a-button>
                             </a-form-item>
 
                         </a-form>
                     </a-tab-pane>
                     <a-tab-pane tab="检查申请" key="2">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 80%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 80%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
-
+                        <inspection></inspection>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
                         <a-row type="flex" align="middle" justify="space-around">
@@ -184,11 +181,15 @@
 
 <script>
 
-    import AFormItem from "ant-design-vue/es/form/FormItem";
+    import Diagnose from '../../components/Diagnose'
+    import Inpsection from '../../components/Inspection'
 
     export default {
         name: "Index",
-        components: {AFormItem},
+        components: {
+            'diagnose': Diagnose,
+            'inspection': Inpsection
+        },
         data: () => ({
             load: {
                 patient: true
@@ -198,17 +199,82 @@
                 inPatient: [],//在诊
                 outPatient: [],
             },
-            currentPatient: {
-                name: "当前患者"
+            currentPatient: null,
+            rules: {
+                selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}, {}],
+                bodyExamination: [{required: true, message: '请输入', trigger: 'blur'}],
+                allergyHistory: [{required: true, message: '请输入', trigger: 'blur'}],
+                historySymptom: [{required: true, message: '请输入', trigger: 'blur'}],
+                previousTreatment: [{required: true, message: '请输入', trigger: 'blur'}],
+                currentSymptom: [{required: true, message: '请输入', trigger: 'blur'}],
             },
-            rules: {},
             record: null,
-            showList: true
+            showList: true,
+
         }),
         methods: {
+            submitRecord () {
+                this.record.validateFields(err => {
+                    if (!err) {
+                        if (this.$store.state.diagnose.length === 0) {
+                            this.$message.info("请指定疾病")
+                        } else {
+                            let data = {}
+                            data.medicalRecord = this.record.getFieldsValue()
+                            data.registrationId = this.currentPatient.id
+                            data.diagnoses = this.$store.state.diagnose
+                            data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
+                            this.createMedicalRecord(data)
+                        }
+                    }
+                })
+            },
+            createMedicalRecord (data) {
+                let that = this
+                this.$api.post("/medical_record/firstDiagnose", data,
+                    res => {
+                        if (res.code === "100") {
+                            that.$message.success("提交成功")
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, () => {
+                        that.$message.error("网络错误")
+                    })
+            },
             selectPatient (patient) {
-                this.showList = false
-                console.log(patient)
+                let that = this
+                this.$api.get("/medical_record/check/" + patient.id, null, res => {
+                    if (res.code === '100') {
+                        that.showList = false
+                        that.currentPatient = patient
+                    } else {
+                        that.$confirm({
+                            title: '患者病例信息不存在，是否创建新病例?',
+                            onOk () {
+                                that.showList = false
+                                that.currentPatient = patient
+                                that.$api.post("/medical_record/comein/" + patient.id, null,
+                                    res => {
+                                        if (res.code === '100') {
+                                            that.$message.success("创建成功")
+                                        } else {
+                                            that.$message.error(res.msg)
+                                        }
+                                    }, () => {
+                                        that.$message.error("网络异常")
+
+                                    })
+                            },
+                            onCancel () {
+
+                            },
+                        })
+                    }
+                }, () => {
+                    that.$message.error("网络异常")
+                })
+
             },
             getPatient () {
                 let that = this

@@ -2,8 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Login from './views/Login'
-import Medicine from './views/Medicine'
-import test from './views/test'
 
 Vue.use(Router)
 
@@ -61,12 +59,17 @@ export default new Router({
         {
             path:'/medicine',
             name:'medicine',
-            component: Medicine
+            component :() => import( './views/Medicine')
         },
         {
-            path:'/test',
-            name:'test',
-            component: test
+            path:'/inspection',
+            name:'inspction',
+            component:() => import('./views/inspection/Inspection')
+        },
+        {
+            path:'/search',
+            name:'search',
+            component:() => import('./views/Search')
         }
     ]
 })
