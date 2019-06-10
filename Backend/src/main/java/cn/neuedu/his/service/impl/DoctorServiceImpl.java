@@ -71,6 +71,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     InvoiceService invoiceService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    DrugTemplateRelationshipService drugTemplateRelationshipService;
 
 
     @Override
@@ -260,7 +262,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses,Integer doctorId) throws Exception {
         JobSchedule schedule=scheduleService.getByDoctorId(doctorId, new Date(System.currentTimeMillis()));
 
-
         Registration registration = registrationService.findById(registrationID);
         if(registration==null ){
             return CommonUtil.errorJson(ErrorEnum.E_705.addErrorParamName("registrationId"));
@@ -422,10 +423,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 inspectionApplicationService.save(application);
                 Payment payment = setInspectionPayment(application,registration.getPatientId(),doctorId);
                 paymentService.save(payment);
+
             }
         }
 
-        //保存模板非药项目
+        //保存模板药项目
         String check="";
         List<Prescription> prescriptionList=template.getPrescriptions();
         if(prescriptionList!=null){
@@ -506,6 +508,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 }
                 InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true,drug.getFeeTypeId());
                 inspectionApplicationService.save(application);
+                InspectionTemplateRelationship relationship=new InspectionTemplateRelationship();
+                relationship.setTemplateId(tempId);
+                relationship.setItemId(application.getId());
+                relationship.setItemType(application.getFeeTypeId());
+                relationship.setAmount(application.getQuantity());
+                inspectionTemplateRelationshipService.save(relationship);
             }
         }
         //保存模板非药项目
@@ -520,6 +528,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setTemplate(true);
                 p2.setItemId(tempId);
                 prescriptionService.save(p2);
+                InspectionTemplateRelationship relationship=new InspectionTemplateRelationship();
+                relationship.setTemplateId(tempId);
+                relationship.setItemId(p2.getId());
+                relationship.setItemType(p2.getFeeTypeId());
+                relationship.setAmount(p2.getAmount());
+                inspectionTemplateRelationshipService.save(relationship);
             }
         }
         return CommonUtil.successJson();
@@ -620,9 +634,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
             }
             prescriptionService.save(p);
+            DrugTemplateRelationship relationship=new DrugTemplateRelationship();
+            relationship.setTemplateId(template.getId());
+            relationship.setItemId(p.getId());
+            drugTemplateRelationshipService.save(relationship);
         }
         return CommonUtil.successJson();
     }
+
+
 
     @Override
     public JSONObject getPrescriptionsTemByName(String name) {

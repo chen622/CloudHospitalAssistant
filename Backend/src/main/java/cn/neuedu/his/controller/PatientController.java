@@ -185,9 +185,6 @@ public class PatientController {
         return CommonUtil.successJson(result);
     }
 
-
-
-
     @GetMapping("/getAll")
     public JSONObject findAll() {
         List<Patient> patients = patientService.findAll();

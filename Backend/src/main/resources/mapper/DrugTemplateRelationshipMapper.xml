@@ -6,6 +6,6 @@
       WARNING - @mbg.generated
     -->
     <result column="template_id" jdbcType="INTEGER" property="templateId" />
-    <result column="drug_id" jdbcType="INTEGER" property="drugId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
   </resultMap>
 </mapper>
