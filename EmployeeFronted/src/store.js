@@ -7,9 +7,21 @@ export default new Vuex.Store({
     state: {
         isLogin: false,
         userType: -1,
-        urls: []
+        urls: [],
+        diagnose: [],
+        diagnoseType: 0
     },
     mutations: {
+        changeDiagnoseType (state, type) {
+            state.diagnoseType = type
+        },
+        addDisease (state, disease) {
+            state.diagnose.push(disease)
+        },
+        clearDiagnose (state) {
+            state.diagnose = []
+            state.diagnoseType = 0
+        },
         setLogin (state, login) {
             state.isLogin = login
         },
