@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.beans.Transient;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,11 @@ import java.util.List;
  */
 public interface DoctorService extends Service<Doctor> {
 
+    @Transactional
+     void saveDiagnose(List<Integer> diagnoses ,Integer itemId,Boolean isMajor,Boolean isTemplate);
+
+    @Transient
+    JSONObject updateMR(MedicalRecord record,List<Integer> diagnoses,List<Integer> finalDiagnose) ;
 
     @Transactional
     JSONObject getRegistrationInof(Date time,Integer doctorId);
