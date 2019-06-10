@@ -15,13 +15,13 @@
                 <p style="font-size: 20px">患者信息确认：</p>
                 <a-form :form="form" layout="inline">
                     <a-form-item label="姓名">
-                        <a-input v-decorator="['username',{rules:[{required:false,message:''}]}]" placeholder="姓名"></a-input>
+                        <a-input v-model="username" placeholder="姓名">{{username}}</a-input>
                     </a-form-item>
                     <a-form-item label="身份证号">
-                        <a-input v-decorator="['username',{rules:[{required:false,message:''}]}]" placeholder="身份证号"></a-input>
+                        <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
                     <a-form-item label="家庭住址" :label-col="{span:8}":wrapper-col="{span:15}">
-                        <a-textarea v-decorator="['家庭住址',{rules:[{required:false,message:''}]}]" placeholder="家庭住址" autosize style="width: 300px"/>
+                        <a-textarea v-model="address" placeholder="家庭住址" autosize style="width: 300px">{{address}}</a-textarea>
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">患者消费信息:</p>
@@ -30,8 +30,13 @@
                         <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                         <span slot="customTitle">姓名</span>
                     </a-table>
-                    <a-button type="primary">收费结算</a-button>
+                    <a-button type="primary"  @click="showmodal">收费结算</a-button>
                 </template>
+                <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="确认" cancelText="取消">
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+                </a-modal>
             </a-card>
         </a-col>
     </a-row>
@@ -45,6 +50,10 @@
         data () {
             return {
                 form:this.$form.createForm(this),
+                username:'',
+                userid:'',
+                address:'',
+                visible: false,
                 columns : [{
                     title:'病历号',
                     dataIndex:'id',
@@ -128,7 +137,16 @@
             onSelectChange(selectedRowKeys){
                 console.log('selectedRowKeys changed: ',selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
-            }
+            },
+            onSearch(value){
+
+            },
+            showmodal(){
+                this.visible = true
+            },
+            handleok(event){
+                this.visible = false
+            },
 
         },
     };

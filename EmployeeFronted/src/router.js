@@ -60,6 +60,16 @@ export default new Router({
             path:'/medicine',
             name:'medicine',
             component :() => import( './views/Medicine')
+        },
+        {
+            path:'/inspection',
+            name:'inspction',
+            component:() => import('./views/inspection/Inspection')
+        },
+        {
+            path:'/search',
+            name:'search',
+            component:() => import('./views/Search')
         }
     ]
 })
