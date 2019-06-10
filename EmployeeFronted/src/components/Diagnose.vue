@@ -30,8 +30,8 @@
             <span slot="label" class="form-label">诊断类型</span>
             <a-radio-group style="white-space: nowrap;text-align: center"
                            buttonStyle="solid" defaultValue="0" @change="changeType">
-                <a-radio-button value="0">西医诊断</a-radio-button>
-                <a-radio-button value="1">中医诊断</a-radio-button>
+                <a-radio-button value="0">中医诊断</a-radio-button>
+                <a-radio-button value="1">西医诊断</a-radio-button>
             </a-radio-group>
             <a-button style="float: right" type="primary" class="editable-add-btn"
                       @click="showDisease = true">添加诊断

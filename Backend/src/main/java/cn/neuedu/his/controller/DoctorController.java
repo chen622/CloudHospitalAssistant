@@ -234,49 +234,7 @@ public class DoctorController {
     }
 
 
-    /**
-     * 医生初诊提交，更新该挂号状态
-     * update the registration state as first diagnose which is 803
-     * +
-     *
-     * @param object
-     * @return
-     */
-    @PostMapping("/firstDiagnose")
-    public JSONObject setFirstDiagnose(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorID;
-        try {
-            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-        Integer registrationID = null;
-        try {
-            registrationID = Integer.parseInt(object.get("registrationId").toString());
-        } catch (NumberFormatException n) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        }
 
-        //删除暂存病历
-//        try {
-//            redisService.deleteTemporaryMR(registrationID);
-//        } catch (Exception e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_803);
-//        }
-
-        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
-        medicalRecord.setRegistrationId(registrationID);
-        ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
-        if (diagnoses == null || diagnoses.size() == 0)
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
-        JSONObject object1;
-        try {
-            object1 = doctorService.setFirstDiagnose(registrationID, medicalRecord, diagnoses, doctorID);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
-        }
-        return object1;
-    }
 
     /**
      * 存为全院病历模板
