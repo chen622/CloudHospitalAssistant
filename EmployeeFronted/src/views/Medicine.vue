@@ -918,7 +918,7 @@ import { Promise, resolve, reject } from 'q';
                 }
                 callback('内容应大于0!');
             },selectPatient(item){
-                console.log('*************')
+                // console.log('*************')
                 
                 
                 Object.assign(this.patient,item)        
@@ -927,12 +927,10 @@ import { Promise, resolve, reject } from 'q';
                 this.form2.setFieldsValue()
                 var notTake=item.notTake
                 var taken=item.taken
-                console.log(notTake)
-                console.log(item.taken)
+                // console.log(notTake)
+                // console.log(taken)
                 for(var i=0;i<notTake.length;i++){ 
                     var prescription=notTake[i].prescription
-                    console.log('9999999999999999')
-                    console.log(prescription)
                     this.paymentData.push({
                         key:notTake[i].id,
                         itemId:notTake[i].itemId,
@@ -940,14 +938,30 @@ import { Promise, resolve, reject } from 'q';
                         name:prescription.drug.name,                  
                         quantity:prescription.amount,                 
                         return:0,                  
-                        unit_price:notTake[i].unit_price,                
-                        totalPrice:(notTake[i].unit_price * notTake.quantity),
+                        unit_price:notTake[i].unitPrice,                
+                        totalPrice:(notTake[i].unitPrice * prescription.amount),
                         state:'未取药',
                         create_time:notTake.create_time,
                     })
                 }
+
+                for(var i=0;i<taken.length;i++){ 
+                    var prescription=taken[i].prescription
+                    this.paymentData.push({
+                        key:taken[i].id,
+                        itemId:taken[i].itemId,
+                        code:prescription.drug.code,       
+                        name:prescription.drug.name,                  
+                        quantity:prescription.amount,                 
+                        return:0,                  
+                        unit_price:taken[i].unitPrice,                
+                        totalPrice:(taken[i].unitPrice * prescription.amount),
+                        state:'未取药',
+                        create_time:taken.create_time,
+                    })
+                }
                 
-                console.log(this.paymentData)
+                // console.log(this.paymentData)
             }, getPatient(value){
                 console.log(this.time)
             },sendDrug(id){
@@ -982,16 +996,21 @@ import { Promise, resolve, reject } from 'q';
                 this.$api.post("/patient/getDrug", m,
                             res => {
                                 if (res.code === "100") {
-                                var data=res.data.notTake
+                                
+                                var patient=res.data.notTake
+                            
                                 this.patients=[]
                                 this.patients.push(
                                     {
-                                        id:data.id,
+                                        id:patient.id,
                                         age:20,
-                                        realName:data.realName,
+                                        realName:patient.realName,
                                         sex:0,
-                                        notTake:data.paymentList,
-                                        taken:res.data.taken.paymentList
+                                        notTake:patient.paymentList,
+                                       
+                                        happenRetreat:res.data.token.happenRetreat,
+                                        takenNotRetreat:res.data.token.takenNotRetreat,
+                                        AllReturn:res.data.token.AllReturn,
                                     }
                                 
                                 )

@@ -41,6 +41,9 @@ public class DoctorController {
     @Autowired
     RedisServiceImpl redisService;
 
+
+
+
     /**
      * 通过患者名字找到所有挂在该医生的待诊挂号
      * use patient name to registration
@@ -769,6 +772,28 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
         return doctorService.finishDiagnose(registrationId);
+    }
+
+    /**
+     *
+     *更新病历
+     *  传过来的medicalRecord里面的挂号id一定要填
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/updateMR")
+    public JSONObject updateMR(@RequestBody JSONObject object ,Authentication authentication){
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        MedicalRecord record=JSONObject.parseObject(object.get("record").toString(),MedicalRecord.class);
+        List<Integer> firstDiagnose=JSONObject.parseArray(object.get("firstDiagnose").toString(),Integer.class);
+        List<Integer> finalDiagnose=JSONObject.parseArray(object.get("finalDiagnose").toString(),Integer.class);
+        return doctorService.updateMR(record,firstDiagnose, finalDiagnose);
     }
 
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")

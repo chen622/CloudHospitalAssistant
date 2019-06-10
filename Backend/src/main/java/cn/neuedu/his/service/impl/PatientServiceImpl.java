@@ -86,7 +86,6 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
         Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_PAID, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
-
         return patient;
     }
 
