@@ -2,6 +2,7 @@ package cn.neuedu.his.service;
 import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +18,7 @@ public interface InvoiceService extends Service<Invoice> {
 //    Invoice getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException;
     void addAnewInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException;
     void addAgainInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException;
+    JSONObject getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException;
 
     Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
     ArrayList<Integer> getInvoiceNormalIdList(Integer settleId);

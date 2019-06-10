@@ -40,4 +40,9 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     public List<Payment> selectPatientInformationByNameOrId(String name, Integer id, Integer department_id, Boolean auth) {
         return inspectionApplicationMapper.selectPatientInformationByNameOrId(name,id,department_id,auth);
     }
+
+    @Override
+    public InspectionApplication findInspectionAndNonDrug(Integer id) {
+        return inspectionApplicationMapper.getInspectionAndNonDrug(id);
+    }
 }

@@ -12,4 +12,5 @@ import java.util.ArrayList;
 public interface PrescriptionService extends Service<Prescription> {
     public  void deleteByTemplateId(Integer templateId);
     ArrayList<Prescription> getByMedicalRecordId(Integer id);
+    Prescription findPrescriptionAndDrug(Integer id);
 }

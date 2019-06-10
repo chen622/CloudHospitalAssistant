@@ -30,8 +30,9 @@
   </select>
 
   <select id="getPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-        SELECT * FROM payment where id = #{id} order by create_time asc
+        SELECT * FROM payment where invoice_id = #{id} order by create_time asc
    </select>
+
 
     <select id="getInvoiceNormalList" resultType="java.lang.Integer">
         select id from invoice where daily_settle_id = #{settleId}
@@ -44,4 +45,5 @@
     <select id="getInvoiceNumberByAllDoctor" resultType="java.lang.Integer">
         select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and payment.create_time <![CDATA[>=]]> #{startDate} and payment.create_time <![CDATA[<=]]>#{endDate}
     </select>
+
 </mapper>

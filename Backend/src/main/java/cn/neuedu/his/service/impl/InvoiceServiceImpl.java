@@ -1,11 +1,12 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.InvoiceMapper;
-import cn.neuedu.his.model.Invoice;
-import cn.neuedu.his.model.Payment;
-import cn.neuedu.his.service.InvoiceService;
-import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.model.*;
+import cn.neuedu.his.service.*;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,18 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     private PaymentService paymentService;
     @Autowired
     private RedisServiceImpl redisService;
+    @Autowired
+    private PaymentTypeService paymentTypeService;
+    @Autowired
+    private RegistrationService registrationService;
+    @Autowired
+    private PrescriptionService prescriptionService;
+    @Autowired
+    private InspectionApplicationService inspectionApplicationService;
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private ConstantVariableService constantVariableService;
 
 
     /**
@@ -118,14 +131,79 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         }
     }
 
-//    @Override
-//    public Invoice getInvoiceInfo(Integer invoiceId) throws  IllegalArgumentException{
-//        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
-//        if (invoice == null)
-//            throw new IllegalArgumentException("invoiceId");
-//
-//        return invoice;
-//    }
+    /**
+     * 获取发票模板信息
+     * @param invoiceId
+     * @return
+     * @throws IllegalArgumentException
+     */
+    @Override
+    public JSONObject getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException{
+        JSONObject result = new JSONObject();
+        Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
+        if (invoice == null)
+            throw new IllegalArgumentException("invoiceId");
+        if (invoice.getPaymentList().isEmpty())
+            throw new IllegalArgumentException("paymentId");
+
+        //根据发票各缴费类型，将缴费信息分条加入
+        JSONArray jsonArray = new JSONArray();
+        for (Payment payment: invoice.getPaymentList()) {
+            PaymentType paymentType = paymentTypeService.findById(payment.getPaymentTypeId());
+            String typeName = paymentType.getName();
+            String projectName;
+            String note = null;
+
+            //挂号
+            if (paymentType.getType().equals(Constants.REGISTRATION_PAYMENT_TYPE)) {
+                Registration registration = registrationService.findRegistrationAndType(payment.getItemId());
+                projectName = registration.getRegistrationType().getName();
+                if (registration.getNeedBook().equals(true))
+                    note = "需要病历本";
+            //处方
+            } else if (paymentType.getType().equals(Constants.DRUG_PAYMENT_TYPE)){
+                projectName = prescriptionService.findPrescriptionAndDrug(payment.getItemId()).getDrug().getName();
+            //检查项目
+            } else {
+                projectName = inspectionApplicationService.findInspectionAndNonDrug(payment.getItemId()).getNonDrug().getName();
+            }
+            //将明细信息加入
+            jsonArray.add(putInvoiceContent(projectName, typeName, payment.getUnitPrice(), payment.getQuantity(), note));
+        }
+
+        //将信息存入result
+        Payment paymentExample = invoice.getPaymentList().get(0);
+        result.put("patient", patientService.findById(paymentExample.getPatientId()));
+        result.put("settlementType", constantVariableService.findById(paymentExample.getSettlementTypeId()).getName());
+        invoice.setPaymentList(null);
+        result.put("invoice", invoice);
+        result.put("item", jsonArray);
+
+        return result;
+    }
+
+    /**
+     * 发票上明细
+     * @param name：项目名称
+     * @param paymentType：缴费类型
+     * @param unitPrice：单价
+     * @param quantity：数量
+     * @param note：备注
+     * @return
+     */
+    private JSONObject putInvoiceContent(String name, String paymentType, BigDecimal unitPrice, Integer quantity, String note) {
+        JSONObject result = new JSONObject();
+        result.put("name", name);
+        result.put("paymentType", paymentType);
+        result.put("unitPrice", unitPrice);
+        result.put("quantity", quantity);
+        result.put("itemTotalAmount", unitPrice.add(new BigDecimal(quantity)));
+        if (note == null)
+            result.put("note", "");
+        else
+            result.put("note", note);
+        return result;
+    }
 
     /**
      * 发票重打

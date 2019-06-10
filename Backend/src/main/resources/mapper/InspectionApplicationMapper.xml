@@ -159,6 +159,27 @@
           AND user.department_id = #{department_id} #医生部门需相同
       </if>
   </select>
+  
+
+  <resultMap id="inspectionAndNonDrug" type="cn.neuedu.his.model.InspectionApplication">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="quantity" jdbcType="INTEGER" property="quantity" />
+    <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
+    <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
+    <result column="is_done" jdbcType="BIT" property="isDone"/>
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+    <result column="is_check" jdbcType="BIT" property="isCheck"/>
+    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+    <association property="nonDrug" resultMap="cn.neuedu.his.mapper.NonDrugMapper.BaseResultMap"/>
+  </resultMap>
+
+  <select id="getInspectionAndNonDrug" resultMap="inspectionAndNonDrug">
+    select i.*, nd.* from inspection_application i join non_drug nd on i.non_drug_id = nd.id
+    where i.id = #{id}
+  </select>
 
 
 </mapper>

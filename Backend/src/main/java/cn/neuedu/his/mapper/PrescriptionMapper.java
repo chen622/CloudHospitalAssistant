@@ -9,6 +9,7 @@ import java.util.List;
 
 @Component
 public interface PrescriptionMapper extends MyMapper<Prescription> {
-    public void deleteByTemplateId(Integer templateId);
+    void deleteByTemplateId(Integer templateId);
     ArrayList<Prescription> getByMedicalRecordId(Integer id);
+    Prescription getPrescriptionAndDrug(Integer id);
 }

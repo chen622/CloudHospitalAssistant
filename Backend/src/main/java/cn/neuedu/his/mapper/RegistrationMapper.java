@@ -21,4 +21,5 @@ public interface RegistrationMapper extends MyMapper<Registration> {
      ArrayList<Integer> getAllByDoctor(Integer doctorId, String start, String end, Integer state);
      Integer getRegistrationInof(Date time, Integer doctorId);
      Integer getRegistrationState(Integer id);
+     Registration getRegistrationAndType(Integer id);
 }

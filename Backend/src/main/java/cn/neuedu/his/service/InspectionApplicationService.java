@@ -15,4 +15,5 @@ public interface InspectionApplicationService extends Service<InspectionApplicat
     public void  deleteByTemplateId(Integer templateId);
     ArrayList<InspectionApplication> getByMedicalRecordId(Integer id);
     List<Payment> selectPatientInformationByNameOrId(String name, Integer id, Integer department_id,Boolean auth);
+    InspectionApplication findInspectionAndNonDrug(Integer id);
 }
