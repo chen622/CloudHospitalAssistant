@@ -177,9 +177,17 @@ public class NonDrugController {
         }
     }
 
-
-    @GetMapping({"/getTypeAndNonDrug/{name}","/getTypeAndNonDrug//{code}",
-            "/getTypeAndNonDrug/{name}/{code}","/getTypeAndNonDrug/"})
+    /**
+     * 根据非药品名称来模糊查询
+     * 根据非药品编码来模糊查询
+     * 获取所有type和非药品目录
+     * @param name
+     * @param code
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/getTypeAndNonDrug/name/{name}","/getTypeAndNonDrug/code/{code}",
+            "/getTypeAndNonDrug/nameAndCode/{name}/{code}","/getTypeAndNonDrug/"})
     JSONObject getTypeAndNonDrug(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "code",required = false) String code, Authentication authentication){
 
         Boolean auth;
