@@ -86,7 +86,6 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
         Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_PAID, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
-
         return patient;
     }
 
@@ -162,7 +161,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
             //计算退药数量
             Integer retreatQuantity = 0;
             for (Payment item: allPaymentList) {
-                retreatQuantity = retreatQuantity = item.getQuantity();
+                retreatQuantity = retreatQuantity + item.getQuantity();
             }
 
             JSONObject paymentObject = new JSONObject();

@@ -186,12 +186,12 @@
                                             
                                             <a-tag color="green" style="font-size:15px" v-if="text=='已取药'">{{text}}</a-tag>
                                             <a-tag color="purple" style="font-size:15px" v-if="text=='曾退药'">{{text}}</a-tag>
-                                             
+                                            <a-tag color="red" style="font-size:15px" v-if="text=='药全退'">{{text}}</a-tag>
                                         </template>
                                         
                                         <template slot="actionc" slot-scope="text, record">
                                             <div class='editable-row-operations'>                             
-                                                 <a @click="() => returnDrug(record.id)" style="color:red">退药</a>                                             
+                                                 <a @click="() => returnDrug(record)" style="color:red">退药</a>                                             
                                             </div>
                                         </template>
 
@@ -222,7 +222,6 @@
         <div id="components-modal-demo-position" style="width:700px">
             <a-modal
             title="药品信息"
-            bodyStyle="top: 20px;width:450px"
             width="500px"
             :visible="modelVisiable"
             @ok="() => ok()"
@@ -385,27 +384,32 @@
 
         <a-modal
             title=""
-            bodyStyle="top: 20px;width:350px"
+
             style="text-align:center"
-            width="360px"
+            width="500px"
             :visible="visible"
             @ok="() => okReturn()"
-            @cancel="() => cancelReturn(this.drugTemp)"            
+            @cancel="() => cancelReturn()"            
             >
 
-            <a-form  :columns="columns" :dataSource="drugTemp" :form="form" style="width:300px;text-align:center" layout="inline">
-                <a-form-item label="请输入退药数量" >
+            <a-form  :columns="columns"  :form="form2" style="width:400px;text-align:center" layout="inline">
+
+                <a-form-item label="请输入退药数量" style="margin-left:35px;text-align:center" >
                     <a-input  
-                    style="width:100px"
+                    style="width:100px;text-align:center"
                     v-decorator="[
-                        'code',
+                        'quantity',
                         {
                             initialValue: [this.quantity],
-                             rules: [{ required: true, validator:checkPrice }],
+                             rules: [{ required: true, validator:'请输入数字' }],
                         }
                         ]" 
-                    getFieldDecorator="('code',)"
+                    getFieldDecorator="('quantity',)"
                     />
+                </a-form-item>
+
+                <a-form-item style="text-align:center">
+                    <a-button style="width:80px;text-align:center" type="dashed" disabled block >上限({{this.restDrug}})</a-button>
                 </a-form-item>
 
             </a-form>
@@ -427,6 +431,8 @@ import { Promise, resolve, reject } from 'q';
         data() {
           
         return {
+            restId:0,
+            restDrug:0,
             time:null,
             visible:false,
             quantity:1,
@@ -918,46 +924,147 @@ import { Promise, resolve, reject } from 'q';
                 }
                 callback('内容应大于0!');
             },selectPatient(item){
-                console.log('*************')
-                
-                
+                   
                 Object.assign(this.patient,item)        
-                // Object.assign(this.paymentData,[])
                 this.paymentData=[]
                 this.form2.setFieldsValue()
                 var notTake=item.notTake
-                var taken=item.taken
-                console.log(notTake)
-                console.log(item.taken)
+                this.paymentData=[]
                 for(var i=0;i<notTake.length;i++){ 
                     var prescription=notTake[i].prescription
-                    console.log('9999999999999999')
-                    console.log(prescription)
                     this.paymentData.push({
                         key:notTake[i].id,
+                         id:notTake[i].id,
                         itemId:notTake[i].itemId,
                         code:prescription.drug.code,       
                         name:prescription.drug.name,                  
                         quantity:prescription.amount,                 
                         return:0,                  
-                        unit_price:notTake[i].unit_price,                
-                        totalPrice:(notTake[i].unit_price * notTake.quantity),
+                        unit_price:notTake[i].unitPrice,                
+                        totalPrice:(notTake[i].unitPrice * prescription.amount),
                         state:'未取药',
-                        create_time:notTake.create_time,
+                        create_time:notTake[i].create_time,
+                        isFrozen:notTake[i].isFrozen,
+                        drugId:prescription.drugId,
+                    })
+                }
+
+                this.returnData=[]
+
+                var taken=item.takenNotRetreat
+
+                for(var i=0;i<taken.length;i++){ 
+                    var prescription=taken[i].prescription
+                    this.returnData.push({
+                        key:taken[i].id,
+                        id:taken[i].id,
+                        itemId:taken[i].itemId,
+                        code:prescription.drug.code,       
+                        name:prescription.drug.name,                  
+                        quantity:prescription.amount,                 
+                        return:0,                  
+                        unit_price:taken[i].unitPrice,                
+                        totalPrice:(taken[i].unitPrice * prescription.amount),
+                        state:'已取药',
+                        create_time:taken[i].create_time,
+                        return:0,
+                        drugId:prescription.drugId,
+                        isFrozen:taken[i].isFrozen,
+                    })
+                }
+
+                taken=item.happenRetreat
+     
+                for(var i=0;i<taken.length;i++){
+                    var prescription=taken[i].payment.prescription
+                    this.returnData.push({
+                        key:taken[i].payment.id,
+                        id:taken[i].payment.id,
+                        itemId:taken[i].payment.itemId,
+                        code:prescription.drug.code,       
+                        name:prescription.drug.name,                  
+                        quantity:prescription.amount,                 
+                        return:0,                  
+                        unit_price:taken[i].payment.unitPrice,                
+                        totalPrice:(taken[i].payment.unitPrice * prescription.amount),
+                        state:'曾退药',
+                        create_time:taken[i].payment.create_time,
+                        isFrozen:taken[i].payment.isFrozen,
+                        return:taken[i].retreatQuantity,
+                        drugId:prescription.drugId,
+                        isFrozen:taken[i].payment.isFrozen,
+                    })
+
+                }
+
+
+               
+                
+                taken=item.AllReturn
+                for(var i=0;i<taken.length;i++){ 
+                    var prescription=taken[i].prescription
+                    this.returnData.push({
+                        key:taken[i].id,
+                         id:taken[i].id,
+                        itemId:taken[i].itemId,
+                        code:prescription.drug.code,       
+                        name:prescription.drug.name,                  
+                        quantity:prescription.amount,                 
+                        return:0,                  
+                        unit_price:taken[i].unitPrice,                
+                        totalPrice:(taken[i].unitPrice * prescription.amount),
+                        state:'药全退',
+                        create_time:taken[i].create_time,
+                        return:prescription.amount,
+                        drugId:prescription.drugId,
+                        isFrozen:taken[i].isFrozen,
                     })
                 }
                 
-                console.log(this.paymentData)
-            }, getPatient(value){
-                console.log(this.time)
-            },sendDrug(id){
-            },returnDrug(id){
-                this.visible=true
 
+            }, getPatient(value){
+
+            },sendDrug(id){
+            },returnDrug(payemny){
+                if(!payemny.isFrozen && payemny.state.indexOf('药全退')<0){
+                    this.visible=true
+                    // console.log(this.restDrug+' '+payemny.quantity+' '+payemny.return)
+                    this.restDrug=(payemny.quantity+payemny.return) 
+                    this.restId=payemny.id 
+                }
             },cancelReturn(){
                 this.visible=false
             },okReturn(){
-                 this.visible=false
+                this.visible=false
+                var quantity1=this.form2.getFieldValue('quantity')[0]
+                if(quantity1>0 && quantity1<=this.restDrug){
+                    const newData=[...this.returnData]
+                    const pay= newData.filter(item => this.restId === item.id)[0]
+
+
+                    var m={
+                        paymentId:this.restId,
+                        drugId:pay.drugId,
+                        quantity:quantity1
+                    }
+
+                    let that=this
+                    this.$api.post("/drug/retreatDrug", m,
+                            res => {
+                                if (res.code === "100") {                    
+                                    pay.return=pay.return-quantity1
+                                    that.returnData=newData
+                                }else{
+                                    that.$message.error(res)
+                                }
+                            }, res => {
+                                that.$message.error(res)
+                    })  
+                    
+                    
+                }else{
+                    alert('请输入合法数字！')
+                }
             },            
             onSearchByPid(value){
                 let that=this
@@ -970,8 +1077,7 @@ import { Promise, resolve, reject } from 'q';
                     start=this.time[0].utc().format('YYYY-MM-DD'),
                     end=this.time[1].utc().format('YYYY-MM-DD')
                 }
-                console.log(start)
-                console.log(end)
+
                
                 var m={
                    start:start,
@@ -982,16 +1088,19 @@ import { Promise, resolve, reject } from 'q';
                 this.$api.post("/patient/getDrug", m,
                             res => {
                                 if (res.code === "100") {
-                                var data=res.data.notTake
+                                
+                                var patient=res.data.notTake
                                 this.patients=[]
                                 this.patients.push(
                                     {
-                                        id:data.id,
+                                        id:patient.id,
                                         age:20,
-                                        realName:data.realName,
+                                        realName:patient.realName,
                                         sex:0,
-                                        notTake:data.paymentList,
-                                        taken:res.data.taken.paymentList
+                                        notTake:patient.paymentList,
+                                        happenRetreat:res.data.token.happenRetreat,
+                                        takenNotRetreat:res.data.token.takenNotRetreat,
+                                        AllReturn:res.data.token.AllReturn,
                                     }
                                 
                                 )

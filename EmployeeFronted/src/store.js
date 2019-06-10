@@ -9,7 +9,7 @@ export default new Vuex.Store({
         userType: -1,
         urls: [],
         diagnose: [],
-        diagnoseType: 0
+        diagnoseType: true
     },
     mutations: {
         changeDiagnoseType (state, type) {
@@ -17,6 +17,9 @@ export default new Vuex.Store({
         },
         addDisease (state, disease) {
             state.diagnose.push(disease)
+        },
+        setDiagnose (state, diagnose) {
+            state.diagnose = diagnose
         },
         clearDiagnose (state) {
             state.diagnose = []

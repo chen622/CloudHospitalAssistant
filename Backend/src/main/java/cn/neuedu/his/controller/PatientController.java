@@ -9,6 +9,7 @@ import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -122,7 +123,7 @@ public class PatientController {
      * @param authentication
      * @return
      */
-    @GetMapping("/getDrug")
+    @PostMapping("/getDrug")
     public JSONObject getDrugNotTakeInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
@@ -141,13 +142,18 @@ public class PatientController {
             end = new Date(System.currentTimeMillis());
 
         Patient patient;
+        JSONObject result;
         try {
             patient = patientService.findPatientAndNotTakeDrug(jsonObject.getInteger("patientId"), start, end);
+            result = patientService.findPatientAndAllDrugInfo(jsonObject.getInteger("patientId"), start, end);
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
+        JSONObject re=new JSONObject();
+        re.put("notTake",patient);
 
-        return CommonUtil.successJson(patient);
+        re.put("token", result);
+        return CommonUtil.successJson(re);
     }
 
     /**
@@ -156,7 +162,7 @@ public class PatientController {
      * @param authentication
      * @return
      */
-    @GetMapping("/retreatDrug")
+    @PostMapping("/retreatDrug")
     public JSONObject getDrugRetreatInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
