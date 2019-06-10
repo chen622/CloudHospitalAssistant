@@ -1,17 +1,20 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.InspectionApplication;
-import cn.neuedu.his.model.Prescription;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.InspectionApplicationService;
+import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -24,6 +27,8 @@ public class InspectionApplicationController {
     InspectionApplicationService inspectionApplicationService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    UserService userService;
 
     /**
      * 暂存检查/处置
@@ -85,7 +90,30 @@ public class InspectionApplicationController {
             return CommonUtil.errorJson(ErrorEnum.E_803);
         }
     }
-    /**患者查询
-     *
-     */
-}
+
+    @GetMapping({"/selectPatientInformationByNameOrId/name={name}","/selectPatientInformationByNameOrId/id={id}",
+            "/selectPatientInformationByNameOrId/name={name}&&id={id}","/selectPatientInformationByNameOrId"})
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "id",required = false) Integer id, Authentication authentication){
+
+        Boolean auth;
+        Integer departmentId = null;
+        //判断权限
+        try {
+            PermissionCheck.isHosptialAdimReturnUserId(authentication);
+            auth = true;
+        } catch (Exception e) {
+            auth = false;
+
+            //设定部门ID
+            Integer userId = Integer.valueOf(e.getMessage());
+            User user = userService.findById(userId);
+            System.out.println("------------------------------------------");
+            System.out.println(userId);
+        }
+
+
+        List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name,id,departmentId,auth);
+
+        return CommonUtil.successJson(payments);
+    }
+    }

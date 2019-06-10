@@ -41,6 +41,9 @@ public class InspectionApplication implements Serializable {
     private  Payment payment;
     private NonDrug nonDrug;
 
+    private Patient patient;
+    private User user;
+
     public Boolean getCheck() {
         return isCheck;
     }

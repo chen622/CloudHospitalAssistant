@@ -76,7 +76,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         //获取患者年龄
         try {
             registration.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
-        }catch (ParseException | InvalidParameterException e) {
+        }catch (InvalidParameterException e) {
             throw new IllegalArgumentException("IdentityId");
         }
 

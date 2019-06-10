@@ -137,7 +137,24 @@ public class PermissionCheck {
         } catch (Exception e) {
             throw new AuthenticationServiceException("");
         }
+    }
 
+    /**
+     * 医院管理员权限检验
+     * 异常类型返回用户Id
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer isHosptialAdimReturnUserId(Authentication authentication) throws AuthenticationServiceException {
+        try{
+            Integer userId = isHosptialAdim(authentication);
+            return userId;
+        }catch (Exception e){
+            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+            Integer typeId = (Integer) data.get("id");
+            throw new AuthenticationServiceException(typeId.toString());
+        }
     }
 
     /**
