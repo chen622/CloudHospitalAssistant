@@ -70,6 +70,11 @@ export default new Router({
             path:'/search',
             name:'search',
             component:() => import('./views/Search')
+        },
+        {
+            path: '/template',
+            name: 'temp',
+            component:()=> import('./components/InvoiceTemplate')
         }
     ]
 })

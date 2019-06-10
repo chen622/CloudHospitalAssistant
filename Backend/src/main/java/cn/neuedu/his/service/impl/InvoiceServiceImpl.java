@@ -177,6 +177,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         result.put("settlementType", constantVariableService.findById(paymentExample.getSettlementTypeId()).getName());
         invoice.setPaymentList(null);
         result.put("invoice", invoice);
+        result.put("currentTime", new Date(System.currentTimeMillis()));
         result.put("item", jsonArray);
 
         return result;
