@@ -130,18 +130,12 @@ public class DiseaseFirstController {
     JSONObject getAllDiseaseType(@PathVariable(value = "name",required = false) String name, Authentication authentication){
 
         Boolean auth;
-        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer typeId = (Integer) data.get("typeId");
-        Map<String, Integer> map = null;
+        //判断权限
         try {
-            map = redisService.getMapAll("userType");
-            if (typeId.equals(map.get("医院管理员"))) {
-                auth = true;
-            } else {
-                auth = false;
-            }
+            PermissionCheck.isHosptialAdim(authentication);
+            auth = true;
         } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
+            auth = false;
         }
 
         List<DiseaseFirst> diseaseFirsts = diseaseFirstService.getAllDiseaseType(auth,name);

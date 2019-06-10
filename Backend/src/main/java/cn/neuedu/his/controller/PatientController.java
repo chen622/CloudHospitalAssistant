@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -118,12 +119,11 @@ public class PatientController {
     /**
      * 获取患者需要取的药物信息
      *
-     * @param patientId
      * @param authentication
      * @return
      */
-    @GetMapping("/getDrugTaken/{patientId}")
-    public JSONObject getDrugTakenInfo(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+    @GetMapping("/getDrug")
+    public JSONObject getDrugTakenInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
         } catch (AuthenticationServiceException e) {
@@ -132,42 +132,27 @@ public class PatientController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
-        Patient patient;
+        JSONObject result = new JSONObject();
+
+        Date start = jsonObject.getDate("start");
+        Date end = jsonObject.getDate("end");
+
+        if (start == null)
+            end = null;
+        else if (end == null)
+            end = new Date(System.currentTimeMillis());
+
         try {
-            patient = patientService.findPatientAndNotTakeDrug(patientId);
+            result.put("notTake", patientService.findPatientAndNotTakeDrug(jsonObject.getInteger("patientId"), start, end));
+            result.put("taken", patientService.findPatientAndTakenDrug(jsonObject.getInteger("patientId"), start, end));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
-        return CommonUtil.successJson(patient);
+        return CommonUtil.successJson(result);
     }
 
-    /**
-     * 获取患者某一时期药物信息
-     *
-     * @param jsonObject
-     * @param authentication
-     * @return
-     */
-    @GetMapping("/getDrugDuringDate")
-    public JSONObject getDrugDuringDateInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
-        try {
-            PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
 
-        Patient patient;
-        try {
-            patient = patientService.findPatientAndDrugDuringDate(jsonObject.getInteger("patientId"), jsonObject.getDate("startDate"), jsonObject.getDate("endDate"));
-        } catch (IllegalArgumentException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-
-        return CommonUtil.successJson(patient);
-    }
 
     @GetMapping("/getAll")
     public JSONObject findAll() {

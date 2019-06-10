@@ -111,7 +111,7 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
-        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByTypeAndState" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state, state2 = state2, startDate = startDate, endDate = endDate}"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByTypeAndState" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state, , start = start, end = end}"/>
     </resultMap>
 
     <resultMap id="paymentAndPrescriptionByTypeAndState" type="cn.neuedu.his.model.Payment">
@@ -152,7 +152,8 @@
 
 
     <select id="getPatientAndDrugByTypeAndState" resultMap="patientAndPaymentByTypeAndState">
-        select *, #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state from patient where id = #{patientId}
+        select *, #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state, #{startDate} as start, #{endDate} as end
+         from patient where id = #{patientId}
     </select>
 
     <select id="getPaymentByTypeAndState" resultMap="paymentAndPrescriptionByTypeAndState">
@@ -161,6 +162,12 @@
         where patient_id = #{patientId}
           and (select type from payment_type pt where payment_type_id = pt.id) = #{paymentTotalTypeId}
           and state = #{state}
+        <if test="start != null">
+            and payment.create_time <![CDATA[  >=  ]]> #{start}
+        </if>
+        <if test="end != null">
+            and payment.create_time <![CDATA[  <=  ]]> #{end}
+        </if>
         order by create_time desc
     </select>
 
@@ -168,30 +175,6 @@
         select * from prescription p join drug d on p.drug_id = d.id where p.id = #{item_id}
     </select>
 
-
-
-<!--    &lt;!&ndash;患者信息及某一时段内药物信息  &ndash;&gt;-->
-<!--    <resultMap id="patientAndDrugDuringDate" type="cn.neuedu.his.model.Patient">-->
-<!--        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment"-->
-<!--                    select="selectDrugPaymentByPatientIdDuringDate"-->
-<!--                    column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, startDate = startDate, endDate = endDate}"/>-->
-<!--    </resultMap>-->
-
-<!--    <select id="searchPatientAndDrugDuringDate" resultMap="patientAndDrugDuringDate">-->
-<!--        select *, #{paymentTotalTypeId} as paymentTotalTypeId, #{startDate} as startDate, #{endDate} as endDate-->
-<!--        from patient-->
-<!--        where id = #{patientId}-->
-<!--    </select>-->
-
-<!--    <select id="selectDrugPaymentByPatientIdDuringDate" resultMap="paymentAndPrescriptionByTypeAndState">-->
-<!--        select *-->
-<!--        from payment-->
-<!--        where patient_id = #{patientId}-->
-<!--          and (select type from payment_type where payment_type_id = payment_type.id) = #{paymentTotalTypeId}-->
-<!--          and create_time <![CDATA[>=]]> #{startDate}-->
-<!--          and create_time <![CDATA[<=]]> #{endDate})-->
-<!--        order by create_time-->
-<!--    </select>-->
 
 
 

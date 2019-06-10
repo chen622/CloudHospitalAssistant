@@ -12,7 +12,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.text.ParseException;
@@ -115,7 +114,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public Invoice retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException {
+    public Invoice retreatRegistrationInfo(Integer registrationId, Integer registrarId) throws UnsupportedOperationException, IllegalArgumentException{
         Registration registration = findById(registrationId);
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
@@ -145,7 +144,6 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
     /**
      * 查找所有带诊患者
-     *
      * @param doctorID
      * @param state
      * @return

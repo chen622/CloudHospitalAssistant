@@ -64,6 +64,33 @@ public class Payment {
 
     private Prescription prescription;
     private InspectionApplication application;
+    private Patient patient;
+    private PaymentType paymentType;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
 
     public InspectionApplication getApplication() {
         return application;

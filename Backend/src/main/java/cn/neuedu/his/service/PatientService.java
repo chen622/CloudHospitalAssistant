@@ -13,9 +13,9 @@ public interface PatientService extends Service<Patient> {
     Patient findAllPayment(Integer patientId, Date start, Date end);
     Patient findNotPaidPayment(Integer patientId);
     Patient findNotConsumePayment(Integer patientId);
-    Patient findPatientAndNotTakeDrug(Integer patientId);
-
-    Patient findPatientAndDrugDuringDate(Integer patientId, Date startDate, Date endDate) throws IllegalArgumentException;
+    Patient findPatientAndNotTakeDrug(Integer patientId, Date start, Date end);
+    Patient findPatientAndTakenDrug(Integer patientId, Date start, Date end);
+    Patient findPatientAndReturnDrug(Integer patientId, Date start, Date end);
 
     List<Patient> selectPatientByIdentifyIdAndNameAndPhone(String identifyId,String name, String phone);
 

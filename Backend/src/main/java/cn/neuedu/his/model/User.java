@@ -1,9 +1,6 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -50,10 +47,12 @@ public class User {
     private Boolean isDelete;
 
     //用户类型
+    @Transient()
     private String type;
     //科室名称
     private Department dept;
     //医生职称
+    @Transient()
     private String title;
 
 

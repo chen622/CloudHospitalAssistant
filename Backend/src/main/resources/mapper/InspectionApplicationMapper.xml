@@ -18,21 +18,68 @@
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
   </resultMap>
 
-  <resultMap id="getPatientInformationByInspection" type="cn.neuedu.his.model.InspectionApplication">
+  <resultMap id="getPatientInformationAndInspection" type="cn.neuedu.his.model.Payment">
     <!--
       WARNING - @mbg.generated
     -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <id column="id" jdbcType="INTEGER" property="id"/>
     <result column="quantity" jdbcType="INTEGER" property="quantity" />
-    <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
-    <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
-    <result column="is_done" jdbcType="BIT" property="isDone"/>
-    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
-    <result column="is_check" jdbcType="BIT" property="isCheck"/>
-    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
+    <result column="patient_id" jdbcType="INTEGER" property="patientId" />
+    <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId" />
+    <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
+    <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
+    <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+    <association property="application" javaType="cn.neuedu.his.model.InspectionApplication">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="item_id" jdbcType="INTEGER" property="itemId" />
+      <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="quantity" jdbcType="INTEGER" property="quantity" />
+      <result column="is_canceled" jdbcType="BIT" property="isCanceled" />
+      <result column="is_emerged" jdbcType="BIT" property="isEmerged"/>
+      <result column="is_done" jdbcType="BIT" property="isDone"/>
+      <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+      <result column="is_check" jdbcType="BIT" property="isCheck"/>
+      <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+    </association>
+    <association property="patient" javaType="cn.neuedu.his.model.Patient">
+      <id column="id" jdbcType="INTEGER" property="id"/>
+      <result column="identity_id" jdbcType="VARCHAR" property="identityId"/>
+      <result column="password" jdbcType="VARCHAR" property="password"/>
+      <result column="sex" jdbcType="BIT" property="sex"/>
+      <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+      <result column="username" jdbcType="VARCHAR" property="username"/>
+      <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+      <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
+    </association>
+    <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="code" jdbcType="VARCHAR" property="code" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="type" jdbcType="INTEGER" property="type" />
+    </association>
+    <association property="user" javaType="cn.neuedu.his.model.User">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="username" jdbcType="VARCHAR" property="username" />
+      <result column="real_name" jdbcType="VARCHAR" property="realName" />
+      <result column="password" jdbcType="VARCHAR" property="password" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+      <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+      <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
+      <result column="type_id" jdbcType="INTEGER" property="typeId" />
+      <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+      <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+      <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+      <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+    </association>
   </resultMap>
 
   <select id="hasMedicalRecordInspectionNotDone" resultType="Integer">
@@ -89,6 +136,29 @@
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
   </resultMap>
 
+  <select id="selectPatientInformationByNameOrId" resultMap="getPatientInformationAndInspection">
+    SELECT *
+    FROM payment JOIN inspection_application ON payment.item_id = inspection_application.id
+                 JOIN patient on patient.id = payment.patient_id
+                 JOIN `user` ON payment.doctor_id = `user`.id
+                 Join payment_type pt on payment.payment_type_id = pt.id
+    WHERE payment.payment_type_id in(SELECT id FROM payment_type WHERE payment_type.type = 1 AND is_delete = 0)#结算类型属于检查或检验
+      AND inspection_application.is_check = 0 #未被检查
+      <if test="name != null and id != null">
+        and ( patient.real_name like concat('%',#{name},'%') or patient.id = #{id}) #根据真实姓名或者病历来模糊查找
+      </if>
+      <if test="name != null and id == null">
+        and  patient.real_name like concat('%',#{name},'%')
+      </if>
+      <if test="name == null and id != null">
+        and patient.id = #{id}
+      </if>
+      <if test="auth == false">
+          AND is_canceled = 0 #未被删除
+          AND state = 1202 #已缴费
+          AND user.department_id = #{department_id} #医生部门需相同
+      </if>
+  </select>
 
 
 </mapper>
