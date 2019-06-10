@@ -71,13 +71,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     InvoiceService invoiceService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    DrugTemplateRelationshipService drugTemplateRelationshipService;
 
 
     @Override
     public JSONObject getRegistrationInof(Date time, Integer doctorId) {
-        Integer limit=scheduleService.getRegistrationInof(time,doctorId);
-        Integer amount=registrationService.getRegistrationInof(time, doctorId);
-        JSONObject object=new JSONObject();
+        Integer limit = scheduleService.getRegistrationInof(time, doctorId);
+        Integer amount = registrationService.getRegistrationInof(time, doctorId);
+        JSONObject object = new JSONObject();
         object.put("limitAmount", limit);
         object.put("actualAmount", amount);
         return CommonUtil.successJson(object);
@@ -91,46 +93,48 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      */
     @Override
     @Transactional
-    public JSONObject getHospitalCheckTemps(Integer doctorId,Integer level) {
-        return getInspectionTemps(doctorId,level);
+    public JSONObject getHospitalCheckTemps(Integer doctorId, Integer level) {
+        return getInspectionTemps(doctorId, level);
     }
 
     /**
      * 获得科室检查模板
+     *
      * @param doctorID
      * @param level
      * @return
      */
     @Override
     @Transactional
-    public JSONObject getDeptCheckTemps(Integer doctorID,Integer level) {
-        return getInspectionTemps(doctorID,level);
+    public JSONObject getDeptCheckTemps(Integer doctorID, Integer level) {
+        return getInspectionTemps(doctorID, level);
     }
 
     /**
      * 获得个人检查模板
+     *
      * @param doctorID
      * @param level
      * @return
      */
     @Override
     @Transactional
-    public JSONObject getPersonalCheckTemps(Integer doctorID,Integer level) {
-        return getInspectionTemps(doctorID,level);
+    public JSONObject getPersonalCheckTemps(Integer doctorID, Integer level) {
+        return getInspectionTemps(doctorID, level);
     }
 
-    public JSONObject getInspectionTemps(Integer doctorId,Integer level){
-        List<InspectionTemplate> templates=inspectionTemplateService.getHospitalCheckTemps(doctorId,level);
-        if(templates==null)
-            templates=new ArrayList<>();
-        Iterator<InspectionTemplate> iterator=templates.iterator();
-        while (iterator.hasNext()){
+    public JSONObject getInspectionTemps(Integer doctorId, Integer level) {
+        List<InspectionTemplate> templates = inspectionTemplateService.getHospitalCheckTemps(doctorId, level);
+        if (templates == null)
+            templates = new ArrayList<>();
+        Iterator<InspectionTemplate> iterator = templates.iterator();
+        while (iterator.hasNext()) {
             InspectionTemplate template = iterator.next();
-            if(template.getPrescriptions()!=null && template.getPrescriptions().size()>0){
-                Iterator<Prescription> iterator1=template.getPrescriptions().iterator();
-                while (iterator1.hasNext()){
-                    Prescription p=iterator1.next();
-                    if(p.getDrug().isDelete()==true){
+            if (template.getPrescriptions() != null && template.getPrescriptions().size() > 0) {
+                Iterator<Prescription> iterator1 = template.getPrescriptions().iterator();
+                while (iterator1.hasNext()) {
+                    Prescription p = iterator1.next();
+                    if (p.getDrug().isDelete() == true) {
                         iterator1.remove();
                     }
                 }
@@ -139,7 +143,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 Iterator<InspectionApplication> iterator1=template.getApplications().iterator();
                 while (iterator1.hasNext()){
                     InspectionApplication p=iterator1.next();
-                    if(p.getNonDrug().isDelete()==true){
+                    if(p.getNonDrug().getDelete()==true){
                         iterator1.remove();
                     }
                 }
@@ -157,8 +161,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      */
     @Override
     @Transactional
-    public JSONObject getHospitalMR(Integer doctorID,Integer level) {
-       return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID,level));
+    public JSONObject getHospitalMR(Integer doctorID, Integer level) {
+        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
     }
 
     /**
@@ -501,7 +505,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             for (InspectionApplication r : applicationList){
 
                 NonDrug drug=nonDrugService.findById(r.getNonDrugId());
-                if(r.getNonDrugId()==null || drug==null || drug.isDelete()==true){
+                if(r.getNonDrugId()==null || drug==null || drug.getDelete()==true){
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application=new InspectionApplication(tempId,r.getNonDrugId(),new Date(),false,r.getEmerged(),r.getQuantity(),false,true,drug.getFeeTypeId());

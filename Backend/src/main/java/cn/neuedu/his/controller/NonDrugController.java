@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.NonDrug;
+import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.NonDrugService;
 import cn.neuedu.his.util.CommonUtil;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 /**
@@ -173,5 +175,34 @@ public class NonDrugController {
             else
                 return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+    }
+
+    /**
+     * 根据非药品名称来模糊查询
+     * 根据非药品编码来模糊查询
+     * 获取所有type和非药品目录
+     * @param name
+     * @param code
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/getTypeAndNonDrug/name/{name}","/getTypeAndNonDrug/code/{code}",
+            "/getTypeAndNonDrug/nameAndCode/{name}/{code}","/getTypeAndNonDrug/"})
+    JSONObject getTypeAndNonDrug(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "code",required = false) String code, Authentication authentication){
+
+        Boolean auth;
+        Integer departmentId = null;
+        //判断权限
+        try {
+            PermissionCheck.isHosptialAdimReturnUserId(authentication);
+            auth = true;
+        } catch (Exception e) {
+            auth = false;
+        }
+
+
+        List<PaymentType> paymentTypes = nonDrugService.getTypeAndNonDrug(name,code,auth);
+
+        return CommonUtil.successJson(paymentTypes);
     }
 }

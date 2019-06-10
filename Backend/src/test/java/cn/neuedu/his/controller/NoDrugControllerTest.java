@@ -62,4 +62,15 @@ public class NoDrugControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void getTypeAndNonDrugTest() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/non_drug/getTypeAndNonDrug/nameAndCode/干化X法/D（GHXF）")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
 }

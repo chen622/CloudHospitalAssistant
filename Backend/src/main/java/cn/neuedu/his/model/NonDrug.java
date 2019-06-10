@@ -27,8 +27,18 @@ public class NonDrug {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    public Boolean isDelete() {
+    private Department department;
+
+    public Boolean getDelete() {
         return isDelete;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 
     public void setDelete(Boolean delete) {

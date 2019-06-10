@@ -91,8 +91,8 @@ public class InspectionApplicationController {
         }
     }
 
-    @GetMapping({"/selectPatientInformationByNameOrId/name={name}","/selectPatientInformationByNameOrId/id={id}",
-            "/selectPatientInformationByNameOrId/name={name}&&id={id}","/selectPatientInformationByNameOrId"})
+    @GetMapping({"/selectPatientInformationByNameOrId/name/{name}","/selectPatientInformationByNameOrId/id/{id}",
+            "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}","/selectPatientInformationByNameOrId"})
     JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "id",required = false) Integer id, Authentication authentication){
 
         Boolean auth;
@@ -114,4 +114,11 @@ public class InspectionApplicationController {
 
         return CommonUtil.successJson(payments);
     }
+
+
+    @PostMapping("confirmApplication/{id}")
+    JSONObject confirmApplication(JSONObject jsonObject){
+
+        return CommonUtil.successJson();
     }
+}

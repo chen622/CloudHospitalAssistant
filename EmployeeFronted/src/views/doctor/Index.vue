@@ -60,7 +60,12 @@
         </a-col>
         <a-col :span="showList?16:21" :xl="showList?16:22">
             <a-card :body-style="{padding: 0}">
-                <span slot="title" style="font-size: 22px">{{currentPatient.name}}</span>
+                <div slot="title" v-if="currentPatient">
+                    <span style="font-size: 22px">{{currentPatient.patient.realName}}</span>
+                    <span style="margin: 0 10px">年龄: {{currentPatient.age}}岁</span>
+                    <span>性别: {{currentPatient.patient.sex?'男':'女'}}</span>
+                </div>
+                <span slot="title" style="font-size: 22px" v-else>当前患者</span>
                 <a-tabs defaultActiveKey="1" tabPosition="top" :style="{padding: '0 10px 20px 10px'}"
                         @prevClick="callback"
                         @nextClick="callback">
@@ -123,15 +128,7 @@
                         </a-form>
                     </a-tab-pane>
                     <a-tab-pane tab="检查申请" key="2">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 80%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 80%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
-
+                        <inspection></inspection>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
                         <a-row type="flex" align="middle" justify="space-around">
@@ -185,11 +182,13 @@
 <script>
 
     import Diagnose from '../../components/Diagnose'
+    import Inpsection from '../../components/Inspection'
 
     export default {
         name: "Index",
         components: {
-            'diagnose': Diagnose
+            'diagnose': Diagnose,
+            'inspection': Inpsection
         },
         data: () => ({
             load: {
@@ -200,9 +199,7 @@
                 inPatient: [],//在诊
                 outPatient: [],
             },
-            currentPatient: {
-                name: "当前患者"
-            },
+            currentPatient: null,
             rules: {
                 selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}, {}],
                 bodyExamination: [{required: true, message: '请输入', trigger: 'blur'}],
@@ -222,18 +219,62 @@
                         if (this.$store.state.diagnose.length === 0) {
                             this.$message.info("请指定疾病")
                         } else {
-                            let data = this.record.getFieldsValue()
-                            console.log(data)
-                            data.diagnoseType = this.$store.state.diagnoseType
-                            data.diagnose = this.$store.state.diagnose
-                            console.log(data)
+                            let data = {}
+                            data.medicalRecord = this.record.getFieldsValue()
+                            data.registrationId = this.currentPatient.id
+                            data.diagnoses = this.$store.state.diagnose
+                            data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
+                            this.createMedicalRecord(data)
                         }
                     }
                 })
             },
+            createMedicalRecord (data) {
+                let that = this
+                this.$api.post("/medical_record/firstDiagnose", data,
+                    res => {
+                        if (res.code === "100") {
+                            that.$message.success("提交成功")
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, () => {
+                        that.$message.error("网络错误")
+                    })
+            },
             selectPatient (patient) {
-                this.showList = false
-                this.currentPatient = patient
+                let that = this
+                this.$api.get("/medical_record/check/" + patient.id, null, res => {
+                    if (res.code === '100') {
+                        that.showList = false
+                        that.currentPatient = patient
+                    } else {
+                        that.$confirm({
+                            title: '患者病例信息不存在，是否创建新病例?',
+                            onOk () {
+                                that.showList = false
+                                that.currentPatient = patient
+                                that.$api.post("/medical_record/comein/" + patient.id, null,
+                                    res => {
+                                        if (res.code === '100') {
+                                            that.$message.success("创建成功")
+                                        } else {
+                                            that.$message.error(res.msg)
+                                        }
+                                    }, () => {
+                                        that.$message.error("网络异常")
+
+                                    })
+                            },
+                            onCancel () {
+
+                            },
+                        })
+                    }
+                }, () => {
+                    that.$message.error("网络异常")
+                })
+
             },
             getPatient () {
                 let that = this
