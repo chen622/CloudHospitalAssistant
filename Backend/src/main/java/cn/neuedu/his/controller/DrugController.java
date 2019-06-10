@@ -74,7 +74,7 @@ public class DrugController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-
+        System.out.println("*****************************************");
         try {
             drugService.retreatDrug(jsonObject.getInteger("paymentId"), jsonObject.getInteger("drugId"), jsonObject.getInteger("quantity"), drugAdmin);
         }catch (IllegalArgumentException e1) {

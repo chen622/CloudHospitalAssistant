@@ -151,6 +151,7 @@ public class PatientController {
         }
         JSONObject re=new JSONObject();
         re.put("notTake",patient);
+
         re.put("token", result);
         return CommonUtil.successJson(re);
     }

@@ -161,7 +161,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
             //计算退药数量
             Integer retreatQuantity = 0;
             for (Payment item: allPaymentList) {
-                retreatQuantity = retreatQuantity = item.getQuantity();
+                retreatQuantity = retreatQuantity + item.getQuantity();
             }
 
             JSONObject paymentObject = new JSONObject();
