@@ -66,7 +66,7 @@
             deleteInspection (index) {
                 this.inspections.splice(index, 1)
             },
-            getNodrug
+            // getNodrug
         }
     }
 </script>
