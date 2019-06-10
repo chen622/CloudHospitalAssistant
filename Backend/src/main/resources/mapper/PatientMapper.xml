@@ -147,7 +147,7 @@
         <result column="is_template" jdbcType="BIT" property="isTemplate"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-        <association property="drug" javaType="cn.neuedu.his.model.Drug"/>
+        <association property="drug" javaType="cn.neuedu.his.model.Drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
     </resultMap>
 
 

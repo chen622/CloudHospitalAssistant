@@ -113,8 +113,8 @@ public class PatientControllerTest {
         Date start = new Date();
         Date end = new Date();
         try {
-            start = formatter.parse("2019-05-29");
-            end = formatter.parse("2019-06-04");
+            start = formatter.parse("2019-06-10");
+            end = formatter.parse("2019-06-10");
         } catch (ParseException e) {
             e.printStackTrace();
         }
