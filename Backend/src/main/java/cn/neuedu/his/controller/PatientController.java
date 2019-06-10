@@ -123,7 +123,7 @@ public class PatientController {
      * @return
      */
     @GetMapping("/getDrug")
-    public JSONObject getDrugTakenInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
+    public JSONObject getDrugNotTakeInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);
         } catch (AuthenticationServiceException e) {
@@ -131,8 +131,6 @@ public class PatientController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-
-        JSONObject result = new JSONObject();
 
         Date start = jsonObject.getDate("start");
         Date end = jsonObject.getDate("end");
@@ -142,15 +140,51 @@ public class PatientController {
         else if (end == null)
             end = new Date(System.currentTimeMillis());
 
+        Patient patient;
         try {
-            result.put("notTake", patientService.findPatientAndNotTakeDrug(jsonObject.getInteger("patientId"), start, end));
-            result.put("taken", patientService.findPatientAndTakenDrug(jsonObject.getInteger("patientId"), start, end));
+            patient = patientService.findPatientAndNotTakeDrug(jsonObject.getInteger("patientId"), start, end);
+        } catch (IllegalArgumentException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+
+        return CommonUtil.successJson(patient);
+    }
+
+    /**
+     * 获取患者退药信息
+     * @param jsonObject
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/retreatDrug")
+    public JSONObject getDrugRetreatInfo(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+        Date start = jsonObject.getDate("start");
+        Date end = jsonObject.getDate("end");
+
+        if (start == null)
+            end = null;
+        else if (end == null)
+            end = new Date(System.currentTimeMillis());
+
+        JSONObject result;
+
+        try {
+            result = patientService.findPatientAndAllDrugInfo(jsonObject.getInteger("patientId"), start, end);
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson(result);
     }
+
 
 
 

@@ -147,7 +147,7 @@
         <result column="is_template" jdbcType="BIT" property="isTemplate"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
         <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-        <association property="drug" javaType="cn.neuedu.his.model.Drug"/>
+        <association property="drug" javaType="cn.neuedu.his.model.Drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
     </resultMap>
 
 
@@ -163,10 +163,10 @@
           and (select type from payment_type pt where payment_type_id = pt.id) = #{paymentTotalTypeId}
           and state = #{state}
         <if test="start != null">
-            and payment.create_time <![CDATA[  >=  ]]> #{start}
+            and datediff(payment.create_time, #{start}) &gt;= 0
         </if>
         <if test="end != null">
-            and payment.create_time <![CDATA[  <=  ]]> #{end}
+            and datediff(payment.create_time, #{end}) &lt;= 0
         </if>
         order by create_time desc
     </select>
