@@ -1,6 +1,7 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "payment_type")
@@ -23,7 +24,7 @@ public class PaymentType {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    private List<NonDrug> nonDrugs;
+    private List<NonDrug> nonDrugs = new ArrayList<>();
 
     public Boolean getDelete() {
         return isDelete;
