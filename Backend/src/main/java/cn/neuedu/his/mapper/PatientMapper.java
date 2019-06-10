@@ -14,8 +14,7 @@ public interface PatientMapper extends MyMapper<Patient> {
     Patient getPatientAndAllPayment(@Param("id") Integer id, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
     Patient getPatientAndPaymentByState(@Param("patientId") Integer patientId, @Param("state") Integer state);
     Patient getPatientAndNotConsumePayment(@Param("patientId") Integer patientId, @Param("noPaymentTotalTypeId") Integer noPaymentTotalTypeId);
-    Patient getPatientAndDrugByTypeAndState(@Param("patientId") Integer patientId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId, @Param("state") Integer state);
-    Patient searchPatientAndDrugDuringDate(@Param("patientId") Integer patientId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    Patient getPatientAndDrugByTypeAndState(@Param("patientId") Integer patientId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId, @Param("state") Integer state, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     //通过身份证号模糊查询获得病人
     List<Patient> selectPatientByIdentifyId(String id);
