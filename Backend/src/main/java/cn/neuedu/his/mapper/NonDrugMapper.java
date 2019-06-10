@@ -1,6 +1,7 @@
 package cn.neuedu.his.mapper;
 
 import cn.neuedu.his.model.NonDrug;
+import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.util.inter.MyMapper;
 import org.springframework.stereotype.Component;
 
@@ -14,4 +15,6 @@ public interface NonDrugMapper extends MyMapper<NonDrug> {
     NonDrug selectNonDrugByCode(String code);
     List<NonDrug> findByName (String name);
     List<NonDrug> getAll ();
+
+    List<PaymentType> getTypeAndNonDrug(String name,String code,Boolean auth);
 }

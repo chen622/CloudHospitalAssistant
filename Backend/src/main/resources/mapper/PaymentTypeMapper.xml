@@ -9,6 +9,7 @@
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
   </resultMap>
 
   <select id="getPaymentTypeByName" parameterType="String" resultMap="BaseResultMap">

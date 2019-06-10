@@ -2,6 +2,7 @@ package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.NonDrugMapper;
 import cn.neuedu.his.model.NonDrug;
+import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.NonDrugService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -113,5 +114,10 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
         }
 
         this.update(nonDrug);
+    }
+
+    @Override
+    public List<PaymentType> getTypeAndNonDrug(String name, String code, Boolean auth) {
+        return nonDrugMapper.getTypeAndNonDrug(name,code,auth);
     }
 }
