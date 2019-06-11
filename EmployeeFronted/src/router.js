@@ -67,14 +67,19 @@ export default new Router({
             component:() => import('./views/inspection/Inspection')
         },
         {
-            path:'/search',
-            name:'search',
-            component:() => import('./views/Search')
+            path:'/retreatRegister',
+            name:'RetreatRegister',
+            component:() => import('./views/patient/RetreatRegister')
         },
         {
             path: '/template',
             name: 'temp',
             component:()=> import('./components/InvoiceTemplate')
+        },
+        {
+            path:'/search',
+            name:'search',
+            component:()=> import('./views/patient/Search')
         }
     ]
 })

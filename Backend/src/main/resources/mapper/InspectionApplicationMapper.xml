@@ -144,14 +144,11 @@
                  Join payment_type pt on payment.payment_type_id = pt.id
     WHERE payment.payment_type_id in(SELECT id FROM payment_type WHERE payment_type.type = 1 AND is_delete = 0)#结算类型属于检查或检验
       AND inspection_application.is_check = 0 #未被检查
-      <if test="name != null and id != null">
-        and ( patient.real_name like concat('%',#{name},'%') or patient.id = #{id}) #根据真实姓名或者病历来模糊查找
+      <if test="name != null">
+        and  patient.real_name like concat('%',#{name},'%')  #根据真实姓名或者病历来模糊查找
       </if>
-      <if test="name != null and id == null">
-        and  patient.real_name like concat('%',#{name},'%')
-      </if>
-      <if test="name == null and id != null">
-        and patient.id = #{id}
+      <if test="id == null">
+        and  patient.id like concat('%',#{id},'%')
       </if>
       <if test="auth == false">
           AND is_canceled = 0 #未被删除
