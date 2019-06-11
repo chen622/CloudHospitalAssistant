@@ -25,7 +25,7 @@ public interface DoctorService extends Service<Doctor> {
      void saveDiagnose(List<Integer> diagnoses ,Integer itemId,Boolean isMajor,Boolean isTemplate);
 
     @Transient
-    JSONObject updateMR(MedicalRecord record,List<Integer> diagnoses,List<Integer> finalDiagnose) ;
+    JSONObject updateMR(Integer registrationID,MedicalRecord record,List<Integer> diagnoses) ;
 
     @Transactional
     JSONObject getRegistrationInof(Date time,Integer doctorId);

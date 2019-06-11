@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.service.DrugService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
@@ -226,12 +227,17 @@ public class DrugController {
 
 
     @GetMapping("/getAllDrug")
-    public JSONObject getAllDrug(){
+    public JSONObject getAllDrug(Authentication authentication){
+
+        Boolean auth = null;
         try {
-            return CommonUtil.successJson(drugService.getAllDrug());
+            PermissionCheck.getIdByDrugAdmin(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_802);
+            auth = false;
         }
+        List<ConstantVariable> constantVariables = drugService.getTypeAndDrugs(auth);
+
+        return CommonUtil.successJson(constantVariables);
     }
 
   }

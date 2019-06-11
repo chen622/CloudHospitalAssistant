@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -131,6 +132,13 @@ public class ConstantVariableController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+    }
+
+    @GetMapping("getType/{type}")
+    public JSONObject getConstantByType(@PathVariable("type") Integer type){
+
+        List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(type);
+        return CommonUtil.successJson(constantVariables);
     }
 
 }

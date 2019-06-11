@@ -35,7 +35,7 @@
                 </a-table>
                 <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="执行确认" cancelText="取消执行">
                     <p>病历号：{{id}}</p>
-                    <p>姓名：{{username}}</p>
+                    <p>姓名：{{data[0].name}}</p>
                     <p>项目名称: {{data[0].depname}}</p>
                     <p>状态: {{data[0].state}}</p>
                 </a-modal>
@@ -116,6 +116,16 @@
                     date:'2019-05-25 15:30:26',
                     state:'已开立',
                     department:'肠胃科',
+                },{
+                    key:'2',
+                    id:'600615',
+                    name:'Jhon Brown',
+                    depname:'肠镜',
+                    price:200,
+                    amount:1,
+                    date:'2019-05-25 15:30:26',
+                    state:'已开立',
+                    department:'肠胃科',
                 }]
 
 
@@ -143,7 +153,12 @@
             },
             onSearch(value){
 
+            },
+            getPatient(){
+                let that = this
+                this.$api.get("/inspection_application/select",null)
             }
+
         }
     }
 </script>
