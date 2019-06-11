@@ -90,7 +90,7 @@ public class DoctorControllerTest {
         object.put("record", record);
 
         String  requestJson=object.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryMR")
+        mockMvc.perform(MockMvcRequestBuilders.post("/medical_record/saveTemporaryMR")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

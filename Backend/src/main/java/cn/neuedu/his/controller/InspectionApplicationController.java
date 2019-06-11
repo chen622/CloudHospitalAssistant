@@ -76,7 +76,7 @@ public class InspectionApplicationController {
     }
 
     /**
-     * 获得暂存病历
+     * 获得暂存检查/处置
      *
      * @param registrationId
      * @return
