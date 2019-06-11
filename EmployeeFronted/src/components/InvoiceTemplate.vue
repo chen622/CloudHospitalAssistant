@@ -12,7 +12,7 @@
                             <td/>
                             <td/>
                             <td>
-                                发票号 #: {{invoice.id}}<br>
+                                {{isRetreat?"冲红":""}}发票号 #: {{invoice.id}}<br>
                                 创建时间: {{invoice.createdDate | formatDate}}<br>
                                 打印时间: {{currentTime | formatDate}}
                             </td>
@@ -118,6 +118,7 @@
                 sex: "男"
             },
             settlementType: "自费",
+            isRetreat: false,
             item: [
                 {
                     name: "x",

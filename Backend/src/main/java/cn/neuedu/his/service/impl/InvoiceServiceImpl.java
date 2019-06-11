@@ -178,6 +178,10 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         invoice.setPaymentList(null);
         result.put("invoice", invoice);
         result.put("currentTime", new Date(System.currentTimeMillis()));
+        Boolean isRetreat = false;
+        if (paymentExample.getState().equals(Constants.HAVE_RETREAT))
+            isRetreat = true;
+        result.put("isRetreat", isRetreat);
         result.put("item", jsonArray);
 
         return result;

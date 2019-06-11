@@ -52,7 +52,12 @@ public class DrugController {
         }catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         }catch (UnsupportedOperationException e2) {
-            return CommonUtil.errorJson(ErrorEnum.E_506);
+            if (e2.getMessage().equals("paymentState"))
+                return CommonUtil.errorJson(ErrorEnum.E_506);
+            else if (e2.getMessage().equals("locking"))
+                return CommonUtil.errorJson(ErrorEnum.E_512);
+            else if (e2.getMessage().equals("lock"))
+                return CommonUtil.errorJson(ErrorEnum.E_511);
         }
 
         return CommonUtil.successJson();
@@ -74,7 +79,7 @@ public class DrugController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        System.out.println("*****************************************");
+
         try {
             drugService.retreatDrug(jsonObject.getInteger("paymentId"), jsonObject.getInteger("drugId"), jsonObject.getInteger("quantity"), drugAdmin);
         }catch (IllegalArgumentException e1) {
@@ -84,6 +89,10 @@ public class DrugController {
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("paymentType"))
                 return CommonUtil.errorJson(ErrorEnum.E_504);
+            else if (e2.getMessage().equals("locking"))
+                return CommonUtil.errorJson(ErrorEnum.E_512);
+            else if (e2.getMessage().equals("lock"))
+                return CommonUtil.errorJson(ErrorEnum.E_511);
         } catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
         }

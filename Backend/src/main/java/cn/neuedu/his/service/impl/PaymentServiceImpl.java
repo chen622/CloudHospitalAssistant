@@ -311,12 +311,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     @Override
     public Payment findByRegistrationId(Integer registrationId) {
-        return paymentMapper.selectByItemId(registrationId, Constants.REGISTRATION_PAYMENT_TYPE);
-    }
-
-    @Override
-    public void updateInvoiceId(Integer invoiceId, Integer id) {
-        paymentMapper.updateInvoiceId(invoiceId, id);
+        return paymentMapper.getByItemId(registrationId, Constants.REGISTRATION_PAYMENT_TYPE);
     }
 
     @Override
@@ -342,7 +337,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      */
     @Override
     public ArrayList<Payment> findAllByItemAndPaymentType(Integer itemId, Integer paymentTypeId) {
-        return paymentMapper.selectAllByItemIdAndPaymentTypeId(itemId, paymentTypeId);
+        return paymentMapper.getAllByItemIdAndPaymentTypeId(itemId, paymentTypeId);
     }
 
     /**
