@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -128,12 +130,18 @@ public class PaymentTypeController {
     public JSONObject getAll(){
         try {
             Map<String ,Integer> map=redisService.getMapAll("paymentType");
-            System.out.println(map.size()+"***********************");
+            Map<Integer,String> map1=new HashMap<>();
+            List<PaymentType> list=paymentTypeService.findAll();
+            for(String key:map.keySet()){
+                map1.put(map.get(key),key);
+            }
             JSONObject object=new JSONObject();
-            object.put("name", map.keySet());
-            object.put("id", map.values());
+            object.put("nameKey",map);
+            object.put("idKey", map1);
+            object.put("list", list);
             return CommonUtil.successJson(object);
         } catch (Exception e) {
+            e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
