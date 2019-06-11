@@ -1,4 +1,5 @@
 package cn.neuedu.his.service;
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.util.inter.Service;
 
@@ -25,6 +26,8 @@ public interface DrugService extends Service<Drug> {
     ArrayList<Drug> getAllDrug();
 
     ArrayList<Drug> getDrugByPartName(String name);
+
+    List<ConstantVariable> getTypeAndDrugs(Boolean auth);
 
 
 }

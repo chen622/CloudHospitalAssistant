@@ -40,9 +40,20 @@ public class InspectionApplicationController {
     public JSONObject saveTemporaryInspection(@RequestBody JSONObject object) {
         Integer id = Integer.parseInt(object.get("registrationId").toString());
         List<InspectionApplication> record = JSONObject.parseArray(object.get("inspections").toString(), InspectionApplication.class);
+        try {
+            redisService.setTemporaryInspection(id, record);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_801);
+        }
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("/saveTemporaryInspectionDrug")
+    public JSONObject saveTemporaryInspectionDrug(@RequestBody JSONObject object) {
+        Integer id = Integer.parseInt(object.get("registrationId").toString());
         List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
         try {
-            redisService.setTemporaryInspection(id, record, prescriptions);
+            redisService.setTemporaryInspectionDrug(id, prescriptions);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_801);
         }
@@ -76,7 +87,7 @@ public class InspectionApplicationController {
     }
 
     /**
-     * 获得暂存检查/处置
+     * 删除暂存
      *
      * @param registrationId
      * @return
@@ -91,9 +102,17 @@ public class InspectionApplicationController {
         }
     }
 
-    @GetMapping({"/selectPatientInformationByNameOrId/name/{name}","/selectPatientInformationByNameOrId/id/{id}",
-            "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}","/selectPatientInformationByNameOrId"})
-    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "id",required = false) Integer id, Authentication authentication){
+    /**
+     * 模糊查询信息（病历号和名字）
+     * 获得所有信息
+     * @param name
+     * @param id
+     * @param authentication
+     * @return
+     */
+    @GetMapping({"/selectPatientInformationByNameOrId/name/{name}", "/selectPatientInformationByNameOrId/id/{id}",
+            "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}", "/selectPatientInformationByNameOrId"})
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name", required = false) String name, @PathVariable(value = "id", required = false) Integer id, Authentication authentication) {
 
         Boolean auth;
         Integer departmentId = null;
@@ -106,18 +125,41 @@ public class InspectionApplicationController {
 
             //设定部门ID
             Integer userId = Integer.valueOf(e.getMessage());
-            departmentId= userService.findById(userId).getDepartmentId();
+            departmentId = userService.findById(userId).getDepartmentId();
         }
 
 
-        List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name,id,departmentId,auth);
+        List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
 
         return CommonUtil.successJson(payments);
     }
 
 
+    /**
+     * 取消申请
+     * @param id
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/cancelInspectionApplication/{id}")
+    JSONObject cancelInspectionApplication(@PathVariable(value = "id",required = false) Integer id, Authentication authentication){
+
+        //判断权限（请求者是不是该部门的人）
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer doctorId = (Integer) data.get("id");
+
+        User user = userService.findById(doctorId);
+        InspectionApplication inspectionApplication = inspectionApplicationService.findById(id);
+
+        inspectionApplication.setCanceled(true);
+        inspectionApplicationService.update(inspectionApplication);
+
+        return CommonUtil.successJson();
+    }
+
+
     @PostMapping("confirmApplication/{id}")
-    JSONObject confirmApplication(JSONObject jsonObject){
+    JSONObject confirmApplication(JSONObject jsonObject) {
 
         return CommonUtil.successJson();
     }

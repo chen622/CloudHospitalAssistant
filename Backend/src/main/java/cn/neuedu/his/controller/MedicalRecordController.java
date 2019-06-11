@@ -187,8 +187,37 @@ public class MedicalRecordController {
         } catch (RuntimeException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
         } catch (Exception e) {
-            return  CommonUtil.errorJson(ErrorEnum.E_500);
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
         return object1;
+    }
+
+    /**
+     * 更新病历
+     * 传过来的medicalRecord里面的挂号id一定要填
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/updateMR")
+    public JSONObject updateMR(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Integer registrationID = null;
+        try {
+            registrationID = Integer.parseInt(object.get("registrationId").toString());
+        } catch (NumberFormatException n) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
+        MedicalRecord record = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
+        ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
+        ArrayList<Integer> diagnosesIds = new ArrayList<>();
+        diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
+        return doctorService.updateMR(registrationID, record, diagnosesIds);
     }
 }

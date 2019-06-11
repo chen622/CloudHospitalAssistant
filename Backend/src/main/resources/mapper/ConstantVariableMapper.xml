@@ -10,6 +10,7 @@
     <result column="type" jdbcType="INTEGER" property="type" />
   </resultMap>
 
+
   <!-- 获得大类（type 0） -->
   <select id="getPrimaryType" resultMap="BaseResultMap">
     select *
