@@ -6,8 +6,8 @@
                     <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
                               style="float: right;"></a-button>
                 </span>
-                <a-collapse defaultActiveKey="1" :bordered="false">
-                    <a-collapse-panel header="待诊患者" key="1">
+                <a-collapse defaultActiveKey="2" :bordered="false">
+                    <a-collapse-panel :header="'待诊患者('+patient.waitPatient.length+')'" key="1">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.waitPatient"
                                 style="overflow: auto;max-height: 400px">
                             <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(0,item)">
@@ -22,7 +22,7 @@
                             </a-list-item>
                         </a-list>
                     </a-collapse-panel>
-                    <a-collapse-panel header="在诊患者" key="2">
+                    <a-collapse-panel :header="'在诊患者('+patient.inPatient.length+')'" key="2">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.inPatient"
                                 style="overflow: auto;max-height: 400px">
                             <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(1,item)">
@@ -75,7 +75,7 @@
                                 <a-button type="primary" style="width: 80%">暂存</a-button>
                             </a-col>
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%">清空当前页面</a-button>
+                                <a-button type="primary" style="width: 80%" @click="resetForm">清空当前页面</a-button>
                             </a-col>
                         </a-row>
                         <a-form :form="record">
@@ -117,9 +117,8 @@
                                 <a-textarea placeholder="体格检查" :autosize="{ minRows: 2}"
                                             v-decorator="['bodyExamination',{rules: rules.bodyExamination}]"></a-textarea>
                             </a-form-item>
-                            <a-divider>初步诊断</a-divider>
 
-                            <diagnose></diagnose>
+                            <diagnose :isFinial="false"></diagnose>
 
                             <a-form-item style="text-align: center;margin-top: 20px">
                                 <a-button type="primary" @click="submitRecord">{{patientType===0?'提交病历':'更新病历'}}
@@ -129,17 +128,13 @@
                         </a-form>
                     </a-tab-pane>
                     <a-tab-pane tab="检查申请" key="2">
-                        <inspection></inspection>
+                        <inspection v-if="currentPatient!=null" :registrationId="currentPatient.id"
+                                    @refresh="refreshMR"></inspection>
+                        <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
+                        <diagnose :isFinial="true"></diagnose>
+
 
                     </a-tab-pane>
                     <a-tab-pane tab="处置申请" key="4">
@@ -216,30 +211,35 @@
         }),
         methods: {
             submitRecord () {
-                this.record.validateFields(err => {
-                    if (!err) {
-                        if (this.$store.state.diagnose.length === 0) {
-                            this.$message.info("请指定疾病")
-                        } else {
-                            let data = {}
-                            data.medicalRecord = this.record.getFieldsValue()
-                            data.registrationId = this.currentPatient.id
-                            data.diagnoses = this.$store.state.diagnose
-                            data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
-                            this.createMedicalRecord(data)
+                if (this.currentPatient == null) {
+                    this.$message.error("请选择病人")
+                } else {
+                    this.record.validateFields(err => {
+                        if (!err) {
+                            if (this.$store.state.diagnose.length === 0) {
+                                this.$message.info("请指定疾病")
+                            } else {
+                                let data = {}
+                                data.medicalRecord = this.record.getFieldsValue()
+                                data.registrationId = this.currentPatient.id
+                                data.diagnoses = this.$store.state.diagnose
+                                data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
+                                this.createMedicalRecord(data)
+                            }
                         }
-                    }
-                })
+                    })
+                }
             },
             createMedicalRecord (data) {
                 let that = this
-
+                let url = ''
                 if (this.patientType === 0) {
+                    url = '/medical_record/firstDiagnose'
                 } else {
-
+                    url = '/medical_record/updateMR'
+                    data.medicalRecord.id = this.currentPatient.MRId
                 }
-
-                this.$api.post("/medical_record/firstDiagnose", data,
+                this.$api.post(url, data,
                     res => {
                         if (res.code === "100") {
                             that.$store.commit('clearDiagnose')
@@ -253,11 +253,14 @@
             },
             selectPatient (type, patient) {
                 this.patientType = type
+                this.resetForm()
                 let that = this
                 this.$api.get("/medical_record/check/" + patient.id, null, res => {
                     if (res.code === '100') {
                         that.showList = false
                         that.currentPatient = patient
+                        that.currentPatient.MRId = res.data.id
+                        that.refreshMR()
                         that.record.setFieldsValue({
                                 'selfDescription': res.data.selfDescription,
                                 'bodyExamination': res.data.bodyExamination,
@@ -265,14 +268,14 @@
                                 'historySymptom': res.data.historySymptom,
                                 'previousTreatment': res.data.previousTreatment,
                                 'currentSymptom': res.data.currentSymptom,
-                                'isPregnant': res.data.isPregnant.toString()
+                                'isPregnant': res.data.isPregnant.toString(),
                             }
                         )
                         let diagnose = []
                         res.data.firstDiagnose.forEach(item => {
                             diagnose.push(item.diseaseSecond)
                         })
-                        that.$store.commit("setDiagnose", diagnose)
+                        that.$store.commit("setDiagnose", {isFinial: false, disease: diagnose})
                     } else {
                         that.$confirm({
                             title: '患者病例信息不存在，是否创建新病例?',
@@ -301,6 +304,16 @@
                 })
 
             },
+            resetForm () {
+                this.record.resetFields(['selfDescription',
+                    'bodyExamination',
+                    'allergyHistory',
+                    'historySymptom',
+                    'previousTreatment',
+                    'currentSymptom',
+                    'isPregnant'])
+                this.$store.commit('clearDiagnose')
+            },
             getPatient () {
                 let that = this
                 this.$api.get("/doctor/getAllRegistration", null,
@@ -313,6 +326,47 @@
                         }
                     }, res => {
                         that.$message.error(res)
+                    })
+            },
+            refreshMR () {
+                this.$store.commit('setInspections', [])
+                this.$store.commit('setInspectionPrescriptions', [])
+                this.getTempInspectionAndPrescription()
+                this.getInspectionAndPrescription()
+            },
+            getInspectionAndPrescription () {
+                let that = this
+                this.$api.get("/doctor/getPrescriptionAndInspection/" + this.currentPatient.id, null,
+                    res => {
+                        if (res.code === '100') {
+                            res.data.inspections.forEach(inspection => {
+                                inspection.temp = false
+                                that.$store.commit('addInspections', inspection)
+                            })
+                            res.data.prescriptions.forEach(prescription => {
+                                prescription.temp = false
+                                that.$store.commit('addInspectionPrescriptions', prescription)
+                            })
+                        }
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
+            },
+            getTempInspectionAndPrescription () {
+                let that = this
+                this.$api.get("/inspection_application/getTemporaryInspection/" + this.currentPatient.id, null,
+                    res => {
+                        if (res.code === '100') {
+                            res.data.applications.forEach(inspection => {
+                                inspection.temp = true
+                                that.$store.commit('addInspections', inspection)
+                            })
+                            res.data.prescriptions.forEach(prescription => {
+                                prescription.temp = true
+                                that.$store.commit('addInspectionPrescriptions', prescription)
+                            })
+                        }
+                    }, () => {
                     })
             },
             callback () {

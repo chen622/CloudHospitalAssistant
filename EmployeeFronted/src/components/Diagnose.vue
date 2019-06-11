@@ -1,5 +1,6 @@
 <template>
     <div>
+        <a-divider>{{isFinial?'最终诊断':'初步诊断'}}</a-divider>
         <a-modal
                 v-if="showDisease"
                 title="添加诊断"
@@ -33,19 +34,22 @@
                 <a-radio-button value="false">中医诊断</a-radio-button>
                 <a-radio-button value="true">西医诊断</a-radio-button>
             </a-radio-group>
-            <a-button style="float: right" type="primary" class="editable-add-btn"
+            <a-button style="float: right;margin: 0 10px" type="danger" v-if="isFinial"
+                      @click="submit">提交诊断
+            </a-button>
+            <a-button style="float: right;margin: 0 10px" type="primary"
                       @click="showDisease = true">添加诊断
             </a-button>
 
         </a-form-item>
-        <a-table bordered :dataSource="$store.state.diagnose" :columns="diseaseColumns" rowKey="id"
+        <a-table bordered :dataSource="diagnose" :columns="diseaseColumns" rowKey="id"
                  :pagination="false">
             <template slot="name" slot-scope="text">
                 <span>{{text}}</span>
             </template>
             <template slot="action" slot-scope="text,record,index">
                 <a-popconfirm
-                        v-if="$store.state.diagnose.length"
+                        v-if="diagnose.length"
                         title="确定删除？"
                         @confirm="() => deleteDiagnose(index)">
                     <a href="javascript:;">删除</a>
@@ -58,7 +62,9 @@
 <script>
     export default {
         name: "Diagnose",
+        props: ['isFinial'],
         data: () => ({
+            diagnose: null,
             disease: {
                 first: [],
                 second: []
@@ -83,20 +89,25 @@
             ],
         }),
         methods: {
+            submit () {
+                this.$api.post
+            },
             changeType (value) {
                 this.$store.commit('changeDiagnoseType', value.target.value)
             },
             addDiagnose () {
-                if (this.$store.state.diagnose === null) {
+                if (this.diagnose === null) {
                     this.$message.error("请选择疾病类型")
                 } else {
-                    if (this.$store.state.diagnose.includes(this.newDiagnose)) {
-                        this.$message.info("请勿添加重复疾病")
-                    } else {
-                        this.$store.commit('addDisease', this.newDiagnose)
-                        this.showDisease = false
-                        this.newDiagnose = null
+                    for (let diagnose of this.diagnose) {
+                        if (diagnose.id === this.newDiagnose.id) {
+                            this.$message.info("请勿添加重复疾病")
+                            return
+                        }
                     }
+                    this.$store.commit('addDisease', {isFinial: this.isFinial, disease: this.newDiagnose})
+                    this.showDisease = false
+                    this.newDiagnose = null
                 }
             },
             deleteDiagnose (index) {
@@ -134,6 +145,11 @@
         },
         mounted () {
             this.getDiseaseFirst()
+            if (this.isFinal) {
+                this.diagnose = this.$store.state.finalDiagnose
+            } else {
+                this.diagnose = this.$store.state.diagnose
+            }
 
         }
     }

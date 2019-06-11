@@ -450,13 +450,21 @@ public class RedisServiceImpl {
     }
 
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications) throws Exception {
-        setObjectList(id.toString() + applicationKey, applications);
-        expireDay(id.toString() + applicationKey, 1);
+        if (applications == null || applications.size() == 0) {
+            deleteTemporaryInspection(id);
+        } else {
+            setObjectList(id.toString() + applicationKey, applications);
+            expireDay(id.toString() + applicationKey, 1);
+        }
     }
 
     public void setTemporaryInspectionDrug(Integer id, List<Prescription> prescriptions) throws Exception {
-        setObjectList(id.toString() + prescriptionKey, prescriptions);
-        expireDay(id.toString() + prescriptionKey, 1);
+        if (prescriptions == null || prescriptions.size() == 0) {
+            deleteTemporaryInspectionDrug(id);
+        } else {
+            setObjectList(id.toString() + prescriptionKey, prescriptions);
+            expireDay(id.toString() + prescriptionKey, 1);
+        }
     }
 
     /**
@@ -479,6 +487,16 @@ public class RedisServiceImpl {
         Jedis jedis = getResource();
         try {
             jedis.del(id.toString() + applicationKey);
+        } catch (Exception e) {
+            //returnBrokenResource(jedis);
+        } finally {
+            returnResource(jedis);
+        }
+    }
+
+    public void deleteTemporaryInspectionDrug(Integer id) {
+        Jedis jedis = getResource();
+        try {
             jedis.del(id.toString() + prescriptionKey);
         } catch (Exception e) {
             //returnBrokenResource(jedis);

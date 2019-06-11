@@ -1,26 +1,40 @@
 <template>
     <div>
+        <a-divider>项目内容</a-divider>
         <a-row type="flex" align="middle" justify="center">
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button type="primary" style="width: 80%">暂存</a-button>
+                <a-button type="primary" style="width: 80%">删除暂存</a-button>
             </a-col>
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
                 <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="inspections" rowKey="id" :columns="inspectionsColumns" :pagination="false">
+        <a-table :dataSource="$store.state.inspections" rowKey="nonDrug.id" :columns="inspectionsColumns"
+                 :pagination="false">
             <template slot="temp" slot-scope="text,record">
                 {{record.temp?'暂存':'开立'}}
             </template>
             <template slot="action" slot-scope="text,record,index">
-                <a-popconfirm
-                        v-if="inspections.length"
-                        title="确定删除？"
-                        @confirm="() => deleteInspection(index)">
-                    <a href="javascript:;">删除</a>
-                </a-popconfirm>
+                <div class="action" v-if="$store.state.inspections.length && record.temp">
+                    <a-popconfirm
+
+                            title="确定开立？"
+                            @confirm="() => saveInspection(record,index)">
+                        <a>开立</a>
+                    </a-popconfirm>
+                    <a-popconfirm
+                            title="确定删除？"
+                            @confirm="() => deleteInspection(index)">
+                        <a>删除</a>
+                    </a-popconfirm>
+                </div>
+                <div class="action" v-if="$store.state.inspections.length && !record.temp">
+                    <a>查看结果</a>
+                </div>
             </template>
         </a-table>
+        <a-divider>项目用药内容</a-divider>
+        <Prescription :registrationId="registrationId" :isInspection="true" @refresh="refreshMR"></Prescription>
         <a-modal v-if="showAddInspection" :visible="showAddInspection" @ok="addInspection"
                  @cancel="showAddInspection = false">
             <template slot="title">添加新检查</template>
@@ -36,27 +50,31 @@
                         <a-select-option v-for="(item,index) in nonDrugs" :key="index">{{item.name}}</a-select-option>
                     </a-select>
                 </a-form-item>
+                <a-form-item label="次数" :labelCol="{span: 5}" :wrapperCol="{span: 18}">
+                    <a-input-number :disabled="newInspection==null" :defaultValue="1" :min="1" @change="changeAmount"/>
+                </a-form-item>
             </a-form>
         </a-modal>
     </div>
 </template>
 
 <script>
+    import Prescription from '../components/Prescription'
     import AFormItem from "ant-design-vue/es/form/FormItem";
 
     export default {
         name: "Inspection",
-        components: {AFormItem},
+        props: ['registrationId'],
+        components: {AFormItem, Prescription},
         data: () => ({
             showAddInspection: false,
             newInspection: null,
             nonDrugs: [],
             nonDrugsTypes: [],
-            inspections: [],
             inspectionsColumns: [
                 {
                     title: '项目名称',
-                    dataIndex: 'name',
+                    dataIndex: 'nonDrug.name',
                     align: 'center',
                 },
                 {
@@ -70,8 +88,13 @@
                 //     scopedSlots: {customRender: 'state'},
                 // },
                 {
-                    title: '价格',
-                    dataIndex: 'price',
+                    title: '单价',
+                    dataIndex: 'nonDrug.price',
+                    align: 'center',
+                },
+                {
+                    title: '数量',
+                    dataIndex: 'quantity',
                     align: 'center',
                 },
                 {
@@ -88,8 +111,28 @@
             ]
         }),
         methods: {
+            saveInspection (record, index) {
+                let data = {
+                    isDisposal: false,
+                    registrationId: this.registrationId,
+                    template: {
+                        applications: [record]
+                    }
+                }
+                let that = this
+                this.$api.post('/inspection_application/saveInspection', data,
+                    res => {
+                        if (res.code === '100') {
+                            that.$message.success("开立成功")
+                            that.deleteInspection(index)
+                        }
+                    }, () => {
+                    }
+                )
+            },
             deleteInspection (index) {
-                this.inspections.splice(index, 1)
+                this.$store.commit('removeInspections', index)
+                this.saveTempInspection()
             },
             getNonDrug () {
                 let that = this
@@ -97,6 +140,7 @@
                     res => {
                         if (res.code === '100') {
                             that.nonDrugsTypes = res.data
+                            that.nonDrugs = res.data[0].nonDrugs
                         }
                     }, () => {
                         that.$message.error("网络错误")
@@ -104,6 +148,7 @@
             },
             selectNonDrugs (index) {
                 this.newInspection = this.nonDrugs[index]
+                this.newInspection.quantity = 1
             },
             selectNoDrugsType (index) {
                 this.nonDrugs = this.nonDrugsTypes[index].nonDrugs
@@ -112,15 +157,41 @@
                 if (this.newInspection === null) {
                     this.$message.info("请选择具体项目")
                 } else {
-                    if (this.inspections.includes(this.newInspection)) {
-                        this.$message.info("请不要重复添加")
-                    } else {
-                        this.newInspection.temp = true
-                        this.inspections.push(this.newInspection)
-                        this.newInspection = null
-                        this.showAddInspection = false
+                    let data = {
+                        temp: true,
+                        department: this.newInspection.department,
+                        nonDrug: this.newInspection,
+                        nonDrugId: this.newInspection.id,
+                        feeTypeId: this.newInspection.feeTypeId,
+                        quantity: this.newInspection.quantity
                     }
+                    this.$store.commit('addInspections', data)
+                    this.newInspection = null
+                    this.showAddInspection = false
+                    this.saveTempInspection()
                 }
+            },
+            changeAmount (value) {
+                this.newInspection.quantity = value
+            },
+            saveTempInspection () {
+                let that = this
+                let data = {
+                    registrationId: this.registrationId,
+                    inspections: this.$store.state.inspections
+                }
+                this.$api.post("/inspection_application/saveTemporaryInspection", data,
+                    res => {
+                        if (res.code === '100') {
+                            that.$message.success("暂存成功")
+                            that.refreshMR()
+                        }
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
+            },
+            refreshMR(){
+                this.$emit("refresh")
             }
         },
         mounted () {
@@ -130,5 +201,14 @@
 </script>
 
 <style scoped>
+    .ant-divider-inner-text {
+        margin: 10px 0;
+        font-weight: bold;
+        font-size: 22px;
+        color: #096dd9;
+    }
 
+    .action a {
+        margin-right: 20px;
+    }
 </style>

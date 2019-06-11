@@ -707,8 +707,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return "drug";
         if (p.getAmount() == null)
             return "amount";
-        if (p.getUseAmount() == null || p.getUseAmount().equals(""))
-            return "useAmount";
         if (p.getDays() == null)
             return "days";
         if (p.getNeedSkinTest() == null)
