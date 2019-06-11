@@ -52,7 +52,7 @@
                             <a-col :span="showList?3:3" :xl="showList?6:2" style="width:20%;" >
                                 <a-card v-if="showList" hoverable :body-style="{padding: '2px 0 0 0'}">
                                     <span slot="title" style="font-size: 22px">
-                                        <sapn style="margin-left:35px">患者列表</sapn>
+                                        <span style="margin-left:35px">患者列表</span>
                                          <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
                                                 style="float:right;margin-top:12px" size="small"></a-button>
                                     </span>
@@ -63,7 +63,7 @@
                                         
 
                                         <a-col  style="text-align: center" >
-                                            <a-range-picker style="width:95%"  v-model="time" >
+                                            <a-range-picker style="width:95%;margin-top:10px"  v-model="time" >
                                             <template slot="dateRender" slot-scope="current">
                                                 <div class="ant-calendar-date" :style="getCurrentStyle(current)">
                                                    {{current.date()}}
@@ -102,7 +102,7 @@
 
                             <a-col :span="showList?16:21" :xl="showList?30:30" style="width:78%;padding:0 0 0 0 ; margin:0 0 0 0">
                                 <a-card :body-style="{padding: 0}">
-                                    <span slot="title" style="font-size: 22px">
+                                    <span slot="title" style="font-size: 22px" >
                                       
 
 
@@ -170,8 +170,10 @@
                                         </template>
 
                                         <template slot="isFrozen" slot-scope="text">
-                                            <a-tag color="blue" v-if="text==false">未冻结</a-tag>
-                                            <a-table color="green" v-if="text==true">已冻结</a-table>
+                                            <template v-if="text==true">
+                                                <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
+                                            </template>
+                                            <template v-else><a-tag color="green" style="font-size:15px">未冻结</a-tag></template>
                                         </template>
 
                                         <template slot="actionc" slot-scope="text, record">
@@ -181,7 +183,7 @@
                                         </template>
 
                                         <template slot="create_time" slot-scope="text">
-                                            <span>{{text| formatDate}}</span>
+                                            <span name>{{text| formatDate}}</span>
                                         </template>
                            
                                     </a-table>   
@@ -213,13 +215,12 @@
                                         </template>
 
                                         <template slot="isFrozen" slot-scope="text">
-                                            <a-tag color="blue" >{{text}}</a-tag>
+                                         
                                             <template v-if="text==true">
-                                                <a-table color="green" >已冻结</a-table>
+                                                <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
                                             </template>
-                                            <template v-else><a-tag color="blue" >未冻结</a-tag></template>
-                                            
-                                           
+                                            <template v-else><a-tag color="green" style="font-size:15px">未冻结</a-tag></template>
+                                                
                                             
                                         </template>
 
@@ -459,6 +460,7 @@ import { Promise, resolve, reject } from 'q';
         data() {
           
         return {
+            selectedRowKeys:[],
             sendRowKeys:[],
             retreatRowKeys:[],
             value:[],
@@ -995,12 +997,10 @@ import { Promise, resolve, reject } from 'q';
                         isFrozen:item.notTake[i].isFrozen,
                         drugId:prescription.drugId,
                     })
-                    console.log(item.notTake[i])
                 }
 
                 this.returnData=[]
                 var taken=item.takenNotRetreat
-                console.log(taken)
                 for(var i=0;i<taken.length;i++){ 
                     var prescription=taken[i].prescription
                     this.returnData.push({
@@ -1025,7 +1025,6 @@ import { Promise, resolve, reject } from 'q';
                 taken=item.happenRetreat
 
                 for(var i=0;i<taken.length;i++){
-                       console.log(taken[i].payment.id)
                     var prescription=taken[i].payment.prescription
                     this.returnData.push({
                         key:taken[i].payment.id,
@@ -1200,7 +1199,6 @@ import { Promise, resolve, reject } from 'q';
                 Object.assign(this.sendRowKeys,rowKeys)
             },allSend(){
                 var rowKeys=this.sendRowKeys
-                console.log(rowKeys)
                 var notTake=this.paymentData
                 for(var i=0;i<rowKeys.length;i++){
                     this.sendDrug(notTake.filter(item => rowKeys[i] === item.key)[0])
@@ -1212,14 +1210,13 @@ import { Promise, resolve, reject } from 'q';
                 var rowKeys=this.retreatRowKeys
                 
                 const retreat=this.returnData
-                console.log(rowKeys)
-                console.log(retreat)
+                // console.log(rowKeys)
+                // console.log(retreat)
                 for(var i=0;i<rowKeys.length;i++){
-                    console.log('********')
+                
                    var temp=retreat.filter(item => rowKeys[i] === item.key)
                     if(temp.length>0){   
                         if(temp[0].state.indexOf('药全退')<0){
-                            console.log(temp[0])
                             this.retreatAll(temp[0])
                         }
                     }else{               
@@ -1233,9 +1230,6 @@ import { Promise, resolve, reject } from 'q';
                                 drugId:temp.drugId,
                                 quantity:(temp.quantity-temp.return)
                             }   
-                            console.log('m')
-                            console.log(m)
-                            console.log(temp)
 
                         this.$api.post("/drug/retreatDrug", m,
                                 res => {
