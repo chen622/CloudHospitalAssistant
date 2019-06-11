@@ -214,9 +214,12 @@
 
                                         <template slot="isFrozen" slot-scope="text">
                                             <a-tag color="blue" >{{text}}</a-tag>
-                                        
-                                            <a-tag color="blue" v-if="text==false">未冻结</a-tag>
-                                            <a-table color="green" v-else>已冻结</a-table>
+                                            <template v-if="text==true">
+                                                <a-table color="green" >已冻结</a-table>
+                                            </template>
+                                            <template v-else><a-tag color="blue" >未冻结</a-tag></template>
+                                            
+                                           
                                             
                                         </template>
 
