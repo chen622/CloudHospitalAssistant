@@ -263,6 +263,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             for (Payment payment: paymentList) {
                 currentRemainQuantity = currentRemainQuantity + payment.getQuantity();
             }
+        }else {
+            currentRemainQuantity = originalPayment.getQuantity();
         }
 
         //判断数量是否合法，并改变原payment状态
