@@ -202,31 +202,29 @@ public class MedicalRecordController {
      */
     @PostMapping("/finalDiagnose")
     public JSONObject saveFinalDiagnose(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
         try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            PermissionCheck.isOutpatientDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
-        Integer registrationID = null, medicalRecordId;
+        Integer registrationID = null;
         try {
             registrationID = Integer.parseInt(object.get("registrationId").toString());
+            MedicalRecord medicalRecord = medicalRecordService.getByRegistrationId(registrationID);
+            if (medicalRecord == null)
+                throw new NumberFormatException();
+            ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
+            ArrayList<Integer> diagnosesIds = new ArrayList<>();
+            diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
+            if (diagnoses == null || diagnoses.size() == 0)
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
+            try {
+                return doctorService.saveFinalDiagnose(registrationID, medicalRecord, diagnosesIds);
+            } catch (Exception e) {
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+            }
         } catch (NumberFormatException n) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        }
-        try {
-            medicalRecordId = Integer.parseInt(object.get("medicalRecordId").toString());
-        } catch (NumberFormatException n) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecordId"));
-        }
-
-        ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
-        if (diagnoses == null || diagnoses.size() == 0)
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
-        try {
-            return doctorService.saveFinalDiagnose(registrationID, medicalRecordId, diagnoses);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
         }
     }
 
@@ -240,9 +238,8 @@ public class MedicalRecordController {
      */
     @PostMapping("/updateMR")
     public JSONObject updateMR(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
         try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+             PermissionCheck.isOutpatientDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }

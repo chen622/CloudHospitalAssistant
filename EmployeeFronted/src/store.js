@@ -12,10 +12,13 @@ export default new Vuex.Store({
         finalDiagnose: [],
         inspections: [],
         inspectionPrescriptions: [],
-        prescription: [],
-        diagnoseType: true
+        diagnoseType: true,
+        payments: []
     },
     mutations: {
+        setPayment (state, payments) {
+            state.payments = payments
+        },
         setInspections (state, inspections) {
             state.inspections = inspections
         },
@@ -38,11 +41,17 @@ export default new Vuex.Store({
             state.diagnoseType = type
         },
         addDisease (state, data) {
-            console.log(data)
             if (data.isFinial) {
                 state.finalDiagnose.push(data.disease)
             } else {
                 state.diagnose.push(data.disease)
+            }
+        },
+        removeDisease (state, data) {
+            if (data.isFinial) {
+                state.finalDiagnose.splice(data.index, 1)
+            } else {
+                state.diagnose.splice(data.index, 1)
             }
         },
         setDiagnose (state, data) {
@@ -51,8 +60,11 @@ export default new Vuex.Store({
             } else
                 state.diagnose = data.disease
         },
-        clearDiagnose (state) {
+        clear (state) {
             state.diagnose = []
+            state.finalDiagnose = []
+            state.inspections = []
+            state.inspectionPrescriptions = []
             state.diagnoseType = 0
         },
         setLogin (state, login) {

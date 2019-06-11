@@ -67,6 +67,16 @@ public class Payment {
     private Patient patient;
     private PaymentType paymentType;
     private User user;
+    private ConstantVariable stateVariable;
+
+
+    public ConstantVariable getStateVariable() {
+        return stateVariable;
+    }
+
+    public void setStateVariable(ConstantVariable stateVariable) {
+        this.stateVariable = stateVariable;
+    }
 
     public User getUser() {
         return user;

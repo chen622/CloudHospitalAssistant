@@ -64,6 +64,8 @@
                     <span style="font-size: 22px">{{currentPatient.patient.realName}}</span>
                     <span style="margin: 0 10px">年龄: {{currentPatient.age}}岁</span>
                     <span>性别: {{currentPatient.patient.sex?'男':'女'}}</span>
+                    <a-button @click="refreshMR" type="primary" shape="circle" icon="reload"
+                              style="float: right;"></a-button>
                 </div>
                 <span slot="title" style="font-size: 22px" v-else>当前患者</span>
                 <a-tabs defaultActiveKey="1" tabPosition="top" :style="{padding: '0 10px 20px 10px'}"
@@ -133,41 +135,31 @@
                         <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
-                        <diagnose :isFinial="true"></diagnose>
-
-
+                        <diagnose v-if="currentPatient!=null" :isFinial="true"
+                                  :registrationId="currentPatient.id"></diagnose>
+                        <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
-                    <a-tab-pane tab="处置申请" key="4">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
+                    <!--                    <a-tab-pane tab="处置申请" key="4">-->
+                    <!--                        <a-row type="flex" align="middle" justify="space-around">-->
+                    <!--                            <a-col span="3">-->
+                    <!--                                <a-button type="primary" style="width: 100%">暂存</a-button>-->
+                    <!--                            </a-col>-->
+                    <!--                            <a-col span="3">-->
+                    <!--                                <a-button type="primary" style="width: 100%">清空当前页面</a-button>-->
+                    <!--                            </a-col>-->
+                    <!--                        </a-row>-->
 
-                    </a-tab-pane>
+                    <!--                    </a-tab-pane>-->
                     <a-tab-pane tab="药物处方" key="5">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
-
+                        <a-divider>处方内容</a-divider>
+                        <prescription v-if="currentPatient!=null" :registrationId="currentPatient.id"
+                                      :isInspection="true" @refresh="refreshMR"></prescription>
+                        <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                     <a-tab-pane tab="费用查询" key="6">
-                        <a-row type="flex" align="middle" justify="space-around">
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">暂存</a-button>
-                            </a-col>
-                            <a-col span="3">
-                                <a-button type="primary" style="width: 100%">清空当前页面</a-button>
-                            </a-col>
-                        </a-row>
+                        <a-divider>费用详情</a-divider>
+                        <payment v-if="currentPatient!=null" :patientId="currentPatient.patient.id"></payment>
+                        <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                 </a-tabs>
             </a-card>
@@ -178,13 +170,18 @@
 <script>
 
     import Diagnose from '../../components/Diagnose'
-    import Inpsection from '../../components/Inspection'
+    import Inspection from '../../components/Inspection'
+    import Prescription from '../../components/Prescription'
+    import Payment from '../../components/Payment'
+
 
     export default {
         name: "Index",
         components: {
             'diagnose': Diagnose,
-            'inspection': Inpsection
+            'inspection': Inspection,
+            'prescription': Prescription,
+            'payment': Payment
         },
         data: () => ({
             load: {
@@ -242,7 +239,6 @@
                 this.$api.post(url, data,
                     res => {
                         if (res.code === "100") {
-                            that.$store.commit('clearDiagnose')
                             that.$message.success("提交成功")
                         } else {
                             that.$message.error(res.msg)
@@ -272,10 +268,16 @@
                             }
                         )
                         let diagnose = []
+                        that.$store.commit('changeDiagnoseType', res.data.isWesternMedicine)
                         res.data.firstDiagnose.forEach(item => {
                             diagnose.push(item.diseaseSecond)
                         })
+                        diagnose = []
                         that.$store.commit("setDiagnose", {isFinial: false, disease: diagnose})
+                        res.data.finalDiagnose.forEach(item => {
+                            diagnose.push(item.diseaseSecond)
+                        })
+                        that.$store.commit("setDiagnose", {isFinial: true, disease: diagnose})
                     } else {
                         that.$confirm({
                             title: '患者病例信息不存在，是否创建新病例?',
@@ -312,7 +314,7 @@
                     'previousTreatment',
                     'currentSymptom',
                     'isPregnant'])
-                this.$store.commit('clearDiagnose')
+                this.$store.commit('clear')
             },
             getPatient () {
                 let that = this
@@ -333,6 +335,17 @@
                 this.$store.commit('setInspectionPrescriptions', [])
                 this.getTempInspectionAndPrescription()
                 this.getInspectionAndPrescription()
+                this.getPayments()
+            },
+            getPayments () {
+                let that = this
+                this.$api.get("/payment/getByDoctor/" + this.currentPatient.patient.id, null, res => {
+                    if (res.code === '100') {
+                        that.$store.commit('setPayment', res.data)
+                    }
+                }, () => {
+                    that.$message.error('网络异常')
+                })
             },
             getInspectionAndPrescription () {
                 let that = this

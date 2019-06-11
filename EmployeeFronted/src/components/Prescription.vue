@@ -73,7 +73,6 @@
         components: {AFormItem},
         props: ['isInspection', 'registrationId'],
         data: () => ({
-            prescriptions: [],
             newP: {
                 amount: 1,
                 useage: null,
@@ -129,6 +128,17 @@
                         prescriptions: [record]
                     }
                 }
+                let i = 0
+                this.prescriptions.forEach(
+                    p => {
+                        if (!p.temp) {
+                            i++
+                        }
+                    })
+                if (i >= 5) {
+                    this.$message.error("已达药物种类上线")
+                    return
+                }
                 this.$api.post("/inspection_application/saveInspection", data,
                     res => {
                         if (res.code === '100') {
@@ -158,7 +168,7 @@
                     this.$store.commit("addInspectionPrescriptions", data)
                     this.newPrescription = null
                     this.showAddPrescription = false
-                    this.newP.useage = {
+                    this.newP = {
                         amount: 1,
                         useage: null,
                         frequency: null,
@@ -177,8 +187,13 @@
                 let that = this
                 let data = {
                     registrationId: this.registrationId,
-                    prescriptions: this.$store.state.inspectionPrescriptions
+                    prescriptions: []
                 }
+                this.$store.state.inspectionPrescriptions.forEach(p => {
+                    if (p.temp) {
+                        data.prescriptions.push(p)
+                    }
+                })
                 this.$api.post("/inspection_application/saveTemporaryInspectionDrug", data,
                     res => {
                         if (res.code === '100') {
@@ -224,14 +239,14 @@
                 this.$emit('refresh')
             }
         },
+        computed: {
+            prescriptions () {
+                return this.$store.state.inspectionPrescriptions
+            }
+        },
         mounted () {
             this.getAllDrug()
             this.getUseage()
-            if (this.isInspection) {
-                this.prescriptions = this.$store.state.inspectionPrescriptions
-            } else {
-                this.prescriptions = this.$store.state.prescription
-            }
         }
     }
 </script>

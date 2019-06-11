@@ -34,7 +34,7 @@
             </template>
         </a-table>
         <a-divider>项目用药内容</a-divider>
-        <Prescription :registrationId="registrationId" :isInspection="true" @refresh="refreshMR"></Prescription>
+        <prescription :registrationId="registrationId" :isInspection="true" @refresh="refreshMR"></prescription>
         <a-modal v-if="showAddInspection" :visible="showAddInspection" @ok="addInspection"
                  @cancel="showAddInspection = false">
             <template slot="title">添加新检查</template>
@@ -60,12 +60,11 @@
 
 <script>
     import Prescription from '../components/Prescription'
-    import AFormItem from "ant-design-vue/es/form/FormItem";
 
     export default {
         name: "Inspection",
         props: ['registrationId'],
-        components: {AFormItem, Prescription},
+        components: {prescription: Prescription},
         data: () => ({
             showAddInspection: false,
             newInspection: null,
@@ -190,7 +189,7 @@
                         that.$message.error("网络异常")
                     })
             },
-            refreshMR(){
+            refreshMR () {
                 this.$emit("refresh")
             }
         },

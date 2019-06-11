@@ -49,7 +49,7 @@
             </template>
             <template slot="action" slot-scope="text,record,index">
                 <a-popconfirm
-                        v-if="diagnose.length"
+                        v-if="diagnose.length && record.temp"
                         title="确定删除？"
                         @confirm="() => deleteDiagnose(index)">
                     <a href="javascript:;">删除</a>
@@ -62,9 +62,8 @@
 <script>
     export default {
         name: "Diagnose",
-        props: ['isFinial'],
+        props: ['isFinial', 'registrationId'],
         data: () => ({
-            diagnose: null,
             disease: {
                 first: [],
                 second: []
@@ -90,7 +89,23 @@
         }),
         methods: {
             submit () {
-                this.$api.post
+                let data = {
+                    registrationId: this.registrationId,
+                    diagnoses: this.$store.state.finalDiagnose
+                }
+                if (this.$store.state.finalDiagnose.length === 0) {
+                    this.$message.error("请添加疾病")
+                    return
+                }
+                let that = this
+                this.$api.post('/medical_record/finalDiagnose', data,
+                    res => {
+                        if (res === '100') {
+                            that.$message.success("提交成功")
+                        }
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
             },
             changeType (value) {
                 this.$store.commit('changeDiagnoseType', value.target.value)
@@ -105,14 +120,16 @@
                             return
                         }
                     }
+                    this.newDiagnose.temp = true
                     this.$store.commit('addDisease', {isFinial: this.isFinial, disease: this.newDiagnose})
                     this.showDisease = false
                     this.newDiagnose = null
                 }
             },
             deleteDiagnose (index) {
-                this.diagnose.splice(index, 1);
-            }, selectFirst (value) {
+                this.$store.commit("removeDisease", {isFinial: this.isFinial, index: index})
+            },
+            selectFirst (value) {
                 let that = this
                 this.$api.get("/disease_second/getDiseaseByType/" + value, null,
                     res => {
@@ -143,14 +160,18 @@
                     })
             },
         },
+        computed: {
+            diagnose () {
+
+                if (this.isFinial) {
+                    return this.$store.state.finalDiagnose
+                } else {
+                    return this.$store.state.diagnose
+                }
+            }
+        },
         mounted () {
             this.getDiseaseFirst()
-            if (this.isFinal) {
-                this.diagnose = this.$store.state.finalDiagnose
-            } else {
-                this.diagnose = this.$store.state.diagnose
-            }
-
         }
     }
 </script>

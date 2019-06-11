@@ -27,7 +27,7 @@
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
         <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
         <association property="patient" javaType="Patient">
-            <id property="id" column="id"></id>
+            <id property="id" column="patientId"></id>
             <result property="realName" column="real_name"></result>
             <result property="identityId" column="identity_id"></result>
             <result column="sex" jdbcType="BIT" property="sex"/>
@@ -35,7 +35,8 @@
     </resultMap>
 
     <select id="getAllWaitingRegistration" resultMap="registrationWithPatient">
-        select *
+        select *,
+               patient.id as patientId
         from registration,
              patient,
              job_schedule
@@ -49,7 +50,8 @@
 
 
     <select id="getRegistrationByPatientName" resultMap="registrationWithPatient">
-        select *
+        select *,
+               patient.id as patientId
         from registration,
              patient
         where state = 47
@@ -105,8 +107,10 @@
     </resultMap>
 
     <select id="getRegistrationAndType" resultMap="registrationAndType">
-        select r.*, rt.* from registration r join job_schedule j on r.schedule_id = j.id
-            join registration_type rt on j.registration_type_id = rt.id
+        select r.*, rt.*
+        from registration r
+                 join job_schedule j on r.schedule_id = j.id
+                 join registration_type rt on j.registration_type_id = rt.id
         where r.id = #{id}
     </select>
 
