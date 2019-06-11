@@ -74,4 +74,5 @@
         from medical_record
         where registration_id = #{registrationId}
     </select>
+    
 </mapper>

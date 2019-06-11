@@ -16,4 +16,5 @@ public interface InspectionApplicationMapper extends MyMapper<InspectionApplicat
     ArrayList<InspectionApplication> getByMedicalRecordId(Integer id);
     List<Payment> selectPatientInformationByNameOrId(String name,Integer id,Integer department_id,Boolean auth);
     InspectionApplication getInspectionAndNonDrug(Integer id);
+    ArrayList<InspectionApplication> getAllByMedical(Integer id);
 }

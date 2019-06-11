@@ -1,9 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.*;
-import cn.neuedu.his.service.DoctorService;
-import cn.neuedu.his.service.MedicalRecordService;
-import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -40,8 +38,25 @@ public class DoctorController {
 
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    private PrescriptionService prescriptionService;
+    @Autowired
+    private InspectionApplicationService inspectionApplicationService;
 
+    @GetMapping("/getAll/{medicalId}")
+    public JSONObject getAllByMedical(@PathVariable("medicalId") Integer medicalId, Authentication authentication) {
+        try {
+            PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
+        JSONObject result = new JSONObject();
+        result.put("prescription", prescriptionService.findPrescriptionAndDrugByMedical(medicalId));
+        result.put("inspection", inspectionApplicationService.findAllByMedical(medicalId));
+
+        return CommonUtil.successJson(result);
+    }
 
 
     /**
@@ -235,8 +250,6 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
-
-
 
 
     /**
@@ -518,8 +531,6 @@ public class DoctorController {
     }
 
 
-
-
     /**
      * 更新检查模板
      *
@@ -720,7 +731,6 @@ public class DoctorController {
         }
         return doctorService.finishDiagnose(registrationId);
     }
-
 
 
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
