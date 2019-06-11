@@ -40,9 +40,20 @@ public class InspectionApplicationController {
     public JSONObject saveTemporaryInspection(@RequestBody JSONObject object) {
         Integer id = Integer.parseInt(object.get("registrationId").toString());
         List<InspectionApplication> record = JSONObject.parseArray(object.get("inspections").toString(), InspectionApplication.class);
+        try {
+            redisService.setTemporaryInspection(id, record);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_801);
+        }
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("/saveTemporaryInspectionDrug")
+    public JSONObject saveTemporaryInspectionDrug(@RequestBody JSONObject object) {
+        Integer id = Integer.parseInt(object.get("registrationId").toString());
         List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
         try {
-            redisService.setTemporaryInspection(id, record, prescriptions);
+            redisService.setTemporaryInspectionDrug(id, prescriptions);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_801);
         }
@@ -76,7 +87,7 @@ public class InspectionApplicationController {
     }
 
     /**
-     * 获得暂存检查/处置
+     * 删除暂存
      *
      * @param registrationId
      * @return
@@ -99,9 +110,9 @@ public class InspectionApplicationController {
      * @param authentication
      * @return
      */
-    @GetMapping({"/selectPatientInformationByNameOrId/name/{name}","/selectPatientInformationByNameOrId/id/{id}",
-            "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}","/selectPatientInformationByNameOrId"})
-    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "id",required = false) Integer id, Authentication authentication){
+    @GetMapping({"/selectPatientInformationByNameOrId/name/{name}", "/selectPatientInformationByNameOrId/id/{id}",
+            "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}", "/selectPatientInformationByNameOrId"})
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name", required = false) String name, @PathVariable(value = "id", required = false) Integer id, Authentication authentication) {
 
         Boolean auth;
         Integer departmentId = null;
@@ -114,11 +125,11 @@ public class InspectionApplicationController {
 
             //设定部门ID
             Integer userId = Integer.valueOf(e.getMessage());
-            departmentId= userService.findById(userId).getDepartmentId();
+            departmentId = userService.findById(userId).getDepartmentId();
         }
 
 
-        List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name,id,departmentId,auth);
+        List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
 
         return CommonUtil.successJson(payments);
     }
@@ -148,7 +159,7 @@ public class InspectionApplicationController {
 
 
     @PostMapping("confirmApplication/{id}")
-    JSONObject confirmApplication(JSONObject jsonObject){
+    JSONObject confirmApplication(JSONObject jsonObject) {
 
         return CommonUtil.successJson();
     }

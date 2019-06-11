@@ -774,27 +774,7 @@ public class DoctorController {
         return doctorService.finishDiagnose(registrationId);
     }
 
-    /**
-     *
-     *更新病历
-     *  传过来的medicalRecord里面的挂号id一定要填
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/updateMR")
-    public JSONObject updateMR(@RequestBody JSONObject object ,Authentication authentication){
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-        MedicalRecord record=JSONObject.parseObject(object.get("record").toString(),MedicalRecord.class);
-        List<Integer> firstDiagnose=JSONObject.parseArray(object.get("firstDiagnose").toString(),Integer.class);
-        List<Integer> finalDiagnose=JSONObject.parseArray(object.get("finalDiagnose").toString(),Integer.class);
-        return doctorService.updateMR(record,firstDiagnose, finalDiagnose);
-    }
+
 
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
     public JSONObject getAllPaymentDetails(@PathVariable("registrationId") Integer registrationId, @PathVariable("medicalRecordId") Integer medicalRecordId, Authentication authentication) {
