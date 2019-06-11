@@ -45,6 +45,20 @@ public class DrugTest {
         //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
 
+    //插入医生信息
+    @Test
+    public void takeDrug() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/57/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 
     //插入医生信息
     @Test

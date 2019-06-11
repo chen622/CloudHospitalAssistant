@@ -26,4 +26,5 @@ public interface RegistrationService extends Service<Registration> {
     void setRegistrationSequence();
     Integer getRegistrationInof(Date time, Integer doctorId);
     Integer getRegistrationState(Integer id);
+    Registration findRegistrationAndType(Integer id);
 }

@@ -40,4 +40,14 @@
      select * from  payment where  item_id=#{id}  and  payment_type_id=#{type};
   </select>
 
+
+  <resultMap id="prescriptionAndDrug" type="cn.neuedu.his.model.Prescription">
+    <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
+  </resultMap>
+
+  <select id="getPrescriptionAndDrug" resultMap="prescriptionAndDrug">
+    select p.*, d.* from prescription p join drug d on p.drug_id = d.id where p.id = #{id}
+  </select>
+
+
 </mapper>

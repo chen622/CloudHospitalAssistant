@@ -75,6 +75,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     DrugTemplateRelationshipService drugTemplateRelationshipService;
 
 
+
+
     @Override
     public JSONObject getRegistrationInof(Date time, Integer doctorId) {
         Integer limit = scheduleService.getRegistrationInof(time, doctorId);
@@ -264,7 +266,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject setFirstDiagnose(Integer registrationID, MedicalRecord medicalRecord,List<Integer> diagnoses,Integer doctorId) throws Exception {
         JobSchedule schedule=scheduleService.getByDoctorId(doctorId, new Date(System.currentTimeMillis()));
 
-
         Registration registration = registrationService.findById(registrationID);
         if(registration==null ){
             return CommonUtil.errorJson(ErrorEnum.E_705.addErrorParamName("registrationId"));
@@ -277,7 +278,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         //检查是否已经有初诊了
         MedicalRecord record =medicalRecordService.getByRegistrationId(registrationID);
-       if(record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
+       if(record!=null && record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
             return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("firstDiagnose"));
         //检查是否有必要的参数没有填写完
         String  check=cheakMedicalRecord(medicalRecord);
@@ -286,10 +287,66 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         medicalRecord.setId(null);
         medicalRecordService.save(medicalRecord);
-        ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecord.getId(),false,false);
+        doctorService.saveDiagnose(diagnoses, medicalRecord.getId(),false,false);
         scheduleService.update(schedule);
         return CommonUtil.successJson();
     }
+
+    @Override
+    public JSONObject updateMR(MedicalRecord record,List<Integer> diagnoses,List<Integer> finalDiagnose)  {
+        MedicalRecord original=medicalRecordService.getMedicalRecordWithDiagnose(record.getId());
+        Registration registration=registrationService.findById(original.getRegistrationId());
+        if(original==null){
+            return CommonUtil.errorJson(ErrorEnum.E_805);
+        }else if (registration==null){
+            return CommonUtil.errorJson(ErrorEnum.E_705);
+        }else if(registrationService.findById(original.getRegistrationId()).getState().intValue()>=Constants.FINISH_DIAGNOSIS){
+            return CommonUtil.errorJson(ErrorEnum.E_807);
+        }
+
+        String  check=cheakMedicalRecord(record);
+        if(!check.equals("")){
+            throw new RuntimeException("medicalRecord");
+        }
+
+        record.setId(original.getId());
+        medicalRecordService.update(record);
+
+
+        if(diagnoses==null){
+            return  CommonUtil.errorJson(ErrorEnum.E_806);
+        }else {
+            List<Diagnose> dd= original.getFirstDiagnose();
+            try {
+                if(dd!=null){
+                    for(Diagnose d:dd){
+                        System.out.println(d.getId());
+                        diagnoseService.deleteById(d.getId());
+                    }
+                    doctorService.saveDiagnose(diagnoses, original.getId(), false, false);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                CommonUtil.errorJson(ErrorEnum.E_808);
+            }
+            dd= original.getFinalDiagnose();
+            if(dd!=null && finalDiagnose!=null && registration.getState().intValue()>=Constants.FINAL_DIAGNOSIS ){
+                try {
+                    for(Diagnose d:dd){
+                        System.out.println(d.getId());
+                        diagnoseService.deleteById(d.getId());
+                    }
+                    doctorService.saveDiagnose(diagnoses, original.getId(), true, false);
+                } catch (Exception e) {
+                    return  CommonUtil.errorJson(ErrorEnum.E_808);
+                }
+            }
+        }
+            return CommonUtil.successJson();
+    }
+
+
+
 
     /**
      * 存为病历模板
@@ -354,16 +411,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Registration registration = registrationService.findById(registrationId);
         if(registration==null)
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("registration"));
+        if(registration.getState().intValue()>=Constants.FINISH_DIAGNOSIS){
+            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        }
         MedicalRecord record =medicalRecordService.findById(medicalRecordId);
 
         if(record==null || !record.getRegistrationId().equals(registrationId))
             return  CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("medicalRecordId"));
-        if(record.getFirstDiagnose()!=null && !record.getFirstDiagnose().isEmpty())
-            return  CommonUtil.errorJson(ErrorEnum.E_615.addErrorParamName("finalDiagnose"));
-
         registration.setState(Constants.FINAL_DIAGNOSIS);
         registrationService.update(registration);
-        ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnose(diagnoses, medicalRecordId,true,false);
+        doctorService.saveDiagnose(diagnoses, medicalRecordId,true,false);
         return CommonUtil.successJson();
     }
 
@@ -710,8 +767,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
+
+
+    @Override
     @Transactional
-    public   void saveDiagnose(List<Integer> diagnoses ,Integer itemId,Boolean isMajor,Boolean isTemplate) throws  Exception{
+    public   void saveDiagnose(List<Integer> diagnoses ,Integer itemId,Boolean isMajor,Boolean isTemplate) {
         if(diagnoses!=null){
             for (Integer integer:diagnoses){
                 Diagnose diagnose=new Diagnose();
@@ -722,6 +782,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 diagnose.setTemplate(isTemplate);
                 diagnose.setDiseaseId(integer);
                 diagnoseService.save(diagnose);
+                System.out.println("save :"+diagnose.getId());
             }
         }
     }

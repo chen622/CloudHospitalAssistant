@@ -65,6 +65,18 @@
 
 <!--  收费员的发票和缴费单信息-->
   <resultMap id="adminAndInvoiceAndPaymentDuringDate" type="cn.neuedu.his.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
+    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
     <collection property="invoiceList" ofType="cn.neuedu.his.model.Invoice" select="selectInvoiceByUserId" column="{userId = id, startDate = startDate, endDate = endDate}"/>
   </resultMap>
 

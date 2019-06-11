@@ -185,4 +185,9 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     public Integer getRegistrationState(Integer id) {
         return registrationMapper.getRegistrationState(id);
     }
+
+    @Override
+    public Registration findRegistrationAndType(Integer id) {
+        return registrationMapper.getRegistrationAndType(id);
+    }
 }

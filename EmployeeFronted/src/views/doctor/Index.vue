@@ -9,8 +9,8 @@
                 <a-collapse defaultActiveKey="1" :bordered="false">
                     <a-collapse-panel header="待诊患者" key="1">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.waitPatient"
-                                style="overflow: auto;height: 400px">
-                            <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(item)">
+                                style="overflow: auto;max-height: 400px">
+                            <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(0,item)">
                                 <a-list-item-meta>
                                 <span slot="title"
                                       style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
@@ -24,8 +24,8 @@
                     </a-collapse-panel>
                     <a-collapse-panel header="在诊患者" key="2">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.inPatient"
-                                style="overflow: auto;height: 400px">
-                            <a-list-item slot="renderItem" slot-scope="item">
+                                style="overflow: auto;max-height: 400px">
+                            <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(1,item)">
                                 <a-list-item-meta>
                                 <span slot="title"
                                       style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
@@ -122,7 +122,8 @@
                             <diagnose></diagnose>
 
                             <a-form-item style="text-align: center;margin-top: 20px">
-                                <a-button type="primary" @click="submitRecord">提交病历</a-button>
+                                <a-button type="primary" @click="submitRecord">{{patientType===0?'提交病历':'更新病历'}}
+                                </a-button>
                             </a-form-item>
 
                         </a-form>
@@ -210,6 +211,7 @@
             },
             record: null,
             showList: true,
+            patientType: 0,
 
         }),
         methods: {
@@ -231,9 +233,16 @@
             },
             createMedicalRecord (data) {
                 let that = this
+
+                if (this.patientType === 0) {
+                } else {
+
+                }
+
                 this.$api.post("/medical_record/firstDiagnose", data,
                     res => {
                         if (res.code === "100") {
+                            that.$store.commit('clearDiagnose')
                             that.$message.success("提交成功")
                         } else {
                             that.$message.error(res.msg)
@@ -242,12 +251,28 @@
                         that.$message.error("网络错误")
                     })
             },
-            selectPatient (patient) {
+            selectPatient (type, patient) {
+                this.patientType = type
                 let that = this
                 this.$api.get("/medical_record/check/" + patient.id, null, res => {
                     if (res.code === '100') {
                         that.showList = false
                         that.currentPatient = patient
+                        that.record.setFieldsValue({
+                                'selfDescription': res.data.selfDescription,
+                                'bodyExamination': res.data.bodyExamination,
+                                'allergyHistory': res.data.allergyHistory,
+                                'historySymptom': res.data.historySymptom,
+                                'previousTreatment': res.data.previousTreatment,
+                                'currentSymptom': res.data.currentSymptom,
+                                'isPregnant': res.data.isPregnant.toString()
+                            }
+                        )
+                        let diagnose = []
+                        res.data.firstDiagnose.forEach(item => {
+                            diagnose.push(item.diseaseSecond)
+                        })
+                        that.$store.commit("setDiagnose", diagnose)
                     } else {
                         that.$confirm({
                             title: '患者病例信息不存在，是否创建新病例?',

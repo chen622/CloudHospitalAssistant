@@ -46,6 +46,8 @@ public class Registration {
 
     private Patient patient;
 
+    private RegistrationType registrationType;
+
     public Patient getPatient() {
         return patient;
     }
@@ -184,5 +186,13 @@ public class Registration {
 
     public void setSerialNumber(Integer serialNumber) {
         this.serialNumber = serialNumber;
+    }
+
+    public RegistrationType getRegistrationType() {
+        return registrationType;
+    }
+
+    public void setRegistrationType(RegistrationType registrationType) {
+        this.registrationType = registrationType;
     }
 }

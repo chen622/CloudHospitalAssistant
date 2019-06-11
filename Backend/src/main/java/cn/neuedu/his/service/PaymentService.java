@@ -22,9 +22,6 @@ public interface PaymentService extends Service<Payment> {
 
 
     Payment findByRegistrationId(Integer registrationId);
-    void updateInvoiceId(Integer invoiceId, Integer id);
-
-
     ArrayList<Payment> getWithItem(Integer id);
     List<Payment> getByRegistrationId(Integer id, Integer type);
     ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end);

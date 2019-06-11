@@ -46,7 +46,7 @@ public class RedisServiceImpl{
             jedisPool.returnResourceObject(jedis);
     }
 
-    private void set(String key, String value) throws Exception{
+    public void set(String key, String value) throws Exception{
         Jedis jedis=null;
         try{
             jedis = getResource();
@@ -58,8 +58,8 @@ public class RedisServiceImpl{
         }
     }
 
-    private String get(String key) throws Exception{
-        String result = null;
+    public String get(String key) throws Exception{
+        String result;
         Jedis jedis=null;
         try{
             jedis = getResource();
@@ -71,6 +71,33 @@ public class RedisServiceImpl{
         }
 
         return result;
+    }
+
+    public String getSet(String key, String value) throws Exception {
+        String result;
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            result = jedis.getSet(key, value);
+        } catch (Exception e) {
+            throw new Exception();
+        }finally{
+            returnResource(jedis);
+        }
+
+        return result;
+    }
+
+    public Long del(String key) throws Exception {
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            return jedis.del(key);
+        } catch (Exception e) {
+            throw new Exception();
+        }finally{
+            returnResource(jedis);
+        }
     }
 
     private void setObject(String key, Object value) throws Exception{
@@ -165,13 +192,31 @@ public class RedisServiceImpl{
      * 设置key的生存时间
      * @param key
      */
-    private void expire(String key, Integer day) {
+    public void expire(String key, Integer second) throws Exception {
         Jedis jedis=null;
         try{
             jedis = getResource();
-            jedis.expire(key, day * 24 * 60 * 60);
+            jedis.expire(key, second);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception();
+        }finally{
+            returnResource(jedis);
+        }
+    }
+
+    /**
+     * 设置锁
+     * @param key
+     * @param value
+     * @throws Exception
+     */
+    public long setnx(String key, String value) throws Exception{
+        Jedis jedis=null;
+        try{
+            jedis = getResource();
+            return jedis.setnx(key, value);
+        } catch (Exception e) {
+            throw new Exception();
         }finally{
             returnResource(jedis);
         }
@@ -198,7 +243,7 @@ public class RedisServiceImpl{
         return resultMap;
     }
 
-    //实现方法
+    //基础方法变型
     /**
      * 设置redis list
      * @param key
@@ -262,7 +307,16 @@ public class RedisServiceImpl{
         }
     }
 
+    /**
+     * 设置key的生存时间(以天数计算）
+     * @param key
+     */
+    private void expireDay(String key, Integer day) throws Exception {
+        expire(key, day * 24 * 60 * 60);
+    }
 
+
+    //实现方法
     /**
      * 设置发票号段
      * @param start
@@ -300,7 +354,7 @@ public class RedisServiceImpl{
     public void setRegistrationSequenceList(Integer id, Integer amount) throws UnsupportedOperationException{
         try {
             setNumberList(id.toString() + registrationKey, 1, amount);
-            expire(id.toString() + registrationKey, 3);
+            expireDay(id.toString() + registrationKey, 3);
         }catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }
@@ -352,7 +406,7 @@ public class RedisServiceImpl{
      */
     public void setTemporaryMedicalRecord(Integer id, MedicalRecord record) throws Exception {
         setObject(id.toString()+medicalRecordKey, record);
-        expire(id.toString()+medicalRecordKey, 1);
+        expireDay(id.toString()+medicalRecordKey, 1);
 
     }
 
@@ -380,8 +434,8 @@ public class RedisServiceImpl{
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications, List<Prescription> prescriptions) throws Exception {
         setObjectList(id.toString()+applicationKey, applications);
         setObjectList(id.toString()+prescriptionKey, prescriptions);
-        expire(id.toString()+applicationKey, 1);
-        expire(id.toString()+prescriptionKey, 1);
+        expireDay(id.toString()+applicationKey, 1);
+        expireDay(id.toString()+prescriptionKey, 1);
     }
 
     /**

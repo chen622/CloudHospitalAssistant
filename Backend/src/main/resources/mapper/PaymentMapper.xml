@@ -23,16 +23,12 @@
 
 
 
-  <select id="selectByItemId" resultMap="BaseResultMap">
+  <select id="getByItemId" resultMap="BaseResultMap">
     select * from payment p
     where (select type from payment_type pt where pt.id = p.payment_type_id) = #{paymentTotalTypeId} and item_id = #{registrationId}
   </select>
 
-  <update id="updateInvoiceId">
-    update payment set invoice_id = #{invoiceId} where id = #{id}
-  </update>
-
-  <select id="selectAllByItemIdAndPaymentTypeId" resultMap="BaseResultMap">
+  <select id="getAllByItemIdAndPaymentTypeId" resultMap="BaseResultMap">
     select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId}
   </select>
 

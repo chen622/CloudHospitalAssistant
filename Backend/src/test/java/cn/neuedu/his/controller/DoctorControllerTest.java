@@ -90,7 +90,7 @@ public class DoctorControllerTest {
         object.put("record", record);
 
         String  requestJson=object.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryMR")
+        mockMvc.perform(MockMvcRequestBuilders.post("/medical_record/saveTemporaryMR")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
@@ -426,6 +426,46 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
+
+
+    @Test
+    public void updateMR() throws Exception, AuthenticationServiceException {
+
+        MedicalRecord medicalRecord = medicalRecordService.findById(1);
+
+        medicalRecord.setSelfDescription("啦啦啦啦");
+
+
+
+        JSONObject object=new JSONObject();
+
+        List<Integer> list=new ArrayList<>();
+        list.add(1);
+        list.add(6);
+
+        List<Integer> list2=new ArrayList<>();
+        list2.add(8);
+        list2.add(7);
+
+        object.put("record", medicalRecord);
+        object.put("firstDiagnose",list);
+        object.put("finalDiagnose",list);
+
+        String requestJson=object.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/updateMR")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+
+
 
     @Test
     public void saveHospitalMRTemplate() throws Exception, AuthenticationServiceException {

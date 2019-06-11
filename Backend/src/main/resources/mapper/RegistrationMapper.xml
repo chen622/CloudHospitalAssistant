@@ -86,7 +86,28 @@
     <select id="getRegistrationState" resultType="java.lang.Integer">
         select state
         from registration
-        where registrar_id = {id}
+        where registrar_id = #{id}
+    </select>
+
+    <resultMap id="registrationAndType" type="cn.neuedu.his.model.Registration">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="need_book" jdbcType="BIT" property="needBook"/>
+        <result column="patient_id" jdbcType="INTEGER" property="patientId"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="schedule_id" jdbcType="INTEGER" property="scheduleId"/>
+        <result column="registrar_id" jdbcType="INTEGER" property="registrarId"/>
+        <result column="age" jdbcType="INTEGER" property="age"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="sequence" jdbcType="INTEGER" property="sequence"/>
+        <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
+        <association property="registrationType" resultMap="cn.neuedu.his.mapper.RegistrationTypeMapper.BaseResultMap"/>
+    </resultMap>
+
+    <select id="getRegistrationAndType" resultMap="registrationAndType">
+        select r.*, rt.* from registration r join job_schedule j on r.schedule_id = j.id
+            join registration_type rt on j.registration_type_id = rt.id
+        where r.id = #{id}
     </select>
 
 </mapper>
