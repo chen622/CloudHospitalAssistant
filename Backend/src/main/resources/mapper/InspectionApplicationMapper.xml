@@ -48,7 +48,23 @@
       <result column="is_template" jdbcType="BIT" property="isTemplate"/>
       <result column="is_check" jdbcType="BIT" property="isCheck"/>
       <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+      <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
+      <id column="id" jdbcType="INTEGER" property="id" />
+      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="standard" jdbcType="VARCHAR" property="standard" />
+      <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
+      <result column="code" jdbcType="VARCHAR" property="code"/>
+      <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+      <association property="department" javaType="cn.neuedu.his.model.Department">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="deptname" jdbcType="VARCHAR" property="name" />
+        <result column="kind_id" jdbcType="INTEGER" property="kindId" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+      </association>
     </association>
+
+  </association>
     <association property="patient" javaType="cn.neuedu.his.model.Patient">
       <id column="id" jdbcType="INTEGER" property="id"/>
       <result column="identity_id" jdbcType="VARCHAR" property="identityId"/>
@@ -137,17 +153,19 @@
   </resultMap>
 
   <select id="selectPatientInformationByNameOrId" resultMap="getPatientInformationAndInspection">
-    SELECT *
+    SELECT *, department.name as deptname
     FROM payment JOIN inspection_application ON payment.item_id = inspection_application.id
                  JOIN patient on patient.id = payment.patient_id
                  JOIN `user` ON payment.doctor_id = `user`.id
                  Join payment_type pt on payment.payment_type_id = pt.id
+                 Join non_drug on inspection_application.non_drug_id = non_drug.id
+                 Join department on non_drug.executive_department = department.id
     WHERE payment.payment_type_id in(SELECT id FROM payment_type WHERE payment_type.type = 1 AND is_delete = 0)#结算类型属于检查或检验
       AND inspection_application.is_check = 0 #未被检查
       <if test="name != null">
         and  patient.real_name like concat('%',#{name},'%')  #根据真实姓名或者病历来模糊查找
       </if>
-      <if test="id == null">
+      <if test="id != null">
         and  patient.id like concat('%',#{id},'%')
       </if>
       <if test="auth == false">
