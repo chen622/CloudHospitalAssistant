@@ -134,7 +134,7 @@ public class ConstantVariableController {
         }
     }
 
-    @GetMapping("getType/{type}")
+    @GetMapping("/getType/{type}")
     public JSONObject getConstantByType(@PathVariable("type") Integer type){
 
         List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(type);

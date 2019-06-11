@@ -32,4 +32,9 @@ public class PrescriptionServiceImpl extends AbstractService<Prescription> imple
     public Prescription findPrescriptionAndDrug(Integer id) {
         return prescriptionMapper.getPrescriptionAndDrug(id);
     }
+
+    @Override
+    public ArrayList<Prescription> findPrescriptionAndDrugByMedical(Integer medicalId) {
+        return prescriptionMapper.getPrescriptionAndDrugByMedical(medicalId);
+    }
 }

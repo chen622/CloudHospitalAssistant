@@ -38,8 +38,8 @@ public class DrugTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 1)
-                .claim("typeId", 603)
+                .claim("id", 9)
+                .claim("typeId", 604)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
         //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -49,8 +49,27 @@ public class DrugTest {
     @Test
     public void takeDrug() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/57/1")
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/62/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void retreatDrug() throws Exception {
+        JSONObject param = new JSONObject();
+        param.put("paymentId", 53);
+        param.put("drugId", 1);
+        param.put("quantity", 1);
+
+        String requestJson = param.toJSONString();
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/retreatDrug")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

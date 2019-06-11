@@ -23,7 +23,7 @@ public class InspectionApplication implements Serializable {
     private Boolean isDone;
 
     @Column(name = "is_emerged")
-    private  Boolean isEmerged;
+    private Boolean isEmerged;
 
     @Column(name = "quantity")
     private Integer quantity;
@@ -31,18 +31,27 @@ public class InspectionApplication implements Serializable {
     @Column(name = "is_canceled")
     private Boolean isCanceled;
 
-    @Column (name = "is_template")
+    @Column(name = "is_template")
     private Boolean isTemplate;
 
     private Integer feeTypeId;
 
-    private Boolean isCheck=true;
+    private Boolean isCheck = true;
 
-    private  Payment payment;
+    private Payment payment;
+    private Department department;
     private NonDrug nonDrug;
 
     private Patient patient;
     private User user;
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 
     public Boolean getCheck() {
         return isCheck;
@@ -64,7 +73,7 @@ public class InspectionApplication implements Serializable {
         return;
     }
 
-    public InspectionApplication(Integer itemId, Integer nonDrugId, Date createTime, Boolean isDone, Boolean isEmerged, Integer quantity, Boolean isCanceled, Boolean isTemplate,Integer feeTypeId) {
+    public InspectionApplication(Integer itemId, Integer nonDrugId, Date createTime, Boolean isDone, Boolean isEmerged, Integer quantity, Boolean isCanceled, Boolean isTemplate, Integer feeTypeId) {
         this.itemId = itemId;
         this.nonDrugId = nonDrugId;
         this.createTime = createTime;
@@ -73,7 +82,7 @@ public class InspectionApplication implements Serializable {
         this.quantity = quantity;
         this.isCanceled = isCanceled;
         this.isTemplate = isTemplate;
-        this.feeTypeId=feeTypeId;
+        this.feeTypeId = feeTypeId;
     }
 
     public Boolean getDone() {

@@ -32,8 +32,8 @@ public class RedisServiceImpl {
     private String invoiceKey = "invoice-list";
     private String registrationKey = "-registration-list";
     private String medicalRecordKey = "MR";
-    private String prescriptionKey = "-prescriptions";
-    private String applicationKey = "-applications";
+    private String prescriptionKey = "prescriptions";
+    private String applicationKey = "applications";
 
     //基础方法
     private Jedis getResource() {
@@ -53,7 +53,7 @@ public class RedisServiceImpl {
             jedis.set(key, value);
         } catch (Exception e) {
             throw new Exception();
-        }finally{
+        } finally {
             returnResource(jedis);
         }
     }
@@ -75,13 +75,13 @@ public class RedisServiceImpl {
 
     public String getSet(String key, String value) throws Exception {
         String result;
-        Jedis jedis=null;
-        try{
+        Jedis jedis = null;
+        try {
             jedis = getResource();
             result = jedis.getSet(key, value);
         } catch (Exception e) {
             throw new Exception();
-        }finally{
+        } finally {
             returnResource(jedis);
         }
 
@@ -89,13 +89,13 @@ public class RedisServiceImpl {
     }
 
     public Long del(String key) throws Exception {
-        Jedis jedis=null;
-        try{
+        Jedis jedis = null;
+        try {
             jedis = getResource();
             return jedis.del(key);
         } catch (Exception e) {
             throw new Exception();
-        }finally{
+        } finally {
             returnResource(jedis);
         }
     }
@@ -195,27 +195,28 @@ public class RedisServiceImpl {
      *
      * @param key
      */
-    public void expire(String key, Integer second) throws Exception {
+    private void expire(String key, Integer second) throws Exception {
         Jedis jedis = null;
         try {
             jedis = getResource();
             jedis.expire(key, second);
         } catch (Exception e) {
             throw new Exception();
-        }finally{
+        } finally {
             returnResource(jedis);
         }
     }
 
     /**
      * 设置锁
+     *
      * @param key
      * @param value
      * @throws Exception
      */
-    public long setnx(String key, String value) throws Exception{
-        Jedis jedis=null;
-        try{
+    public long setnx(String key, String value) throws Exception {
+        Jedis jedis = null;
+        try {
             jedis = getResource();
             return jedis.setnx(key, value);
         } catch (Exception e) {
@@ -246,7 +247,8 @@ public class RedisServiceImpl {
         return resultMap;
     }
 
-    //基础方法
+    //基础方法变型
+
     /**
      * 设置redis list
      *
@@ -315,6 +317,7 @@ public class RedisServiceImpl {
 
     /**
      * 设置key的生存时间(以天数计算）
+     *
      * @param key
      */
     private void expireDay(String key, Integer day) throws Exception {
@@ -323,6 +326,7 @@ public class RedisServiceImpl {
 
 
     //实现方法
+
     /**
      * 设置发票号段
      *
@@ -447,12 +451,12 @@ public class RedisServiceImpl {
 
     public void setTemporaryInspection(Integer id, List<InspectionApplication> applications) throws Exception {
         setObjectList(id.toString() + applicationKey, applications);
-        expire(id.toString() + applicationKey, 1);
+        expireDay(id.toString() + applicationKey, 1);
     }
 
     public void setTemporaryInspectionDrug(Integer id, List<Prescription> prescriptions) throws Exception {
         setObjectList(id.toString() + prescriptionKey, prescriptions);
-        expire(id.toString() + prescriptionKey, 1);
+        expireDay(id.toString() + prescriptionKey, 1);
     }
 
     /**

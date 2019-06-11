@@ -477,7 +477,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             }
         }
 
-        //保存模板非药项目
+        //保存模板药项目
         String check = "";
         List<Prescription> prescriptionList = template.getPrescriptions();
         if (prescriptionList != null) {
@@ -486,7 +486,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if (!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug = drugService.findById(prescription.getDrugId());
-                if (drug == null || drug.getDelete() == true)
+                if (drug == null || drug.getDelete())
                     return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2 = new Prescription(prescription, drug.getFeeTypeId(), medicalRecordId, false);
                 p2.setTemplate(false);
@@ -627,9 +627,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     @Transactional
-    public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer medicalRecordId, Integer registationId, Integer doctorId) throws Exception {
+    public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer registrationId, Integer doctorId) throws Exception {
 
-        Registration registration = registrationService.findById(registationId);
+        Registration registration = registrationService.findById(registrationId);
+        MedicalRecord record = medicalRecordService.getByRegistrationId(registrationId);
+        if (record == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_805);
+        }
+        Integer medicalRecordId = record.getId();
 
         if (!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
             return CommonUtil.errorJson(ErrorEnum.E_703);

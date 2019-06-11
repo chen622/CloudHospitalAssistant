@@ -1,10 +1,11 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Table(name = "non_drug")
-public class NonDrug {
+public class NonDrug implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
