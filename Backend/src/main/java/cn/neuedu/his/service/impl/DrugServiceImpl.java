@@ -64,7 +64,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
                 update(drug);
             } finally {
                 //释放锁
-                LockUtil.unLock(drugId.toString() + drugKey);
+                //LockUtil.unLock(drugId.toString() + drugKey);
             }
         } else {
             throw new UnsupportedOperationException("locking");
