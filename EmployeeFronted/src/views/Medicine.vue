@@ -823,7 +823,6 @@ import { Promise, resolve, reject } from 'q';
                                 that.data=newData         
                                 that.$message.success("更新成功！")      
                             } else {
-                                aler(res.msg)
                                 that.$message.error(res.msg)
                             }
                         }, () => {
@@ -892,7 +891,6 @@ import { Promise, resolve, reject } from 'q';
                                     that.data=tem           
                                     that.$message.success("删除成功！")
                                 } else {
-                                    aler(res.msg)
                                     that.$message.error(res.msg)
                                 }
                             }, () => {
