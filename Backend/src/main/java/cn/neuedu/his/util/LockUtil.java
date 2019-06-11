@@ -32,6 +32,7 @@ public class LockUtil {
             if(status == 1) {
                 return true;
             }
+
             long oldExpireTime = Long.parseLong(redisService.get(key));
             if(oldExpireTime < System.currentTimeMillis()) {
                 //超时
@@ -44,7 +45,6 @@ public class LockUtil {
         }catch (Exception e) {
             throw new UnsupportedOperationException("lock");
         }
-
         return false;
     }
 

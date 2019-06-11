@@ -32,7 +32,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Autowired
     private PaymentService paymentService;
 
-    private String drugKey = "-drug";
+    private String drugKey = "-drug-lock";
 
     /**
      * 取药
@@ -56,7 +56,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
             throw new UnsupportedOperationException("paymentState");
 
         //设置锁
-        boolean lock = LockUtil.lock(drugId.toString() + drugKey, 5);
+        boolean lock = LockUtil.lock(drugId.toString() + drugKey, 5000);
         if (lock) {
             try {
                 //领取操作
@@ -64,7 +64,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
                 update(drug);
             } finally {
                 //释放锁
-                //LockUtil.unLock(drugId.toString() + drugKey);
+                LockUtil.unLock(drugId.toString() + drugKey);
             }
         } else {
             throw new UnsupportedOperationException("locking");

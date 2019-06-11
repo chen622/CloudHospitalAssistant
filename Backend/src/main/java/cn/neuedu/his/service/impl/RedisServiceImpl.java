@@ -192,7 +192,7 @@ public class RedisServiceImpl{
      * 设置key的生存时间
      * @param key
      */
-    public void expire(String key, Integer second) throws Exception {
+    private void expire(String key, Integer second) throws Exception {
         Jedis jedis=null;
         try{
             jedis = getResource();
