@@ -140,7 +140,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     }
 
     /**
-     * 查询所欲已取过药之后状态的信息（用作退药时患者查询）
+     * 查询所有已取过药之后状态的信息（用作退药时患者查询）
      * @param patientId
      * @param start
      * @param end
@@ -166,7 +166,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
             JSONObject paymentObject = new JSONObject();
             paymentObject.put("payment", originalPayment);
-            paymentObject.put("retreatQuantity", retreatQuantity);
+            paymentObject.put("retreatQuantity", retreatQuantity * (-1));
             jsonArray.add(paymentObject);
         }
 
