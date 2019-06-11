@@ -147,7 +147,7 @@
       <if test="name != null">
         and  patient.real_name like concat('%',#{name},'%')  #根据真实姓名或者病历来模糊查找
       </if>
-      <if test="id == null">
+      <if test="id != null">
         and  patient.id like concat('%',#{id},'%')
       </if>
       <if test="auth == false">
