@@ -5,14 +5,14 @@
                 <a-card hoveracble title="费用类别管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
                      
                      <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;text-align: center;width:85%">
-                            <a-col span="7" style="margin-left:20px;" >
+                            <a-col span="6" style="margin-left:20px;" >
                                 <a-input-search placeholder="请输入费用编码" @search="onSearchByCode" enterButton></a-input-search>
                             </a-col>
-                            <a-col span="7"  >
+                            <a-col span="6"  >
                                 <a-input-search placeholder="请输入费用名称" @search="onSearchByName" enterButton></a-input-search>
                             </a-col>
                             <a-col span="3" >
-                                <a-button  @click="add" style="color:#1890FF"><a-icon type="edit" />新增药品</a-button>
+                                <a-button  @click="add" style="color:#1890FF"><a-icon type="edit" />新增类型</a-button>
                             </a-col>
                           
                             <a-col span="3"  >
@@ -22,11 +22,14 @@
                               <a-col span="3" >
                                 <a-button  @click="importI" type="primary"><a-icon type="plus-circle"/>导入数据</a-button>
                             </a-col>
+                            <a-col :span="2">
+                                <a-button @click="getPaymentList" type="primary" shape="circle" icon="reload"
+                                                style=";margin-top:5px" size="small"></a-button>
+                            </a-col>
                         </a-row>
 
                      
-
-                    <a-table :columns="columns" style="width:85%" :dataSource="paymentTypeList" bordered :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                    <a-table :columns="columns" style="width:85%;text-align: center" :dataSource="paymentTypeList" bordered :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
       
                         <template slot="type" slot-scope="text,record">
                             <a-select
@@ -51,8 +54,8 @@
                                 <a-select-option key="1">是</a-select-option>
                             </a-select>
                             <template v-else>
-                                <a-tag color="red" v-if="text">已删</a-tag>
-                                 <a-tag color="blue" v-else>未删</a-tag>
+                                <a-tag color="red" style="font-size:13px" v-if="text">已删</a-tag>
+                                 <a-tag color="blue" style="font-size:13px" v-else>未删</a-tag>
                             </template>
                         </template>
 
@@ -61,7 +64,7 @@
                             <a-input
                                 v-if="record.editable"
                                 style="margin: -5px 0"
-                                :value="text"
+                                :defaultValue="text"
                                 @change="e => handleChange(e.target.value, record.key, col)"
                                 />
                                 <template v-else>{{text}}</template>
@@ -72,10 +75,10 @@
                         <template slot="action" slot-scope="text, record">
                             <div class='editable-row-operations'>
                                 <span v-if="record.editable">
-                                <a @click="() => saveRow(record.id)">保存</a>
+                                <a @click="() => saveRow(record)">保存</a>
                                 <a-divider type="vertical" />
-                                <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record.id)">
-                                <a style="color:red"  @click="() => cancel(record.id)">取消</a>
+                                <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record)">
+                                <a style="color:red"  @click="() => cancel(record)">取消</a>
                                 </a-popconfirm>
                                 </span>
                                 <span v-else>
@@ -151,19 +154,25 @@ import { Promise, resolve, reject } from 'q';
                 typeList:[],
                 idKeyMap:{},
                 nameKeyMap:{},
-                modalVisible:false,
             }
         },created(){
             this.getPaymentList()
         },methods:{
             getPaymentList(){
-                 let that=this
+                this.paymentTypeList=[]
+                this.typeList=[]
+                this.nameKeyMap=new Map()
+                this.idKeyMap=new Map()
+                this.selectedRowKeys=[]
+                this.paymentTypeTemp=[{id:-1,code:'0',name:'default',type:'default',isDelete:false}]
+                let that=this
                 this.$api.get("/payment_type/getAll", null,
                     res => {
                         if (res.code === "100") {
                             var list=res.data
                             var t=list.filter(item => 0 === item.type)
                             var map=new Map()
+                            var m=new Map()
                             for(var i=0;i<t.length;i++){
                                 that.typeList.push({
                                     key:t[i].id,
@@ -174,8 +183,13 @@ import { Promise, resolve, reject } from 'q';
                                     type:'大类'
                                 })
                                 map.set(t[i].id,t[i].name)
+                                m.set(t[i].name,t[i].id)
                                 that.paymentTypeList.push(that.typeList[i])
                             }
+                            that.idKeyMap=map
+                            that.idKeyMap.set(0,'大类')
+                            that.nameKeyMap=m
+                            that.nameKeyMap.set('大类',0)
                             that.typeList.push({id:0,name:'大类'})
                             var p=res.data.filter(item => 0 != item.type)
                             for(var i=0;i<p.length;i++){
@@ -190,7 +204,7 @@ import { Promise, resolve, reject } from 'q';
                                     })
                                 }
                             }
-                         that.originalList=that.pa
+                         that.originalList=that.paymentTypeList
                         } else {
                                console.log(res.msg)
                             that.$message.error(res.msg)
@@ -212,9 +226,13 @@ import { Promise, resolve, reject } from 'q';
                     this.paymentTypeList=this.originalList
                 }
             },add(e){
-
+                var a={id:null,code:'无',name:'无',type:'大类',isDelete:false,editable:true,isAdd:true}
+                this.paymentTypeTemp=a
+                this.paymentTypeList.unshift(a)
             },deleteAll(){
-
+                for(var i=0;i<this.selectedRowKeys.length;i++){
+                    this.deleteRow(this.selectedRowKeys[i])
+                }
             },importI(){
 
             },typeChange(e){
@@ -224,46 +242,79 @@ import { Promise, resolve, reject } from 'q';
                 this.paymentTypeTemp.isDelete=e
                 console.log(e)
             },handleChange(value,record,name){
-                var newData=[...this.originalList]
+                var newData=[...this.paymentTypeList]
                 if(name == "name"){
                     var temp=newData.filter(item =>  value === item.name)
-                    if(temp.length>0){
+                    if(temp.length>1){
                         alert('名称重复')
                         return
                     }
                     this.paymentTypeTemp.name=value
                 }else{
                      var temp=newData.filter(item =>  value === item.code)
-                    if(temp.length>0){
+                    if(temp.length>1){
                         alert('编码重复')
                         return
                     }
                     this.paymentTypeTemp.code=value
-                }
-
-                
-            },saveRow(value){
-                let that=this
-                
-                var p=new Promise((resolve,reject) => {
-                    this.$api.post("/payment_type/insertPaymentType", that.paymentTypeTemp,
+                }      
+            },saveRow(record){  
+                let that=this  
+                if(record.isAdd){
+                    record=this.paymentTypeTemp
+                    var t=this.nameKeyMap.get(record.type)
+                    if(t!=null && t>=0 && t< 100){
+                        record.type=t
+                    }
+                    record.delete=record.isDelete
+                    console.log(record)                
+                    this.$api.post("/payment_type/insertPaymentType", record,
                         res => {
-                            if (res.code === "100") {                             
+                            if (res.code === "100") {
+                                                            
                                 alert('更新成功')
+                                that.getPaymentList()
                             } else {
                                 alert('更新失败')
-                                console.log(res.msg)
                                 that.$message.error(res.msg)
                             }
                         }, res => {
                             that.$message.error(res)
                     })
-                  })
-                  .then(r=>{
-                      that.getPaymentList();
-                  })
-            },cancel(value){
-
+                  return
+                }
+                if(value != this.paymentTypeTemp.id)
+                    return
+                var p=this.paymentTypeTemp
+                var t=this.nameKeyMap.get(p.type)
+                if(t!=null && t>=0 && t< 100){
+                    p.type=t
+                }
+                p.delete=p.isDelete
+                this.$api.post("/payment_type/updatePaymentType", p,
+                    res => {
+                        if (res.code === "100") {
+                            resolve('')                             
+                            alert('更新成功')
+                        } else {
+                            alert('更新失败')
+                            that.$message.error(res.msg)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                })
+            },cancel(record){
+                if(record.isAdd){
+                    this.paymentTypeList.shift()
+                    return
+                }
+                var id=record.id
+                const newData = [...this.paymentTypeList]
+                const target = newData.filter(item => id === item.id)[0]
+                if (target) {
+                    delete target.editable
+                    this.paymentTypeList = newData
+                }
             },edit(value){
                 const newData = [...this.paymentTypeList]
                 const target = newData.filter(item => value.id === item.id)[0]
@@ -274,14 +325,30 @@ import { Promise, resolve, reject } from 'q';
                     this.paymentTypeList=newData
                 } 
             },deleteRow(value){
-
+                var p=new Promise((resolve,reject) => {
+                    this.$api.post("/payment_type/deletePaymentType/"+value, null,
+                        res => {
+                            if (res.code === "100") {                             
+                                alert('更新成功')
+                                resolve('')
+                            } else {
+                                alert('更新失败')
+                                that.$message.error(res.msg)
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                    })
+                  })
+                  .then(r=>{
+                      that.getPaymentList();
+                  })
             },ok(){
                 
             },cancle(){
                 this.modalVisible=false
             },onSelectChange(rowKeys){
-                constants.log(this.rowKeys)
                 this.selectedRowKeys=rowKeys
+                console.log(this.selectedRowKeys)
             }
         }
 
