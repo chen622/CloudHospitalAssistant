@@ -175,6 +175,9 @@
                                             </div>
                                         </template>
 
+                                        <template slot="create_time" slot-scope="text">
+                                            <span>{{text| formatDate}}</span>
+                                        </template>
                            
                                     </a-table>   
 
@@ -193,6 +196,10 @@
                                             <div class='editable-row-operations'>                             
                                                  <a @click="() => returnDrug(record)" style="color:red">退药</a>                                             
                                             </div>
+                                        </template>
+
+                                        <template slot="create_time" slot-scope="text">
+                                            <span>{{text| formatDate}}</span>
                                         </template>
 
                            
@@ -480,6 +487,12 @@ import { Promise, resolve, reject } from 'q';
                         width: '200px',
                         scopedSlots:{customRender:'name'}
                     },{
+                        title:'状态',
+                        dataIndex: 'state',
+                        key:'state',
+                        width: '100px',
+                        scopedSlots:{customRender:'state'}
+                    },{
                         title:'药品数量',
                         dataIndex: 'quantity',
                         key:'quantity',
@@ -503,12 +516,6 @@ import { Promise, resolve, reject } from 'q';
                         key:'totalPrice',
                         width: '150px',
                         scopedSlots:{customRender:'totalPrice'}
-                    },{
-                        title:'状态',
-                        dataIndex: 'state',
-                        key:'state',
-                        width: '100px',
-                        scopedSlots:{customRender:'state'}
                     },{
                         title:'支付时间',
                         dataIndex: 'create_time',
@@ -606,9 +613,7 @@ import { Promise, resolve, reject } from 'q';
                 patients:[],
             }
         },
-        components: {
-
-        },
+        
         computed:{
             formItemLayout () {
                 const { formLayout } = this;
@@ -625,6 +630,22 @@ import { Promise, resolve, reject } from 'q';
             },
         },created() {
             this.getData(); 
+        },filters: {
+            formatDate: function (value) {
+                let date = new Date(value);
+                let y = date.getFullYear();
+                let MM = date.getMonth() + 1;
+                MM = MM < 10 ? ('0' + MM) : MM;
+                let d = date.getDate();
+                d = d < 10 ? ('0' + d) : d;
+                let h = date.getHours();
+                h = h < 10 ? ('0' + h) : h;
+                let m = date.getMinutes();
+                m = m < 10 ? ('0' + m) : m;
+                let s = date.getSeconds();
+                s = s < 10 ? ('0' + s) : s;
+                return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
+            }
         },methods: {
             async  getData(){
                 
@@ -642,8 +663,7 @@ import { Promise, resolve, reject } from 'q';
                 await this.getDrugType()
 
                 
-            },
-             getForm () {
+            },getForm () {
                 let that=this
                var p=new Promise((resolve,reject) => {
                    this.$api.get("/constant_variable/getForm", null,
@@ -740,8 +760,7 @@ import { Promise, resolve, reject } from 'q';
                 this.modelVisiable=true
                 this.drugTemp.isCancel=false
                 this.drugTemp.add=true
-            },
-            insert(value){
+            },insert(value){
                
             },deleteAll(){
                 if(this.rowKeys.length>0){
@@ -752,16 +771,14 @@ import { Promise, resolve, reject } from 'q';
                 this.rowKeys=[]
             },onSelectChange(rowKeys){
                 this.rowKeys=rowKeys
-            },
-            handleChange (value, key, column) {
+            },handleChange (value, key, column) {
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target[column] = value
                     this.data = newData
                 }
-            },
-            saveRow () {
+            },saveRow () {
                 let target=this.drugTemp
                 let that=this
                 const newData = [...this.data]
@@ -784,8 +801,7 @@ import { Promise, resolve, reject } from 'q';
                     }    
                 }
 
-            },
-            cancel (key) {
+            },cancel (key) {
                this.drugTemp.isCancel=true
                this.modelVisiable=false
                let that=this
@@ -802,8 +818,7 @@ import { Promise, resolve, reject } from 'q';
                         }             
                     
                 }
-            },
-            edit (key) {
+            },edit (key) {
                 const newData = [...this.data]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
@@ -935,7 +950,6 @@ import { Promise, resolve, reject } from 'q';
                 var notTake=[]
                 
                 Object.assign(notTake,item.notTake)
-                // console.log(item.notTake)
                 for(var i=0;i<item.notTake.length;i++){ 
                     var prescription=item.notTake[i].prescription
                     this.paymentData.push({
@@ -949,7 +963,7 @@ import { Promise, resolve, reject } from 'q';
                         unit_price:item.notTake[i].unitPrice,                
                         totalPrice:(item.notTake[i].unitPrice * prescription.amount),
                         state:'未取药',
-                        create_time:item.notTake[i].createTime,
+                        create_time: item.notTake[i].createTime ,
                         isFrozen:item.notTake[i].isFrozen,
                         drugId:prescription.drugId,
                     })
@@ -1025,7 +1039,6 @@ import { Promise, resolve, reject } from 'q';
                 }
                 
             })
-
             },async getPatient(value){
                 let that=this
                 this.paymentData=[]
@@ -1042,8 +1055,8 @@ import { Promise, resolve, reject } from 'q';
                     paymentId:record.id,
                     drugId:record.drugId
                     }
-                console.log(record.id)
-                console.log(record.drugId)
+                // console.log(record.id)
+                // console.log(record.drugId)
                 let that=this
                 this.$api.post("/drug/takeDrug/"+record.id+'/'+record.drugId,null,
                     res => {
@@ -1160,8 +1173,6 @@ import { Promise, resolve, reject } from 'q';
                     style.borderRadius = '50%'
                 }
                 return style
-            },formatDate(value){
-                
             }
            
         }
