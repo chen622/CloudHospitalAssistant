@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.*;
+import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.InspectionApplicationService;
 import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
@@ -9,6 +10,7 @@ import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,8 @@ public class InspectionApplicationController {
     RedisServiceImpl redisService;
     @Autowired
     UserService userService;
+    @Autowired
+    DoctorService doctorService;
 
     /**
      * 暂存检查/处置
@@ -51,7 +55,7 @@ public class InspectionApplicationController {
     @PostMapping("/saveTemporaryInspectionDrug")
     public JSONObject saveTemporaryInspectionDrug(@RequestBody JSONObject object) {
         Integer id = Integer.parseInt(object.get("registrationId").toString());
-        List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
+        List<Prescription> prescriptions = JSONObject.parseArray(object.getString("prescriptions"), Prescription.class);
         try {
             redisService.setTemporaryInspectionDrug(id, prescriptions);
         } catch (Exception e) {
@@ -132,6 +136,32 @@ public class InspectionApplicationController {
         List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
 
         return CommonUtil.successJson(payments);
+    }
+
+    /**
+     * 保存医生申请的非药项目
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/saveInspection")
+    public JSONObject saveInspection(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+        try {
+            //是否为确诊的
+            Boolean isDisposal = (Boolean) object.get("isDisposal");
+            return doctorService.saveInspection(object, isDisposal, doctorId);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
     }
 
 

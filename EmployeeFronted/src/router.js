@@ -80,6 +80,11 @@ export default new Router({
             path:'/search',
             name:'search',
             component:()=> import('./views/patient/Search')
+        },
+        {
+            path:'/finance/manage',
+            name:'manage',
+            component:()=> import('./views/admin/DailySettle')
         }
     ]
 })

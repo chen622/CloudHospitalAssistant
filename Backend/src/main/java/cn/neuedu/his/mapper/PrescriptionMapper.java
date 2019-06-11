@@ -12,4 +12,5 @@ public interface PrescriptionMapper extends MyMapper<Prescription> {
     void deleteByTemplateId(Integer templateId);
     ArrayList<Prescription> getByMedicalRecordId(Integer id);
     Prescription getPrescriptionAndDrug(Integer id);
+    ArrayList<Prescription> getPrescriptionAndDrugByMedical(Integer medicalId);
 }

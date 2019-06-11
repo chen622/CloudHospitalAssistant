@@ -53,4 +53,26 @@
     select *
     from prescription
   </select>
+
+  <resultMap id="prescriptionAndDrugByMedical" type="cn.neuedu.his.model.Prescription">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="usage_id" jdbcType="INTEGER" property="usageId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="frequency" jdbcType="VARCHAR" property="frequency" />
+    <result column="drug_id" jdbcType="INTEGER" property="drugId" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="days" jdbcType="INTEGER" property="days" />
+    <result column="use_amount" jdbcType="VARCHAR" property="useAmount" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="need_skin_test" jdbcType="BIT" property="needSkinTest" />
+    <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
+    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+    <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
+  </resultMap>
+
+  <select id="getPrescriptionAndDrugByMedical" resultMap="prescriptionAndDrugByMedical">
+    select p.*, d.* from prescription p join drug d on p.drug_id = d.id where p.item_id = #{medicalId} and is_template = false
+  </select>
 </mapper>

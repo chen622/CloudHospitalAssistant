@@ -45,4 +45,9 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     public InspectionApplication findInspectionAndNonDrug(Integer id) {
         return inspectionApplicationMapper.getInspectionAndNonDrug(id);
     }
+
+    @Override
+    public ArrayList<InspectionApplication> findAllByMedical(Integer medicalId) {
+        return inspectionApplicationMapper.getAllByMedical(medicalId);
+    }
 }

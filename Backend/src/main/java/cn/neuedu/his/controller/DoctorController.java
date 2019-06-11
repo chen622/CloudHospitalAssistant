@@ -1,9 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.*;
-import cn.neuedu.his.service.DoctorService;
-import cn.neuedu.his.service.MedicalRecordService;
-import cn.neuedu.his.service.RegistrationService;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -40,6 +38,25 @@ public class DoctorController {
 
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    private PrescriptionService prescriptionService;
+    @Autowired
+    private InspectionApplicationService inspectionApplicationService;
+
+    @GetMapping("/getAll/{medicalId}")
+    public JSONObject getAllByMedical(@PathVariable("medicalId") Integer medicalId, Authentication authentication) {
+        try {
+            PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        JSONObject result = new JSONObject();
+        result.put("prescription", prescriptionService.findPrescriptionAndDrugByMedical(medicalId));
+        result.put("inspection", inspectionApplicationService.findAllByMedical(medicalId));
+
+        return CommonUtil.successJson(result);
+    }
 
 
     /**
@@ -513,61 +530,6 @@ public class DoctorController {
         }
     }
 
-
-    /**
-     * 保存医生申请的非药项目
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/saveInspection")
-    public JSONObject saveInspection(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        try {
-            //是否为确诊的
-            Boolean isDisposal = (Boolean) object.get("isDisposal");
-            return doctorService.saveInspection(object, isDisposal, doctorId);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
-
-
-    /**
-     * 保存检查模板
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/saveInspectionTem")
-    public JSONObject saveInspectionTem(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
-        JSONObject k = checkTemplate("inspection", doctorId, template.getName(), template.getLevel());
-        if (k != null)
-            return k;
-        try {
-            return doctorService.saveInspectionAsTemplate(template, doctorId);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
 
     /**
      * 更新检查模板
