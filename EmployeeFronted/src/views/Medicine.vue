@@ -163,7 +163,7 @@
                                     
                                     <a-divider style="margin-top:20px;font-size:20px;">取药信息</a-divider>
                                     
-                                    <a-table :columns="paymentColumns" :dataSource="paymentData"     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                                    <a-table :columns="paymentColumns" :dataSource="paymentData" :scroll="{ x: 1200 }"    :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
                                         
                                         <template slot="state" slot-scope="text">                                            
                                             <a-tag color="orange" style="font-size:15px" v-if="text=='未取药'">{{text}}</a-tag>
@@ -171,7 +171,7 @@
 
                                         <template slot="actionc" slot-scope="text, record">
                                             <div class='editable-row-operations'>
-                                                <a @click="() => sendDrug(record.id)">发药</a>                                  
+                                                <a @click="() => sendDrug(record)">发药</a>                                  
                                             </div>
                                         </template>
 
@@ -180,7 +180,7 @@
 
                                      <a-divider style="margin-top:20px;font-size:20px;">退药信息</a-divider>
                                     
-                                    <a-table :columns="paymentColumns" :dataSource="returnData"     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
+                                    <a-table :columns="paymentColumns" :dataSource="returnData"  :scroll="{ x: 1200 }"   :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
                                         
                                         <template slot="state" slot-scope="text">
                                             
@@ -431,6 +431,7 @@ import { Promise, resolve, reject } from 'q';
         data() {
           
         return {
+            value:[],
             restId:0,
             restDrug:0,
             time:null,
@@ -923,36 +924,39 @@ import { Promise, resolve, reject } from 'q';
                 return;
                 }
                 callback('内容应大于0!');
-            },selectPatient(item){
+            },selectPatient(item){ 
+                var p=new Promise((resolve,reject) => {
+                  
+                Object.assign(this.patient,item) 
                    
-                Object.assign(this.patient,item)        
                 this.paymentData=[]
+    
                 this.form2.setFieldsValue()
-                var notTake=item.notTake
-                this.paymentData=[]
-                for(var i=0;i<notTake.length;i++){ 
-                    var prescription=notTake[i].prescription
+                var notTake=[]
+                
+                Object.assign(notTake,item.notTake)
+                // console.log(item.notTake)
+                for(var i=0;i<item.notTake.length;i++){ 
+                    var prescription=item.notTake[i].prescription
                     this.paymentData.push({
-                        key:notTake[i].id,
-                         id:notTake[i].id,
-                        itemId:notTake[i].itemId,
+                        key:item.notTake[i].id,
+                         id:item.notTake[i].id,
+                        itemId:item.notTake[i].itemId,
                         code:prescription.drug.code,       
                         name:prescription.drug.name,                  
                         quantity:prescription.amount,                 
                         return:0,                  
-                        unit_price:notTake[i].unitPrice,                
-                        totalPrice:(notTake[i].unitPrice * prescription.amount),
+                        unit_price:item.notTake[i].unitPrice,                
+                        totalPrice:(item.notTake[i].unitPrice * prescription.amount),
                         state:'未取药',
-                        create_time:notTake[i].create_time,
-                        isFrozen:notTake[i].isFrozen,
+                        create_time:item.notTake[i].createTime,
+                        isFrozen:item.notTake[i].isFrozen,
                         drugId:prescription.drugId,
                     })
                 }
 
                 this.returnData=[]
-
                 var taken=item.takenNotRetreat
-
                 for(var i=0;i<taken.length;i++){ 
                     var prescription=taken[i].prescription
                     this.returnData.push({
@@ -966,7 +970,7 @@ import { Promise, resolve, reject } from 'q';
                         unit_price:taken[i].unitPrice,                
                         totalPrice:(taken[i].unitPrice * prescription.amount),
                         state:'已取药',
-                        create_time:taken[i].create_time,
+                        create_time:taken[i].createTime,
                         return:0,
                         drugId:prescription.drugId,
                         isFrozen:taken[i].isFrozen,
@@ -974,7 +978,7 @@ import { Promise, resolve, reject } from 'q';
                 }
 
                 taken=item.happenRetreat
-     
+
                 for(var i=0;i<taken.length;i++){
                     var prescription=taken[i].payment.prescription
                     this.returnData.push({
@@ -988,7 +992,7 @@ import { Promise, resolve, reject } from 'q';
                         unit_price:taken[i].payment.unitPrice,                
                         totalPrice:(taken[i].payment.unitPrice * prescription.amount),
                         state:'曾退药',
-                        create_time:taken[i].payment.create_time,
+                        create_time:taken[i].payment.createTime,
                         isFrozen:taken[i].payment.isFrozen,
                         return:taken[i].retreatQuantity,
                         drugId:prescription.drugId,
@@ -997,10 +1001,9 @@ import { Promise, resolve, reject } from 'q';
 
                 }
 
-
-               
                 
                 taken=item.AllReturn
+
                 for(var i=0;i<taken.length;i++){ 
                     var prescription=taken[i].prescription
                     this.returnData.push({
@@ -1014,17 +1017,44 @@ import { Promise, resolve, reject } from 'q';
                         unit_price:taken[i].unitPrice,                
                         totalPrice:(taken[i].unitPrice * prescription.amount),
                         state:'药全退',
-                        create_time:taken[i].create_time,
+                        create_time:taken[i].createTime,
                         return:prescription.amount,
                         drugId:prescription.drugId,
                         isFrozen:taken[i].isFrozen,
                     })
                 }
                 
+            })
 
-            }, getPatient(value){
-
-            },sendDrug(id){
+            },async getPatient(value){
+                let that=this
+                this.paymentData=[]
+                this.returnData=[]
+                that.time=that.value                
+                await that.onSearchByPid(this.patient.id)
+                var item=that.patients.filter(item => this.patient.id === item.id )[0]
+                await that.selectPatient(item)
+                if(value==1){
+                    alert('发药成功')
+                }
+            },async sendDrug(record){
+                var a={
+                    paymentId:record.id,
+                    drugId:record.drugId
+                    }
+                console.log(record.id)
+                console.log(record.drugId)
+                let that=this
+                this.$api.post("/drug/takeDrug/"+record.id+'/'+record.drugId,null,
+                    res => {
+                        if (res.code === "100") {
+                            this.getPatient(1)
+                        }else{
+                            that.$message.error(res)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                })
             },returnDrug(payemny){
                 if(!payemny.isFrozen && payemny.state.indexOf('药全退')<0){
                     this.visible=true
@@ -1067,24 +1097,33 @@ import { Promise, resolve, reject } from 'q';
                 }
             },            
             onSearchByPid(value){
+                var p=new Promise((resolve,reject) => {
                 let that=this
-               var start,end
-                if(this.time==null || this.time.length==0){
+                var start,end
+                that.value=[]
 
-                    start=moment().format('YYYY-MM-DD')
-                    end=moment().utc().format('YYYY-MM-DD')
-                }else{
-                    start=this.time[0].utc().format('YYYY-MM-DD'),
-                    end=this.time[1].utc().format('YYYY-MM-DD')
-                }
+                    if(this.time==null || this.time.length==0){
+                        start=moment().format('YYYY-MM-DD')
+                        end=moment().utc().format('YYYY-MM-DD')
+                        that.value.push(moment())
+                        that.value.push(moment())
+                    }else{
+                        that.value.push(that.time[0])
+                        that.value.push(that.time[1])
+                        start=this.time[0].utc().format('YYYY-MM-DD'),
+                        end=this.time[1].utc().format('YYYY-MM-DD')
+                    }
 
-               
-                var m={
-                   start:start,
-                   end:end,
-                   patientId:value
-                }
+                    var m={
+                    start:start,
+                    end:end,
+                    patientId:value
+                    }
 
+                    that.getOnePatient(m)
+                })
+            },getOnePatient(m){
+                let that=this
                 this.$api.post("/patient/getDrug", m,
                             res => {
                                 if (res.code === "100") {
@@ -1118,7 +1157,9 @@ import { Promise, resolve, reject } from 'q';
                     style.borderRadius = '50%'
                 }
                 return style
-            },
+            },formatDate(value){
+                
+            }
            
         }
     }
