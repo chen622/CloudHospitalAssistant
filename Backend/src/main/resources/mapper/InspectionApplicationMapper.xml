@@ -209,11 +209,21 @@
     <result column="is_check" jdbcType="BIT" property="isCheck"/>
     <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
     <association property="department" resultMap="cn.neuedu.his.mapper.DepartmentMapper.BaseResultMap"/>
-    <association property="nonDrug" resultMap="cn.neuedu.his.mapper.NonDrugMapper.BaseResultMap"/>
+    <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
+      <id column="nonDrug_id" jdbcType="INTEGER" property="id" />
+      <result column="nonDrug_name" jdbcType="VARCHAR" property="name" />
+      <result column="price" jdbcType="DECIMAL" property="price" />
+      <result column="standard" jdbcType="VARCHAR" property="standard" />
+      <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
+      <result column="code" jdbcType="VARCHAR" property="code"/>
+      <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+      <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </association>
   </resultMap>
 
   <select id="getAllByMedical" resultMap="inspectionByMedical">
-    select i.*, d.*, nd.* from inspection_application i join non_drug nd on i.non_drug_id = nd.id
+    select i.*, d.*, nd.*,nd.name as nonDrug_name, nd.id as nonDrug_id
+    from inspection_application i join non_drug nd on i.non_drug_id = nd.id
         join department d on nd.executive_department = d.id
     where i.item_id = #{medicalId} and is_template = false
   </select>
