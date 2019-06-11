@@ -823,6 +823,7 @@ import { Promise, resolve, reject } from 'q';
                                 that.data=newData         
                                 that.$message.success("更新成功！")      
                             } else {
+                                aler(res.msg)
                                 that.$message.error(res.msg)
                             }
                         }, () => {
@@ -891,6 +892,7 @@ import { Promise, resolve, reject } from 'q';
                                     that.data=tem           
                                     that.$message.success("删除成功！")
                                 } else {
+                                    aler(res.msg)
                                     that.$message.error(res.msg)
                                 }
                             }, () => {
@@ -1234,9 +1236,8 @@ import { Promise, resolve, reject } from 'q';
                         this.$api.post("/drug/retreatDrug", m,
                                 res => {
                                     if (res.code === "100") {                    
-                                        alert('退药成功')
                                     }else{
-                                        alert(res.code)
+                                        alert(res.msg)
                                         that.$message.error(res)
                                     }
                                 }, res => {
