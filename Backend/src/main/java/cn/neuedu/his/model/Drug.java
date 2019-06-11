@@ -68,7 +68,6 @@ public class Drug {
         isDelete = delete;
     }
 
-
     public Integer getFeeTypeId() {
         return feeTypeId;
     }
