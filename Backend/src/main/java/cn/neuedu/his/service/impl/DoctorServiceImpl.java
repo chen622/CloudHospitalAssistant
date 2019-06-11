@@ -477,7 +477,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             }
         }
 
-        //保存模板非药项目
+        //保存模板药项目
         String check = "";
         List<Prescription> prescriptionList = template.getPrescriptions();
         if (prescriptionList != null) {
@@ -486,7 +486,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if (!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug = drugService.findById(prescription.getDrugId());
-                if (drug == null || drug.getDelete() == true)
+                if (drug == null || drug.getDelete())
                     return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2 = new Prescription(prescription, drug.getFeeTypeId(), medicalRecordId, false);
                 p2.setTemplate(false);

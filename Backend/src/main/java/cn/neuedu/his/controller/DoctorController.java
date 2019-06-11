@@ -518,60 +518,7 @@ public class DoctorController {
     }
 
 
-    /**
-     * 保存医生申请的非药项目
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/saveInspection")
-    public JSONObject saveInspection(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        try {
-            //是否为确诊的
-            Boolean isDisposal = (Boolean) object.get("isDisposal");
-            return doctorService.saveInspection(object, isDisposal, doctorId);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
 
-
-    /**
-     * 保存检查模板
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/saveInspectionTem")
-    public JSONObject saveInspectionTem(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
-        JSONObject k = checkTemplate("inspection", doctorId, template.getName(), template.getLevel());
-        if (k != null)
-            return k;
-        try {
-            return doctorService.saveInspectionAsTemplate(template, doctorId);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        }
-    }
 
     /**
      * 更新检查模板

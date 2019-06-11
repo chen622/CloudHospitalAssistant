@@ -59,6 +59,7 @@ public class Prescription implements Serializable {
     private Integer feeTypeId;
 
     private Drug drug;
+
     private Payment payment;
 
     public Prescription() {
