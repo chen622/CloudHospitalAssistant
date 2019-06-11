@@ -7,7 +7,7 @@
                     <a-col>
                         <a-form layout="inline">
                             <a-form-item label="病历号">
-                                <a-input-search placeholder="病历号" @search="onSearch" enterButton v-decorator="['病历号',{rules:[{required: true, message: '请输入病历号'}]}]"></a-input-search>
+                                <a-input-search placeholder="病历号" @search="onSearch" enterButton v-model="id"></a-input-search>
                             </a-form-item>
                         </a-form>
                     </a-col>
@@ -20,7 +20,7 @@
                     <a-form-item label="身份证号">
                         <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
-                    <a-form-item label="家庭住址" :label-col="{span:8}":wrapper-col="{span:15}">
+                    <a-form-item label="家庭住址">
                         <a-textarea v-model="address" placeholder="家庭住址" autosize style="width: 300px">{{address}}</a-textarea>
                     </a-form-item>
                 </a-form>
@@ -30,13 +30,8 @@
                         <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
                         <span slot="customTitle">姓名</span>
                     </a-table>
-                    <a-button type="primary"  @click="showmodal">收费结算</a-button>
+                    <a-button type="primary">收费结算</a-button>
                 </template>
-                <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="确认" cancelText="取消">
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                <p>Some contents...</p>
-                </a-modal>
             </a-card>
         </a-col>
     </a-row>
@@ -50,10 +45,10 @@
         data () {
             return {
                 form:this.$form.createForm(this),
+                id:'',
                 username:'',
                 userid:'',
                 address:'',
-                visible: false,
                 columns : [{
                     title:'病历号',
                     dataIndex:'id',
@@ -135,17 +130,11 @@
         },
         methods: {
             onSelectChange(selectedRowKeys){
-                console.log('selectedRowKeys changed: ',selectedRowKeys);
                 this.selectedRowKeys = selectedRowKeys
             },
             onSearch(value){
+                alert(value)
 
-            },
-            showmodal(){
-                this.visible = true
-            },
-            handleok(event){
-                this.visible = false
             },
 
         },

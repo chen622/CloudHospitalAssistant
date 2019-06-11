@@ -1,7 +1,7 @@
 <template>
     <a-row type="flex" align="middle" justify="center" class="info-search">
         <a-col span="20">
-            <a-card hoverable title="查询" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
+            <a-card hoverable title="退号" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
                 <p style="font-size: 20px">病历信息查询:</p>
                 <a-row type="flex" align="top" justify="start" style="margin: 5px 0 10px 0;">
                     <a-col>
@@ -15,13 +15,13 @@
                 <p style="font-size: 20px">患者信息确认：</p>
                 <a-form :form="form" layout="inline">
                     <a-form-item label="姓名">
-                        <a-input v-decorator="['username',{rules:[{required:false,message:''}]}]" placeholder="姓名"></a-input>
+                        <a-input v-model="username" placeholder="姓名">{{username}}</a-input>
                     </a-form-item>
                     <a-form-item label="身份证号">
-                        <a-input v-decorator="['username',{rules:[{required:false,message:''}]}]" placeholder="身份证号"></a-input>
+                        <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
-                    <a-form-item label="家庭住址" :label-col="{span:8}":wrapper-col="{span:15}">
-                        <a-textarea v-decorator="['家庭住址',{rules:[{required:false,message:''}]}]" placeholder="家庭住址" autosize style="width: 300px"/>
+                    <a-form-item label="家庭住址">
+                        <a-textarea v-model="address" placeholder="家庭住址" autosize style="width: 300px">{{address}}</a-textarea>
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">患者挂号信息：</p>
@@ -31,7 +31,7 @@
                     <span slot="action" slot-scope="text, record">
                 <a href="javascript:;">退号</a>
                 <a-divider type="vertical" />
-                <a href="javascript:;">删除</a>
+                <a-popconfirm v-if="data.length" title="Sure to delete?" @confirm="() => onDelete(record.key)"><a href="javascript:;">删除</a></a-popconfirm>
               </span>
                 </a-table>
             </a-card>
@@ -47,6 +47,9 @@
         data () {
             return {
                 form:this.$form.createForm(this),
+                username:'',
+                userid:'',
+                address:'',
                 columns : [{
                     title:'病历号',
                     dataIndex:'id',
@@ -109,19 +112,23 @@
             getInfo(){
                 let that = this
                 this.$api.get("",null,
-                res=>{
-                    if (res.code === ""){
-                        that.data = res.data
+                    res=>{
+                        if (res.code === ""){
+                            that.data = res.data
 
-                    }
-                    else {
-                        that.$message.error(res)
-                    }
-                })
+                        }
+                        else {
+                            that.$message.error(res)
+                        }
+                    })
 
             },
             onSearch(value){
                 alert(value)
+            },
+            onDelete (key) {
+                const data = [...this.data]
+                this.data = data.filter(item => item.key !== key)
             },
 
         },
@@ -129,8 +136,8 @@
 </script>
 
 <style>
-.info-search{
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
+    .info-search{
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
 </style>
