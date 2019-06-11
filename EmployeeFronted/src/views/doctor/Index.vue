@@ -233,6 +233,12 @@
             },
             createMedicalRecord (data) {
                 let that = this
+
+                if (this.patientType === 0) {
+                } else {
+
+                }
+
                 this.$api.post("/medical_record/firstDiagnose", data,
                     res => {
                         if (res.code === "100") {

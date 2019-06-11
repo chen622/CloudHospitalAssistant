@@ -8,7 +8,10 @@
                 <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="inspections" rowKey="id">
+        <a-table :dataSource="inspections" rowKey="id" :columns="inspectionsColumns" :pagination="false">
+            <template slot="temp" slot-scope="text,record">
+                {{record.temp?'暂存':'开立'}}
+            </template>
             <template slot="action" slot-scope="text,record,index">
                 <a-popconfirm
                         v-if="inspections.length"
@@ -23,7 +26,7 @@
             <template slot="title">添加新检查</template>
             <a-form>
                 <a-form-item label="类别" :labelCol="{span: 5}" :wrapperCol="{span: 18}">
-                    <a-select @change="selectNoDrugsType">
+                    <a-select @change="selectNoDrugsType" :defaultValue="nonDrugsTypes[0].name">
                         <a-select-option v-for="(item,index) in nonDrugsTypes" :key="index">{{item.name}}
                         </a-select-option>
                     </a-select>
@@ -72,6 +75,12 @@
                     align: 'center',
                 },
                 {
+                    title: '状态',
+                    dataIndex: 'temp',
+                    align: 'center',
+                    scopedSlots: {customRender: 'temp'}
+                },
+                {
                     title: '操作',
                     align: 'center',
                     scopedSlots: {customRender: 'action'},
@@ -93,7 +102,7 @@
                         that.$message.error("网络错误")
                     })
             },
-            selectNonDrugs(index){
+            selectNonDrugs (index) {
                 this.newInspection = this.nonDrugs[index]
             },
             selectNoDrugsType (index) {
@@ -103,9 +112,14 @@
                 if (this.newInspection === null) {
                     this.$message.info("请选择具体项目")
                 } else {
-                    this.inspections.push(this.newInspection)
-                    this.newInspection = null
-                    this.showAddInspection = false
+                    if (this.inspections.includes(this.newInspection)) {
+                        this.$message.info("请不要重复添加")
+                    } else {
+                        this.newInspection.temp = true
+                        this.inspections.push(this.newInspection)
+                        this.newInspection = null
+                        this.showAddInspection = false
+                    }
                 }
             }
         },
