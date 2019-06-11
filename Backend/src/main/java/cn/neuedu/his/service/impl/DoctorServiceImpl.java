@@ -627,9 +627,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     @Transactional
-    public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer medicalRecordId, Integer registationId, Integer doctorId) throws Exception {
+    public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer registrationId, Integer doctorId) throws Exception {
 
-        Registration registration = registrationService.findById(registationId);
+        Registration registration = registrationService.findById(registrationId);
+        MedicalRecord record = medicalRecordService.getByRegistrationId(registrationId);
+        if (record == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_805);
+        }
+        Integer medicalRecordId = record.getId();
 
         if (!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
             return CommonUtil.errorJson(ErrorEnum.E_703);

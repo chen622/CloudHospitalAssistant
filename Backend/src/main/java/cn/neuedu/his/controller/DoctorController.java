@@ -42,8 +42,6 @@ public class DoctorController {
     RedisServiceImpl redisService;
 
 
-
-
     /**
      * 通过患者名字找到所有挂在该医生的待诊挂号
      * use patient name to registration
@@ -235,8 +233,6 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
-
-
 
 
     /**
@@ -699,13 +695,13 @@ public class DoctorController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        Integer medicalId = Integer.parseInt(object.get("medicalRecordId").toString());
-        Integer registationId = Integer.parseInt(object.get("medicalRecordId").toString());
+
+        Integer registrationId = Integer.parseInt(object.get("registrationId").toString());
 
         List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
         if (prescriptions != null && !prescriptions.isEmpty()) {
             try {
-                return doctorService.savePrescriptions(prescriptions, medicalId, registationId, doctorId);
+                return doctorService.savePrescriptions(prescriptions, registrationId, doctorId);
             } catch (Exception e) {
                 return CommonUtil.errorJson(ErrorEnum.E_500.addErrorParamName(e.getMessage()));
             }
@@ -773,7 +769,6 @@ public class DoctorController {
         }
         return doctorService.finishDiagnose(registrationId);
     }
-
 
 
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
