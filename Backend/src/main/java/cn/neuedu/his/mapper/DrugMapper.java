@@ -3,6 +3,7 @@ package cn.neuedu.his.mapper;
 import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.util.inter.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,5 +19,5 @@ public interface DrugMapper extends MyMapper<Drug> {
     ArrayList<Drug> getByName(String name);
     ArrayList<Drug> getDrugByPartName(String name);
 
-    List<ConstantVariable> getTypeAndDrugs(Boolean auth);
+    List<ConstantVariable> getTypeAndDrugs(@Param("auth") Boolean auth);
 }

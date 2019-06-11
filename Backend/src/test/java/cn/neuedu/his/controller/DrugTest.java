@@ -39,7 +39,7 @@ public class DrugTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 604)
+                .claim("typeId", 603)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
         //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();

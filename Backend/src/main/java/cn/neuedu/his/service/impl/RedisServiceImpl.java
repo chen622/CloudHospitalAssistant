@@ -247,7 +247,6 @@ public class RedisServiceImpl {
     }
 
     //基础方法
-变型
     /**
      * 设置redis list
      *
