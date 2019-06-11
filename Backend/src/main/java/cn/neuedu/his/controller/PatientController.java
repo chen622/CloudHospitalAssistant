@@ -206,7 +206,7 @@ public class PatientController {
     @PostMapping("/searchByMulti")
     public JSONObject selectPatientByIdentifyId(@RequestBody JSONObject json) {
         String identifyId = json.getString("id");
-        String name = json.getString("name");
+        String name = json.getString("realName");
         String phone = json.getString("phone");
         if (identifyId == null) {
             return CommonUtil.errorJson(ErrorEnum.E_501);
