@@ -49,5 +49,8 @@
     select p.*, d.* from prescription p join drug d on p.drug_id = d.id where p.id = #{id}
   </select>
 
-
+  <select id="getAllPrescription" resultMap="BaseResultMap">
+    select *
+    from prescription
+  </select>
 </mapper>
