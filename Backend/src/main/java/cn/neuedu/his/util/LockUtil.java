@@ -2,9 +2,11 @@ package cn.neuedu.his.util;
 
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+@Component
 public class LockUtil {
     @Autowired
     public RedisServiceImpl redisServiceTemp;
