@@ -192,6 +192,44 @@ public class MedicalRecordController {
         return object1;
     }
 
+
+    /**
+     * 保存确诊信息
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/finalDiagnose")
+    public JSONObject saveFinalDiagnose(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Integer registrationID = null, medicalRecordId;
+        try {
+            registrationID = Integer.parseInt(object.get("registrationId").toString());
+        } catch (NumberFormatException n) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
+        try {
+            medicalRecordId = Integer.parseInt(object.get("medicalRecordId").toString());
+        } catch (NumberFormatException n) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecordId"));
+        }
+
+        ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
+        if (diagnoses == null || diagnoses.size() == 0)
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
+        try {
+            return doctorService.saveFinalDiagnose(registrationID, medicalRecordId, diagnoses);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+        }
+    }
+
     /**
      * 更新病历
      * 传过来的medicalRecord里面的挂号id一定要填

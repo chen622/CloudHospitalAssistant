@@ -84,12 +84,12 @@ export default new Router({
         {
             path:'/finance/manage',
             name:'manage',
-            component:()=> import('./views/admin/paymentType')
+            component:()=> import('./views/admin/PaymentType')
         },
         {
             path:'/finance/check',
             name:'check',
-            component:()=> import('./views/admin/dailySettle')
+            component:()=> import('./views/admin/DailySettle')
         }
     ]
 })
