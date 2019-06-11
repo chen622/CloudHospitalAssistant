@@ -36,21 +36,23 @@
       <result column="spell" jdbcType="VARCHAR" property="spell" />
       <result column="standard" jdbcType="VARCHAR" property="standard" />
       <result column="price" jdbcType="DECIMAL" property="price" />
-      <result column="name" jdbcType="VARCHAR" property="name" />
+      <result column="drugs_name" jdbcType="VARCHAR" property="name" />
       <result column="code" jdbcType="VARCHAR" property="code" />
       <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
       <result column="drug_type" javaType="INTEGER" property="drugType"/>
       <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
       <result column="is_delete" jdbcType="BIT" property="isDelete"/>
       <association property="feeType" javaType="cn.neuedu.his.model.ConstantVariable">
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="type" jdbcType="INTEGER" property="type" />
+        <id column="fee_type_id" jdbcType="INTEGER" property="id" />
+        <result column="fee_type_name" jdbcType="VARCHAR" property="name" />
+        <result column="fee_type_type" jdbcType="INTEGER" property="type" />
+        <result column="fee_type_is_delete" jdbcType="BIT" property="isDelete"/>
       </association>
       <association property="formul" javaType="cn.neuedu.his.model.ConstantVariable">
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="name" jdbcType="VARCHAR" property="name" />
-        <result column="type" jdbcType="INTEGER" property="type" />
+        <id column="formulation_id" jdbcType="INTEGER" property="id" />
+        <result column="formulation_name" jdbcType="VARCHAR" property="name" />
+        <result column="formulation_type" jdbcType="INTEGER" property="type" />
+        <result column="formulation_is_delete" jdbcType="BIT" property="isDelete"/>
       </association>
     </collection>
   </resultMap>
@@ -72,7 +74,9 @@
   </select>
 
   <select id="getTypeAndDrugs" resultMap="drugAndType">
-    SELECT *
+    SELECT *,fee_type.id as  fee_type_id,fee_type.name as fee_type_name, fee_type.is_delete as fee_type_is_delete,fee_type.type as fee_type_type,
+           formulation.id as formulation_id, formulation.name as formulation_name, formulation.type as formulation_type, formulation.is_delete as formulation_is_delete,
+           drug.name as drugs_name
     FROM constant_variable JOIN drug ON constant_variable.id = drug.drug_type
     JOIN constant_variable fee_type ON fee_type.id = drug.fee_type_id
     JOIN constant_variable formulation on formulation.id = drug.formulation
