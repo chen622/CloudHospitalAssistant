@@ -36,7 +36,7 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isFinancialOfficer(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -129,17 +129,8 @@ public class PaymentTypeController {
     @GetMapping("/getAll")
     public JSONObject getAll(){
         try {
-            Map<String ,Integer> map=redisService.getMapAll("paymentType");
-            Map<Integer,String> map1=new HashMap<>();
             List<PaymentType> list=paymentTypeService.findAll();
-            for(String key:map.keySet()){
-                map1.put(map.get(key),key);
-            }
-            JSONObject object=new JSONObject();
-            object.put("nameKey",map);
-            object.put("idKey", map1);
-            object.put("list", list);
-            return CommonUtil.successJson(object);
+            return CommonUtil.successJson(list);
         } catch (Exception e) {
             e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_802);

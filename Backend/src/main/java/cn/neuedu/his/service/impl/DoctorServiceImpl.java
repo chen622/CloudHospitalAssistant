@@ -493,6 +493,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
                 Payment p = setPrescriptionPayment(p2, registration.getPatientId(), doctorId);
+                paymentService.save(p);
             }
         }
 
