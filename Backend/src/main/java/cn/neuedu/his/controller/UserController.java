@@ -77,6 +77,7 @@ public class UserController {
             urls.add(new url("看诊", "/doctor/index", "doctor"));
         } else if (typeId.equals(map.get("挂号收费员"))) {//601
             urls.add(new url("挂号", "/patient/register", "register"));
+            urls.add(new url("缴费", "/patient/charge", "charge"));
         } else if (typeId.equals(map.get("财务管理员"))) { //605
             urls.add(new url("门诊财务管理", "/finance/manage", "manage"));
             urls.add(new url("日结核对", "/finance/check", "check"));
