@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.service.DrugService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 
 /**
+ *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -30,7 +32,6 @@ public class DrugController {
 
     /**
      * 发药
-     *
      * @param paymentId
      * @param drugId
      * @param authentication
@@ -41,7 +42,7 @@ public class DrugController {
         Integer drugAdmin;
         try {
             drugAdmin = PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
+        }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -49,9 +50,9 @@ public class DrugController {
 
         try {
             drugService.takeDrug(paymentId, drugId, drugAdmin);
-        } catch (IllegalArgumentException e1) {
+        }catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
-        } catch (UnsupportedOperationException e2) {
+        }catch (UnsupportedOperationException e2) {
             if (e2.getMessage().equals("paymentState"))
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("locking"))
@@ -65,7 +66,6 @@ public class DrugController {
 
     /**
      * 退药
-     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -75,7 +75,7 @@ public class DrugController {
         Integer drugAdmin;
         try {
             drugAdmin = PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
+        }catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -83,9 +83,9 @@ public class DrugController {
 
         try {
             drugService.retreatDrug(jsonObject.getInteger("paymentId"), jsonObject.getInteger("drugId"), jsonObject.getInteger("quantity"), drugAdmin);
-        } catch (IllegalArgumentException e1) {
+        }catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
-        } catch (UnsupportedOperationException e2) {
+        }catch (UnsupportedOperationException e2) {
             if (e2.getMessage().equals("paymentState"))
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("paymentType"))
@@ -103,18 +103,18 @@ public class DrugController {
 
 
     @PostMapping("/delete/{id}")
-    public JSONObject deleteDrug(@PathVariable("id") Integer id, Authentication authentication) {
+    public JSONObject deleteDrug(@PathVariable("id") Integer id , Authentication authentication){
 
         //检测是药物管理员权限
-        try {
+        try{
             PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (Exception e) {
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try {
+        try{
             drugService.deleteDrug(id);
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e){
             if (e.getMessage().equals("626"))
                 return CommonUtil.errorJson(ErrorEnum.E_626);
         }
@@ -122,19 +122,19 @@ public class DrugController {
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyDrug(@RequestBody JSONObject jsonObject, Authentication authentication) {
+    public JSONObject modifyDrug(@RequestBody JSONObject jsonObject , Authentication authentication){
 
         //检测是药物管理员权限
-        try {
+        try{
             PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (Exception e) {
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try {
-            Drug drug = JSONObject.toJavaObject(jsonObject, Drug.class);
+        try{
+            Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drugService.modifyDrug(drug);
-        } catch (RuntimeException e) {
+        }catch (RuntimeException e){
             if (e.getMessage().equals("626"))
                 return CommonUtil.errorJson(ErrorEnum.E_626);
             else if (e.getMessage().equals("627"))
@@ -150,22 +150,22 @@ public class DrugController {
     }
 
     @PostMapping("/insert")
-    public JSONObject insertDrug(@RequestBody JSONObject jsonObject, Authentication authentication) {
+    public JSONObject insertDrug(@RequestBody JSONObject jsonObject , Authentication authentication){
 
         //检测是药物管理员权限
-        try {
+        try{
             PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (Exception e) {
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         Integer id = null;
-        try {
-            Drug drug = JSONObject.toJavaObject(jsonObject, Drug.class);
+        try{
+            Drug drug = JSONObject.toJavaObject(jsonObject,Drug.class);
             drug.setDelete(false);
             drug.setId(null);
-            id = drugService.insertDrug(drug);
-        } catch (RuntimeException e) {
+            id=drugService.insertDrug(drug);
+        }catch (RuntimeException e){
             e.printStackTrace();
             if (e.getMessage().equals("631"))
                 return CommonUtil.errorJson(ErrorEnum.E_631);
@@ -189,14 +189,14 @@ public class DrugController {
      * @return
      */
     @GetMapping("/select/{name}")
-    public JSONObject selectDrug(@PathVariable("name") String name, Authentication authentication) {
+    public JSONObject selectDrug(@PathVariable("name") String name , Authentication authentication){
 
         System.out.println(name);
 
         //检测是药物管理员权限
-        try {
+        try{
             PermissionCheck.getIdByDrugAdmin(authentication);
-        } catch (Exception e) {
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -213,26 +213,31 @@ public class DrugController {
      * @return
      */
     @GetMapping("/getAllDrugType")
-    public JSONObject getAllDrugType() {
+    public JSONObject getAllDrugType(){
         try {
             Map<String, Integer> map = redisService.getMapAll("drugType");
             JSONObject object = new JSONObject();
-            object.put("name", map.keySet());
-            object.put("id", map.values());
+            object.put("name",map.keySet());
+            object.put("id",map.values());
             return CommonUtil.successJson(object);
-        } catch (Exception e) {
+        }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 
 
     @GetMapping("/getAllDrug")
-    public JSONObject getAllDrug() {
+    public JSONObject getAllDrug(Authentication authentication){
+
+        Boolean auth = null;
         try {
-            return CommonUtil.successJson(drugService.getAllDrug());
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        }catch (Exception e){
+            auth = false;
         }
+        List<ConstantVariable> constantVariables = drugService.getTypeAndDrugs(auth);
+
+        return CommonUtil.successJson(constantVariables);
     }
 
-}
+  }

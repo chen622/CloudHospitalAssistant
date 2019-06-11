@@ -39,7 +39,7 @@ public class DrugTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 604)
+                .claim("typeId", 603)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
         //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -49,7 +49,7 @@ public class DrugTest {
     @Test
     public void takeDrug() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/57/1")
+        mockMvc.perform(MockMvcRequestBuilders.post("/drug/takeDrug/58/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -64,7 +64,7 @@ public class DrugTest {
     @Test
     public void get() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/drug/getAllDrugType")
+        mockMvc.perform(MockMvcRequestBuilders.get("/drug/getAllDrug")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

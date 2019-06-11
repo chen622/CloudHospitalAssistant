@@ -1,6 +1,7 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DrugMapper;
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.DrugService;
@@ -32,7 +33,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Autowired
     private PaymentService paymentService;
 
-    private String drugKey = "-drug";
+    private String drugKey = "-drug-lock";
 
     /**
      * 取药
@@ -56,7 +57,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
             throw new UnsupportedOperationException("paymentState");
 
         //设置锁
-        boolean lock = LockUtil.lock(drugId.toString() + drugKey, 5);
+        boolean lock = LockUtil.lock(drugId.toString() + drugKey, 5000);
         if (lock) {
             try {
                 //领取操作
@@ -64,7 +65,7 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
                 update(drug);
             } finally {
                 //释放锁
-                //LockUtil.unLock(drugId.toString() + drugKey);
+                LockUtil.unLock(drugId.toString() + drugKey);
             }
         } else {
             throw new UnsupportedOperationException("locking");
@@ -166,6 +167,11 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Override
     public ArrayList<Drug> getDrugByPartName(String name) {
         return drugMapper.getDrugByPartName(name);
+    }
+
+    @Override
+    public List<ConstantVariable> getTypeAndDrugs(Boolean auth) {
+        return drugMapper.getTypeAndDrugs(auth);
     }
 
     private boolean judgeDrug(Drug drug) throws Exception {
