@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Invoice;
+import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -25,8 +26,23 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
+    @GetMapping("/getByDoctor/{patientId}")
+    public JSONObject getByDoctor(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+        try {
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+
     /**
      * 挂号缴费
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -35,7 +51,7 @@ public class PaymentController {
     public JSONObject payRegistration(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -44,7 +60,7 @@ public class PaymentController {
         Invoice invoice;
         try {
             invoice = paymentService.payRegistrationPayment(jsonObject.getInteger("paymentId"), jsonObject.getInteger("settlementType"));
-        }catch (IndexOutOfBoundsException e1) {
+        } catch (IndexOutOfBoundsException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_509);
         } catch (IllegalArgumentException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e2.getMessage()));
@@ -55,6 +71,7 @@ public class PaymentController {
 
     /**
      * 缴费
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -64,7 +81,7 @@ public class PaymentController {
         Integer tollKeeper;
         try {
             tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -73,7 +90,7 @@ public class PaymentController {
         JSONObject result;
         try {
             result = paymentService.payPayment((ArrayList<Integer>) jsonObject.getJSONArray("paymentIdList").toJavaList(Integer.class), jsonObject.getInteger("settlementType"), tollKeeper);
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             return CommonUtil.errorJson(ErrorEnum.E_505);
         }
 
@@ -82,6 +99,7 @@ public class PaymentController {
 
     /**
      * 检验项目、药品类（未取药）退费
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -91,7 +109,7 @@ public class PaymentController {
         Integer tollKeeper;
         try {
             tollKeeper = PermissionCheck.getIdByAdminProducePayment(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -115,6 +133,7 @@ public class PaymentController {
 
     /**
      * 药品类(已取药）退费
+     *
      * @param paymentId
      * @param authentication
      * @return
@@ -124,7 +143,7 @@ public class PaymentController {
         Integer tollKeeper;
         try {
             tollKeeper = PermissionCheck.getIdByPaymentAdmin(authentication);
-        }catch (AuthenticationServiceException e) {
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -132,9 +151,9 @@ public class PaymentController {
 
         try {
             paymentService.retreatDrugFee(paymentId, tollKeeper);
-        }catch (IllegalArgumentException e1) {
+        } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
-        }catch (UnsupportedOperationException e2) {
+        } catch (UnsupportedOperationException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_506);
         }
 

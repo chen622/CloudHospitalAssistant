@@ -192,6 +192,42 @@ public class MedicalRecordController {
         return object1;
     }
 
+
+    /**
+     * 保存确诊信息
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/finalDiagnose")
+    public JSONObject saveFinalDiagnose(@RequestBody JSONObject object, Authentication authentication) {
+        try {
+            PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Integer registrationID = null;
+        try {
+            registrationID = Integer.parseInt(object.get("registrationId").toString());
+            MedicalRecord medicalRecord = medicalRecordService.getByRegistrationId(registrationID);
+            if (medicalRecord == null)
+                throw new NumberFormatException();
+            ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
+            ArrayList<Integer> diagnosesIds = new ArrayList<>();
+            diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
+            if (diagnoses == null || diagnoses.size() == 0)
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
+            try {
+                return doctorService.saveFinalDiagnose(registrationID, medicalRecord, diagnosesIds);
+            } catch (Exception e) {
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
+            }
+        } catch (NumberFormatException n) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        }
+    }
+
     /**
      * 更新病历
      * 传过来的medicalRecord里面的挂号id一定要填
@@ -202,9 +238,8 @@ public class MedicalRecordController {
      */
     @PostMapping("/updateMR")
     public JSONObject updateMR(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
         try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+             PermissionCheck.isOutpatientDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }

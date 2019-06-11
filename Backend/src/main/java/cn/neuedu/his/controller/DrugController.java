@@ -18,7 +18,6 @@ import java.util.Map;
 
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -67,6 +66,7 @@ public class DrugController {
 
     /**
      * 退药
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -228,12 +228,17 @@ public class DrugController {
 
 
     @GetMapping("/getAllDrug")
-    public JSONObject getAllDrug() {
+    public JSONObject getAllDrug(Authentication authentication) {
+
+        Boolean auth = null;
         try {
-            return CommonUtil.successJson(drugService.getAllDrug());
+            PermissionCheck.getIdByDrugAdmin(authentication);
         } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
+            auth = false;
         }
+        List<ConstantVariable> constantVariables = drugService.getTypeAndDrugs(auth);
+
+        return CommonUtil.successJson(constantVariables);
     }
 
 }

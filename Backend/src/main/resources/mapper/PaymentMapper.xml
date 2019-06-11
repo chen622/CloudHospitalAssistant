@@ -1,50 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.PaymentMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Payment">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id"/>
-    <result column="quantity" jdbcType="INTEGER" property="quantity" />
-    <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-    <result column="patient_id" jdbcType="INTEGER" property="patientId" />
-    <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId" />
-    <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
-    <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
-    <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Payment">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="patient_id" jdbcType="INTEGER" property="patientId"/>
+        <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId"/>
+        <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="invoice_id" jdbcType="INTEGER" property="invoiceId"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
+        <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+    </resultMap>
 
 
+    <select id="getByItemId" resultMap="BaseResultMap">
+        select *
+        from payment p
+        where (select type from payment_type pt where pt.id = p.payment_type_id) = #{paymentTotalTypeId}
+          and item_id = #{registrationId}
+    </select>
 
-  <select id="getByItemId" resultMap="BaseResultMap">
-    select * from payment p
-    where (select type from payment_type pt where pt.id = p.payment_type_id) = #{paymentTotalTypeId} and item_id = #{registrationId}
-  </select>
+    <select id="getAllByItemIdAndPaymentTypeId" resultMap="BaseResultMap">
+        select *
+        from payment
+        where item_id = #{itemId}
+          and payment_type_id = #{paymentTypeId}
+    </select>
 
-  <select id="getAllByItemIdAndPaymentTypeId" resultMap="BaseResultMap">
-    select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId}
-  </select>
+    <select id="getByRegistrationId" resultMap="BaseResultMap">
+        select *
+        from payment
+        where item_id = #{id}
+          and payment_type_id = #{type};
+    </select>
 
-  <select id="getByRegistrationId" resultMap="BaseResultMap">
-        select * from payment where  item_id=#{id} and  payment_type_id=#{type};
-  </select>
+    <select id="getByAllDoctor" resultMap="BaseResultMap">
+        select *
+        from payment
+        where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
+          and create_time <![CDATA[>=]]> #{startDate}
+          and create_time <![CDATA[<=]]> #{endDate}
+    </select>
 
-  <select id="getByAllDoctor" resultMap="BaseResultMap">
-    select * from payment where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and create_time <![CDATA[>=]]> #{startDate} and create_time <![CDATA[<=]]> #{endDate}
-  </select>
+    <select id="getAllByItemIdAndPaymentTypeIdAndState" resultMap="BaseResultMap">
+        select *
+        from payment
+        where item_id = #{itemId}
+          and payment_type_id = #{paymentTypeId}
+          and state = #{state}
+    </select>
 
-  <select id="getAllByItemIdAndPaymentTypeIdAndState" resultMap="BaseResultMap">
-    select * from payment where item_id = #{itemId} and payment_type_id = #{paymentTypeId} and state = #{state}
-  </select>
+    <!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->
+    <!--    select sum(quantity * unit_price) from payment where -->
+    <!--  </select>-->
 
-<!--  <select id="getTotalAmountByDepartmentAndPaymentType" resultType="java.lang.Integer">-->
-<!--    select sum(quantity * unit_price) from payment where -->
-<!--  </select>-->
+
+    <resultMap id="WithPaymentType" type="cn.neuedu.his.model.Payment">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="patient_id" jdbcType="INTEGER" property="patientId"/>
+        <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="invoice_id" jdbcType="INTEGER" property="invoiceId"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
+            <id column="typeId" jdbcType="INTEGER" property="id"/>
+            <result column="typeName" jdbcType="VARCHAR" property="name"/>
+        </association>
+        <association property="prescription" javaType="cn.neuedu.his.model.Prescription">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <association property="drug" javaType="cn.neuedu.his.model.Drug">
+                <id column="drugId" jdbcType="INTEGER" property="id"/>
+                <result column="drugName" jdbcType="VARCHAR" property="name"/>
+            </association>
+        </association>
+        <association property="application" javaType="cn.neuedu.his.model.InspectionApplication">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
+                <id column="nonDrugId" jdbcType="INTEGER" property="id"/>
+                <result column="nonDrugName" jdbcType="VARCHAR" property="name"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <select id="getAllPaymentWithPaymentTypeByDoctorIdAndPatientId" resultMap="WithPaymentType">
+        select payment.*,
+               payment_type.id   as typeId,
+               payment_type.name as typeName,
+               prescription.*,
+               drug.id           as drugId,
+               drug.name         as drugName,
+               inspection_application.*,
+               non_drug.id       as nonDrugId,
+               non_drug.name     as nonDrugName
+        from payment
+                 join payment_type on payment.payment_type_id = payment_type.id
+                 left join prescription on payment.item_id = prescription.id
+                 left join drug on prescription.drug_id = drug.id
+                 left join inspection_application on payment.item_id = inspection_application.id
+                 left join non_drug on inspection_application.non_drug_id = non_drug.id
+        where payment.doctor_id = #{doctorId}
+          and payment.patient_id = #{patientId}
+          and DATEDIFF(payment.create_time, now()) = 0
+    </select>
 </mapper>

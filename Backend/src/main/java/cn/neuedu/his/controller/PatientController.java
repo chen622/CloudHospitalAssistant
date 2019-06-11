@@ -98,13 +98,13 @@ public class PatientController {
      */
     @GetMapping("/getNotConsumePayment/{patientId}")
     public JSONObject getNotConsumePaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
-        try {
-            PermissionCheck.getIdByPaymentAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
+//        try {
+//            PermissionCheck.getIdByPaymentAdmin(authentication);
+//        } catch (AuthenticationServiceException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
 
         Patient patient;
         try {

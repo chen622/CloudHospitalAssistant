@@ -123,7 +123,7 @@ public class DoctorControllerTest {
      */
     @Test
     public void deleteTemporaryMR() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/deleteTemporaryMR/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPrescriptionAndInspection/35")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

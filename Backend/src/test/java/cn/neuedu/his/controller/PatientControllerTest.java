@@ -96,7 +96,7 @@ public class PatientControllerTest {
 
     @Test
     public void getNotConsumePaymentAndPatient() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getNotConsumePayment/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/patient/getNotConsumePayment/21")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

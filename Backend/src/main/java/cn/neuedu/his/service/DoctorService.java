@@ -103,7 +103,7 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject getInspectionResult(Integer id);
 
     @Transactional
-    JSONObject saveFinalDiagnose(Integer registrationId,Integer medicalRecordId,List<Integer> diagnoses) throws Exception;
+    JSONObject saveFinalDiagnose(Integer registrationId,MedicalRecord medicalRecord,List<Integer> diagnoses);
 
     @Transactional
     public JSONObject savePrescriptions(List<Prescription> prescriptions,Integer registationId,Integer doctorId) throws Exception;

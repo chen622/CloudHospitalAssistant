@@ -82,8 +82,18 @@ export default new Router({
             component:()=> import('./views/patient/Search')
         },
         {
+            path:'/finance/manage',
+            name:'manage',
+            component:()=> import('./views/admin/PaymentType')
+        },
+        {
+            path:'/finance/check',
+            name:'check',
+            component:()=> import('./views/admin/DailySettle')
+        },
+        {
             path:'/finance/paymentType',
-            name:'paymentType',
+                name:'paymentType',
             component:()=> import('./views/admin/paymentType')
         }
     ]

@@ -3,11 +3,12 @@ package cn.neuedu.his.model;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "constant_variable")
-public class ConstantVariable {
+public class ConstantVariable implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

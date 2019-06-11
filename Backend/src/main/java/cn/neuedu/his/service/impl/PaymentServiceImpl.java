@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -37,8 +36,18 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Autowired
     RedisServiceImpl redisService;
 
+    @Override
+    public List<Payment> getByDoctor(Integer patientId, Integer doctorId) {
+        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByDoctorIdAndPatientId(doctorId, patientId);
+        if (payments == null) {
+            payments = new ArrayList<>();
+        }
+        return payments;
+    }
+
     /**
      * 生成挂号缴费单
+     *
      * @param registrationId
      * @return
      * @throws IllegalArgumentException
@@ -58,10 +67,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         BigDecimal unitPrice = registrationTypeService.findById(jobScheduleService.findById(registration.getScheduleId()).getRegistrationTypeId()).getPrice();
         payment.setUnitPrice(unitPrice);
         if (registration.getNeedBook())
-            payment.setUnitPrice(payment.getUnitPrice() .add(new BigDecimal(1)));
+            payment.setUnitPrice(payment.getUnitPrice().add(new BigDecimal(1)));
         payment.setCreateTime(new Date(System.currentTimeMillis()));
 
-        Map<String ,Integer> map;
+        Map<String, Integer> map;
         try {
             map = redisService.getMapAll("paymentType");
         } catch (Exception e) {
@@ -78,6 +87,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 支付挂号缴费单
+     *
      * @param paymentId
      * @param settlementTypeId
      * @throws RuntimeException
@@ -97,18 +107,19 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 缴费（包括检查项目和药费）
+     *
      * @param paymentIdList
      * @param settlementTypeId
      * @param tollKeeperId
      * @return
      */
     @Override
-    public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException{
+    public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException {
         ArrayList successId = new ArrayList(); //成功的缴费单号
         ArrayList failId = new ArrayList(); //失败的缴费单号
 
         //更新所有缴费单
-        for(Integer paymentId: paymentIdList) {
+        for (Integer paymentId : paymentIdList) {
             Payment payment = findById(paymentId);
             if (payment == null || !payment.getState().equals(Constants.PRODUCE_PAYMENT)) {
                 failId.add(paymentId);
@@ -127,7 +138,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             if (!successId.isEmpty())
                 //生成发票
                 invoiceService.addInvoiceByPaymentList(successId);
-        }catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new NullPointerException();
         }
 
@@ -140,12 +151,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 检验项目、挂号类，药品类（未取药）退费
+     *
      * @param paymentId
      * @param adminId
      * @return
      */
     @Override
-    public Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException{
+    public Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
         if (originalPayment == null)
@@ -169,6 +181,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 退还药物，生成缴费单
+     *
      * @param paymentId
      * @param adminId
      * @param retreatQuantity
@@ -180,12 +193,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     public void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
-        if(originalPayment == null)
+        if (originalPayment == null)
             throw new IllegalArgumentException("paymentId");
 
         //如果不是药物，则抛出异常
         Integer totalTypeId = paymentTypeService.getTotalPaymentType(originalPayment.getPaymentTypeId());
-        if (!totalTypeId.equals(Constants.DRUG_PAYMENT_TYPE ))
+        if (!totalTypeId.equals(Constants.DRUG_PAYMENT_TYPE))
             throw new UnsupportedOperationException("paymentType");
 
         //确定是否能退:1.未冻结 2.处于取完药状态
@@ -202,13 +215,14 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 药品退费，生成发票
+     *
      * @param paymentId
      * @param paymentAdminId
      * @throws IllegalArgumentException
      * @throws UnsupportedOperationException
      */
     @Override
-    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId)throws IllegalArgumentException, UnsupportedOperationException{
+    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId) throws IllegalArgumentException, UnsupportedOperationException {
         Payment payment = findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException();
@@ -226,6 +240,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 判断该payment是否可退
+     *
      * @param itemId
      * @param totalTypeId
      * @param state
@@ -235,7 +250,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         if (totalTypeId.equals(Constants.REGISTRATION_PAYMENT_TYPE)) {
             if (registrationService.getRegistrationState(itemId).equals(Constants.WAITING_FOR_TREATMENT))
                 return true;
-        }else {
+        } else {
             if (state.equals(Constants.HAVE_PAID))
                 return true;
         }
@@ -244,11 +259,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 确定数量是否合法, 并改变原payment状态
+     *
      * @param originalPayment
      * @param retreatQuantity
      * @return
      */
-    private Boolean isValidQuantity(Payment originalPayment, Integer retreatQuantity, Integer totalTypeId){
+    private Boolean isValidQuantity(Payment originalPayment, Integer retreatQuantity, Integer totalTypeId) {
         if (!totalTypeId.equals(Constants.DRUG_PAYMENT_TYPE)) {
             originalPayment.setState(Constants.HAPPEN_RETREAT_ALL);
             update(originalPayment);
@@ -260,10 +276,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             //获取所有payment（包括冲红）
             ArrayList<Payment> paymentList = findAllByItemAndPaymentType(originalPayment.getItemId(), originalPayment.getPaymentTypeId());
 
-            for (Payment payment: paymentList) {
+            for (Payment payment : paymentList) {
                 currentRemainQuantity = currentRemainQuantity + payment.getQuantity();
             }
-        }else {
+        } else {
             currentRemainQuantity = originalPayment.getQuantity();
         }
         System.out.println(currentRemainQuantity);
@@ -283,6 +299,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 生成新的退药缴费单
+     *
      * @param originalPayment
      * @param retreatQuantity
      * @param adminId
@@ -307,11 +324,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
 
-
-
-
-
-
     @Override
     public Payment findByRegistrationId(Integer registrationId) {
         return paymentMapper.getByItemId(registrationId, Constants.REGISTRATION_PAYMENT_TYPE);
@@ -334,6 +346,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 根据item和缴费类型，找出所有相关payment
+     *
      * @param itemId
      * @param paymentTypeId
      * @return
@@ -345,6 +358,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     /**
      * 根据item，缴费类型和状态，找出所有相关payment
+     *
      * @param itemId
      * @param paymentTypeId
      * @param state
