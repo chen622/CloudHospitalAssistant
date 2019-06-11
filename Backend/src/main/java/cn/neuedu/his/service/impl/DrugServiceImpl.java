@@ -1,6 +1,7 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DrugMapper;
+import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.DrugService;
@@ -137,6 +138,11 @@ public class DrugServiceImpl extends AbstractService<Drug> implements DrugServic
     @Override
     public ArrayList<Drug> getDrugByPartName(String name) {
         return drugMapper.getDrugByPartName(name);
+    }
+
+    @Override
+    public List<ConstantVariable> getTypeAndDrugs(Boolean auth) {
+        return drugMapper.getTypeAndDrugs(auth);
     }
 
     private boolean judgeDrug(Drug drug) throws Exception {

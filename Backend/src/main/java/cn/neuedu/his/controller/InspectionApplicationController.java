@@ -91,6 +91,14 @@ public class InspectionApplicationController {
         }
     }
 
+    /**
+     * 模糊查询信息（病历号和名字）
+     * 获得所有信息
+     * @param name
+     * @param id
+     * @param authentication
+     * @return
+     */
     @GetMapping({"/selectPatientInformationByNameOrId/name/{name}","/selectPatientInformationByNameOrId/id/{id}",
             "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}","/selectPatientInformationByNameOrId"})
     JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "id",required = false) Integer id, Authentication authentication){
@@ -113,6 +121,29 @@ public class InspectionApplicationController {
         List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name,id,departmentId,auth);
 
         return CommonUtil.successJson(payments);
+    }
+
+
+    /**
+     * 取消申请
+     * @param id
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/cancelInspectionApplication/{id}")
+    JSONObject cancelInspectionApplication(@PathVariable(value = "id",required = false) Integer id, Authentication authentication){
+
+        //判断权限（请求者是不是该部门的人）
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer doctorId = (Integer) data.get("id");
+
+        User user = userService.findById(doctorId);
+        InspectionApplication inspectionApplication = inspectionApplicationService.findById(id);
+
+        inspectionApplication.setCanceled(true);
+        inspectionApplicationService.update(inspectionApplication);
+
+        return CommonUtil.successJson();
     }
 
 

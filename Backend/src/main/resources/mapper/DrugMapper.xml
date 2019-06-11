@@ -28,7 +28,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="INTEGER" property="type" />
-    <collection property="drug" ofType="cn.neuedu.his.model.Drug">
+    <collection property="drugs" ofType="cn.neuedu.his.model.Drug">
       <id column="id" jdbcType="INTEGER" property="id" />
       <result column="formulation" jdbcType="INTEGER" property="formulation" />
       <result column="factory" jdbcType="VARCHAR" property="factory" />
@@ -42,6 +42,16 @@
       <result column="drug_type" javaType="INTEGER" property="drugType"/>
       <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
       <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+      <association property="feeType" javaType="cn.neuedu.his.model.ConstantVariable">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+      </association>
+      <association property="formul" javaType="cn.neuedu.his.model.ConstantVariable">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+      </association>
     </collection>
   </resultMap>
 
@@ -61,5 +71,15 @@
     select * from drug where  is_delete=false limit 0,100;
   </select>
 
-
+  <select id="getTypeAndDrugs" resultMap="drugAndType">
+    SELECT *
+    FROM constant_variable JOIN drug ON constant_variable.id = drug.drug_type
+    JOIN constant_variable fee_type ON fee_type.id = drug.fee_type_id
+    JOIN constant_variable formulation on formulation.id = drug.formulation
+    <where>
+      <if test="auth == false">
+        drug.is_delete = 0
+      </if>
+    </where>
+  </select>
 </mapper>

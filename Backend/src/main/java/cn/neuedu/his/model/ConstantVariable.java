@@ -3,6 +3,7 @@ package cn.neuedu.his.model;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "constant_variable")
@@ -21,7 +22,7 @@ public class ConstantVariable {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    private List<Drug> drugs;
+    private List<Drug> drugs = new ArrayList<>();
 
     public void setDelete(Boolean delete) {
         isDelete = delete;

@@ -134,7 +134,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 Iterator<Prescription> iterator1 = template.getPrescriptions().iterator();
                 while (iterator1.hasNext()) {
                     Prescription p = iterator1.next();
-                    if (p.getDrug().isDelete() == true) {
+                    if (p.getDrug().getDelete() == true) {
                         iterator1.remove();
                     }
                 }
@@ -438,7 +438,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 if(!check.equals(""))
                     return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
                 Drug drug = drugService.findById(prescription.getDrugId());
-                if(drug==null || drug.isDelete()==true)
+                if(drug==null || drug.getDelete()==true)
                     return CommonUtil.errorJson(ErrorEnum.E_626);
                 Prescription p2=new Prescription(prescription, drug.getFeeTypeId(),medicalRecordId,false);
                 p2.setTemplate(false);
@@ -591,7 +591,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             p.setItemId(medicalRecordId);
             p.setTemplate(false);
             Drug drug= drugService.findById(p.getDrugId());
-            if(drug==null || drug.isDelete()==true)
+            if(drug==null || drug.getDelete()==true)
                 return CommonUtil.errorJson(ErrorEnum.E_626);
             check=checkPrescription(p);
             if(!check.equals("")){
@@ -634,7 +634,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         for (DrugTemplate drugTemplate:drugTemplates){
             Iterator<Prescription> iterator=drugTemplate.getPrescriptions().iterator();
             while (iterator.hasNext()){
-                if (iterator.next().getDrug().isDelete()==true)
+                if (iterator.next().getDrug().getDelete()==true)
                     iterator.remove();
             }
         }

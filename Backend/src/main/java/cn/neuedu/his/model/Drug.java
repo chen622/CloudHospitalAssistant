@@ -38,10 +38,29 @@ public class Drug {
     private Integer drugType;
     private Integer feeTypeId;
 
+    private ConstantVariable feeType;
+    private ConstantVariable formul;
+
+    public ConstantVariable getFormul() {
+        return formul;
+    }
+
+    public void setFormul(ConstantVariable formul) {
+        this.formul = formul;
+    }
+
+    public ConstantVariable getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(ConstantVariable feeType) {
+        this.feeType = feeType;
+    }
+
     @Column(name = "is_delete")
     private Boolean isDelete;
 
-    public Boolean isDelete() {
+    public Boolean getDelete() {
         return isDelete;
     }
 
