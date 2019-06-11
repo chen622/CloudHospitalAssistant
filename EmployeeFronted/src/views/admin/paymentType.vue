@@ -100,7 +100,7 @@
 
 <script>
 import { constants } from 'crypto';
-
+import { Promise, resolve, reject } from 'q';
 
     export default {
         data() {
@@ -191,7 +191,6 @@ import { constants } from 'crypto';
                                 }
                             }
                          that.originalList=that.pa
-
                         } else {
                                console.log(res.msg)
                             that.$message.error(res.msg)
@@ -230,16 +229,39 @@ import { constants } from 'crypto';
                     var temp=newData.filter(item =>  value === item.name)
                     if(temp.length>0){
                         alert('名称重复')
+                        return
                     }
+                    this.paymentTypeTemp.name=value
                 }else{
                      var temp=newData.filter(item =>  value === item.code)
                     if(temp.length>0){
                         alert('编码重复')
+                        return
                     }
+                    this.paymentTypeTemp.code=value
                 }
+
                 
             },saveRow(value){
-
+                let that=this
+                
+                var p=new Promise((resolve,reject) => {
+                    this.$api.post("/payment_type/insertPaymentType", that.paymentTypeTemp,
+                        res => {
+                            if (res.code === "100") {                             
+                                alert('更新成功')
+                            } else {
+                                alert('更新失败')
+                                console.log(res.msg)
+                                that.$message.error(res.msg)
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                    })
+                  })
+                  .then(r=>{
+                      that.getPaymentList();
+                  })
             },cancel(value){
 
             },edit(value){
