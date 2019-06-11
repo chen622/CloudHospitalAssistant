@@ -1049,7 +1049,10 @@ import { Promise, resolve, reject } from 'q';
                     res => {
                         if (res.code === "100") {
                             this.getPatient(1)
-                        }else{
+                        }else if(res.code=="512"){
+                            alert('请稍后！')
+                        }
+                        else{
                             that.$message.error(res)
                         }
                     }, res => {
