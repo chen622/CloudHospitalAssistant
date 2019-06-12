@@ -46,18 +46,18 @@ public class PaymentTypeController {
 
         PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
 
-        Map<String ,Integer> payment=redisService.getMapAll("paymentType");
-        //判断类型是否正确
-        if(payment.values().contains(paymentType.getType()))
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
-
         try{
-            paymentTypeService.save(paymentType);
-            redisService.setPaymentType(paymentType);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_605);
+            paymentTypeService.insertPaymentType(paymentType);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("501.1"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("redis"));
+            else if (e.getMessage().equals("501.2"))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
+            else if (e.getMessage().equals("605"))
+                return CommonUtil.errorJson(ErrorEnum.E_605);
         }
-        return CommonUtil.successJson(paymentType);
+
+        return CommonUtil.successJson();
     }
 
     @PostMapping("/deletePaymentType/{id}")
@@ -82,6 +82,7 @@ public class PaymentTypeController {
 
         paymentType.setDelete(true);
 
+        redisService.deletePaymentType(paymentType);
         paymentTypeService.update(paymentType);
 
         return CommonUtil.successJson(paymentType);

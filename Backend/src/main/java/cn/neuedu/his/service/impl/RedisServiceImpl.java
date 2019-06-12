@@ -520,10 +520,34 @@ public class RedisServiceImpl {
         return returnStatus;
     }
 
+    /**
+     * 删除hash中 field对应的值
+     * hdel 删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略
+     * @param key
+     * @param field
+     * @return
+     */
+    public long deleteHash(String key, String... field) {
+        Jedis jedis = getResource();
+        jedis.select(0);
+        long returnStatus = jedis.hdel(key, field);
+        return returnStatus;
+    }
 
     public void setPaymentType(PaymentType type){
         Jedis jedis = getResource();
 
+        try {
+            setHash("paymentType",type.getName(),type.getType().toString());
+        } catch (Exception e) {
+            //returnBrokenResource(jedis);
+        }finally {
+            returnResource(jedis);
+        }
+    }
+
+    public void deletePaymentType(PaymentType type){
+        Jedis jedis = getResource();
         try {
             setHash("paymentType",type.getName(),type.getType().toString());
         } catch (Exception e) {
