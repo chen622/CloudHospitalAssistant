@@ -62,15 +62,13 @@
                         <a-tab-pane tab="发药管理" key="2">
 
                             <a-row type="flex" align="top" justify="space-around" class="info-card">
-                                <a-col :span="showList?3:3" :xl="showList?6:2" style="width:20%;">
+                                <a-col span="6">
                                     <a-card v-if="showList" hoverable :body-style="{padding: '2px 0 0 0'}">
                                     <span slot="title" style="font-size: 22px">
                                         <span style="margin-left:35px">患者列表</span>
                                          <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
                                                    style="float:right;margin-top:12px" size="small"></a-button>
                                     </span>
-
-
                                         <a-collapse defaultActiveKey="1" :bordered="false">
 
                                             <a-col style="text-align: center">
@@ -115,168 +113,147 @@
                                     </a-affix>
                                 </a-col>
 
-                                <a-col :span="showList?16:21" :xl="showList?30:30"
-                                       style="width:78%;padding:0 0 0 0 ; margin:0 0 0 0">
-                                    <a-card :body-style="{padding: 0}">
-                                    <span slot="title" style="font-size: 22px">
-                                      
+                                <a-col span="17">
+                                    <a-card :body-style="{padding: 0}" :loading="loading">
+                                        <div style="padding-top:10px;font-size: 16px">
+
+                                            <a-form layout="inline" :form="form2">
+                                                <a-form-item
+                                                        :label-col="formItemLayout.labelCol"
+                                                        :wrapper-col="formItemLayout.wrapperCol">
+                                                    <span slot="label" class="form-title">
+                                                        姓名
+                                                    </span>
+                                                    <a-input disabled :value="patient.realName"></a-input>
+                                                </a-form-item>
+
+                                                <a-form-item
+                                                        :label-col="formItemLayout.labelCol"
+                                                        :wrapper-col="formItemLayout.wrapperCol"
+                                                >
+                                                    <span slot="label" class="form-title">
+                                                        性别
+                                                    </span>
+                                                    <a-input disabled :value="patient.sex?'男':'女'"></a-input>
+                                                </a-form-item>
+
+                                                <a-form-item
+                                                        label="年龄"
+                                                        :label-col="formItemLayout.labelCol"
+                                                        :wrapper-col="formItemLayout.wrapperCol"
+                                                >
+                                                    <span slot="label" class="form-title">
+                                                        年龄
+                                                    </span>
+                                                    <a-input disabled :value="patient.age"></a-input>
+
+                                                </a-form-item>
+
+                                                <a-form-item>
+                                                    <a-button @click="allSend"
+                                                    >全部取药
+                                                    </a-button>
+
+                                                </a-form-item>
+
+                                                <a-form-item>
+                                                    <a-button @click="allRetreat"
+                                                              type="danger">全部退药
+                                                    </a-button>
+
+                                                </a-form-item>
+
+                                            </a-form>
 
 
-                                    <a-form :layout="formLayout" :form="form2" style="text-align: center">
-                                        
-                                        <a-form-item>
-                                            <a-icon type="user"/>
-                                        </a-form-item>
+                                            <a-divider style="margin-top:20px;font-size:20px;">取药信息</a-divider>
+
+                                            <a-table :columns="paymentColumns" :dataSource="paymentData"
+                                                     :scroll="{ x: 1200 }"
+                                                     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChangeSendDrug}">
+
+                                                <template slot="state" slot-scope="text">
+                                                    <a-tag color="orange" style="font-size:15px"
+                                                           v-if="text=='未取药'">{{text}}
+                                                    </a-tag>
+                                                </template>
+
+                                                <template slot="isFrozen" slot-scope="text">
+                                                    <template v-if="text==true">
+                                                        <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
+                                                    </template>
+                                                    <template v-else>
+                                                        <a-tag color="green"
+                                                               style="font-size:15px">未冻结
+                                                        </a-tag>
+                                                    </template>
+                                                </template>
+
+                                                <template slot="actionc" slot-scope="text, record">
+                                                    <div class='editable-row-operations'>
+                                                        <a @click="() => sendDrug(record)">发药</a>
+                                                    </div>
+                                                </template>
+
+                                                <template slot="create_time" slot-scope="text">
+                                                    <span name>{{text| formatDate}}</span>
+                                                </template>
+
+                                            </a-table>
+
+                                            <a-divider style="margin-top:20px;font-size:20px;">退药信息</a-divider>
 
 
-                                        <a-form-item
-                                                label="姓名"
-                                                :label-col="formItemLayout.labelCol"
-                                                :wrapper-col="formItemLayout.wrapperCol"
-                                        >
-                                            <a-button type="dashed" disabled
-                                                      style="color:black;width:100px;margin-right:20px">{{this.patient.realName}}</a-button>
-                                        </a-form-item>
+                                            <a-table :columns="paymentColumns" :dataSource="returnData"
+                                                     :scroll="{ x: 1200 }"
+                                                     :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChangeRetreatDrug}">
 
+                                                <template slot="state" slot-scope="text">
 
-                                        <a-form-item
-                                                label="性别"
-                                                :label-col="formItemLayout.labelCol"
-                                                :wrapper-col="formItemLayout.wrapperCol"
-                                        >
-                                           <a-button type="dashed" disabled
-                                                     style="color:black;width:100px;margin-right:20px">{{this.patient.sex?'男':'女'}}</a-button>
-                                        </a-form-item>
+                                                    <a-tag color="green" style="font-size:15px"
+                                                           v-if="text=='已取药'">{{text}}
+                                                    </a-tag>
+                                                    <a-tag color="purple" style="font-size:15px"
+                                                           v-if="text=='曾退药'">{{text}}
+                                                    </a-tag>
+                                                    <a-tag color="red" style="font-size:15px"
+                                                           v-if="text=='药全退'">{{text}}
+                                                    </a-tag>
+                                                </template>
 
-                                         <a-form-item
-                                                 label="年龄"
-                                                 :label-col="formItemLayout.labelCol"
-                                                 :wrapper-col="formItemLayout.wrapperCol"
-                                         >
-                                           <a-button type="dashed" disabled
-                                                     style="color:black;width:100px;margin-right:20px">{{this.patient.age}}</a-button>
-                                        </a-form-item>
+                                                <template slot="actionc" slot-scope="text, record">
+                                                    <div class='editable-row-operations'>
+                                                        <a @click="() => returnDrug(record)" style="color:red">退药</a>
+                                                    </div>
+                                                </template>
 
-                                         <a-form-item
-                                                 label="ID"
-                                                 :label-col="formItemLayout.labelCol"
-                                                 :wrapper-col="formItemLayout.wrapperCol"
-                                         >
-                                          
-                                            <a-button type="dashed" disabled
-                                                      style="color:black;width:100px;margin-right:20px">{{this.patient.id}}</a-button>
-                                        </a-form-item>
+                                                <template slot="create_time" slot-scope="text">
+                                                    <span>{{text| formatDate}}</span>
+                                                </template>
 
-                                        <a-form-item>
-                                             
-                                            <a-button @click="allSend"
-                                                      style="width:100px;margin-left:120px;color:#1890FF">全部取药</a-button>
-                                            
-                                        </a-form-item>
+                                                <template slot="isFrozen" slot-scope="text">
 
-                                        <a-form-item>
-                                            <a-button @click="allRetreat" style="width:100px"
-                                                      type="danger">全部退药</a-button>
-                                            
-                                        </a-form-item>
-                                       
-                                    </a-form>
-
-                                    
-                                    <a-divider style="margin-top:20px;font-size:20px;">取药信息</a-divider>
-                                    
-                                    <a-table :columns="paymentColumns" :dataSource="paymentData" :scroll="{ x: 1200 }"
-                                             :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChangeSendDrug}">
-                                        
-                                        <template slot="state" slot-scope="text">                                            
-                                            <a-tag color="orange" style="font-size:15px"
-                                                   v-if="text=='未取药'">{{text}}</a-tag>
-                                        </template>
-
-                                        <template slot="isFrozen" slot-scope="text">
-                                            <template v-if="text==true">
-                                                <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
-                                            </template>
-                                            <template v-else><a-tag color="green"
-                                                                    style="font-size:15px">未冻结</a-tag></template>
-                                        </template>
-
-                                        <template slot="actionc" slot-scope="text, record">
-                                            <div class='editable-row-operations'>
-                                                <a @click="() => sendDrug(record)">发药</a>                                  
-                                            </div>
-                                        </template>
-
-                                        <template slot="create_time" slot-scope="text">
-                                            <span name>{{text| formatDate}}</span>
-                                        </template>
-                           
-                                    </a-table>   
-
-                                     <a-divider style="margin-top:20px;font-size:20px;">退药信息</a-divider>
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    
-                                    <a-table :columns="paymentColumns" :dataSource="returnData" :scroll="{ x: 1200 }"
-                                             :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChangeRetreatDrug}">
-                                        
-                                        <template slot="state" slot-scope="text">
-                                            
-                                            <a-tag color="green" style="font-size:15px"
-                                                   v-if="text=='已取药'">{{text}}</a-tag>
-                                            <a-tag color="purple" style="font-size:15px"
-                                                   v-if="text=='曾退药'">{{text}}</a-tag>
-                                            <a-tag color="red" style="font-size:15px"
-                                                   v-if="text=='药全退'">{{text}}</a-tag>
-                                        </template>
-                                        
-                                        <template slot="actionc" slot-scope="text, record">
-                                            <div class='editable-row-operations'>                             
-                                                 <a @click="() => returnDrug(record)" style="color:red">退药</a>                                             
-                                            </div>
-                                        </template>
-
-                                        <template slot="create_time" slot-scope="text">
-                                            <span>{{text| formatDate}}</span>
-                                        </template>
-
-                                        <template slot="isFrozen" slot-scope="text">
-                                         
-                                            <template v-if="text==true">
-                                                <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
-                                            </template>
-                                            <template v-else><a-tag color="green"
-                                                                    style="font-size:15px">未冻结</a-tag></template>
-                                                
-                                            
-                                        </template>
-
-                           
-                                    </a-table>         
-      
-
-                                                             
-                                    </span>
-
-
+                                                    <template v-if="text==true">
+                                                        <a-tag color="blue" style="font-size:15px">已冻结</a-tag>
+                                                    </template>
+                                                    <template v-else>
+                                                        <a-tag color="green"
+                                                               style="font-size:15px">未冻结
+                                                        </a-tag>
+                                                    </template>
+                                                </template>
+                                            </a-table>
+                                        </div>
                                     </a-card>
                                 </a-col>
                             </a-row>
-
                         </a-tab-pane>
-
                     </a-tabs>
 
                 </a-card>
             </a-col>
         </a-row>
-
-
         <template>
-
             <div id="components-modal-demo-position" style="width:700px">
                 <a-modal
                         title="药品信息"
@@ -442,7 +419,6 @@
 
             <a-modal
                     title=""
-
                     style="text-align:center"
                     width="500px"
                     :visible="visible"
@@ -487,8 +463,8 @@
     import moment from 'moment'//导入文件
     export default {
         data () {
-
             return {
+                loading: false,
                 selectedRowKeys: [],
                 sendRowKeys: [],
                 retreatRowKeys: [],
@@ -498,7 +474,6 @@
                 time: null,
                 visible: false,
                 quantity: 1,
-                formLayout: 'inline',
                 load: {
                     patient: true
                 },
@@ -607,81 +582,82 @@
                         scopedSlots: {customRender: 'actionc'}
                     }
                 ],
-                columns: [{
-                    title: '编码',
-                    dataIndex: 'code',
-                    key: 'code',
-                    sorter: true,
-                    width: '150px',
-                    scopedSlots: {
-                        customRender: 'code'
-                    }
-                }, {
-                    title: '名称',
-                    dataIndex: 'name',
-                    key: 'name',
-                    sorter: true,
-                    width: '200px',
-                    scopedSlots: {customRender: 'name'}
-                }, {
-                    title: '规格',
-                    dataIndex: 'standard',
-                    key: 'standard',
-                    width: '150px',
-                    scopedSlots: {customRender: 'standard'}
-                }, {
-                    title: '单位',
-                    dataIndex: 'packageCompany',
-                    key: 'packageCompany',
-                    width: '100px',
-                    scopedSlots: {customRender: 'packageCompany'}
-                }, {
-                    title: '生产厂家',
-                    dataIndex: 'factory',
-                    key: 'factory',
-                    width: '300px',
-                    scopedSlots: {customRender: 'factory'}
-                }, {
-                    title: '单价',
-                    dataIndex: 'price',
-                    key: 'price',
-                    width: '150px',
-                    sorter: true,
-                    scopedSlots: {customRender: 'price'}
-                }, {
-                    title: '剂型',
-                    dataIndex: 'formulationName',
-                    key: 'formulationName',
-                    width: '150px',
-                    scopedSlots: {customRender: 'formulationName'}
-                }, {
-                    title: '药品类型',
-                    dataIndex: 'drugTypeName',
-                    key: 'drugTypeName',
-                    sorter: true,
-                    width: '150px',
-                    scopedSlots: {customRender: 'drugTypeName'}
-                }, {
-                    title: '拼音',
-                    dataIndex: 'spell',
-                    width: '150px',
-                    key: 'spell',
-                    scopedSlots: {customRender: 'spell'}
-                }, {
-                    title: '支付类型',
-                    dataIndex: 'paymentType',
-                    width: '150px',
-                    key: 'paymentType',
-                    scopedSlots: {customRender: 'paymentType'}
-                }, {
-                    title: '操作',
-                    key: 'action',
-                    dataIndex: 'action',
-                    width: '120px',
-                    align: 'middle',
-                    fixed: 'right',
-                    scopedSlots: {customRender: 'action'}
-                }],
+                columns: [
+                    {
+                        title: '编码',
+                        dataIndex: 'code',
+                        key: 'code',
+                        sorter: true,
+                        width: '150px',
+                        scopedSlots: {
+                            customRender: 'code'
+                        }
+                    }, {
+                        title: '名称',
+                        dataIndex: 'name',
+                        key: 'name',
+                        sorter: true,
+                        width: '200px',
+                        scopedSlots: {customRender: 'name'}
+                    }, {
+                        title: '规格',
+                        dataIndex: 'standard',
+                        key: 'standard',
+                        width: '150px',
+                        scopedSlots: {customRender: 'standard'}
+                    }, {
+                        title: '单位',
+                        dataIndex: 'packageCompany',
+                        key: 'packageCompany',
+                        width: '100px',
+                        scopedSlots: {customRender: 'packageCompany'}
+                    }, {
+                        title: '生产厂家',
+                        dataIndex: 'factory',
+                        key: 'factory',
+                        width: '300px',
+                        scopedSlots: {customRender: 'factory'}
+                    }, {
+                        title: '单价',
+                        dataIndex: 'price',
+                        key: 'price',
+                        width: '150px',
+                        sorter: true,
+                        scopedSlots: {customRender: 'price'}
+                    }, {
+                        title: '剂型',
+                        dataIndex: 'formulationName',
+                        key: 'formulationName',
+                        width: '150px',
+                        scopedSlots: {customRender: 'formulationName'}
+                    }, {
+                        title: '药品类型',
+                        dataIndex: 'drugTypeName',
+                        key: 'drugTypeName',
+                        sorter: true,
+                        width: '150px',
+                        scopedSlots: {customRender: 'drugTypeName'}
+                    }, {
+                        title: '拼音',
+                        dataIndex: 'spell',
+                        width: '150px',
+                        key: 'spell',
+                        scopedSlots: {customRender: 'spell'}
+                    }, {
+                        title: '支付类型',
+                        dataIndex: 'paymentType',
+                        width: '150px',
+                        key: 'paymentType',
+                        scopedSlots: {customRender: 'paymentType'}
+                    }, {
+                        title: '操作',
+                        key: 'action',
+                        dataIndex: 'action',
+                        width: '120px',
+                        align: 'middle',
+                        fixed: 'right',
+                        scopedSlots: {customRender: 'action'}
+                    }],
                 data: [],
                 paymentData: [],
                 returnData: [],
@@ -749,8 +725,6 @@
                             this.$message.error(res)
                         })
                 })
-
-
             }, getDrugType () {
                 let that = this
                 new Promise(() => {
@@ -1194,10 +1168,11 @@
                 })
             }, getOnePatient (m) {
                 let that = this
+                this.loading = true
                 this.$api.post("/patient/getDrug", m,
                     res => {
                         if (res.code === "100") {
-
+                            that.loading = false
                             var patient = res.data.notTake
                             this.patients = []
                             this.patients.push(
@@ -1282,5 +1257,9 @@
     .info-medicine {
         margin-top: 40px;
         margin-bottom: 20px;
+    }
+
+    .form-title {
+        font-size: 18px;
     }
 </style>
