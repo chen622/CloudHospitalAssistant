@@ -33,24 +33,24 @@
                        @click="visible=true; CurrentPatient=record">{{text}}</a>
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
                     </template>
-                    <span slot="action">
-                       <a-upload name="smfile" :multiple="true" accept="image/*" action="https://sm.ms/api/upload">
+                    <template slot="check" slot-scope="text">{{text?'已诊':'待诊'}}</template>
+                    <span slot="action" slot-scope="text, record">
+                       <a-upload name="smfile" :multiple="true" accept="image/*" action="https://sm.ms/api/upload" @change="uploading">
                            <a-button type="primary">结果录入</a-button>
                        </a-upload>
                     </span>
                 </a-table>
-                <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="执行确认" cancelText="取消执行">
+                <a-modal title="项目信息确认" v-model="visible" @ok="handleok" @cancel="handlecancel" okText="执行确认" cancelText="取消执行">
                     <p>病历号: {{id}}</p>
                     <p>姓名: {{username}}</p>
                     <p>项目名称: {{projectName}}</p>
-                    <p>状态: {{state}}</p>
+                    <p>状态:</p>
                 </a-modal>
             </a-card>
         </a-col>
     </a-row>
 </template>
 <script>
-
 
     export default {
         name: 'inspection',
@@ -87,7 +87,8 @@
                     scopedSlots: {customRender: 'application.createTime'}
                 }, {
                     title: '状态',
-                    dataIndex: 'state',
+                    dataIndex: 'application.check',
+                    scopedSlots: {customRender: 'check'}
                 }, {
                     title: '执行科室',
                     dataIndex: 'application.nonDrug.department.name',
@@ -112,7 +113,7 @@
             handleok() {
                 this.visible = false
                 let that = this
-                that.$api.post("/inspection_application/confirmApplication/" + this.CurrentPatient.id, this.CurrentPatient.id,
+                that.$api.post("/inspection_application/confirmApplication/" + this.CurrentPatient.application.id, this.CurrentPatient.application.id,
                     res => {
                         if (res.code === "100") {
                             that.$message.success("执行操作成功")
@@ -122,6 +123,32 @@
                     }, res => {
                         that.$message.error(res)
                     })
+                console.log(this.CurrentPatient)
+                console.log(this.CurrentPatient.application.id)
+            },
+            handlecancel(){
+                this.visible = false
+                let that = this
+                that.$api.post("/inspection_application/cancelApplication/" + this.CurrentPatient.application.id, this.CurrentPatient.application.id,
+                res=>{
+                    if(res.code === "100"){
+                        that.$message.success("执行操作成功")
+                    }
+                    else {
+                        that.$message.error(res)
+                    }
+                },res=>{
+                    that.$message.error(res)
+                    })
+                console.log(this.CurrentPatient)
+                console.log(this.CurrentPatient.application.id)
+            },
+            uploading(event){
+              console.log(event)
+                if (event.file.status === 'done'){
+                    console.log(event.file.response.data.url)
+                }
+
             },
             onSearch(value) {
                 if (value === null || value === undefined) {
