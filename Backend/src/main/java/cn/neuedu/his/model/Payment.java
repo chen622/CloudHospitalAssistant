@@ -31,7 +31,7 @@ public class Payment {
 
     /**
      * 参考常量表
-结费类型：自费/医保等
+     * 结费类型：自费/医保等
      */
     @Column(name = "settlement_type_id")
     private Integer settlementTypeId;
@@ -218,10 +218,10 @@ public class Payment {
 
     /**
      * 获取参考常量表
-结费类型：自费/医保等
+     * 结费类型：自费/医保等
      *
      * @return settlement_type_id - 参考常量表
-结费类型：自费/医保等
+     * 结费类型：自费/医保等
      */
     public Integer getSettlementTypeId() {
         return settlementTypeId;
@@ -229,10 +229,10 @@ public class Payment {
 
     /**
      * 设置参考常量表
-结费类型：自费/医保等
+     * 结费类型：自费/医保等
      *
      * @param settlementTypeId 参考常量表
-结费类型：自费/医保等
+     *                         结费类型：自费/医保等
      */
     public void setSettlementTypeId(Integer settlementTypeId) {
         this.settlementTypeId = settlementTypeId;
