@@ -28,6 +28,8 @@ public class DailySettleController {
     DailySettleService dailySettleService;
     @Autowired
     InvoiceService invoiceService;
+    @Autowired
+    UserService userService;
 
     @PostMapping("/makeTable")
     public JSONObject makeDailySettleTable(@RequestBody JSONObject jsonObject, Authentication authentication) {
@@ -51,7 +53,7 @@ public class DailySettleController {
 
     @GetMapping("/getSettleInfo/{adminId}")
     public JSONObject getSettleInfo(@PathVariable("adminId") Integer adminId, Authentication authentication) {
-        JSONArray resultArray = new JSONArray();
+        JSONObject result = new JSONObject();
         try {
             PermissionCheck.isFinancialOfficer(authentication);
         }catch (Exception e) {
@@ -62,6 +64,7 @@ public class DailySettleController {
         if (dailySettleList.isEmpty())
             return CommonUtil.successJson(new ArrayList<DailySettle>());
 
+        JSONArray resultArray = new JSONArray();
         for (DailySettle dailySettle: dailySettleList) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("dailySettle", dailySettle);
@@ -69,8 +72,10 @@ public class DailySettleController {
             jsonObject.put("anewInvoiceId", invoiceService.getInvoiceAnewIdList(dailySettle.getId()));
             resultArray.add(jsonObject);
         }
+        result.put("settleList", resultArray);
+        result.put("admin", userService.findById(adminId));
 
-        return CommonUtil.successJson(resultArray);
+        return CommonUtil.successJson(result);
     }
 
     @PostMapping("/check/{settleId}")

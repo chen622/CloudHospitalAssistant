@@ -158,7 +158,7 @@
                     </a-tab-pane>
                     <a-tab-pane tab="费用查询" key="6">
                         <a-divider>费用详情</a-divider>
-                        <payment v-if="currentPatient!=null" :patientId="currentPatient.patient.id"></payment>
+                        <payment v-if="currentPatient!=null" :patientId="currentPatient.patient.id" :isDoctor="true"></payment>
                         <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                 </a-tabs>

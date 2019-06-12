@@ -90,6 +90,11 @@ export default new Router({
             path:'/finance/check',
             name:'check',
             component:()=> import('./views/admin/DailySettle')
+        },
+        {
+            path:'/finance/workload',
+            name:'workload',
+            component:()=> import('./views/admin/WorkloadCalculate')
         }
     ]
 })
