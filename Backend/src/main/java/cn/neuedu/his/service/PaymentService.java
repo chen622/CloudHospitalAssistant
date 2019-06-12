@@ -28,7 +28,7 @@ public interface PaymentService extends Service<Payment> {
     Payment findByRegistrationId(Integer registrationId);
     ArrayList<Payment> getWithItem(Integer id);
     List<Payment> getByRegistrationId(Integer id, Integer type);
-    ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end);
+    ArrayList<Payment> findAllByDoctor(Integer doctorId, Date start, Date end);
     Integer getAllPayments(Integer doctorId, String start, String end,Integer id);
     public ArrayList<Payment> findAllByItemAndPaymentType(Integer itemId, Integer paymentTypeId);
     ArrayList<Payment> findAllByItemAndPaymentTypeAndState(Integer itemId, Integer paymentTypeId, Integer state) throws RuntimeException;

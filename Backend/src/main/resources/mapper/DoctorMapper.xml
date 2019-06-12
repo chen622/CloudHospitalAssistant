@@ -15,7 +15,10 @@
         select u.department_id from  user u,doctor where u.id=doctor.id and doctor.id=#{id}
   </select>
 
-  <select id="getAllNotDelete" resultMap="BaseResultMap">
-    select * from doctor where is_delete = false
+  <select id="getAllClinicNotDelete" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap">
+    select u.* from doctor d join user u on d.id = u.id
+    where d.is_delete = false and u.is_delete = false
+        and u.department_id in
+            (select dd.id from department dd join department_kind dk on dd.kind_id = dk.id where dk.classification_id = 101)
   </select>
 </mapper>

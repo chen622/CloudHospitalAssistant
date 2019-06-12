@@ -51,7 +51,7 @@ public class DoctorControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 602)
+                .claim("typeId", 605)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -878,7 +878,7 @@ public class DoctorControllerTest {
         param.put("start", start);
         param.put("end", end);
         String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getDoctorWorkload")
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/getDoctorWorkload")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

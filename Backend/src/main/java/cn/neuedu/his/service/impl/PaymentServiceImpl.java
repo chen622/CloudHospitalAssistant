@@ -181,7 +181,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new IndexOutOfBoundsException();
 
         //填入新的信息
-        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId,Constants.HAVE_RETREAT);
+        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId, Constants.HAVE_RETREAT);
 
         //生成冲红发票，若无法生成，抛出异常
         return invoiceService.addInvoiceByPayment(newPaymentId);
@@ -218,7 +218,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new IndexOutOfBoundsException();
 
         //填入新的信息
-        addPayment(originalPayment, retreatQuantity, adminId,Constants.HAVE_RETURN_DRUG);
+        addPayment(originalPayment, retreatQuantity, adminId, Constants.HAVE_RETURN_DRUG);
     }
 
     /**
@@ -348,17 +348,12 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     @Override
-    public ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end) {
-        ArrayList<Payment> list=paymentMapper.getByAllDoctor(doctorId, start, end);
+    public ArrayList<Payment> findAllByDoctor(Integer doctorId, Date start, Date end) {
+        ArrayList<Payment> list=paymentMapper.getAllByDoctor(doctorId, start, end);
         if(list==null){
             list=new ArrayList<>();
         }
         return list;
-    }
-
-    @Override
-    public Integer getAllPayments(Integer doctorId, String start, String end,Integer id) {
-        return paymentMapper.getAllPayments(doctorId, start, end,id);
     }
 
     /**
@@ -394,5 +389,11 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         }
         return list;
     }
+
+    @Override
+    public Integer getAllPayments(Integer doctorId, String start, String end,Integer id) {
+        return paymentMapper.getAllPayments(doctorId, start, end,id);
+    }
+
 
 }

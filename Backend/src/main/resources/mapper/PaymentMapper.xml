@@ -43,10 +43,10 @@
           and payment_type_id = #{type};
     </select>
 
-    <select id="getByAllDoctor" resultMap="BaseResultMap">
+    <select id="getAllByDoctor" resultMap="BaseResultMap">
         select *
         from payment
-        where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
+        where doctor_id = #{projectOperatorId}
           and create_time <![CDATA[>=]]> #{startDate}
           and create_time <![CDATA[<=]]> #{endDate}
           and invoice_id != null
