@@ -1,7 +1,9 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Invoice;
+import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -25,6 +27,8 @@ public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
+    @Autowired
+    PatientService patientService;
 
     @PostMapping("/getAll")
     public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
@@ -46,8 +50,10 @@ public class PaymentController {
             Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
+            Patient patient = patientService.findById(patientId);
             List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
-            return CommonUtil.successJson(paymentList);
+            patient.setPaymentList(paymentList);
+            return CommonUtil.successJson(patient);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
