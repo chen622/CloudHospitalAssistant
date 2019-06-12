@@ -178,7 +178,9 @@
   
                 <a-divider style="margin-top:20px;font-size:20px;">信息统计</a-divider>
                 
-
+                <div>
+                    <div id="chart1"></div>
+                </div>
             
             </a-card>
         </a-col>
@@ -204,11 +206,17 @@
                 paymentData:[],
                 paymentColumns:[],
                 selectedRowKeys:[],
-                result:null,
+                paymentTypeList:[],
+                paymentTypeMap:[],
+                result:{},
+                name:[],
+                value:[],
                 
             }
         },computed:{
 
+        },created(){
+            this.getPaymentType();
         },methods: {
             getCurrentStyle (current){
                 const style = {}
@@ -227,13 +235,23 @@
 
                 let that=this  
                 var m={start:start,end:end}
+                this.name=[]
+                this.value=[]
                 this.$api.post("/doctor/getDoctorStatistics", m,
                     res => {
                         if (res.code === "100") {
                             that.result=res.data.feeMap
                             delete res.data.feeMap
                             that.doctor=res.data
-                          
+                            for(var key in that.result){
+                               for(var i=0;i<that.paymentTypeMap.length;i++){
+                                   if(that.paymentTypeMap[i].id == key){
+                                        that.name.push(that.paymentTypeMap[i].name)
+                                        that.value.push(that.paymentTypeMap[i].id)
+                                   }
+                               } 
+                            }
+                            this.$chart.bar1('chart1','工作量统计','',that.name,that.value)
                         } else {
                             that.$message.error(res.msg)
                         }
@@ -247,6 +265,29 @@
                 
             },selectPatient(item){
 
+            }, getPaymentType(){
+                let that=this
+                this.$api.get("/payment_type/getAll", null,
+                 res => {
+                    if (res.code === "100") {
+                        var name=res.data
+                        var id=[]
+                        for(let i=0;i<name.length;i++){
+                            if(!name[i].delete){
+                                that.paymentTypeList.push({
+                                    name:name[i].name,
+                                    id:name[i].id
+                                })
+                                that.paymentTypeMap.push({
+                                    id:name[i].id,
+                                    name:name[i].name
+                                })
+                            }
+                        }                        
+                    }
+                }, res => {
+                        that.$message.error(res)
+                })
             }
         }
     }
@@ -258,5 +299,10 @@
     .info-medicine{
         margin-top: 40px;
         margin-bottom: 20px;
+    }
+
+    #chart1 {
+        width: 400px;
+        height: 400px;
     }
 </style>
