@@ -6,6 +6,10 @@ import api from './api'
 import 'ant-design-vue/dist/antd.css'
 import store from './store'
 import Print from './print'
+import myCharts from './myCharts';
+
+
+Vue.use(myCharts)
 Vue.config.productionTip = false
 
 Vue.use(Antd)
@@ -29,3 +33,5 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount('#app')
+
+

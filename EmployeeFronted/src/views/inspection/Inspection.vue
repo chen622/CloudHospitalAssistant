@@ -45,7 +45,7 @@
                     <p>病历号: {{id}}</p>
                     <p>姓名: {{username}}</p>
                     <p>项目名称: {{projectName}}</p>
-                    <p>状态:</p>
+                    <p>状态:{{state?'交费':'未交费'}}</p>
                 </a-modal>
             </a-card>
         </a-col>

@@ -1105,6 +1105,7 @@ import { Promise, resolve, reject } from 'q';
                                 
                                 var patient=res.data.patient
                                 var result=res.data.result
+
                                 this.patients=[]
                                 this.patients.push(
                                     {
