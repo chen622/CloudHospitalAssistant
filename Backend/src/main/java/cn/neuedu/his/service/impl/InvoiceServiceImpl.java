@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -43,13 +42,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     /**
      * 通过缴费信息，生成挂号发票
+     *
      * @param paymentId
      * @return
      * @throws IllegalArgumentException
      * @throws IndexOutOfBoundsException
      */
     @Override
-    public Invoice addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException{
+    public Invoice addInvoiceByPayment(Integer paymentId) throws IllegalArgumentException, IndexOutOfBoundsException {
         Payment payment = paymentService.findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException("paymentId");
@@ -58,7 +58,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         //从redis取出发票号
         try {
             invoiceId = redisService.getInvoiceSerialsNumberFromFront();
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException("invoice");
         }
         //todo:invoiceId设为规律码（可以直接在model类进行处理）
@@ -79,27 +79,31 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     /**
      * 根据多条缴费单id，生成发票
      * 需要计算总额，并更改这些payment的invoiceId
+     *
      * @param paymentIdList
      * @return
      */
     @Override
-    public Invoice addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException{
+    public Invoice addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException {
         Invoice invoice = new Invoice();
         Integer invoiceId;
         //从redis取出发票号
         try {
             invoiceId = redisService.getInvoiceSerialsNumberFromFront();
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException();
         }
 
         invoice.setId(invoiceId);
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
 
+        invoice.setOperatorId(paymentService.findById(paymentIdList.get(0)).getOperatorId());
+
+        save(invoice);
         if (paymentIdList.isEmpty())
             throw new NullPointerException("paymentList");
         BigDecimal totalAmount = new BigDecimal(0);
-        for (Integer paymentId: paymentIdList) {
+        for (Integer paymentId : paymentIdList) {
             Payment payment = paymentService.findById(paymentId);
             if (payment == null)
                 throw new IllegalArgumentException("paymentId");
@@ -110,35 +114,35 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
             totalAmount = totalAmount.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));
         }
         invoice.setPriceAmount(totalAmount);
-        invoice.setOperatorId(paymentService.findById(paymentIdList.get(0)).getOperatorId());
-
-        save(invoice);
+        update(invoice);
         return invoice;
     }
 
     /**
      * 设置发票号段到redis
+     *
      * @param start
      * @param end
      * @throws IllegalArgumentException
      */
     @Override
-    public void setInvoiceNumberToRedis(Integer start, Integer end) throws IllegalArgumentException{
+    public void setInvoiceNumberToRedis(Integer start, Integer end) throws IllegalArgumentException {
         try {
             redisService.setInvoiceSerialsNumberList(start, end);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException();
         }
     }
 
     /**
      * 获取发票模板信息
+     *
      * @param invoiceId
      * @return
      * @throws IllegalArgumentException
      */
     @Override
-    public JSONObject getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException{
+    public JSONObject getInvoiceInfo(Integer invoiceId) throws IllegalArgumentException {
         JSONObject result = new JSONObject();
         Invoice invoice = getInvoiceAndPaymentByInvoiceId(invoiceId);
         if (invoice == null)
@@ -148,7 +152,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
         //根据发票各缴费类型，将缴费信息分条加入
         JSONArray jsonArray = new JSONArray();
-        for (Payment payment: invoice.getPaymentList()) {
+        for (Payment payment : invoice.getPaymentList()) {
             PaymentType paymentType = paymentTypeService.findById(payment.getPaymentTypeId());
             String typeName = paymentType.getName();
             String projectName;
@@ -160,10 +164,10 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
                 projectName = registration.getRegistrationType().getName();
                 if (registration.getNeedBook().equals(true))
                     note = "需要病历本";
-            //处方
-            } else if (paymentType.getType().equals(Constants.DRUG_PAYMENT_TYPE)){
+                //处方
+            } else if (paymentType.getType().equals(Constants.DRUG_PAYMENT_TYPE)) {
                 projectName = prescriptionService.findPrescriptionAndDrug(payment.getItemId()).getDrug().getName();
-            //检查项目
+                //检查项目
             } else {
                 projectName = inspectionApplicationService.findInspectionAndNonDrug(payment.getItemId()).getNonDrug().getName();
             }
@@ -189,6 +193,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     /**
      * 发票上明细
+     *
      * @param name：项目名称
      * @param paymentType：缴费类型
      * @param unitPrice：单价
@@ -212,6 +217,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     /**
      * 发票重打
+     *
      * @param invoiceId
      * @throws IllegalArgumentException
      */
@@ -229,6 +235,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     /**
      * 发票补打
+     *
      * @param invoiceId
      * @throws IllegalArgumentException
      */
