@@ -81,6 +81,7 @@
 <script>
     export default {
         name: "InvoiceTemplate",
+        props: ['invoiceId'],
         data: () => ({
             invoice: {
                 id: 0,
@@ -124,9 +125,9 @@
             }
         },
         methods: {
-            getInvoice() {
+            getInvoice () {
                 let that = this
-                this.$api.get('/invoice/print/' + 12, null, function (res) {
+                this.$api.get('/invoice/print/143', null, function (res) {
                     if (res.code === '100') {
                         that.invoice = res.data.invoice
                         that.patient = res.data.patient
@@ -141,7 +142,7 @@
                 })
             }
         },
-        mounted() {
+        mounted () {
             this.getInvoice()
         }
     }
