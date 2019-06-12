@@ -17,8 +17,8 @@ Vue.prototype.dateToTimeStamp = function (date) {
 }
 
 Vue.prototype.datetimeToTimeStamp = function (datetime) {
-    //mytime是待转换时间字符串，格式：'2018-9-12 9:11:23'
-    let timestamp = Date.parse(datetime.replace(/-/g, '/'))    //返回'2018-9-12 9:11:23'的时间戳
+    let Time = new Date(datetime);
+    let timestamp = Time.getTime();
     return timestamp
 }
 
