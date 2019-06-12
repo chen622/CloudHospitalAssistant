@@ -49,7 +49,7 @@
         where doctor_id = #{projectOperatorId}
           and create_time <![CDATA[>=]]> #{startDate}
           and create_time <![CDATA[<=]]> #{endDate}
-          and invoice_id != null
+          and invoice_id is not null
     </select>
 
     <select id="getAllByItemIdAndPaymentTypeIdAndState" resultMap="BaseResultMap">

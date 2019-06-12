@@ -876,7 +876,7 @@ public class DoctorControllerTest {
         }
 
         param.put("start", start);
-        param.put("end", end);
+        param.put("end", null);
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/doctor/getDoctorWorkload")
                 .contentType(MediaType.APPLICATION_JSON)
