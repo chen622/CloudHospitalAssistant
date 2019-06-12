@@ -50,7 +50,14 @@ public class InspectionApplicationTest {
     @Test
     public void get() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/cancelApplication/5")
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("userName", "y");
+        jsonObject.put("realName", "tys");
+        jsonObject.put("password", "123456");
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/entryApplicationResult")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
