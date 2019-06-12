@@ -59,10 +59,10 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
         if (this.getConstantByName(constantVariable.getType(),constantVariable.getName()) != null)
             throw new RuntimeException("630");
 
+        this.save(constantVariable);
         if(constantVariable.getType() != 0){
             redisService.setHash(key,constantVariable.getName(),constantVariable.getId().toString());
         }
-        this.save(constantVariable);
     }
 
     @Override
@@ -77,9 +77,9 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
         else if (this.getConstantByType(constantVariable.getId()) != null){
             throw new RuntimeException("633");
         }
-        redisService.deleteHash(type,constantVariable.getName(),constantVariable.getId().toString());
         constantVariable.setDelete(true);
         this.update(constantVariable);
+        redisService.deleteHash(type,constantVariable.getName(),constantVariable.getId().toString());
     }
 
     @Override
@@ -99,8 +99,8 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
             throw new RuntimeException("630");
 
         constantVariable.setDelete(false);
-        redisService.setHash(type,constantVariable.getName(),constantVariable.getId().toString());
         this.update(constantVariable);
+        redisService.setHash(type,constantVariable.getName(),constantVariable.getId().toString());
     }
 
     @Override

@@ -139,6 +139,7 @@ public class InspectionApplicationController {
         List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
 
         return CommonUtil.successJson(payments);
+
     }
 
     /**

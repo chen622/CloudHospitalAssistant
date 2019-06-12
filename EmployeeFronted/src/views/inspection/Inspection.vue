@@ -26,16 +26,16 @@
                         </a-textarea>
                     </a-form-item>
                 </a-form>
+                <br/>
                 <p style="font-size: 20px">项目明细</p>
-                <a-table :columns="columns" :dataSource="data">
-                    <a slot="username" slot-scope="text,record" href="javascript:;"
-                       @click="visible=true;currentPatient=record">{{text}}</a>
+                <a-table :columns="columns" :dataSource="data" rowKey="id">
+                    <a slot="patient.username" slot-scope="text,record" href="javascript:;"
+                       @click="visible=true; CurrentPatient=record">{{text}}</a>
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
                     </template>
                     <span slot="action" slot-scope="text, record">
-                       <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76"
-                                 :headers="headers" @change="handleChange">
-                           <a-button>结果录入</a-button>
+                       <a-upload name="smfile" :multiple="true" accept="image/*" action="https://sm.ms/api/upload">
+                           <a-button type="primary">结果录入</a-button>
                        </a-upload>
                     </span>
                 </a-table>
@@ -51,9 +51,11 @@
 </template>
 <script>
 
+    import axios from 'axios'
+
     export default {
         name: 'inspection',
-        data () {
+        data() {
             return {
                 form: this.$form.createForm(this),
                 visible: false,
@@ -63,61 +65,68 @@
                 address: '',
                 projectName: '',
                 state: '',
-                headers: {
-                    authorization: 'authorization-text',
-                },
-                columns: [
-                    {
-                        title: '病历号',
-                        dataIndex: 'patientId',
-                    }, {
-                        title: '姓名',
-                        dataIndex: 'patient.username',
-                        scopedSlots: {customRender: 'username'}
-                    }, {
-                        title: '项目名称',
-                        dataIndex: 'paymentType.name',
-                    }, {
-                        title: '单价',
-                        dataIndex: 'unitPrice',
-                    }, {
-                        title: '数量',
-                        dataIndex: 'application.quantity',
-                    }, {
-                        title: '开立时间',
-                        dataIndex: 'application.createTime',
-                        scopedSlots: {customRender: 'application.createTime'}
-                    }, {
-                        title: '状态',
-                        dataIndex: 'state',
-                    }, {
-                        title: '执行科室',
-                        dataIndex: 'application.nonDrug.department.name',
-                    }, {
-                        title: '操作',
-                        dataIndex: 'action',
-                        key: 'action',
-                        scopedSlots: {customRender: 'action'}
-                    }],
+                columns: [{
+                    title: '病历号',
+                    dataIndex: 'patientId',
+                    scopedSlots: {customRender: 'patientId'}
+                }, {
+                    title: '姓名',
+                    dataIndex: 'patient.username',
+                    scopedSlots: {customRender: 'patient.username'}
+                }, {
+                    title: '项目名称',
+                    dataIndex: 'paymentType.name',
+                }, {
+                    title: '单价',
+                    dataIndex: 'unitPrice',
+                }, {
+                    title: '数量',
+                    dataIndex: 'application.quantity',
+                }, {
+                    title: '开立时间',
+                    dataIndex: 'application.createTime',
+                    scopedSlots: {customRender: 'application.createTime'}
+                }, {
+                    title: '状态',
+                    dataIndex: 'state',
+                }, {
+                    title: '执行科室',
+                    dataIndex: 'application.nonDrug.department.name',
+                }, {
+                    title: '操作',
+                    dataIndex: 'action',
+                    key: 'action',
+                    scopedSlots: {customRender: 'action'}
+                }],
                 data: [],
-                currentPatient: null
+                CurrentPatient: null,
+                file: '',
+                src: ''
+
+
             }
         },
         mounted: function () {
             this.getPatient()
         },
         methods: {
-            handleok () {
-                this.visible = falses
+            handleok() {
+                this.visible = false
+                let that = this
+                that.$api.post("/inspection_application/confirmApplication/" + this.CurrentPatient.id, this.CurrentPatient.id,
+                    res => {
+                        if (res.code === "100") {
+                            that.$message.success("执行操作成功")
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
+                console.log(this.CurrentPatient.id)
+                console.log(this.CurrentPatient)
             },
-            handleChange (info) {
-                if (info.file.status === 'done') {
-                    this.$message.success(`${info.file.name} file upload successfully`);
-                } else if (info.file.status === 'error') {
-                    this.$message.error(`${info.file.name} file upload failed`)
-                }
-            },
-            onSearch (value) {
+            onSearch(value) {
                 if (value === null || value === undefined) {
                     value === null
                 }
@@ -141,7 +150,7 @@
                     })
 
             },
-            getPatient () {
+            getPatient() {
                 let that = this
                 this.$api.get("/inspection_application/selectPatientInformationByNameOrId", null,
                     res => {
