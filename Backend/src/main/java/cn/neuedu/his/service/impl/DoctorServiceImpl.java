@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.Doc;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -986,6 +987,49 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         return result;
     }
+
+    @Autowired
+    ConstantVariableService constantVariableService;
+
+    /**
+     *
+     * 获得医生某时间所有费用详情
+     * @param doctorId
+     * @param start
+     * @param end
+     * @return
+     */
+    @Override
+    public JSONObject getDoctorStatistics(Integer doctorId,String start,String end){
+
+        User user=userService.findById(doctorId);
+        Doctor doctor=doctorService.findById(doctorId);
+        if(doctor==null){
+            return  CommonUtil.errorJson(ErrorEnum.E_617);
+        }
+        doctor.setRealName(user.getRealName());
+        doctor.setTitleName(constantVariableService.findById(doctor.getTitleId()).getName());
+        //取出所有paymentType的id和名字
+        Map<Integer, String> paymentTypeMap = new HashMap<>();
+        ArrayList<PaymentType> smallPaymentType=paymentTypeService.getSmallPaymentType();
+        for (PaymentType paymentType : smallPaymentType) {
+            paymentTypeMap.put(paymentType.getId(), paymentType.getName());
+        }
+
+        //使用map记录每个医生的每个paymentType对应的总额
+
+
+        JSONObject object=new JSONObject();
+        Integer count=0;
+        for (Integer id : paymentTypeMap.keySet()) {
+            count=paymentService.getAllPayments(doctorId, start, end,id);
+            if (count>0)
+                object.put(id.toString(), new BigDecimal(count));
+        }
+        doctor.setFeeMap(object);
+        return CommonUtil.successJson(doctor);
+    }
+
 
 
     private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal, List<Prescription> prescriptions) {

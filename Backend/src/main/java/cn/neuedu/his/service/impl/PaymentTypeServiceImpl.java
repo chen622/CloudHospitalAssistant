@@ -91,4 +91,13 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
         redisService.setPaymentType(paymentType);
         this.update(paymentType);
     }
+
+    @Override
+    public ArrayList<PaymentType> getSmallPaymentType() {
+        ArrayList<PaymentType> list=paymentTypeMapper.getSmallPaymentType();
+        if(list==null){
+            list=new ArrayList<>();
+        }
+        return list;
+    }
 }

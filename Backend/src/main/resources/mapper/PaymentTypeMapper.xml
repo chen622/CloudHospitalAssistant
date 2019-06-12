@@ -19,4 +19,8 @@
   <select id="getAllNotDelete" resultMap="BaseResultMap">
     select * from payment_type where is_delete = false
   </select>
+  
+  <select id="getSmallPaymentType" resultMap="BaseResultMap">
+    select * from payment_type where id>99;
+  </select>
 </mapper>

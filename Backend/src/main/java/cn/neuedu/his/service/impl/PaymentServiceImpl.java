@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -352,7 +349,16 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
     @Override
     public ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end) {
-        return paymentMapper.getByAllDoctor(doctorId, start, end);
+        ArrayList<Payment> list=paymentMapper.getByAllDoctor(doctorId, start, end);
+        if(list==null){
+            list=new ArrayList<>();
+        }
+        return list;
+    }
+
+    @Override
+    public Integer getAllPayments(Integer doctorId, String start, String end,Integer id) {
+        return paymentMapper.getAllPayments(doctorId, start, end,id);
     }
 
     /**
@@ -381,10 +387,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     @Override
-    public ArrayList<Payment> getForStatistics(Integer doctorId, Integer patientId, String start, String end) {
-        ArrayList<Payment> list=paymentMapper.getForStatistics(doctorId, patientId, start, end);
+    public Map<Integer,Integer> getForStatistics(Integer doctorId, Integer patientId, String start, String end) {
+        Map<Integer,Integer> list=paymentMapper.getForStatistics(doctorId, patientId, start, end);
         if(list==null){
-            list=new ArrayList<>();
+            list=new HashMap<>();
         }
         return list;
     }

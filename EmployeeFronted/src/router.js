@@ -32,8 +32,7 @@ export default new Router({
             path: '/doctor/index',
             name: 'doctor',
             component: () => import('./views/doctor/Index')
-        },
-        {
+        },{
             path: '/login',
             name: 'login',
             component: Login
