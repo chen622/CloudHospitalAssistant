@@ -5,10 +5,11 @@ import Antd from 'ant-design-vue'
 import api from './api'
 import 'ant-design-vue/dist/antd.css'
 import store from './store'
-
+import Print from './print'
 Vue.config.productionTip = false
 
 Vue.use(Antd)
+Vue.use(Print) // 注册
 Vue.prototype.$api = api
 
 

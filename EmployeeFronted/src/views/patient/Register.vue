@@ -98,15 +98,27 @@
                 <a-button type="primary" @click="pay">缴费</a-button>
             </template>
         </a-modal>
+        <a-modal
+                v-if="showInvoice"
+                v-model="showInvoice"
+                :closable="false"
+                :maskClosable="false"
+                :bodyStyle="{padding: '5px'}"
+                width="80%"
+                @ok="$print($refs.print)">
+            <invoice ref="print"></invoice>
+        </a-modal>
     </a-row>
 </template>
 <script>
 
+    import Invoice from '../../components/InvoiceTemplate'
     import SearchPatient from '../../components/SearchPatient'
 
     export default {
         components: {
-            searchPatient: SearchPatient
+            searchPatient: SearchPatient,
+            invoice: Invoice
         },
         data () {
             return {
@@ -120,6 +132,8 @@
                 showRegister: false,
                 showDoctor: false,
                 showPayment: false,
+                showInvoice: true,
+                invoice: null,
                 doctor: [],
                 requestObject: {
                     patientId: null,
@@ -132,7 +146,7 @@
         },
         methods: {
             selectPatient (record) {
-                this.showDoctor = true
+                this.showRegister = true
                 this.requestObject.patientId = record.id
             },
             pay () {
