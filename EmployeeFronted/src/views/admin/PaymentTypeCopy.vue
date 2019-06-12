@@ -307,26 +307,30 @@ import { constants } from 'crypto';
                     p.type = t
                 }
                 p.delete = p.isDelete
-                this.$api.post("/payment_type/updatePaymentType", p,
-                    res => {
-                        if (res.code === "100") {
-                            const newData=[...that.paymentTypeList]
-                            const tar=newData.filter(item => item.id === p.id)[0]
-                            tar.id=p.id
-                            tar.code=p.code
-                            tar.name=p.name
-                            tar.type=that.idKeyMap.get(p.type)
-                            delete tar.editable
-                            tar.isDelete=p.delete
-                            tar.delete=p.delete
-                            that.paymentTypeList=newData
-                            that.$message.success('更新成功')
-                        } else {
-                            that.$message.error(res.msg)
-                        }
-                    }, res => {
-                        that.$message.error(res)
-                    })
+                if(p.delete){       
+                    this.$api.post("/payment_type/updatePaymentType", p,
+                        res => {
+                            if (res.code === "100") {
+                                const newData=[...that.paymentTypeList]
+                                const tar=newData.filter(item => item.id === p.id)[0]
+                                tar.id=p.id
+                                tar.code=p.code
+                                tar.name=p.name
+                                tar.type=that.idKeyMap.get(p.type)
+                                delete tar.editable
+                                tar.isDelete=true
+                                tar.delete=true
+                                that.paymentTypeList=newData
+                                that.$message.success('更新成功')
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                        })
+                }else{
+                    this.retreatDelete(p)
+                }
             }, cancel (record) {
                 if (record.isAdd) {
                     this.paymentTypeList.shift()
@@ -354,7 +358,6 @@ import { constants } from 'crypto';
                 this.$api.post("/payment_type/deletePaymentType/" + value, null,
                     res => {
                         if (res.code === "100") {
-                            console.log('******')
                             that.$message.success('更新成功')
                             const target=that.paymentTypeList.filter(item => value === item.id)[0]
                             target.isDelete=true
@@ -370,6 +373,28 @@ import { constants } from 'crypto';
                 this.modalVisible = false
             }, onSelectChange (rowKeys) {
                 this.selectedRowKeys = rowKeys
+            },retreatDelete(p){
+                let that=this
+                this.$api.post("/payment_type/recoverPaymentType", p,
+                    res => {
+                        if (res.code === "100") {
+                            const newData=[...that.paymentTypeList]
+                            const tar=newData.filter(item => item.id === p.id)[0]
+                            tar.id=p.id
+                            tar.code=p.code
+                            tar.name=p.name
+                            tar.type=that.idKeyMap.get(p.type)
+                            delete tar.editable
+                            tar.isDelete=false
+                            tar.delete=false
+                            that.paymentTypeList=newData
+                            that.$message.success('更新成功')
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
             }
         }
     }

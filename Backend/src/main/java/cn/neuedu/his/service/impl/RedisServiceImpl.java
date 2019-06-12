@@ -538,7 +538,8 @@ public class RedisServiceImpl {
         Jedis jedis = getResource();
 
         try {
-            setHash("paymentType",type.getName(),type.getType().toString());
+            setHash("paymentType",type.getName(),type.getId().toString());
+            
         } catch (Exception e) {
             //returnBrokenResource(jedis);
         }finally {

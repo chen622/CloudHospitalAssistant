@@ -83,11 +83,9 @@ public class PaymentTypeController {
     }
 
 
-    @PostMapping("/recoverPaymentType/{id}")
-    public JSONObject recoverPaymentType(@PathVariable("id") Integer id, Authentication authentication){
-
+    @PostMapping("/recoverPaymentType")
+    public JSONObject recoverPaymentType(@RequestBody JSONObject object, Authentication authentication){
         //检查权限
-
         try{
             PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
@@ -98,16 +96,17 @@ public class PaymentTypeController {
             }
         }
 
-        PaymentType paymentType = paymentTypeService.findById(id);
+        PaymentType payment = JSONObject.toJavaObject(object, PaymentType.class);
+
+        PaymentType paymentType = paymentTypeService.findById(payment.getId());
 
         //检查结算类型是否存在
         if (paymentType == null)
-            return CommonUtil.errorJson(ErrorEnum.E_606);
+            return CommonUtil.errorJson(ErrorEnum.E_810);
 
-        paymentType.setDelete(false);
-
-        redisService.setPaymentType(paymentType);
-        paymentTypeService.update(paymentType);
+        payment.setDelete(false);
+        redisService.setPaymentType(payment);
+        paymentTypeService.update(payment);
 
         return CommonUtil.successJson(paymentType);
     }
