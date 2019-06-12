@@ -29,8 +29,13 @@
                     </a-popconfirm>
                 </div>
                 <div class="action" v-if="$store.state.inspections.length && !record.temp">
-                    <a>查看结果</a>
+                    <a v-if="record.results&&record.results.length> 0"
+                       @click="showResultMethod(record.results)">查看结果</a>
+                    <span v-else>无结果</span>
                 </div>
+                <a-modal title="结果" v-if="showResult" v-model="showResult">
+                    <img v-for="(result,index) in results" :key="index" :src="result.picture" style="width: 100%"/>
+                </a-modal>
             </template>
         </a-table>
         <a-divider>项目用药内容</a-divider>
@@ -70,6 +75,8 @@
             newInspection: null,
             nonDrugs: [],
             nonDrugsTypes: [],
+            showResult: false,
+            results: [],
             inspectionsColumns: [
                 {
                     title: '项目名称',
@@ -110,6 +117,10 @@
             ]
         }),
         methods: {
+            showResultMethod (results) {
+                this.showResult = true
+                this.results = results
+            },
             saveInspection (record, index) {
                 let data = {
                     isDisposal: false,
