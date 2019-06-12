@@ -347,6 +347,9 @@ import { stat } from 'fs';
                         start=this.time[0].utc().format('YYYY-MM-DD'),
                         end=this.time[1].utc().format('YYYY-MM-DD')
                     }
+                    var m={
+                        start:start,
+                        end:end,
                      console.log(start)
                      console.log(this.getTimeStamp(start))
                     var m={
@@ -364,6 +367,25 @@ import { stat } from 'fs';
                         if (res.code === "100") {
                             
                             console.log(res.data)
+                            that.paymentList=[]
+                            var p=res.data.paymentList
+                            for (let i = 0; i < p.length; i++) {
+                                if (p[i].type != 0) {
+                                    that.paymentList.push({
+                                        key: p[i].id,
+                                        id: p[i].id,
+                                        code: p[i].code,
+                                        name: p[i].name,
+                                        isDelete: p[i].delete,
+                                        type: map.get(p[i].type)
+                                    })
+                                }
+                            }
+                            var pp=res.data
+                            delete pp.paymentList
+                            that.patients.push(pp)
+                            console.log(that.patients)
+                            console.log(that)
                         }else{
                             that.$message.error(res)
                         }

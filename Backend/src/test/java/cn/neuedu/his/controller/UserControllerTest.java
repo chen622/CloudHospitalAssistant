@@ -323,7 +323,7 @@ public class UserControllerTest {
     @Test
     public void findAll() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/findUser/ccm")
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/findUser/ccm1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
