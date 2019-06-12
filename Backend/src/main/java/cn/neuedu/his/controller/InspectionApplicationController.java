@@ -201,7 +201,7 @@ public class InspectionApplicationController {
         try{
             PermissionCheck.isTechnicalDoctor(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_632);
+            return CommonUtil.errorJson(ErrorEnum.E_602);
         }
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         //判断权限
@@ -209,7 +209,8 @@ public class InspectionApplicationController {
 
         InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
         inspectionResult.setOperatorId(id);
-        inspectionResultService.save(inspectionResult);
+
+        inspectionApplicationService.entryApplicationResult(inspectionResult);
         return CommonUtil.successJson();
     }
 }
