@@ -127,7 +127,7 @@
         methods: {
             getInvoice () {
                 let that = this
-                this.$api.get('/invoice/print/143', null, function (res) {
+                this.$api.get('/invoice/print/' + this.invoiceId, null, function (res) {
                     if (res.code === '100') {
                         that.invoice = res.data.invoice
                         that.patient = res.data.patient

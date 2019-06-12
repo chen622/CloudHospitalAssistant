@@ -153,4 +153,12 @@ public class ConstantVariableController {
         return CommonUtil.successJson(constantVariables);
     }
 
+
+    @GetMapping("/getAll")
+    public JSONObject getAll(){
+
+        List<ConstantVariable> constantVariables = constantVariableService.findAll();
+        return CommonUtil.successJson(constantVariables);
+    }
+
 }
