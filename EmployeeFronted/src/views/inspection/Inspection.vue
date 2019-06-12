@@ -20,25 +20,25 @@
                     <a-form-item label="身份证号">
                         <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
-                    <a-form-item label="家庭住址">
-                        <a-textarea v-model="address" placeholder="家庭住址" autosize style="width:300px">{{address}}</a-textarea>
+                    <a-form-item label="联系方式">
+                        <a-textarea v-model="address" placeholder="联系方式" autosize style="width:300px">{{address}}</a-textarea>
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">项目明细</p>
                 <a-table :columns="columns"  :dataSource="data">
-                    <a slot="name" slot-scope="text" href="javascript:;" @click="showmodal">{{text}}</a>
+                    <a slot="patient.username" slot-scope="text" href="javascript:;" @click="showmodal">{{text}}</a>
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}</template>
-                    <span slot="action" slot-scope="">
+                    <span slot="action" slot-scope="text, record">
                        <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers" @change="handleChange">
                            <a-button>结果录入</a-button>
                        </a-upload>
                     </span>
                 </a-table>
                 <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="执行确认" cancelText="取消执行">
-                    <p>病历号:</p>
-                    <p>姓名:</p>
-                    <p>项目名称:</p>
-                    <p>状态:</p>
+                    <p>病历号: {{id}}</p>
+                    <p>姓名: {{username}}</p>
+                    <p>项目名称: {{projectName}}</p>
+                    <p>状态: {{state}}</p>
                 </a-modal>
             </a-card>
         </a-col>
@@ -58,6 +58,8 @@
                 username:'',
                 userid:'',
                 address:'',
+                projectName:'',
+                state:'',
                 headers:{
                     authorization:'authorization-text',
                 },
@@ -136,6 +138,13 @@
                 res=>{
                     if (res.code === "100"){
                         that.data = res.data
+                        this.username = this.data[0].user.realName
+                        this.userid = this.data[0].user.identifyId
+                        console.log(res.data)
+                        this.address = this.data[0].patient.phoneNumber
+                        this.id = this.data[0].patientId
+                        this.projectName = this.data[0].paymentType.name
+                        this.state = this.data[0].state
                     }
                     else {
                         that.$message.error(res)

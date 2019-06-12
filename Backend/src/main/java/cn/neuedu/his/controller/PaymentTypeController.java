@@ -156,8 +156,8 @@ public class PaymentTypeController {
         PaymentType lastPaymentType = paymentTypeService.getPaymentTypeByName(paymentType.getName());
 
         //判断数据是否存在
-        if (lastPaymentType != null)
-            return CommonUtil.errorJson(ErrorEnum.E_606);
+        if (lastPaymentType == null)
+            return CommonUtil.errorJson(ErrorEnum.E_810);
 
         try{
             paymentTypeService.update(paymentType);

@@ -41,6 +41,16 @@ public class Patient {
 
     private List<Payment> paymentList;
 
+    private String phoneNumber;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     /**
      * @return id
      */

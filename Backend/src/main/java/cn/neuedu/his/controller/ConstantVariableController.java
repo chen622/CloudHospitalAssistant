@@ -127,7 +127,6 @@ public class ConstantVariableController {
                 map1.put("id", map.get(string));
                 list.add(map1);
             }
-
             return CommonUtil.successJson(list);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
