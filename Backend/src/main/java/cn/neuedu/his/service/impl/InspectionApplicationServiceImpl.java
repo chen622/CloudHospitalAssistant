@@ -50,4 +50,18 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     public ArrayList<InspectionApplication> findAllByMedical(Integer medicalId) {
         return inspectionApplicationMapper.getAllByMedical(medicalId);
     }
+
+    @Override
+    public void confirmApplication(Integer id) throws RuntimeException {
+        InspectionApplication inspectionApplication = this.findById(id);
+        inspectionApplication.setCheck(true);
+        this.update(inspectionApplication);
+    }
+
+    @Override
+    public void cancelApplication(Integer id) throws RuntimeException {
+        InspectionApplication inspectionApplication = this.findById(id);
+        inspectionApplication.setCanceled(true);
+        this.update(inspectionApplication);
+    }
 }

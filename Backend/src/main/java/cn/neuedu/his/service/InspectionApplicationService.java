@@ -17,4 +17,6 @@ public interface InspectionApplicationService extends Service<InspectionApplicat
     List<Payment> selectPatientInformationByNameOrId(String name, Integer id, Integer department_id,Boolean auth);
     InspectionApplication findInspectionAndNonDrug(Integer id);
     ArrayList<InspectionApplication> findAllByMedical(Integer medicalId);
+    void confirmApplication(Integer id) throws RuntimeException;
+    void cancelApplication(Integer id) throws RuntimeException;
 }

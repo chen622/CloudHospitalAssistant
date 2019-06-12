@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.InspectionApplicationService;
+import cn.neuedu.his.service.InspectionResultService;
 import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
@@ -33,6 +34,8 @@ public class InspectionApplicationController {
     UserService userService;
     @Autowired
     DoctorService doctorService;
+    @Autowired
+    InspectionResultService inspectionResultService;
 
     /**
      * 暂存检查/处置
@@ -189,8 +192,24 @@ public class InspectionApplicationController {
 
 
     @PostMapping("confirmApplication/{id}")
-    JSONObject confirmApplication(JSONObject jsonObject) {
+    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
 
+        inspectionApplicationService.confirmApplication(id);
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("cancelApplication/{id}")
+    public JSONObject cancelApplication(@PathVariable("id") Integer id, Authentication authentication){
+
+        inspectionApplicationService.cancelApplication(id);
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("entryApplicationResult")
+    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject){
+
+        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
+        inspectionResultService.save(inspectionResult);
         return CommonUtil.successJson();
     }
 }
