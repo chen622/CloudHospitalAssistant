@@ -59,7 +59,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     public void confirmApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
         //检测是否交钱
-        if (inspectionApplication.getCheck() != true)
+        if (!inspectionApplication.getCheck())
             throw new RuntimeException("634");
 
         inspectionApplication.setDone(true);
@@ -69,6 +69,9 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public void cancelApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
+        if (inspectionApplication.getDone()){
+            throw new RuntimeException();
+        }
         inspectionApplication.setCanceled(true);
         this.update(inspectionApplication);
     }
