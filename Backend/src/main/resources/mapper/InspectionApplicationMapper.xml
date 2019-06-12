@@ -37,7 +37,7 @@
     <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
     <association property="application" javaType="cn.neuedu.his.model.InspectionApplication">
-      <id column="id" jdbcType="INTEGER" property="id" />
+      <id column="application_id" jdbcType="INTEGER" property="id" />
       <result column="item_id" jdbcType="INTEGER" property="itemId" />
       <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
       <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -154,7 +154,7 @@
   </resultMap>
 
   <select id="selectPatientInformationByNameOrId" resultMap="getPatientInformationAndInspection">
-    SELECT *, department.name as deptname,non_drug.id as nonDrug_id
+    SELECT *, department.name as deptname,non_drug.id as nonDrug_id,inspection_application.id as application_id
     FROM payment JOIN inspection_application ON payment.item_id = inspection_application.id
                  JOIN patient on patient.id = payment.patient_id
                  JOIN `user` ON payment.doctor_id = `user`.id
