@@ -54,10 +54,8 @@ public class DailySettleController {
         JSONArray resultArray = new JSONArray();
         try {
             PermissionCheck.isFinancialOfficer(authentication);
-        }catch (AuthenticationServiceException e) {
+        }catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         ArrayList<DailySettle> dailySettleList = dailySettleService.getSettleInfo(adminId);
