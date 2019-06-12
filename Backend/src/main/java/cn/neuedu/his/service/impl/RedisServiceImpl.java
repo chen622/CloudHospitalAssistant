@@ -539,7 +539,7 @@ public class RedisServiceImpl {
 
         try {
             setHash("paymentType",type.getName(),type.getId().toString());
-            
+
         } catch (Exception e) {
             //returnBrokenResource(jedis);
         }finally {
