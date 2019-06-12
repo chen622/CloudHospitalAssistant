@@ -289,17 +289,21 @@
                 if (value != this.paymentTypeTemp.id)
                     return
                 let p = this.paymentTypeTemp
+              
                 let t = this.nameKeyMap.get(p.type)
                 if (t != null && t >= 0 && t < 100) {
                     p.type = t
                 }
                 p.delete = p.isDelete
+                console.log(p)
                 this.$api.post("/payment_type/updatePaymentType", p,
                     res => {
                         if (res.code === "100") {
                             alert('更新成功')
                         } else {
-                            alert('更新失败')
+                            // console.log('?')
+                            // console.log(p)
+                            // alert('更新失败')
                             that.$message.error(res.msg)
                         }
                     }, res => {
