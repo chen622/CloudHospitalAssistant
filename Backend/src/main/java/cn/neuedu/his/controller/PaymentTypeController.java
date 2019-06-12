@@ -106,6 +106,7 @@ public class PaymentTypeController {
 
         paymentType.setDelete(false);
 
+        redisService.setPaymentType(paymentType);
         paymentTypeService.update(paymentType);
 
         return CommonUtil.successJson(paymentType);

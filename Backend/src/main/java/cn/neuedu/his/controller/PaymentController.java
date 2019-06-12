@@ -158,8 +158,9 @@ public class PaymentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+            invoice =paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
         } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         } catch (UnsupportedOperationException e2) {
@@ -167,11 +168,14 @@ public class PaymentController {
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("invoice"))
                 return CommonUtil.errorJson(ErrorEnum.E_505);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
         } catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
+
     }
 
     /**
@@ -192,14 +196,15 @@ public class PaymentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            paymentService.retreatDrugFee(paymentId, tollKeeper);
+            invoice = paymentService.retreatDrugFee(paymentId, tollKeeper);
         } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         } catch (UnsupportedOperationException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_506);
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
     }
 }
