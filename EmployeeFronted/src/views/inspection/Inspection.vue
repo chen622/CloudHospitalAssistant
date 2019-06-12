@@ -131,7 +131,18 @@
                     value === null
                 }
                 let that = this
-                this.$api.get("",value)
+                this.$api.get("/inspection_application/selectPatientInformationByNameOrId/id/"+ value, null,
+                res=>{
+                    if (res.code === "100"){
+                        that.data = res.data
+                        console.log(this.data)
+                    }
+                    else {
+                        that.$message.error(res)
+                    }
+                }, res=>{
+                    that.$message.error(res)
+                    })
 
             },
             getPatient(){
