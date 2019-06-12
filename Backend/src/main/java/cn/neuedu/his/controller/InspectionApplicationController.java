@@ -169,13 +169,9 @@ public class InspectionApplicationController {
     public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
 
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isTechnicalDoctor(authentication);
         }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+            return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
         try {
@@ -191,13 +187,9 @@ public class InspectionApplicationController {
     public JSONObject cancelApplication(@PathVariable("id") Integer id,Authentication authentication){
 
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isTechnicalDoctor(authentication);
         }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+            return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
         inspectionApplicationService.cancelApplication(id);
@@ -206,18 +198,17 @@ public class InspectionApplicationController {
 
     @PostMapping("/entryApplicationResult")
     public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject,Authentication authentication){
-
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isTechnicalDoctor(authentication);
         }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+            return CommonUtil.errorJson(ErrorEnum.E_632);
         }
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        //判断权限
+        Integer id = (Integer) data.get("id");
 
         InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
+        inspectionResult.setOperatorId(id);
         inspectionResultService.save(inspectionResult);
         return CommonUtil.successJson();
     }
