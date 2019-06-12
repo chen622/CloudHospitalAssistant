@@ -91,10 +91,5 @@ export default new Router({
             name:'check',
             component:()=> import('./views/admin/DailySettle')
         },
-        {
-            path:'/finance/paymentType',
-                name:'paymentType',
-            component:()=> import('./views/admin/paymentType')
-        }
     ]
 })
