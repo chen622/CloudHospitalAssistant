@@ -22,19 +22,35 @@
                     </div>
                     <!--订单已缴费-->
                     <div v-else-if="record.state===1202" class="action">
-                        <a @click="invoiceId = record.invoiceId;showInvoice=true">重打发票</a>
+                        <a-popconfirm title='确定重打吗?' @confirm="invoiceId = record.invoiceId;showInvoice=true">
+                            <a>重打发票</a>
+                        </a-popconfirm>
+                        <a-popconfirm title='确定退费吗?' @confirm="showRetreat=true;retreatPayment =record">
+                            <a>退费</a>
+                        </a-popconfirm>
+                    </div>
+                    <div v-else-if="record.state===1204" class="action">
                         <a>退费</a>
                     </div>
                 </div>
             </template>
         </a-table>
-        <a-modal :visible="showPay" header="缴费" @ok="pay" @cancel="showPay =false">
-            <a-form>
+        <a-modal v-if="showPay" :visible="showPay" title="缴费" @ok="pay" @cancel="showPay =false">
+            <a-form layout="inline" style="text-align: center">
                 <a-form-item label="缴费类型">
                     <a-select v-model="settlementType">
                         <a-select-option v-for="settlement in settlementTypes" :key="settlement.id">{{settlement.name}}
                         </a-select-option>
                     </a-select>
+                </a-form-item>
+            </a-form>
+        </a-modal>
+        <a-modal v-if="showRetreat" :visible="showRetreat" title="退费" @ok="retreatWithoutTake"
+                 @cancel="showRetreat =false">
+            <a-form layout="inline" style="text-align: center">
+                <a-form-item label="数量">
+                    <a-input-number v-model="retreatQuantity" :min="1" :max="retreatPayment.quantity">
+                    </a-input-number>
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -103,8 +119,33 @@
             showPay: false,
             showInvoice: false,
             invoiceId: null,
+            showRetreat: false,
+            retreatPayment: null,
+            retreatQuantity: 1
         }),
         methods: {
+            retreatWithoutTake () {
+                let that = this
+                console.log(this.retreatPayment)
+                this.$api.post("/payment/produceRetreatPayment",
+                    {paymentId: this.retreatPayment.id, quantity: this.retreatQuantity},
+                    res => {
+                        if (res.code === '100') {
+                            that.invoiceId = res.data.id
+                            that.showRetreat = false
+                            that.showInvoice = true
+                            that.$message.success("退费成功")
+                            that.selectedRowKeys = []
+                            that.$emit("reload")
+                        }
+                        that.$message.error(res.msg)
+
+                    },
+                    () => {
+                        that.$message.error("网络错误")
+                    }
+                )
+            },
             onSelect (select, selected) {
                 if (selected) {
                     if (select.paymentType.type === 3) {
@@ -135,6 +176,10 @@
                 }
             },
             pay () {
+                if (this.settlementType === null) {
+                    this.$message.error("请选择缴费类型")
+                    return
+                }
                 let that = this
                 this.$api.post('/payment/pay', {
                     paymentIdList: this.selectedRowKeys,
