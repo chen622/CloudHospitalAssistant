@@ -52,11 +52,11 @@ public class UserControllerTest {
     public void insertProperDoctorrInformation() throws Exception {
         //json数据
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("userName", "ccm6");
-        jsonObject.put("realName", "ccm");
+        jsonObject.put("userName", "ccm9");
+        jsonObject.put("realName", "ccm9");
         jsonObject.put("password", "123456");
         jsonObject.put("createTime", new Date(System.currentTimeMillis()));
-        jsonObject.put("typeId", 606);
+        jsonObject.put("typeId", 602);
         jsonObject.put("departmentId", 1);
         jsonObject.put("identifyId", "211002199709251979");
         jsonObject.put("titleId", 701);

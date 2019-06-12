@@ -43,17 +43,23 @@ public class DoctorController {
     @Autowired
     private InspectionApplicationService inspectionApplicationService;
 
-    @GetMapping("/getAll/{medicalId}")
-    public JSONObject getAllByMedical(@PathVariable("medicalId") Integer medicalId, Authentication authentication) {
+    @GetMapping("/getPrescriptionAndInspection/{registrationId}")
+    public JSONObject getAllByMedical(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         try {
             PermissionCheck.isOutpatientDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
-
+        if (registrationId==null){
+            return CommonUtil.errorJson(ErrorEnum.E_501);
+        }
+        MedicalRecord medicalRecord = medicalRecordService.getByRegistrationId(registrationId);
+        if (medicalRecord==null){
+            return CommonUtil.errorJson(ErrorEnum.E_501);
+        }
         JSONObject result = new JSONObject();
-        result.put("prescription", prescriptionService.findPrescriptionAndDrugByMedical(medicalId));
-        result.put("inspection", inspectionApplicationService.findAllByMedical(medicalId));
+        result.put("prescriptions", prescriptionService.findPrescriptionAndDrugByMedical(medicalRecord.getId()));
+        result.put("inspections", inspectionApplicationService.findAllByMedical(medicalRecord.getId()));
 
         return CommonUtil.successJson(result);
     }
@@ -594,83 +600,8 @@ public class DoctorController {
         return doctorService.getInspectionResult(id);
     }
 
-    /**
-     * 保存确诊信息
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/finalDiagnose")
-    public JSONObject saveFinalDiagnose(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-        Integer registrationID = null, medicalRecordId;
-        try {
-            registrationID = Integer.parseInt(object.get("registrationId").toString());
-        } catch (NumberFormatException n) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        }
-        try {
-            medicalRecordId = Integer.parseInt(object.get("medicalRecordId").toString());
-        } catch (NumberFormatException n) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecordId"));
-        }
-
-        ArrayList<Integer> diagnoses = (ArrayList<Integer>) object.getJSONArray("diagnoses").toJavaList(Integer.class);
-        if (diagnoses == null || diagnoses.size() == 0)
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("diagnoses"));
-        try {
-            return doctorService.saveFinalDiagnose(registrationID, medicalRecordId, diagnoses);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("medicalRecord"));
-        }
-    }
-
 
     //part three
-
-    /**
-     * 保存医生开的药方
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/savePrescriptions")
-    public JSONObject savePrescriptions(@RequestBody JSONObject object, Authentication authentication) {
-        Integer doctorId;
-        try {
-            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-        } catch (AuthenticationServiceException a) {
-            try {
-                doctorId = PermissionCheck.isTechnicalDoctor(authentication);
-            } catch (AuthenticationServiceException aa) {
-                return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
-            } catch (Exception e) {
-                return CommonUtil.errorJson(ErrorEnum.E_802);
-            }
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-
-        Integer registrationId = Integer.parseInt(object.get("registrationId").toString());
-
-        List<Prescription> prescriptions = JSONObject.parseArray(object.get("prescriptions").toString(), Prescription.class);
-        if (prescriptions != null && !prescriptions.isEmpty()) {
-            try {
-                return doctorService.savePrescriptions(prescriptions, registrationId, doctorId);
-            } catch (Exception e) {
-                return CommonUtil.errorJson(ErrorEnum.E_500.addErrorParamName(e.getMessage()));
-            }
-        } else {
-            return CommonUtil.errorJson(ErrorEnum.E_704);
-        }
-    }
 
 
     /**

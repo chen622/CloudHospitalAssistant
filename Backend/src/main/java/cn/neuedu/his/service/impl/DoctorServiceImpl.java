@@ -397,20 +397,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     @Override
-    public JSONObject saveFinalDiagnose(Integer registrationId, Integer medicalRecordId, List<Integer> diagnoses) throws Exception {
+    public JSONObject saveFinalDiagnose(Integer registrationId, MedicalRecord medicalRecord, List<Integer> diagnoses) {
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             return CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("registration"));
-        if (registration.getState().intValue() >= Constants.FINISH_DIAGNOSIS) {
+        if (registration.getState() >= Constants.FINISH_DIAGNOSIS) {
             return CommonUtil.errorJson(ErrorEnum.E_809);
         }
-        MedicalRecord record = medicalRecordService.findById(medicalRecordId);
-
-        if (record == null || !record.getRegistrationId().equals(registrationId))
-            return CommonUtil.errorJson(ErrorEnum.E_608.addErrorParamName("medicalRecordId"));
         registration.setState(Constants.FINAL_DIAGNOSIS);
         registrationService.update(registration);
-        doctorService.saveDiagnose(diagnoses, medicalRecordId, true, false);
+        doctorService.saveDiagnose(diagnoses, medicalRecord.getId(), true, false);
         return CommonUtil.successJson();
     }
 
@@ -493,6 +489,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setItemId(medicalRecordId);
                 prescriptionService.save(p2);
                 Payment p = setPrescriptionPayment(p2, registration.getPatientId(), doctorId);
+                paymentService.save(p);
             }
         }
 
@@ -707,8 +704,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return "drug";
         if (p.getAmount() == null)
             return "amount";
-        if (p.getUseAmount() == null || p.getUseAmount().equals(""))
-            return "useAmount";
         if (p.getDays() == null)
             return "days";
         if (p.getNeedSkinTest() == null)

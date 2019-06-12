@@ -98,13 +98,13 @@ public class PatientController {
      */
     @GetMapping("/getNotConsumePayment/{patientId}")
     public JSONObject getNotConsumePaymentAndPatient(@PathVariable("patientId") Integer patientId, Authentication authentication) {
-        try {
-            PermissionCheck.getIdByPaymentAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
+//        try {
+//            PermissionCheck.getIdByPaymentAdmin(authentication);
+//        } catch (AuthenticationServiceException e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_502);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
 
         Patient patient;
         try {
@@ -206,7 +206,7 @@ public class PatientController {
     @PostMapping("/searchByMulti")
     public JSONObject selectPatientByIdentifyId(@RequestBody JSONObject json) {
         String identifyId = json.getString("id");
-        String name = json.getString("name");
+        String name = json.getString("realName");
         String phone = json.getString("phone");
         if (identifyId == null) {
             return CommonUtil.errorJson(ErrorEnum.E_501);

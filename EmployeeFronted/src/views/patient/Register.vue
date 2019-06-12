@@ -1,42 +1,7 @@
 <template>
     <a-row type="flex" align="middle" justify="center">
         <a-col span="20">
-            <a-card hoveracble title="查询" :headStyle="{fontSize: '30px'}" :body-style="{padding: 0}"
-                    class="info-search">
-                <a-form :form="form" layout="inline" style="margin: 20px">
-                    <p class="form-header">患者查询:</p>
-                    <a-form-item label="身份证号" hideRequiredMark="false">
-                        <a-input placeholder="身份证号"
-                                 v-decorator="['id',{rules: [{required: true, message: '请输入患者身份证号', trigger: 'blur'}]}]"></a-input>
-                    </a-form-item>
-                    <p class="form-header">信息确认:</p>
-                    <a-form-item label="姓名">
-                        <a-input v-decorator="['realName']"
-                                 placeholder="姓名"></a-input>
-                    </a-form-item>
-                    <a-form-item label="手机号">
-                        <a-input v-decorator="['phone',{rules: [{type: 'number',message: '手机号非法', trigger: 'blur'}]}]"
-                                 placeholder="身份证号"></a-input>
-                    </a-form-item>
-                    <a-form-item>
-                        <a-button type="primary" @click="searchPatient">查询患者</a-button>
-                    </a-form-item>
-                </a-form>
-                <a-table :loading="load.loadPatient" :columns="columns" :dataSource="patient" rowKey="id"
-                         :pagination="{defaultPageSize: 10}">
-                    <template slot="sex" slot-scope="text">
-                        <a-tag v-if="text === false" color="pink">女</a-tag>
-                        <a-tag v-else color="blue">男</a-tag>
-                    </template>
-                    <template slot="action" slot-scope="text, record">
-                        <div class='editable-row-operations'>
-                            <a-button type="primary" @click="showRegister = true;requestObject.patientId = record.id">
-                                选择
-                            </a-button>
-                        </div>
-                    </template>
-                </a-table>
-            </a-card>
+            <searchPatient @selectPatient="selectPatient"></searchPatient>
             <a-card v-if="showRegister" hoveracble title="挂号" :headStyle="{fontSize: '30px'}" class="info-search">
                 <a-form :form="registration" layout="inline">
                     <a-form-item label="科室选择">
@@ -137,50 +102,18 @@
 </template>
 <script>
 
+    import SearchPatient from '../../components/SearchPatient'
+
     export default {
+        components: {
+            searchPatient: SearchPatient
+        },
         data () {
             return {
                 load: {
                     loadDoctor: true,
-                    loadPatient: true,
                     register: false
                 },
-                form: this.$form.createForm(this),
-                columns: [
-                    {
-                        title: '身份证号',
-                        dataIndex: 'identityId',
-                        width: '15%',
-                        align: 'center'
-                    }, {
-                        title: '姓名',
-                        dataIndex: 'realName',
-                        width: '10%',
-                        align: 'center'
-                    }, {
-                        title: '电话',
-                        dataIndex: 'phone',
-                        width: '15%',
-                        align: 'center'
-                    }, {
-                        title: '年龄',
-                        dataIndex: 'age',
-                        width: '10%',
-                        align: 'center'
-                    }, {
-                        title: '性别',
-                        dataIndex: 'sex',
-                        width: '10%',
-                        align: 'center',
-                        scopedSlots: {customRender: 'sex'},
-                    }, {
-                        title: '操作',
-                        dataIndex: 'action',
-                        width: '40%',
-                        scopedSlots: {customRender: 'action'},
-                        align: 'center'
-                    }],
-                patient: [],
                 departmentKind: [],
                 settlementType: [],
                 registration: this.$form.createForm(this),
@@ -198,6 +131,11 @@
             }
         },
         methods: {
+            selectPatient (record) {
+                console.log(record)
+                this.showDoctor = true
+                this.requestObject.patientId = record.id
+            },
             pay () {
                 let that = this
                 let data = {
@@ -283,41 +221,6 @@
                 })
             }
             ,
-            getAllPatient () {
-                let that = this
-                this.load.loadPatient = true
-                this.$api.get("/patient/getAll", null,
-                    res => {
-                        if (res.code === "100") {
-                            that.patient = res.data
-                            that.load.loadPatient = false
-                        }
-                    }, () => {
-                        that.$message.error("网络异常")
-                    })
-            }
-            ,
-            searchPatient () {
-                let that = this
-                this.form.validateFields((err) => {
-                    if (!err) {
-                        this.load.loadPatient = true
-                        this.$api.post("/patient/searchByMulti", this.form.getFieldsValue(),
-                            res => {
-                                if (res.code === "100") {
-                                    that.patient = res.data
-                                    that.load.loadPatient = false
-                                } else {
-                                    that.$message.error(res)
-                                }
-                            }, () => {
-                                that.$message.error("网络异常")
-                            }
-                        )
-                    }
-                })
-            }
-            ,
             getSettlementType () {
                 let that = this
                 this.$api.get("/constant_variable/getSettlementType", null,
@@ -344,7 +247,6 @@
         }
         ,
         mounted () {
-            this.getAllPatient()
             this.getDepartment()
             this.getSettlementType()
         }

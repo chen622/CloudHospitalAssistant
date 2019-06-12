@@ -24,16 +24,16 @@ public class Prescription implements Serializable {
     /**
      * 频率
      */
-    @Column( name =  "frequency")
+    @Column(name = "frequency")
     private String frequency;
 
     @Column(name = "drug_id")
     private Integer drugId;
 
-    @Column (name = "amount")
+    @Column(name = "amount")
     private Integer amount;
 
-    @Column (name = "days")
+    @Column(name = "days")
     private Integer days;
 
     /**
@@ -51,7 +51,7 @@ public class Prescription implements Serializable {
     @Column(name = "skin_test_result")
     private Boolean skinTestResult;
 
-    @Column (name = "is_template")
+    @Column(name = "is_template")
     private Boolean isTemplate;
 
     @Column(name = "create_time")
@@ -66,7 +66,7 @@ public class Prescription implements Serializable {
         return;
     }
 
-    public Prescription(Prescription p,Integer feeTypeId,Integer medicalRecord,Boolean isTemplate) {
+    public Prescription(Prescription p, Integer feeTypeId, Integer medicalRecord, Boolean isTemplate) {
         this.usageId = p.usageId;
         this.itemId = medicalRecord;
         this.frequency = p.frequency;
@@ -78,8 +78,8 @@ public class Prescription implements Serializable {
         this.needSkinTest = p.needSkinTest;
         this.skinTestResult = p.skinTestResult;
         this.isTemplate = isTemplate;
-        createTime=new Date(System.currentTimeMillis());
-        this.feeTypeId=feeTypeId;
+        createTime = new Date(System.currentTimeMillis());
+        this.feeTypeId = feeTypeId;
     }
 
 

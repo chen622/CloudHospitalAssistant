@@ -52,44 +52,44 @@ export default new Router({
             component: () => import('./views/patient/Register')
         },
         {
-            path: '/charge',
+            path: '/patient/charge',
             name: 'charge',
             component: () => import('./views/patient/Charge')
         },
         {
-            path:'/medicine',
-            name:'medicine',
-            component :() => import( './views/Medicine')
+            path: '/medicine',
+            name: 'medicine',
+            component: () => import( './views/Medicine')
         },
         {
-            path:'/inspection',
-            name:'inspction',
-            component:() => import('./views/inspection/Inspection')
+            path: '/inspection',
+            name: 'inspection',
+            component: () => import('./views/inspection/Inspection')
         },
         {
-            path:'/retreatRegister',
-            name:'RetreatRegister',
-            component:() => import('./views/patient/RetreatRegister')
+            path: '/retreatRegister',
+            name: 'RetreatRegister',
+            component: () => import('./views/patient/RetreatRegister')
         },
         {
             path: '/template',
             name: 'temp',
-            component:()=> import('./components/InvoiceTemplate')
+            component: () => import('./components/InvoiceTemplate')
         },
         {
-            path:'/search',
-            name:'search',
-            component:()=> import('./views/patient/Search')
+            path: '/search',
+            name: 'search',
+            component: () => import('./views/patient/Search')
         },
         {
             path:'/finance/manage',
             name:'manage',
-            component:()=> import('./views/admin/paymentType')
+            component:()=> import('./views/admin/PaymentType')
         },
         {
             path:'/finance/check',
             name:'check',
-            component:()=> import('./views/admin/dailySettle')
+            component:()=> import('./views/admin/DailySettle')
         }
     ]
 })
