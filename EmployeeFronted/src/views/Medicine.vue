@@ -748,7 +748,7 @@ import { Promise, resolve, reject } from 'q';
                  res => {
                         if (res.code === "100") {
                            var map=new Map();
-                           var name=res.data
+                           var name=res.data.name
                            var id=res.data.id
                            for(let i=0;i<name.length;i++){
                                 that.paymentTypeList.push({

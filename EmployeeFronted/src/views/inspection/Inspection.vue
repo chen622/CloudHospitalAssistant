@@ -34,10 +34,10 @@
                     </span>
                 </a-table>
                 <a-modal title="项目信息确认" v-model="visible" @ok="handleok" okText="执行确认" cancelText="取消执行">
-                    <p>病历号：{{id}}</p>
-                    <p>姓名：{{data[0].name}}</p>
-                    <p>项目名称: {{data[0].depname}}</p>
-                    <p>状态: {{data[0].state}}</p>
+                    <p>病历号:</p>
+                    <p>姓名:</p>
+                    <p>项目名称:</p>
+                    <p>状态:</p>
                 </a-modal>
             </a-card>
         </a-col>
@@ -62,71 +62,43 @@
                 },
                 columns:[{
                     title:'病历号',
-                    dataIndex:'id',
-                    key:'id',
-                    scopedSlots:{customRender:'id'}
+                    dataIndex:'application.id',
+                    scopedSlots:{customRender:'application.id'}
                 },{
                     title:'姓名',
-                    dataIndex:'name',
-                    key:'name',
-                    scopedSlots:{customRender:'name'}
+                    dataIndex:'patient.username',
+                    scopedSlots:{customRender:'patient.username'}
                 },{
                     title:'项目名称',
-                    dataIndex:'depname',
-                    key:'depname',
-                    scopedSlots:{customRender:'depname'}
+                    dataIndex:'paymentType.name',
+                    scopedSlots:{customRender:'paymentType.name'}
                 },{
                     title:'单价',
-                    dataIndex:'price',
-                    key:'price',
-                    scopedSlots:{customRender:'price'}
+                    dataIndex:'application.unitPrice',
+                    scopedSlots:{customRender:'application.unitPrice'}
                 },{
                     title:'数量',
-                    dataIndex:'amount',
-                    key:'amount',
-                    scopedSlots:{customRender:'amount'}
+                    dataIndex:'application.quantity',
+                    scopedSlots:{customRender:'application.quantity'}
                 },{
                     title:'开立时间',
-                    dataIndex:'date',
-                    key:'date',
-                    scopedSlots:{customRender:'date'}
+                    dataIndex:'application.createTime',
+                    scopedSlots:{customRender:'application.createTime'}
                 },{
                     title:'状态',
-                    dataIndex:'state',
-                    key:'state',
-                    scopedSlots:{customRender:'state'}
+                    dataIndex:'application.state',
+                    scopedSlots:{customRender:'application.'}
                 },{
                     title:'执行科室',
-                    dataIndex:'department',
-                    key:'departement',
-                    scopedSlots:{customRender:'department'}
+                    dataIndex:'application.nonDrug.department.name',
+                    scopedSlots:{customRender:'application.nonDrug.department.name'}
                 },{
                     title:'操作',
                     dataIndex:'action',
                     key:'action',
                     scopedSlots:{customRender:'action'}
                 }],
-                data:[{
-                    key:'1',
-                    id:'600615',
-                    name:'Jhon Brown',
-                    depname:'肠镜',
-                    price:200,
-                    amount:1,
-                    date:'2019-05-25 15:30:26',
-                    state:'已开立',
-                    department:'肠胃科',
-                },{
-                    key:'2',
-                    id:'600615',
-                    name:'Jhon Brown',
-                    depname:'肠镜',
-                    price:200,
-                    amount:1,
-                    date:'2019-05-25 15:30:26',
-                    state:'已开立',
-                    department:'肠胃科',
-                }]
+                data:[]
 
 
             }
@@ -135,6 +107,9 @@
             ARow,
             AFormItem,
             ATextarea
+        },
+        mounted:function(){
+          this.getPatient()
         },
         methods:{
             showmodal(){
@@ -152,11 +127,37 @@
                 }
             },
             onSearch(value){
+                if (value === null || value === undefined){
+                    value === null
+                }
+                let that = this
+                this.$api.get("/inspection_application/selectPatientInformationByNameOrId/id/"+ value, null,
+                res=>{
+                    if (res.code === "100"){
+                        that.data = res.data
+                        console.log(this.data)
+                    }
+                    else {
+                        that.$message.error(res)
+                    }
+                }, res=>{
+                    that.$message.error(res)
+                    })
 
             },
             getPatient(){
                 let that = this
-                this.$api.get("/inspection_application/select",null)
+                this.$api.get("/inspection_application/selectPatientInformationByNameOrId",null,
+                res =>{
+                    if (res.code === "100"){
+                        that.data = res.data
+                    }
+                    else{
+                        that.$message.error(res)
+                    }
+                },res =>{
+                    that.$message.error(res)
+                    })
             }
 
         }

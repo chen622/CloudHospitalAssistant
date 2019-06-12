@@ -29,7 +29,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <collection property="drugs" ofType="cn.neuedu.his.model.Drug">
-      <id column="drugId" jdbcType="INTEGER" property="id" />
+      <id column="id" jdbcType="INTEGER" property="id" />
       <result column="formulation" jdbcType="INTEGER" property="formulation" />
       <result column="factory" jdbcType="VARCHAR" property="factory" />
       <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
@@ -76,7 +76,7 @@
   <select id="getTypeAndDrugs" resultMap="drugAndType">
     SELECT *,fee_type.id as  fee_type_id,fee_type.name as fee_type_name, fee_type.is_delete as fee_type_is_delete,fee_type.type as fee_type_type,
            formulation.id as formulation_id, formulation.name as formulation_name, formulation.type as formulation_type, formulation.is_delete as formulation_is_delete,
-           drug.name as drugs_name, drug.id as drugId
+           drug.name as drugs_name
     FROM constant_variable JOIN drug ON constant_variable.id = drug.drug_type
     JOIN constant_variable fee_type ON fee_type.id = drug.fee_type_id
     JOIN constant_variable formulation on formulation.id = drug.formulation
