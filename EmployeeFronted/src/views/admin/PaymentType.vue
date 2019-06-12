@@ -200,9 +200,9 @@
                             that.nameKeyMap = m
                             that.nameKeyMap.set('大类', 0)
                             that.typeList.push({id: 0, name: '大类'})
-                            var p = res.data.filter(item => 0 !== item.type)
+                            var p = res.data.filter(item => 0 != item.type)
                             for (let i = 0; i < p.length; i++) {
-                                if (p[i].type !== 0) {
+                                if (p[i].type != 0) {
                                     that.paymentTypeList.push({
                                         key: p[i].id,
                                         id: p[i].id,
@@ -248,7 +248,7 @@
                 this.paymentTypeTemp.isDelete = e
             }, handleChange (value, record, name) {
                 var newData = [...this.paymentTypeList]
-                if (name === "name") {
+                if (name == "name") {
                     var temp = newData.filter(item => value === item.name)
                     if (temp.length > 1) {
                         alert('名称重复')
@@ -288,7 +288,7 @@
                     return
                 }
                 let value = record.id
-                if (value !== this.paymentTypeTemp.id)
+                if (value != this.paymentTypeTemp.id)
                     return
                 let p = this.paymentTypeTemp
                 let t = this.nameKeyMap.get(p.type)
