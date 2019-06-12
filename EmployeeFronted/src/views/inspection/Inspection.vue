@@ -13,19 +13,19 @@
                         </a-form>
                     </a-col>
                 </a-row>
-                <p style="font-size: 20px">患者信息</p>
-                <a-form :form="form" layout="inline">
-                    <a-form-item label="姓名">
-                        {{realName}}
-                    </a-form-item>
-                    <a-form-item label="身份证号">
-                        {{userid}}
-                    </a-form-item>
-                    <a-form-item label="电话">
-                        {{phoneNumber}}
-                    </a-form-item>
-                </a-form>
-                <br/>
+<!--                <p style="font-size: 20px">患者信息</p>-->
+<!--                <a-form :form="form" layout="inline">-->
+<!--                    <a-form-item label="姓名">-->
+<!--                        {{realName}}-->
+<!--                    </a-form-item>-->
+<!--                    <a-form-item label="身份证号">-->
+<!--                        {{userid}}-->
+<!--                    </a-form-item>-->
+<!--                    <a-form-item label="电话">-->
+<!--                        {{phoneNumber}}-->
+<!--                    </a-form-item>-->
+<!--                </a-form>-->
+<!--                <br/>-->
                 <p style="font-size: 20px">项目明细</p>
                 <a-table :columns="columns" :dataSource="data" rowKey="id">
                     <a slot="patient.realName" slot-scope="text,record" href="javascript:;"
