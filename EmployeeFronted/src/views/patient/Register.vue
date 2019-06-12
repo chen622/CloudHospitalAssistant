@@ -106,7 +106,7 @@
                 :bodyStyle="{padding: '5px'}"
                 width="80%"
                 @ok="$print($refs.print)">
-            <invoice ref="print"></invoice>
+            <invoice ref="print" :invoiceId="invoiceId"></invoice>
         </a-modal>
     </a-row>
 </template>
@@ -133,7 +133,7 @@
                 showDoctor: false,
                 showPayment: false,
                 showInvoice: true,
-                invoice: null,
+                invoiceId: null,
                 doctor: [],
                 requestObject: {
                     patientId: null,
@@ -164,6 +164,8 @@
                         if (res.code === "100") {
                             that.$message.success("缴费成功")
                             that.showPayment = false
+                            that.showInvoice = true
+                            that.invoiceId = res.data.id
                         } else {
                             that.$message.error("res.msg")
                         }

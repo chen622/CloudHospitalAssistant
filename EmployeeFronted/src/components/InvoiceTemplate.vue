@@ -81,6 +81,7 @@
 <script>
     export default {
         name: "InvoiceTemplate",
+        props: ['invoiceId'],
         data: () => ({
             invoice: {
                 id: 0,
@@ -124,15 +125,16 @@
             }
         },
         methods: {
-            getInvoice() {
+            getInvoice () {
                 let that = this
-                this.$api.get('/invoice/print/' + 12, null, function (res) {
+                this.$api.get('/invoice/print/' + this.invoiceId, null, function (res) {
                     if (res.code === '100') {
                         that.invoice = res.data.invoice
                         that.patient = res.data.patient
                         that.settlementType = res.data.settlementType
                         that.item = res.data.item
                         that.currentTime = res.data.currentTime;
+                        that.isRetreat = res .data.isRetreat
                     } else {
                         that.$message.error(res.msg)
                     }
@@ -141,7 +143,7 @@
                 })
             }
         },
-        mounted() {
+        mounted () {
             this.getInvoice()
         }
     }

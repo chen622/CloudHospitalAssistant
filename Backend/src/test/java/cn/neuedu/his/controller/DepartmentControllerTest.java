@@ -145,7 +145,7 @@ public class DepartmentControllerTest {
         param.put("start", start);
         param.put("end", end);
         String requestJson = param.toJSONString();
-        mockMvc.perform(MockMvcRequestBuilders.get("/department/departmentClinicWorkload")
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/departmentClinicWorkload")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

@@ -2,6 +2,7 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.config.Authentication.JwtCheckAuthorizationFilter;
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class ConstantVariableControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 1)
+                .claim("typeId", 606)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -64,8 +65,16 @@ public class ConstantVariableControllerTest {
 
     @Test
     public void   getType() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/4")
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id",304);
+        jsonObject.put("name","上s下");
+        jsonObject.put("type",10000);
+
+        String data = jsonObject.toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/constant_variable/insert/period")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(data)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

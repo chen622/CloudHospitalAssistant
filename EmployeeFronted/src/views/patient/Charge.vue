@@ -6,7 +6,7 @@
         <a-col span="20" v-if="patient!=null">
             <a-card :body-style="{padding: 0}">
                 <template slot="title">
-                    <span>{{patient.realName}}  费用信息</span>
+                    <span>{{patient.realName}}费用信息</span>
                 </template>
                 <a-form layout="inline" style="margin-left: 20px">
                     <a-form-item label="范围选择">
@@ -15,8 +15,11 @@
                     <a-form-item>
                         <a-button @click="search" type="primary">搜索</a-button>
                     </a-form-item>
+                    <a-form-item>
+                        <a-button v-if="payButton" type="danger" @click="$refs.payment.showPay=true">缴费</a-button>
+                    </a-form-item>
+                    <payment ref="payment" @reload="search" @payButton="type => payButton = type"></payment>
                 </a-form>
-                <payment></payment>
             </a-card>
         </a-col>
     </a-row>
@@ -29,7 +32,8 @@
         data () {
             return {
                 patient: null,
-                timeRange: null
+                timeRange: null,
+                payButton: false,
             }
         },
         components: {

@@ -128,13 +128,15 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
      * @throws IllegalArgumentException
      */
     @Override
-    public JSONArray workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException {
-        JSONArray result = new JSONArray();
+    public JSONObject workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException {
+        JSONObject result = new JSONObject();
+        JSONArray data = new JSONArray();
         ArrayList<Department> departmentList = departmentMapper.getDepartmentByClassification(classification);
         if (departmentList.isEmpty())
             throw new IllegalArgumentException("classification");
 
         //取出所有paymentType的id和名字
+        //todo:后期可改为调用redis
         Map<Integer, String> paymentTypeMap = new HashMap<>();
         for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
             if (paymentType.getId() > 100) {
@@ -168,17 +170,72 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             //将获得数据记录进JSONObject
             JSONObject detail = new JSONObject();
             detail.put("department", department);
-            detail.put("发票数", invoiceNumber);
-            detail.put("看诊人数", doctorVisitNumber);
+            detail.put("invoiceNumber", invoiceNumber);
+            detail.put("visitNumber", doctorVisitNumber);
             for (Integer key : feeMap.keySet()) {
-                totalFee.add(feeMap.get(key));
-                detail.put(paymentTypeMap.get(key), feeMap.get(key));
+                totalFee = totalFee.add(feeMap.get(key));
+                detail.put(key.toString(), feeMap.get(key));
             }
-            detail.put("合计", totalFee);
+            detail.put("total", totalFee);
 
-            result.add(detail);
+            data.add(detail);
         }
+
+        result.put("columns", setColumns(paymentTypeMap));
+        result.put("data", data);
 
         return result;
     }
+
+    private JSONArray setColumns(Map<Integer, String> paymentTypeMap) {
+        //设置前端column值
+        JSONArray columns = new JSONArray();
+        columns.add(setColumn("部门名称", "department.name", 120, "left"));
+        columns.add(setColumn("发票数", "invoiceNumber", 90, "left"));
+        columns.add(setColumn("看诊人数", "visitNumber", 90, "left"));
+
+        for (Integer key : paymentTypeMap.keySet())
+            columns.add(setColumn(paymentTypeMap.get(key), key.toString(), "200px"));
+
+        columns.add(setColumn("合计", "total", 90, "right"));
+
+        return columns;
+    }
+
+    private JSONObject setColumn(String title, String dataIndex, Integer width, String fixed) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("width", width);
+        column.put("fixed", fixed);
+        return column;
+    }
+
+    private JSONObject setColumn(String title, String dataIndex, String width) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("width", width);
+        return column;
+    }
+
+    private JSONObject setColumn(String title, String dataIndex, Integer width, String minWidth, String fixed) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("width", width);
+        column.put("min-width", minWidth);
+        column.put("fixed", fixed);
+        return column;
+    }
+
+    private JSONObject setColumn2(String title, String dataIndex, Integer width, String minWidth) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("width", width);
+        column.put("min-width", minWidth);
+        return column;
+    }
 }
+
