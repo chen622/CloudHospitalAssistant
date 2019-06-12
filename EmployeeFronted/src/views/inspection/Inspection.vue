@@ -27,7 +27,8 @@
                 <p style="font-size: 20px">项目明细</p>
                 <a-table :columns="columns"  :dataSource="data">
                     <a slot="name" slot-scope="text" href="javascript:;" @click="showmodal">{{text}}</a>
-                    <span slot="action" slot-scope="text, record">
+                    <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}</template>
+                    <span slot="action" slot-scope="">
                        <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers" @change="handleChange">
                            <a-button>结果录入</a-button>
                        </a-upload>
@@ -62,8 +63,8 @@
                 },
                 columns:[{
                     title:'病历号',
-                    dataIndex:'application.id',
-                    scopedSlots:{customRender:'application.id'}
+                    dataIndex:'patientId',
+                    scopedSlots:{customRender:'patientId'}
                 },{
                     title:'姓名',
                     dataIndex:'patient.username',
@@ -74,8 +75,8 @@
                     scopedSlots:{customRender:'paymentType.name'}
                 },{
                     title:'单价',
-                    dataIndex:'application.unitPrice',
-                    scopedSlots:{customRender:'application.unitPrice'}
+                    dataIndex:'unitPrice',
+                    scopedSlots:{customRender:'unitPrice'}
                 },{
                     title:'数量',
                     dataIndex:'application.quantity',
@@ -86,8 +87,8 @@
                     scopedSlots:{customRender:'application.createTime'}
                 },{
                     title:'状态',
-                    dataIndex:'application.state',
-                    scopedSlots:{customRender:'application.'}
+                    dataIndex:'state',
+                    scopedSlots:{customRender:'state'}
                 },{
                     title:'执行科室',
                     dataIndex:'application.nonDrug.department.name',
@@ -115,7 +116,7 @@
             showmodal(){
                 this.visible = true
             },
-            handleok(event){
+            handleok(){
                 this.visible = false
             },
             handleChange(info){
@@ -135,7 +136,6 @@
                 res=>{
                     if (res.code === "100"){
                         that.data = res.data
-                        console.log(this.data)
                     }
                     else {
                         that.$message.error(res)

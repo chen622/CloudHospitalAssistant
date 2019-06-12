@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -18,6 +19,8 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
 
     @Autowired
     private PaymentTypeMapper paymentTypeMapper;
+    @Autowired
+    private RedisServiceImpl redisService;
 
     @Override
     public PaymentType getPaymentTypeByName(String paymentTypeName) {
@@ -37,5 +40,27 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
     @Override
     public ArrayList<PaymentType> findAllNotDelete() {
         return paymentTypeMapper.getAllNotDelete();
+    }
+
+    @Override
+    public void insertPaymentType(PaymentType paymentType) {
+        Map<String ,Integer> payment= null;
+        try {
+            payment = redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw new RuntimeException("501.1");
+        }
+        //判断类型是否正确
+        if(payment.values().contains(paymentType.getType()))
+            throw new RuntimeException("501.2");
+            //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
+
+        try{
+            this.save(paymentType);
+            redisService.setPaymentType(paymentType);
+        }catch (Exception e){
+            throw new RuntimeException("605");
+           // return CommonUtil.errorJson(ErrorEnum.E_605);
+        }
     }
 }

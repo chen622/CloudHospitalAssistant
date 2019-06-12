@@ -18,11 +18,8 @@ Vue.prototype.dateToTimeStamp = function (date) {
 }
 
 Vue.prototype.datetimeToTimeStamp = function (datetime) {
-    console.log(datetime)
     let Time = new Date(datetime);
-    console.log(Time)
     let timestamp = Time.getTime();
-    console.log(timestamp)
     return timestamp
 }
 
