@@ -33,7 +33,7 @@ public class PaymentController {
     @PostMapping("/getAll")
     public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
-            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            Integer doctorId = PermissionCheck.getIdByPaymentAdmin(authentication);
             Integer patientId = jsonObject.getInteger("patientId");
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);

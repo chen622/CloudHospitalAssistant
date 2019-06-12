@@ -63,4 +63,32 @@ public class PaymentTypeServiceImpl extends AbstractService<PaymentType> impleme
            // return CommonUtil.errorJson(ErrorEnum.E_605);
         }
     }
+
+    @Override
+    public void deletePaymentType(Integer id) throws RuntimeException{
+        PaymentType paymentType = this.findById(id);
+
+        //检查结算类型是否存在
+        if (paymentType == null)
+            throw new RuntimeException("606");
+
+        paymentType.setDelete(true);
+
+        redisService.deletePaymentType(paymentType);
+        this.update(paymentType);
+
+    }
+
+    @Override
+    public void modifyPaymentType(PaymentType paymentType) throws RuntimeException {
+        PaymentType lastPaymentType = this.getPaymentTypeByName(paymentType.getName());
+
+        //判断数据是否存在
+        if (lastPaymentType != null&& lastPaymentType.getId()!= paymentType.getId())
+            throw new RuntimeException("605");
+            //return CommonUtil.errorJson(ErrorEnum.E_606);
+
+        redisService.setPaymentType(paymentType);
+        this.update(paymentType);
+    }
 }

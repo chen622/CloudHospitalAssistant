@@ -549,7 +549,7 @@ public class RedisServiceImpl {
     public void deletePaymentType(PaymentType type){
         Jedis jedis = getResource();
         try {
-            setHash("paymentType",type.getName(),type.getType().toString());
+            deleteHash("paymentType",type.getName(),type.getType().toString());
         } catch (Exception e) {
             //returnBrokenResource(jedis);
         }finally {
