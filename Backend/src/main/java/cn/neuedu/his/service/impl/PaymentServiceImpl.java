@@ -326,7 +326,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setPatientId(originalPayment.getPatientId());
         newPayment.setState(Constants.HAVE_RETURN_DRUG);
         newPayment.setQuantity(retreatQuantity * (-1));
-        newPayment.setProjectOperatorId(adminId);
+        newPayment.setOperatorId(adminId);
 
         save(newPayment);
 

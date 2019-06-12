@@ -161,7 +161,7 @@ public class DepartmentController {
      * @param authentication
      * @return
      */
-    @GetMapping("/departmentClinicWorkload")
+    @PostMapping("/departmentClinicWorkload")
     public JSONObject getClinicDepartmentWorkLoad(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isFinancialOfficer(authentication);
@@ -171,9 +171,13 @@ public class DepartmentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Date end = jsonObject.getDate("end");
+        if (end == null)
+            end = new Date(System.currentTimeMillis());
+
         try {
             Map<String ,Integer> map = redisService.getMapAll("departmentType");
-            return CommonUtil.successJson(departmentService.workCalculate(map.get("临床科室"), jsonObject.getDate("start"), jsonObject.getDate("end")));
+            return CommonUtil.successJson(departmentService.workCalculate(map.get("临床科室"), jsonObject.getDate("start"), end));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         } catch (Exception e) {
@@ -188,7 +192,7 @@ public class DepartmentController {
      * @param authentication
      * @return
      */
-    @GetMapping("/departmentTechniqueWorkload")
+    @PostMapping("/departmentTechniqueWorkload")
     public JSONObject getTechniqueDepartmentWorkLoad(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isFinancialOfficer(authentication);
@@ -198,9 +202,13 @@ public class DepartmentController {
            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Date end = jsonObject.getDate("end");
+        if (end == null)
+            end = new Date(System.currentTimeMillis());
+
         try {
             Map<String ,Integer> map = redisService.getMapAll("departmentType");
-            return CommonUtil.successJson(departmentService.workCalculate(map.get("医技科室"), jsonObject.getDate("start"), jsonObject.getDate("end")));
+            return CommonUtil.successJson(departmentService.workCalculate(map.get("医技科室"), jsonObject.getDate("start"), end));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         } catch (Exception e) {
