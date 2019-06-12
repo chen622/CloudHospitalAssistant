@@ -1,6 +1,10 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.fastjson.JSONObject;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Map;
 
 public class Doctor {
     @Id
@@ -13,25 +17,51 @@ public class Doctor {
     @Column(name = "title_id")
     private Integer titleId;
 
+
+
     /**
      * 是否排班
      */
     @Column(name = "can_arrange")
     private Boolean canArrange;
 
+
     @Column(name = "is_delete")
     private Boolean isDelete;
+
 
     @Transient
     private String titleName;
 
-    public Boolean isDelete() {
+    @Transient
+    private String realName;
+
+    private JSONObject feeMap;
+
+    public JSONObject getFeeMap() {
+        return feeMap;
+    }
+
+    public void setFeeMap(JSONObject feeMap) {
+        this.feeMap = feeMap;
+    }
+
+    public Boolean getDelete() {
         return isDelete;
     }
 
     public void setDelete(Boolean delete) {
         isDelete = delete;
     }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public void setRealName(String realName) {
+        this.realName = realName;
+    }
+
 
     /**
      * @return id

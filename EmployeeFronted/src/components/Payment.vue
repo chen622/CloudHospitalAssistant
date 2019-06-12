@@ -30,7 +30,33 @@
                         </a-popconfirm>
                     </div>
                     <div v-else-if="record.state===1204" class="action">
-                        <a>退费</a>
+                        <a-popconfirm title='确定退费吗?' @confirm="retreatWithTake(record)">
+                            <a>退费</a>
+                        </a-popconfirm>
+                    </div>
+                    <div v-else-if="record.state===1205">
+                        <a-popconfirm title='确定重打吗?' @confirm="invoiceId = record.invoiceId;showInvoice=true">
+                            <a>重打发票</a>
+                        </a-popconfirm>
+                    </div>
+                </div>
+                <div v-else>
+                    <!--订单已缴费-->
+                    <div v-if="record.state===1202" class="action">
+                        <a-popconfirm title='确定重打吗?' @confirm="invoiceId = record.invoiceId;showInvoice=true">
+                            <a>重打发票</a>
+                        </a-popconfirm>
+                        <!--                        <a-popconfirm title='确定退费吗?' @confirm="showRetreat=true;retreatPayment =record">-->
+                        <!--                            <a>退费</a>-->
+                        <!--                        </a-popconfirm>-->
+                    </div>
+                    <!--                    <div v-else-if="record.state===1204" class="action">-->
+                    <!--                        <a>退费</a>-->
+                    <!--                    </div>-->
+                    <div v-else-if="record.state===1205">
+                        <a-popconfirm title='确定重打吗?' @confirm="invoiceId = record.invoiceId;showInvoice=true">
+                            <a>重打发票</a>
+                        </a-popconfirm>
                     </div>
                 </div>
             </template>
@@ -124,9 +150,27 @@
             retreatQuantity: 1
         }),
         methods: {
+            retreatWithTake (record) {
+                let that = this
+                this.$api.post("/payment/retreatDrugFee/" + record.id, null,
+                    res => {
+                        if (res.code === '100') {
+                            that.invoiceId = res.data.id
+                            that.showInvoice = true
+                            that.$message.success("退费成功")
+                            that.selectedRowKeys = []
+                            that.$emit("reload")
+                        }
+                        that.$message.error(res.msg)
+
+                    },
+                    () => {
+                        that.$message.error("网络错误")
+                    }
+                )
+            },
             retreatWithoutTake () {
                 let that = this
-                console.log(this.retreatPayment)
                 this.$api.post("/payment/produceRetreatPayment",
                     {paymentId: this.retreatPayment.id, quantity: this.retreatQuantity},
                     res => {

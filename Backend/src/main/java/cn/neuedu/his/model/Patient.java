@@ -39,6 +39,16 @@ public class Patient {
     @Column(name = "last_password_modify_time")
     private Date lastPasswordModifyTime;
 
+    private  Integer age;
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
     private List<Payment> paymentList;
 
     private String phoneNumber;

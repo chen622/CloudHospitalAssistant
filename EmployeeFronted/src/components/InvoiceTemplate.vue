@@ -12,7 +12,7 @@
                             <td/>
                             <td/>
                             <td>
-                                {{isRetreat?"冲红":""}}发票号 #: {{invoice.id}}<br>
+                                <span :style="isRetreat?'color: red':''">{{isRetreat?'冲红':""}}发票号 #: {{invoice.id}}</span><br>
                                 创建时间: {{invoice.createdDate | formatDate}}<br>
                                 打印时间: {{currentTime | formatDate}}
                             </td>

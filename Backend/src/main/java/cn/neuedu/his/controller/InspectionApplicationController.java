@@ -121,12 +121,11 @@ public class InspectionApplicationController {
             "/selectPatientInformationByNameOrId/nameAndId/{name}/{id}", "/selectPatientInformationByNameOrId"})
     JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name", required = false) String name, @PathVariable(value = "id", required = false) Integer id, Authentication authentication) {
 
-        Boolean auth;
+        Boolean auth = null;
         Integer departmentId = null;
         //判断权限
         try {
             PermissionCheck.isHosptialAdimReturnUserId(authentication);
-            auth = true;
         } catch (Exception e) {
             auth = false;
 
@@ -135,9 +134,7 @@ public class InspectionApplicationController {
             departmentId = userService.findById(userId).getDepartmentId();
         }
 
-
         List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
-
         return CommonUtil.successJson(payments);
 
     }

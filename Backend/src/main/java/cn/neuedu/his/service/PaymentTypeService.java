@@ -16,4 +16,6 @@ public interface PaymentTypeService extends Service<PaymentType> {
     void insertPaymentType(PaymentType paymentType) throws RuntimeException;//插入结算类型
     void deletePaymentType(Integer id) throws  RuntimeException;//删除结算类型'
     void modifyPaymentType(PaymentType paymentType) throws RuntimeException;//修改结算类型
+
+    ArrayList<PaymentType> getSmallPaymentType();
 }
