@@ -126,6 +126,6 @@ public interface DoctorService extends Service<Doctor> {
     @Transactional
     public Integer registrationNum(Integer doctorId, String start, String end);
 
-    JSONArray doctorWorkCalculate(Date startDate, Date endDate);
+    JSONObject doctorWorkCalculate(Date startDate, Date endDate);
 }
 

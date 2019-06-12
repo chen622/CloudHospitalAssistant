@@ -945,9 +945,10 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
      * @return
      */
     @Override
-    public JSONArray doctorWorkCalculate(Date startDate, Date endDate) {
-        JSONArray result = new JSONArray();
-        ArrayList<Doctor> doctorList = doctorMapper.getAllNotDelete();
+    public JSONObject doctorWorkCalculate(Date startDate, Date endDate) {
+        JSONObject result = new JSONObject();
+        JSONArray data = new JSONArray();
+        ArrayList<User> doctorList = doctorMapper.getAllClinicNotDelete();
 
         //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
@@ -957,34 +958,71 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             }
         }
 
-        for (Doctor doctor : doctorList) {
+        for (User user : doctorList) {
             //使用map记录每个医生的每个paymentType对应的总额
             Map<Integer, BigDecimal> feeMap = new HashMap<>();
             for (Integer id : paymentTypeMap.keySet()) {
                 feeMap.put(id, new BigDecimal(0));
             }
 
-            for (Payment payment : paymentService.findByAllDoctor(doctor.getId(), startDate, endDate)) {
+            for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
                 //更新某缴费项目类型的金额数据
                 feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
             }
 
             JSONObject detail = new JSONObject();
-            detail.put("doctor", doctor);
-            detail.put("发票数", invoiceService.getInvoiceNumberByAllDoctor(doctor.getId(), startDate, endDate));
+            detail.put("doctor", user);
+            detail.put("invoiceNumber", invoiceService.getInvoiceNumberByAllDoctor(user.getId(), startDate, endDate));
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            detail.put("看诊人数", doctorService.registrationNum(doctor.getId(), format.format(startDate), format.format(endDate)));
+            detail.put("visitNumber", doctorService.registrationNum(user.getId(), format.format(startDate), format.format(endDate)));
             BigDecimal totalFee = new BigDecimal(0);
             for (Integer key : feeMap.keySet()) {
                 totalFee = totalFee.add(feeMap.get(key));
-                detail.put(paymentTypeMap.get(key), feeMap.get(key));
+                detail.put(key.toString(), feeMap.get(key));
             }
-            detail.put("合计", totalFee);
+            detail.put("total", totalFee);
 
-            result.add(detail);
+            data.add(detail);
         }
 
+        result.put("columns", setColumns(paymentTypeMap));
+        result.put("data", data);
+
         return result;
+    }
+
+    private JSONArray setColumns(Map<Integer, String> paymentTypeMap) {
+        //设置前端column值
+        JSONArray columns = new JSONArray();
+        columns.add(setColumn("医生名称", "doctor.realName", 120, "left"));
+        columns.add(setColumn("发票数", "invoiceNumber", 120, "left"));
+        columns.add(setColumn("看诊人数", "visitNumber", 120, "left"));
+
+        for (Integer key : paymentTypeMap.keySet())
+            columns.add(setColumn(paymentTypeMap.get(key), key.toString(), 100));
+
+        columns.add(setColumn("合计", "total", 90, "right"));
+
+        return columns;
+    }
+
+    private JSONObject setColumn(String title, String dataIndex, Integer width, String fixed) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("key", dataIndex);
+        column.put("width", width);
+        column.put("fixed", fixed);
+        return column;
+    }
+
+    private JSONObject setColumn(String title, String dataIndex, Integer width) {
+        JSONObject column = new JSONObject();
+        column.put("title", title);
+        column.put("dataIndex", dataIndex);
+        column.put("key", dataIndex);
+        column.put("width", width);
+        return column;
     }
 
 

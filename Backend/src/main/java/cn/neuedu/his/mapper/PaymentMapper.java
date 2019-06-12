@@ -19,7 +19,7 @@ public interface PaymentMapper extends MyMapper<Payment> {
 
     List<Payment> getByRegistrationId(Integer id, Integer type);
 
-    ArrayList<Payment> getByAllDoctor(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    ArrayList<Payment> getAllByDoctor(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     ArrayList<Payment> getAllByItemIdAndPaymentTypeIdAndState(@Param("itemId") Integer itemId, @Param("paymentTypeId") Integer paymentTypeId, @Param("state") Integer state);
 

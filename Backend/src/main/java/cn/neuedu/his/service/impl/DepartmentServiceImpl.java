@@ -154,7 +154,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             Integer doctorVisitNumber = 0; //每个科室医生看诊人数总数
             BigDecimal totalFee = new BigDecimal(0); //科室总计金额
             for (User user : userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
-                for (Payment payment : paymentService.findByAllDoctor(user.getId(), startDate, endDate)) {
+                for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
                     //更新某缴费项目类型的金额数据
                     feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
@@ -190,7 +190,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private JSONArray setColumns(Map<Integer, String> paymentTypeMap) {
         //设置前端column值
         JSONArray columns = new JSONArray();
-        columns.add(setColumn("部门名称", "department.name", 120, "left"));
+        columns.add(setColumn("部门名称", "department.realName", 120, "left"));
         columns.add(setColumn("发票数", "invoiceNumber", 120, "left"));
         columns.add(setColumn("看诊人数", "visitNumber", 120, "left"));
 
@@ -209,7 +209,6 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
-        column.put("sorter", true);
         return column;
     }
 
