@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.InspectionApplicationService;
+import cn.neuedu.his.service.InspectionResultService;
 import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
@@ -33,6 +34,8 @@ public class InspectionApplicationController {
     UserService userService;
     @Autowired
     DoctorService doctorService;
+    @Autowired
+    InspectionResultService inspectionResultService;
 
     /**
      * 暂存检查/处置
@@ -136,6 +139,7 @@ public class InspectionApplicationController {
         List<Payment> payments = inspectionApplicationService.selectPatientInformationByNameOrId(name, id, departmentId, auth);
 
         return CommonUtil.successJson(payments);
+
     }
 
     /**
@@ -171,12 +175,17 @@ public class InspectionApplicationController {
      * @param authentication
      * @return
      */
-    @GetMapping("/cancelInspectionApplication/{id}")
+    @PostMapping("/cancelInspectionApplication/{id}")
     JSONObject cancelInspectionApplication(@PathVariable(value = "id",required = false) Integer id, Authentication authentication){
 
         //判断权限（请求者是不是该部门的人）
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer doctorId = (Integer) data.get("id");
+
+        //判断权限
+        if (doctorService.findById((Integer) data.get("id"))== null){
+            return CommonUtil.errorJson(ErrorEnum.E_632);
+        }
 
         User user = userService.findById(doctorId);
         InspectionApplication inspectionApplication = inspectionApplicationService.findById(id);
@@ -189,8 +198,43 @@ public class InspectionApplicationController {
 
 
     @PostMapping("confirmApplication/{id}")
-    JSONObject confirmApplication(JSONObject jsonObject) {
+    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
 
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+
+        //判断权限
+        if (doctorService.findById((Integer) data.get("id"))== null){
+            return CommonUtil.errorJson(ErrorEnum.E_632);
+        }
+        inspectionApplicationService.confirmApplication(id);
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("cancelApplication/{id}")
+    public JSONObject cancelApplication(@PathVariable("id") Integer id,Authentication authentication){
+
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+
+        //判断权限
+        if (doctorService.findById((Integer) data.get("id"))== null){
+            return CommonUtil.errorJson(ErrorEnum.E_632);
+        }
+        inspectionApplicationService.cancelApplication(id);
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("entryApplicationResult")
+    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject,Authentication authentication){
+
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+
+        //判断权限
+        if (doctorService.findById((Integer) data.get("id"))== null){
+            return CommonUtil.errorJson(ErrorEnum.E_632);
+        }
+
+        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
+        inspectionResultService.save(inspectionResult);
         return CommonUtil.successJson();
     }
 }

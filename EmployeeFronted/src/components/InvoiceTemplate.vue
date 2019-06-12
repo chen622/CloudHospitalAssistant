@@ -55,7 +55,7 @@
                             <td>备注</td>
                         </tr>
 
-                        <tr class="details" v-for="i in item" :key="i.name">
+                        <tr class="details" v-for="i in item" :key="i.id">
                             <td>{{i.name}}</td>
                             <td>{{i.paymentType}}</td>
                             <td>{{i.quantity}}</td>
@@ -81,6 +81,7 @@
 <script>
     export default {
         name: "InvoiceTemplate",
+        props: ['invoiceId'],
         data: () => ({
             invoice: {
                 id: 0,
@@ -124,9 +125,9 @@
             }
         },
         methods: {
-            getInvoice() {
+            getInvoice () {
                 let that = this
-                this.$api.get('/invoice/print/' + 12, null, function (res) {
+                this.$api.get('/invoice/print/' + this.invoiceId, null, function (res) {
                     if (res.code === '100') {
                         that.invoice = res.data.invoice
                         that.patient = res.data.patient
@@ -142,7 +143,7 @@
                 })
             }
         },
-        mounted() {
+        mounted () {
             this.getInvoice()
         }
     }
@@ -150,9 +151,8 @@
 
 <style scoped>
     .invoice-box {
-        max-width: 800px;
+        min-width: 1000px;
         margin: auto;
-        padding: 30px;
         border: 1px solid #eee;
         box-shadow: 0 0 10px rgba(0, 0, 0, .15);
         font-size: 16px;

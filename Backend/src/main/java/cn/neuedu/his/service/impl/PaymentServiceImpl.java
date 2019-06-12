@@ -126,8 +126,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      */
     @Override
     public JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException {
-        ArrayList successId = new ArrayList(); //成功的缴费单号
-        ArrayList failId = new ArrayList(); //失败的缴费单号
+        ArrayList<Integer> successId = new ArrayList<>(); //成功的缴费单号
+        ArrayList<Integer> failId = new ArrayList<>(); //失败的缴费单号
 
         //更新所有缴费单
         for (Integer paymentId : paymentIdList) {
@@ -145,15 +145,15 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             successId.add(paymentId);
         }
 
+        JSONObject result = new JSONObject();
         try {
             if (!successId.isEmpty())
                 //生成发票
-                invoiceService.addInvoiceByPaymentList(successId);
+                result.put("invoice",invoiceService.addInvoiceByPaymentList(successId));
         } catch (RuntimeException e) {
             throw new NullPointerException();
         }
 
-        JSONObject result = new JSONObject();
         result.put("successId", successId);
         result.put("failId", failId);
 
@@ -233,7 +233,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @throws UnsupportedOperationException
      */
     @Override
-    public void retreatDrugFee(Integer paymentId, Integer paymentAdminId) throws IllegalArgumentException, UnsupportedOperationException {
+    public Invoice retreatDrugFee(Integer paymentId, Integer paymentAdminId) throws IllegalArgumentException, UnsupportedOperationException {
         Payment payment = findById(paymentId);
         if (payment == null)
             throw new IllegalArgumentException();
@@ -246,7 +246,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         payment.setOperatorId(paymentAdminId);
         update(payment);
 
-        invoiceService.addInvoiceByPayment(payment.getId());
+        return invoiceService.addInvoiceByPayment(payment.getId());
     }
 
     /**
@@ -326,7 +326,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setPatientId(originalPayment.getPatientId());
         newPayment.setState(Constants.HAVE_RETURN_DRUG);
         newPayment.setQuantity(retreatQuantity * (-1));
-        newPayment.setProjectOperatorId(adminId);
+        newPayment.setOperatorId(adminId);
 
         save(newPayment);
 

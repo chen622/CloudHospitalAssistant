@@ -3,17 +3,23 @@
         <a-col span="20">
             <search-patient @selectPatient="selectPatient"></search-patient>
         </a-col>
-        <a-col span="20">
+        <a-col span="20" v-if="patient!=null">
             <a-card :body-style="{padding: 0}">
                 <template slot="title">
-                    <span>费用信息</span>
+                    <span>{{patient.realName}}费用信息</span>
                 </template>
-                <a-form layout="inline" style="margin-left: 10px">
+                <a-form layout="inline" style="margin-left: 20px">
                     <a-form-item label="范围选择">
                         <a-range-picker v-model="timeRange" showTime format="YYYY-MM-DD HH:mm:ss"/>
                     </a-form-item>
+                    <a-form-item>
+                        <a-button @click="search" type="primary">搜索</a-button>
+                    </a-form-item>
+                    <a-form-item>
+                        <a-button v-if="payButton" type="danger" @click="$refs.payment.showPay=true">缴费</a-button>
+                    </a-form-item>
+                    <payment ref="payment" @reload="search" @payButton="type => payButton = type"></payment>
                 </a-form>
-                <payment></payment>
             </a-card>
         </a-col>
     </a-row>
@@ -25,8 +31,9 @@
     export default {
         data () {
             return {
-                patientId: null,
-                timeRange: null
+                patient: null,
+                timeRange: null,
+                payButton: false,
             }
         },
         components: {
@@ -34,12 +41,38 @@
             searchPatient: SearchPatient
         },
         methods: {
+            selectTime (times) {
+                times[0].utc().valueOf()
+                times[1].utc().valueOf()
+            },
             selectPatient (record) {
-                this.patientId = record.id
+                this.patient = record
 
             },
-            getPayment () {
-                this.$api.get("/")
+            search () {
+                let data = null
+                if (this.timeRange) {
+                    data = {
+                        start: this.timeRange[0].utc().valueOf(),
+                        end: this.timeRange[1].utc().valueOf(),
+                        patientId: this.patient.id
+                    }
+                } else {
+                    data = {
+                        patientId: this.patient.id
+                    }
+                }
+                let that = this
+                this.$api.post("/payment/getAll", data,
+                    res => {
+                        if (res.code === '100') {
+                            that.$store.commit("setPayment", res.data)
+                        } else {
+                            that.$message.info(res.msg)
+                        }
+                    }, () => {
+                        that.$message.error("网络异常")
+                    })
             }
         },
     };

@@ -74,6 +74,7 @@
       <result column="username" jdbcType="VARCHAR" property="username"/>
       <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
       <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+      <result column="phone_number" jdbcType="VARCHAR" property="phoneNumber"/>
       <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
     </association>
     <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
@@ -161,7 +162,6 @@
                  Join non_drug on inspection_application.non_drug_id = non_drug.id
                  Join department on non_drug.executive_department = department.id
     WHERE payment.payment_type_id in(SELECT id FROM payment_type WHERE payment_type.type = 1 AND is_delete = 0)#结算类型属于检查或检验
-      AND inspection_application.is_check = 0 #未被检查
       <if test="name != null">
         and  patient.real_name like concat('%',#{name},'%')  #根据真实姓名或者病历来模糊查找
       </if>

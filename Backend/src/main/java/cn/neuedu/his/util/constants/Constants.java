@@ -90,7 +90,7 @@ public class Constants {
 
     //费用类型
     //挂号费用类型
-    public static final Integer REGISTRATION_PAYMENT_TYPE = 0;
+    public static final Integer REGISTRATION_PAYMENT_TYPE = 3;
     //处值项目费用类型
     public static final Integer NON_DRUG_PAYMENT_TYPE = 1;
     //处方费用类型

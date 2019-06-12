@@ -8,6 +8,7 @@ import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -33,7 +34,7 @@ public class PaymentController {
     @PostMapping("/getAll")
     public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
-            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            Integer doctorId = PermissionCheck.getIdByPaymentAdmin(authentication);
             Integer patientId = jsonObject.getInteger("patientId");
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
@@ -60,6 +61,7 @@ public class PaymentController {
 
     /**
      * 添加获得病人某时间在某个医生下开的所有payment
+     *
      * @param object
      * @param authentication
      * @return
@@ -67,14 +69,14 @@ public class PaymentController {
     @GetMapping("/getForStatistics")
     public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
         try {
-            Integer patientId= (Integer) object.get("patientId");
-            String start=object.get("start").toString();
-            String end=object.get("end").toString();
+            Integer patientId = (Integer) object.get("patientId");
+            String start = object.get("start").toString();
+            String end = object.get("end").toString();
             Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
             Patient patient = patientService.findById(patientId);
-            List<Payment> paymentList = paymentService.getForStatistics(patientId, doctorId,start,end);
+            List<Payment> paymentList = paymentService.getForStatistics(patientId, doctorId, start, end);
             patient.setPaymentList(paymentList);
             return CommonUtil.successJson(patient);
         } catch (AuthenticationServiceException e) {
@@ -133,6 +135,8 @@ public class PaymentController {
         JSONObject result;
         try {
             result = paymentService.payPayment((ArrayList<Integer>) jsonObject.getJSONArray("paymentIdList").toJavaList(Integer.class), jsonObject.getInteger("settlementType"), tollKeeper);
+        } catch (JSONException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501);
         } catch (RuntimeException e) {
             return CommonUtil.errorJson(ErrorEnum.E_505);
         }
@@ -158,8 +162,9 @@ public class PaymentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+            invoice = paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
         } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         } catch (UnsupportedOperationException e2) {
@@ -167,11 +172,14 @@ public class PaymentController {
                 return CommonUtil.errorJson(ErrorEnum.E_506);
             else if (e2.getMessage().equals("invoice"))
                 return CommonUtil.errorJson(ErrorEnum.E_505);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
         } catch (IndexOutOfBoundsException e3) {
             return CommonUtil.errorJson(ErrorEnum.E_507);
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
+
     }
 
     /**
@@ -192,14 +200,15 @@ public class PaymentController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
+        Invoice invoice;
         try {
-            paymentService.retreatDrugFee(paymentId, tollKeeper);
+            invoice = paymentService.retreatDrugFee(paymentId, tollKeeper);
         } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         } catch (UnsupportedOperationException e2) {
             return CommonUtil.errorJson(ErrorEnum.E_506);
         }
 
-        return CommonUtil.successJson();
+        return CommonUtil.successJson(invoice);
     }
 }

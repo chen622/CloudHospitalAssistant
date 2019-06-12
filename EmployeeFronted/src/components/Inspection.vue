@@ -177,8 +177,13 @@
                 let that = this
                 let data = {
                     registrationId: this.registrationId,
-                    inspections: this.$store.state.inspections
+                    inspections: []
                 }
+                this.$store.state.inspections.forEach(inspection => {
+                    if (inspection.temp) {
+                        data.inspections.push(inspection)
+                    }
+                })
                 this.$api.post("/inspection_application/saveTemporaryInspection", data,
                     res => {
                         if (res.code === '100') {

@@ -112,6 +112,7 @@ public class PermissionCheck {
         }
     }
 
+
     /**
      * 医院管理员权限检验
      *

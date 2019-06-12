@@ -98,15 +98,27 @@
                 <a-button type="primary" @click="pay">缴费</a-button>
             </template>
         </a-modal>
+        <a-modal
+                v-if="showInvoice"
+                v-model="showInvoice"
+                :closable="false"
+                :maskClosable="false"
+                :bodyStyle="{padding: '5px'}"
+                width="80%"
+                @ok="$print($refs.print)">
+            <invoice ref="print" :invoiceId="invoiceId"></invoice>
+        </a-modal>
     </a-row>
 </template>
 <script>
 
+    import Invoice from '../../components/InvoiceTemplate'
     import SearchPatient from '../../components/SearchPatient'
 
     export default {
         components: {
-            searchPatient: SearchPatient
+            searchPatient: SearchPatient,
+            invoice: Invoice
         },
         data () {
             return {
@@ -120,6 +132,8 @@
                 showRegister: false,
                 showDoctor: false,
                 showPayment: false,
+                showInvoice: true,
+                invoiceId: null,
                 doctor: [],
                 requestObject: {
                     patientId: null,
@@ -132,7 +146,7 @@
         },
         methods: {
             selectPatient (record) {
-                this.showDoctor = true
+                this.showRegister = true
                 this.requestObject.patientId = record.id
             },
             pay () {
@@ -150,6 +164,8 @@
                         if (res.code === "100") {
                             that.$message.success("缴费成功")
                             that.showPayment = false
+                            that.showInvoice = true
+                            that.invoiceId = res.data.id
                         } else {
                             that.$message.error("res.msg")
                         }

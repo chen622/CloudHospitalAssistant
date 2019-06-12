@@ -6,16 +6,16 @@
 
                     <a-row type="flex" align="top" justify="space-between"
                            style="margin:5px 0 10px 0;text-align: center;width:85%">
-                        <a-col span="7" style="margin-left:20px;">
+                        <a-col span="6" style="margin-left:20px;">
                             <a-input-search placeholder="请输入费用编码" @search="onSearchByCode" enterButton></a-input-search>
                         </a-col>
-                        <a-col span="7">
+                        <a-col span="6">
                             <a-input-search placeholder="请输入费用名称" @search="onSearchByName" enterButton></a-input-search>
                         </a-col>
                         <a-col span="3">
                             <a-button @click="add" style="color:#1890FF">
                                 <a-icon type="edit"/>
-                                新增药品
+                                新增类型
                             </a-button>
                         </a-col>
 
@@ -32,11 +32,15 @@
                                 导入数据
                             </a-button>
                         </a-col>
+                        <a-col :span="2">
+                            <a-button @click="getPaymentList" type="primary" shape="circle" icon="reload"
+                                      style=";margin-top:5px" size="small"></a-button>
+                        </a-col>
                     </a-row>
 
 
-                    <a-table :columns="columns" style="width:85%" :dataSource="paymentTypeList" bordered
-                             :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
+                    <a-table :columns="columns" style="width:85%;text-align: center" :dataSource="paymentTypeList"
+                             bordered :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}">
 
                         <template slot="type" slot-scope="text,record">
                             <a-select
@@ -61,8 +65,8 @@
                                 <a-select-option key="1">是</a-select-option>
                             </a-select>
                             <template v-else>
-                                <a-tag color="red" v-if="text">已删</a-tag>
-                                <a-tag color="blue" v-else>未删</a-tag>
+                                <a-tag color="red" style="font-size:13px" v-if="text">已删</a-tag>
+                                <a-tag color="blue" style="font-size:13px" v-else>未删</a-tag>
                             </template>
                         </template>
 
@@ -71,7 +75,7 @@
                                 <a-input
                                         v-if="record.editable"
                                         style="margin: -5px 0"
-                                        :value="text"
+                                        :defaultValue="text"
                                         @change="e => handleChange(e.target.value, record.key, col)"
                                 />
                                 <template v-else>{{text}}</template>
@@ -82,10 +86,10 @@
                         <template slot="action" slot-scope="text, record">
                             <div class='editable-row-operations'>
                                 <span v-if="record.editable">
-                                <a @click="() => saveRow(record.id)">保存</a>
+                                <a @click="() => saveRow(record)">保存</a>
                                 <a-divider type="vertical"/>
-                                <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record.id)">
-                                <a style="color:red" @click="() => cancel(record.id)">取消</a>
+                                <a-popconfirm title='确定取消吗?' @confirm="() => cancel(record)">
+                                <a style="color:red" @click="() => cancel(record)">取消</a>
                                 </a-popconfirm>
                                 </span>
                                 <span v-else>
@@ -109,7 +113,7 @@
 
 
 <script>
-
+import { constants } from 'crypto';
     export default {
         data () {
             return {
@@ -160,19 +164,25 @@
                 typeList: [],
                 idKeyMap: {},
                 nameKeyMap: {},
-                modalVisible: false,
             }
         }, created () {
             this.getPaymentList()
         }, methods: {
             getPaymentList () {
-                let that = this;
+                this.paymentTypeList = []
+                this.typeList = []
+                this.nameKeyMap = new Map()
+                this.idKeyMap = new Map()
+                this.selectedRowKeys = []
+                this.paymentTypeTemp = [{id: -1, code: '0', name: 'default', type: 'default', isDelete: false}]
+                let that = this
                 this.$api.get("/payment_type/getAll", null,
                     res => {
                         if (res.code === "100") {
-                            var list = res.data;
-                            var t = list.filter(item => 0 === item.type);
-                            var map = new Map();
+                            var list = res.data
+                            var t = list.filter(item => 0 === item.type)
+                            var map = new Map()
+                            var m = new Map()
                             for (var i = 0; i < t.length; i++) {
                                 that.typeList.push({
                                     key: t[i].id,
@@ -181,12 +191,17 @@
                                     name: t[i].name,
                                     isDelete: t[i].delete,
                                     type: '大类'
-                                });
-                                map.set(t[i].id, t[i].name);
+                                })
+                                map.set(t[i].id, t[i].name)
+                                m.set(t[i].name, t[i].id)
                                 that.paymentTypeList.push(that.typeList[i])
                             }
-                            that.typeList.push({id: 0, name: '大类'});
-                            var p = res.data.filter(item => 0 != item.type);
+                            that.idKeyMap = map
+                            that.idKeyMap.set(0, '大类')
+                            that.nameKeyMap = m
+                            that.nameKeyMap.set('大类', 0)
+                            that.typeList.push({id: 0, name: '大类'})
+                            var p = res.data.filter(item => 0 != item.type)
                             for (let i = 0; i < p.length; i++) {
                                 if (p[i].type != 0) {
                                     that.paymentTypeList.push({
@@ -199,7 +214,7 @@
                                     })
                                 }
                             }
-                            that.originalList = that.pa
+                            that.originalList = that.paymentTypeList
                         } else {
                             that.$message.error(res.msg)
                         }
@@ -214,83 +229,176 @@
                 }
             }, onSearchByName (value) {
                 if (value) {
-                    this.paymentTypeList = this.paymentTypeList.filter(item => (item.name.indexOf(value) >= 0));
+                    this.paymentTypeList = this.paymentTypeList.filter(item => (item.name.indexOf(value) >= 0))
                 } else {
                     this.paymentTypeList = this.originalList
                 }
-            }, add (e) {
-                alert(e)
+            }, add () {
+                var a = {id: null, code: '无', name: '无', type: '大类', isDelete: false, editable: true, isAdd: true}
+                this.paymentTypeTemp = a
+                this.paymentTypeList.unshift(a)
             }, deleteAll () {
-
+                for (var i = 0; i < this.selectedRowKeys.length; i++) {
+                    this.deleteRow(this.selectedRowKeys[i])
+                }
             }, importI () {
-
             }, typeChange (e) {
-                this.paymentTypeTemp.type = e;
+                this.paymentTypeTemp.type = e
             }, deleteChange (e) {
-                this.paymentTypeTemp.isDelete = e;
+                if(e=="0")
+                    this.paymentTypeTemp.isDelete = 0
+                if(e=="1")
+                    this.paymentTypeTemp.isDelete = 1
             }, handleChange (value, record, name) {
-                let newData = [...this.originalList];
-                if (name === "name") {
-                    var temp = newData.filter(item => value === item.name);
-                    if (temp.length > 0) {
-                        alert('名称重复');
+                var newData = [...this.paymentTypeList]
+                if (name == "name") {
+                    var temp = newData.filter(item => value === item.name)
+                    if (temp.length > 1) {
+                        this.$message.error('名称重复')
                         return
                     }
                     this.paymentTypeTemp.name = value
                 } else {
-                    let temp = newData.filter(item => value === item.code);
-                    if (temp.length > 0) {
-                        alert('编码重复');
+                    let temp = newData.filter(item => value === item.code)
+                    if (temp.length > 1) {
+                        this.$message.error('编码重复')
                         return
                     }
                     this.paymentTypeTemp.code = value
                 }
-
-
-            }, saveRow () {
-                let that = this;
-                new Promise(() => {
-                    this.$api.post("/payment_type/insertPaymentType", that.paymentTypeTemp,
+            }, saveRow (record) {
+                let that = this
+                if (record.isAdd) {
+                    record = this.paymentTypeTemp
+                    let t = this.nameKeyMap.get(record.type)
+                    if (t != null && t >= 0 && t < 100) {
+                        record.type = t
+                    }
+                    record.delete = record.isDelete
+                    this.$api.post("/payment_type/insertPaymentType", record,
                         res => {
                             if (res.code === "100") {
-                                alert('更新成功')
+                                const newData=[...this.paymentTypeList]
+                                const tar=newData.filter(item => item.id === record.id)[0]
+                                tar.id=record.id
+                                tar.code=record.code
+                                tar.name=record.name
+                                tar.delete=p.delete
+                                tar.type=that.idKeyMap.get(record.type)
+                                delete tar.editable
+                                tar.isDelete=record.delete
+                                that.paymentTypeList=newData
+                                that.$message.success('更新成功')
                             } else {
-                                alert('更新失败');
+                                that.$message.error('更新失败: '+res.msg)
+                            }
+                        }, res => {
+                            that.$message.error(res)
+                        })
+                    return
+                }
+                let value = record.id
+                if (value != this.paymentTypeTemp.id)
+                    return
+                let p = this.paymentTypeTemp
+              
+                let t = this.nameKeyMap.get(p.type)
+                if (t != null && t >= 0 && t < 100) {
+                    p.type = t
+                }
+                p.delete = p.isDelete
+                if(p.delete){       
+                    this.$api.post("/payment_type/updatePaymentType", p,
+                        res => {
+                            if (res.code === "100") {
+                                const newData=[...that.paymentTypeList]
+                                const tar=newData.filter(item => item.id === p.id)[0]
+                                tar.id=p.id
+                                tar.code=p.code
+                                tar.name=p.name
+                                tar.type=that.idKeyMap.get(p.type)
+                                delete tar.editable
+                                tar.isDelete=true
+                                tar.delete=true
+                                that.paymentTypeList=newData
+                                that.$message.success('更新成功')
+                            } else {
                                 that.$message.error(res.msg)
                             }
                         }, res => {
                             that.$message.error(res)
                         })
-                }).then(() => {
-                    that.getPaymentList();
-                })
-            }, cancel (value) {
-                alert(value)
-
-            }, edit (value) {
-                const newData = [...this.paymentTypeList];
-                const target = newData.filter(item => value.id === item.id)[0];
+                }else{
+                    this.retreatDelete(p)
+                }
+            }, cancel (record) {
+                if (record.isAdd) {
+                    this.paymentTypeList.shift()
+                    return
+                }
+                var id = record.id
+                const newData = [...this.paymentTypeList]
+                const target = newData.filter(item => id === item.id)[0]
                 if (target) {
-                    target.editable = true;
-                    this.modalVisible = true;
-                    this.paymentTypeTemp = value;
+                    delete target.editable
+                    this.paymentTypeList = newData
+                }
+            }, edit (value) {
+                const newData = [...this.paymentTypeList]
+                const target = newData.filter(item => value.id === item.id)[0]
+                if (target) {
+                    target.editable = true
+                    this.modalVisible = true
+                    this.paymentTypeTemp = value
                     this.paymentTypeList = newData
                 }
             }, deleteRow (value) {
-                alert(value)
-            }, ok () {
+                let that = this
+                console.log(value)
+                this.$api.post("/payment_type/deletePaymentType/" + value, null,
+                    res => {
+                        if (res.code === "100") {
+                            that.$message.success('更新成功')
+                            const target=that.paymentTypeList.filter(item => value === item.id)[0]
+                            target.isDelete=true
+                        } else {
+                            that.$message.error('更新失败: '+res.msg)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
 
+            }, ok () {
             }, cancle () {
                 this.modalVisible = false
             }, onSelectChange (rowKeys) {
                 this.selectedRowKeys = rowKeys
+            },retreatDelete(p){
+                let that=this
+                this.$api.post("/payment_type/recoverPaymentType", p,
+                    res => {
+                        if (res.code === "100") {
+                            const newData=[...that.paymentTypeList]
+                            const tar=newData.filter(item => item.id === p.id)[0]
+                            tar.id=p.id
+                            tar.code=p.code
+                            tar.name=p.name
+                            tar.type=that.idKeyMap.get(p.type)
+                            delete tar.editable
+                            tar.isDelete=false
+                            tar.delete=false
+                            that.paymentTypeList=newData
+                            that.$message.success('更新成功')
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    }, res => {
+                        that.$message.error(res)
+                    })
             }
         }
-
     }
 </script>
 
 <style scoped>
-
-
 </style>

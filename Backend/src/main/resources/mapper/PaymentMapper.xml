@@ -78,8 +78,13 @@
         <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
         <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <association property="stateVariable" javaType="cn.neuedu.his.model.ConstantVariable">
+            <id column="stateId" jdbcType="INTEGER" property="id"></id>
+            <result column="stateName" jdbcType="VARCHAR" property="name"></result>
+        </association>
         <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
             <id column="typeId" jdbcType="INTEGER" property="id"/>
+            <result column="typeBig" jdbcType="INTEGER" property="type"/>
             <result column="typeName" jdbcType="VARCHAR" property="name"/>
         </association>
         <association property="prescription" javaType="cn.neuedu.his.model.Prescription">
@@ -96,21 +101,27 @@
                 <result column="nonDrugName" jdbcType="VARCHAR" property="name"/>
             </association>
         </association>
+        <association property="user" javaType="cn.neuedu.his.model.User">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        </association>
     </resultMap>
 
 
     <select id="getAllPaymentWithPaymentTypeByPatientId" resultMap="WithPaymentType">
         select payment.*,
-        payment_type.id   as typeId,
+        payment_type.id as typeId,
         payment_type.name as typeName,
+        payment_type.type as typeBig,
         prescription.*,
-        drug.id           as drugId,
-        drug.name         as drugName,
+        drug.id as drugId,
+        drug.name as drugName,
         inspection_application.*,
-        non_drug.id       as nonDrugId,
-        non_drug.name     as nonDrugName,
-        state.id          as stateId,
-        state.name        as stateName
+        non_drug.id as nonDrugId,
+        non_drug.name as nonDrugName,
+        state.id as stateId,
+        state.name as stateName,
+        user.real_name
         from payment
         join payment_type on payment.payment_type_id = payment_type.id
         left join prescription on payment.item_id = prescription.id
@@ -118,6 +129,7 @@
         left join inspection_application on payment.item_id = inspection_application.id
         left join non_drug on inspection_application.non_drug_id = non_drug.id
         left join constant_variable as state on payment.state = state.id
+        left join user on payment.doctor_id = user.id
         where payment.patient_id = #{patientId}
         <if test="start != null">
             and payment.create_time <![CDATA[  >=  ]]> #{start}
@@ -131,18 +143,24 @@
         select payment.*,
                payment_type.id   as typeId,
                payment_type.name as typeName,
+               payment_type.type as typeBig,
                prescription.*,
                drug.id           as drugId,
                drug.name         as drugName,
                inspection_application.*,
                non_drug.id       as nonDrugId,
-               non_drug.name     as nonDrugName
+               non_drug.name     as nonDrugName,
+               state.id as stateId,
+               state.name as stateName,
+               user.real_name
         from payment
                  join payment_type on payment.payment_type_id = payment_type.id
                  left join prescription on payment.item_id = prescription.id
                  left join drug on prescription.drug_id = drug.id
                  left join inspection_application on payment.item_id = inspection_application.id
                  left join non_drug on inspection_application.non_drug_id = non_drug.id
+                 left join constant_variable as state on payment.state = state.id
+                 left join user on payment.doctor_id = user.id
         where payment.doctor_id = #{doctorId}
           and payment.patient_id = #{patientId}
           and DATEDIFF(payment.create_time, now()) = 0
@@ -169,8 +187,9 @@
                  left join constant_variable as state on payment.state = state.id
         where payment.doctor_id = #{doctorId}
           and payment.patient_id = #{patientId}
-          and DATEDIFF(payment.create_time, #{start}) >=0 and  DATEDIFF(#{end},payment.create_time) >=0
-          group  by payment.payment_type_id
+          and DATEDIFF(payment.create_time, #{start}) >= 0
+          and DATEDIFF(#{end}, payment.create_time) >= 0
+        group by payment.payment_type_id
     </select>
 
 

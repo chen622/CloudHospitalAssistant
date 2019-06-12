@@ -1,13 +1,13 @@
 <template>
     <a-row type="flex" align="middle" justify="center" class="info-search">
         <a-col span="20">
-            <a-card hoverable title="退号" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding:'5px 0'}">
+            <a-card hoverable title="退号" :headStyle="{fontSize: '30px'}">
                 <p style="font-size: 20px">病历信息查询:</p>
                 <a-row type="flex" align="top" justify="start" style="margin: 5px 0 10px 0;">
                     <a-col>
                         <a-form layout="inline">
                             <a-form-item label="病历号">
-                                <a-input-search placeholder="病历号" @search="onSearch" enterButton v-decorator="['病历号',{rules:[{required: true, message: '请输入病历号'}]}]"></a-input-search>
+                                <a-input-search placeholder="病历号" @search="getPatient" enterButton ></a-input-search>
                             </a-form-item>
                         </a-form>
                     </a-col>
@@ -91,16 +91,7 @@
                     dataIndex:'action',
                     scopedSlots:{customRender:'action'}
                 }],
-                data:[{
-                    key:'1',
-                    id:'1',
-                    name:'john Brown',
-                    IdNumber: 22222222,
-                    date:'2019-5-6',
-                    NoonBreak:'全天',
-                    office:'咽喉科',
-                    state:'确诊'
-                }]
+                data:[]
             }
         },
         components: {
@@ -109,27 +100,25 @@
             AFormItem
         },
         methods: {
-            getInfo(){
-                let that = this
-                this.$api.get("",null,
-                    res=>{
-                        if (res.code === ""){
-                            that.data = res.data
-
-                        }
-                        else {
-                            that.$message.error(res)
-                        }
-                    })
-
-            },
-            onSearch(value){
-                alert(value)
-            },
             onDelete (key) {
                 const data = [...this.data]
                 this.data = data.filter(item => item.key !== key)
             },
+            getPatient(value){
+                let that = this
+                that.$api.get("/registration/getWaitingRegistration/" + value , null,
+                res=>{
+                    if (res.code === "100"){
+                        that.data = res.data
+                    }
+                    else {
+                        that.$message.error(res)
+                    }
+                }, res=>{
+                    that.$message.error(res)
+                    })
+
+            }
 
         },
     };

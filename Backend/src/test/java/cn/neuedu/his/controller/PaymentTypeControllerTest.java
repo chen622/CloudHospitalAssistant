@@ -55,7 +55,7 @@ public class PaymentTypeControllerTest {
 
         String request = jsonObject.toJSONString();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/payment_type/insertPaymentType")
+        mockMvc.perform(MockMvcRequestBuilders.post("/payment_type/recoverPaymentType/313")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(request)
                 .header(Constants.TOKEN_HEADER, token)
