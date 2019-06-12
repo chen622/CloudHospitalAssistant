@@ -1,9 +1,6 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +35,16 @@ public class Patient {
 
     @Column(name = "last_password_modify_time")
     private Date lastPasswordModifyTime;
+    @Transient
+    private  Integer age;
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
     private List<Payment> paymentList;
 

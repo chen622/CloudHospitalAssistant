@@ -147,7 +147,13 @@ public class ConstantVariableController {
     }
 
     @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") Integer type){
+    public JSONObject getConstantByType(@PathVariable("type") Integer type,Authentication authentication){
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
         List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(type);
         return CommonUtil.successJson(constantVariables);

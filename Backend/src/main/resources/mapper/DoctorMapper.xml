@@ -8,6 +8,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="title_id" jdbcType="INTEGER" property="titleId" />
     <result column="can_arrange" jdbcType="BIT" property="canArrange" />
+    <result column="is_delete" jdbcType="BIT" property="isDelete" />
   </resultMap>
 
   <select id="getDeptNo" resultType="integer">

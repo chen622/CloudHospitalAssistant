@@ -743,5 +743,29 @@ public class DoctorController {
         return CommonUtil.successJson(doctorService.doctorWorkCalculate(jsonObject.getDate("start"), end));
     }
 
+    @PostMapping("/getDoctorStatistics")
+    public JSONObject getDoctorStatistics(@RequestBody JSONObject object,Authentication authentication){
+        Integer doctorId;
+        try{
+            doctorId=PermissionCheck.isOutpatientDoctor(authentication);
+        }catch (Exception e){
+            try {
+                doctorId=PermissionCheck.isTechnicalDoctor(authentication);
+            } catch (Exception ex) {
+                return CommonUtil.errorJson(ErrorEnum.E_502);
+            }
+        }
+
+        String start= (String) object.get("start");
+        String end= (String) object.get("end");
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置格式
+        if(start==null || start.equals("")){
+            start=format.format(System.currentTimeMillis());                                //获得带格式的字符串
+        }
+        if(end==null || end.equals("")){
+            end=format.format(System.currentTimeMillis());
+        }
+        return doctorService.getDoctorStatistics(doctorId, start, end);
+    }
 }
 

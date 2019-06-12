@@ -12,4 +12,5 @@ import java.util.ArrayList;
 public interface PaymentTypeMapper extends MyMapper<PaymentType> {
     PaymentType getPaymentTypeByName(String paymentTypeName);
     ArrayList<PaymentType> getAllNotDelete();
+    ArrayList<PaymentType> getSmallPaymentType();
 }

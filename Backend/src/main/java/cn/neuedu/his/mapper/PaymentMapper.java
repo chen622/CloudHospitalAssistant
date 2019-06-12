@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public interface PaymentMapper extends MyMapper<Payment> {
@@ -21,11 +22,13 @@ public interface PaymentMapper extends MyMapper<Payment> {
 
     ArrayList<Payment> getAllByDoctor(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
+    Integer getAllPayments(@Param("projectOperatorId") Integer projectOperatorId, @Param("startDate") String startDate, @Param("endDate") String endDate,Integer id);
+
     ArrayList<Payment> getAllByItemIdAndPaymentTypeIdAndState(@Param("itemId") Integer itemId, @Param("paymentTypeId") Integer paymentTypeId, @Param("state") Integer state);
 
     ArrayList<Payment> getAllPaymentWithPaymentTypeByDoctorIdAndPatientId(Integer doctorId, Integer patientId);
 
     ArrayList<Payment> getAllPaymentWithPaymentTypeByPatientId(Integer patientId, Date start, Date end);
 
-    ArrayList<Payment> getForStatistics(Integer doctorId,Integer patientId,String start,String end);
+    Map<Integer,Integer> getForStatistics(Integer doctorId, Integer patientId, String start, String end);
 }

@@ -37,7 +37,7 @@
     <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
     <association property="application" javaType="cn.neuedu.his.model.InspectionApplication">
-      <id column="id" jdbcType="INTEGER" property="id" />
+      <id column="application_id" jdbcType="INTEGER" property="id" />
       <result column="item_id" jdbcType="INTEGER" property="itemId" />
       <result column="non_drug_id" jdbcType="INTEGER" property="nonDrugId" />
       <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -49,7 +49,7 @@
       <result column="is_check" jdbcType="BIT" property="isCheck"/>
       <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
       <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
-      <id column="id" jdbcType="INTEGER" property="id" />
+      <id column="nonDrug_id" jdbcType="INTEGER" property="id" />
       <result column="name" jdbcType="VARCHAR" property="name" />
       <result column="price" jdbcType="DECIMAL" property="price" />
       <result column="standard" jdbcType="VARCHAR" property="standard" />
@@ -154,10 +154,10 @@
   </resultMap>
 
   <select id="selectPatientInformationByNameOrId" resultMap="getPatientInformationAndInspection">
-    SELECT *, department.name as deptname
+    SELECT *, department.name as deptname,non_drug.id as nonDrug_id,inspection_application.id as application_id
     FROM payment JOIN inspection_application ON payment.item_id = inspection_application.id
                  JOIN patient on patient.id = payment.patient_id
-                 JOIN `user` ON payment.doctor_id = `user`.id
+                 JOIN user ON payment.doctor_id = user.id
                  Join payment_type pt on payment.payment_type_id = pt.id
                  Join non_drug on inspection_application.non_drug_id = non_drug.id
                  Join department on non_drug.executive_department = department.id
@@ -169,9 +169,7 @@
         and  patient.id like concat('%',#{id},'%')
       </if>
       <if test="auth == false">
-          AND is_canceled = 0 #未被删除
-          AND state = 1202 #已缴费
-          AND user.department_id = #{department_id} #医生部门需相同
+          AND non_drug.executive_department = #{department_id} #医生部门需相同
       </if>
   </select>
   
