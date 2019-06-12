@@ -84,6 +84,8 @@ public class UserController {
             urls.add(new url("工作量统计", "/finance/workload", "workload"));
         } else if (typeId.equals(map.get("药房操作员"))) {
             urls.add(new url("药房管理", "/medicine/index", "medicine"));
+        } else if (typeId.equals(map.get("医技医生"))) {
+            urls.add(new url("检查", "/inspection/index", "inspection"));
         }
         return CommonUtil.successJson(urls);
     }

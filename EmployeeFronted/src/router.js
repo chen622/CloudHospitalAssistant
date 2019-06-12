@@ -53,7 +53,7 @@ export default new Router({
             component: () => import( './views/Medicine/Medicine')
         },
         {
-            path: '/inspection',
+            path: '/inspection/index',
             name: 'inspection',
             component: () => import('./views/inspection/Inspection')
         },

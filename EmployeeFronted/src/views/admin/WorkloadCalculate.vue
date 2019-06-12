@@ -199,7 +199,7 @@
                 time:null,
                 showList:false,
                 showPaitent:false,
-                showDoctor:true,
+                showDoctor:false,
                 patient:{id:1,realName:'小米',age:20,sex:0},
                 doctor:{},
                 patients:[],
@@ -226,6 +226,9 @@
                 }
                 return style
             },search(){
+                this.showDoctor=true
+                this.showList=false
+                this.showPaitent=false
                 var start=null
                 var end=null
                 if(this.time!=null || this.time.length==2){
