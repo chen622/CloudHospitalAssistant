@@ -228,13 +228,14 @@
 
   <!--获得部门ID-->
   <resultMap id="getDepartmentIdEasily" type="cn.neuedu.his.model.InspectionApplication">
-    <association property="nondrug" javaType="cn.neuedu.his.model.NonDrug">
-      <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+    <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
+        <result column="nd_department" jdbcType="INTEGER" property="executiveDepartment"/>
     </association>
   </resultMap>
 
   <select id="getDepartmentId" resultMap="getDepartmentIdEasily">
-    select * from inspection_application join non_drug nd on inspection_application.non_drug_id = nd.id
+    select * ,nd.executive_department as nd_department
+    from inspection_application join non_drug nd on inspection_application.non_drug_id = nd.id
     where inspection_application.id = #{id}
   </select>
 
