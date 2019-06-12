@@ -254,7 +254,7 @@
                                    }
                                } 
                             }
-                            this.$chart.bar1('chart1','工作量统计','',that.name,that.value)
+                            // this.$chart.bar1('chart1','工作量统计','',that.name,that.value)
                         } else {
                             that.$message.error(res.msg)
                         }
