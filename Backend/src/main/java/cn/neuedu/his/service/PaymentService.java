@@ -22,7 +22,7 @@ public interface PaymentService extends Service<Payment> {
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
     Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
-    void retreatDrugFee(Integer paymentId, Integer paymentAdminId);
+    Invoice retreatDrugFee(Integer paymentId, Integer paymentAdminId);
 
     Payment findByRegistrationId(Integer registrationId);
     ArrayList<Payment> getWithItem(Integer id);
