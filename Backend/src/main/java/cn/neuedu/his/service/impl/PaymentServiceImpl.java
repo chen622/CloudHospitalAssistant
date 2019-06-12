@@ -184,7 +184,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new IndexOutOfBoundsException();
 
         //填入新的信息
-        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId);
+        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId,Constants.HAVE_RETREAT);
 
         //生成冲红发票，若无法生成，抛出异常
         return invoiceService.addInvoiceByPayment(newPaymentId);
@@ -221,7 +221,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new IndexOutOfBoundsException();
 
         //填入新的信息
-        addPayment(originalPayment, retreatQuantity, adminId);
+        addPayment(originalPayment, retreatQuantity, adminId,Constants.HAVE_RETURN_DRUG);
     }
 
     /**
@@ -316,7 +316,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @param adminId
      * @return
      */
-    private Integer addPayment(Payment originalPayment, Integer retreatQuantity, Integer adminId) {
+    private Integer addPayment(Payment originalPayment, Integer retreatQuantity, Integer adminId,Integer state) {
         Payment newPayment = new Payment();
         newPayment.setUnitPrice(originalPayment.getUnitPrice());
         newPayment.setSettlementTypeId(originalPayment.getSettlementTypeId());
@@ -324,7 +324,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         newPayment.setItemId(originalPayment.getItemId());
         newPayment.setCreateTime(new Date(System.currentTimeMillis()));
         newPayment.setPatientId(originalPayment.getPatientId());
-        newPayment.setState(Constants.HAVE_RETURN_DRUG);
+        newPayment.setState(state);
         newPayment.setQuantity(retreatQuantity * (-1));
         newPayment.setOperatorId(adminId);
 

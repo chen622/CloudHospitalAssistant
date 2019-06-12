@@ -33,7 +33,7 @@
                        @click="visible=true; CurrentPatient=record">{{text}}</a>
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
                     </template>
-                    <span slot="action" slot-scope="text, record">
+                    <span slot="action">
                        <a-upload name="smfile" :multiple="true" accept="image/*" action="https://sm.ms/api/upload">
                            <a-button type="primary">结果录入</a-button>
                        </a-upload>
@@ -51,7 +51,6 @@
 </template>
 <script>
 
-    import axios from 'axios'
 
     export default {
         name: 'inspection',
@@ -123,8 +122,6 @@
                     }, res => {
                         that.$message.error(res)
                     })
-                console.log(this.CurrentPatient.id)
-                console.log(this.CurrentPatient)
             },
             onSearch(value) {
                 if (value === null || value === undefined) {
@@ -137,7 +134,6 @@
                             that.data = res.data
                             this.username = this.data[0].user.realName
                             this.userid = this.data[0].user.identifyId
-                            console.log(res.data)
                             this.address = this.data[0].patient.phoneNumber
                             this.id = this.data[0].patientId
                             this.projectName = this.data[0].paymentType.name

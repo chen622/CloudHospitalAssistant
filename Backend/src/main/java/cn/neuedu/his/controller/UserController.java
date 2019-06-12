@@ -82,6 +82,8 @@ public class UserController {
             urls.add(new url("门诊财务管理", "/finance/manage", "manage"));
             urls.add(new url("日结核对", "/finance/check", "check"));
             urls.add(new url("工作量统计", "/finance/workload", "workload"));
+        } else if (typeId.equals(map.get("药房操作员"))) {
+            urls.add(new url("药房管理", "/medicine/index", "medicine"));
         }
         return CommonUtil.successJson(urls);
     }
@@ -133,9 +135,9 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
-        try{
+        try {
             userService.deleteUser(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             if (e.getMessage().equals("601"))
                 return CommonUtil.errorJson(ErrorEnum.E_601);
         }
@@ -325,7 +327,7 @@ public class UserController {
 
         try {
             return CommonUtil.successJson(userService.findAllTollKeeper());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
