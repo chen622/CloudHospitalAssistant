@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.DailySettle;
 import cn.neuedu.his.service.DailySettleService;
 import cn.neuedu.his.service.InvoiceService;
+import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
@@ -49,7 +50,7 @@ public class DailySettleController {
     }
 
     @GetMapping("/getSettleInfo/{adminId}")
-    public JSONObject getSettleInfo(@PathVariable("adminId") Integer adminId,  Authentication authentication) {
+    public JSONObject getSettleInfo(@PathVariable("adminId") Integer adminId, Authentication authentication) {
         JSONArray resultArray = new JSONArray();
         try {
             PermissionCheck.isFinancialOfficer(authentication);

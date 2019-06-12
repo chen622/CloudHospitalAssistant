@@ -20,4 +20,6 @@ public interface UserMapper extends MyMapper<User> {
     ArrayList<User> findAllWithName();
 
     List<User> findUser(String name);
+
+    ArrayList<User> getAllTollKeeper(Integer tollType);
 }

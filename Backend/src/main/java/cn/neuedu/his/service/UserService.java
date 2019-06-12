@@ -35,4 +35,6 @@ public interface UserService extends Service<User> {
 
     void deleteUser(Integer id) throws Exception;
 
+    ArrayList<User> findAllTollKeeper() throws Exception;
+
 }

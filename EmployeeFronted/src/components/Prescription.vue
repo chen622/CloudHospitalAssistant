@@ -129,7 +129,7 @@
                     }
                 }
                 let i = 0
-                this.prescriptions.forEach(
+                    this.prescriptions.forEach(
                     p => {
                         if (!p.temp) {
                             i++

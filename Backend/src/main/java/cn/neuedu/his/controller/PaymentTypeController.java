@@ -36,9 +36,13 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isFinancialOfficer(authentication);
+            PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
         }
 
         PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
@@ -60,10 +64,15 @@ public class PaymentTypeController {
     public JSONObject deletePaymentType(@PathVariable("id") Integer id, Authentication authentication){
 
         //检查权限
+
         try{
             PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
         }
 
         PaymentType paymentType = paymentTypeService.findById(id);
@@ -79,6 +88,35 @@ public class PaymentTypeController {
         return CommonUtil.successJson(paymentType);
     }
 
+
+    @PostMapping("/recoverPaymentType/{id}")
+    public JSONObject recoverPaymentType(@PathVariable("id") Integer id, Authentication authentication){
+
+        //检查权限
+
+        try{
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
+        }
+
+        PaymentType paymentType = paymentTypeService.findById(id);
+
+        //检查结算类型是否存在
+        if (paymentType == null)
+            return CommonUtil.errorJson(ErrorEnum.E_606);
+
+        paymentType.setDelete(false);
+
+        paymentTypeService.update(paymentType);
+
+        return CommonUtil.successJson(paymentType);
+    }
+
     @PostMapping("/modifyPaymentType")
     public JSONObject modifyPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication){
 
@@ -86,7 +124,11 @@ public class PaymentTypeController {
         try{
             PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
         }
 
         PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
@@ -107,6 +149,39 @@ public class PaymentTypeController {
     }
 
 
+    @PostMapping("/updatePaymentType")
+    public JSONObject updatePaymentType(@RequestBody JSONObject jsonObject, Authentication authentication){
+
+        //检查权限
+        try{
+            PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
+        }
+
+        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
+
+        PaymentType lastPaymentType = paymentTypeService.getPaymentTypeByName(paymentType.getName());
+
+        //判断数据是否存在
+        if (lastPaymentType != null)
+            return CommonUtil.errorJson(ErrorEnum.E_606);
+
+        try{
+            paymentTypeService.update(paymentType);
+        }catch (Exception e){
+            throw new RuntimeException("信息不能为空");
+        }
+
+        return CommonUtil.successJson();
+    }
+
+
+
     @GetMapping("/selectPaymentType/{paymentTypeName}")
     public JSONObject selectPaymentType(@PathVariable("paymentTypeName") String  paymentTypeName, Authentication authentication){
 
@@ -114,9 +189,12 @@ public class PaymentTypeController {
         try{
             PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
+            try{
+                PermissionCheck.isFinancialOfficer(authentication);
+            }catch (Exception ew){
+                return CommonUtil.errorJson(ErrorEnum.E_602);
+            }
         }
-
         PaymentType paymentType = paymentTypeService.getPaymentTypeByName(paymentTypeName);
 
         //判断数据是否存在

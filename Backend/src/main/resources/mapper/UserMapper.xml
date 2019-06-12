@@ -140,5 +140,9 @@
     select c.name from  doctor ,constant_variable c where doctor.id=#{id} and title_id = c.id
   </select>
 
+<!--  返回所有收费员信息-->
+  <select id="getAllTollKeeper" resultMap="BaseResultMap">
+    select * from user where type_id = #{tollType} and is_delete = false
+  </select>
 
 </mapper>
