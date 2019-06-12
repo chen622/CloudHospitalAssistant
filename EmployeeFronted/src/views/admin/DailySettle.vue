@@ -3,10 +3,7 @@
         <a-col span="23">
             <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
                 <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
-                                    <span slot="title" style="font-size: 22px">收费员列表
-                                        <!--                                        <a-button @click="getPatient" type="primary" shape="circle" icon="reload"-->
-                                        <!--                                            style="float: right;"></a-button>-->
-                                    </span>
+                                    <span slot="title" style="font-size: 22px">收费员列表</span>
                     <a-collapse defaultActiveKey="1" :bordered="false">
                         <a-collapse-panel header="收费员查询" key="1">
                             <a-row type="flex" align="top" justify="start"
@@ -15,13 +12,6 @@
                                         placeholder="收费员编号"
                                         @search="selectTollKeeper"
                                         enterButton></a-input-search>
-                            </a-row>
-                            <a-row type="flex" align="top" justify="start"
-                                   style="margin: 15px 0 10px 0;">
-                                <a-date-picker
-                                        showTime
-                                        format="YYYY-MM-DD hh:mm:ss"
-                                        style="width: 80%"></a-date-picker>
                             </a-row>
                         </a-collapse-panel>
 
@@ -50,12 +40,15 @@
                     <a-collapse :bordered="false" style="margin: 0 3% 1% 3%; font-size: 16px"
                                 v-for="(i,index) in settleTableList" :key="i.id">
                         <a-collapse-panel :key="index">
-                            <template slot="header">{{i.dailySettle.endDate | formatDate}}<span> 日结单</span><a-button style="margin-left: 60%;">核对通过</a-button></template>
+                            <template slot="header">{{i.dailySettle.endDate | formatDate}}<span> 日结单</span>
+                                <a-button style="margin-left: 60%;" @click="check(i.dailySettle.id)">核对通过</a-button>
+                            </template>
                             <div class="invoice-box">
                                 <a-row type="flex" align="top" justify="start"
                                        style="margin: 15px 0 10px 0; font-size: 16px;line-height: 20px;">
                                     <a-col span="5">统计日期</a-col>
-                                    <a-col span="16"><a-tag class="tag-date">{{i.dailySettle.startDate | formatTime}}</a-tag>
+                                    <a-col span="16">
+                                        <a-tag class="tag-date">{{i.dailySettle.startDate | formatTime}}</a-tag>
                                         &#12288;&#12288;至&#12288;&#12288;
                                         <a-tag class="tag-date">{{i.dailySettle.endDate | formatTime}}</a-tag>
                                     </a-col>
@@ -64,8 +57,11 @@
                                 <a-row type="flex" align="top" justify="start"
                                        style="margin: 15px 0 10px 0;">
                                     <a-col span="7">制表人：{{i.dailySettle.makeUser.realName}}</a-col>
-                                    <a-col span="7">收费员：{{i.dailySettle.adminUser.realName}}</a-col>
-                                    <a-col span="10">制表时间&#12288;<a-tag class="tag-date">{{i.dailySettle.makeDate | formatTime}}</a-tag></a-col>
+                                    <a-col span="7">收费员：{{currentTollKeeper.realName}}</a-col>
+                                    <a-col span="10">制表时间&#12288;<a-tag class="tag-date">{{i.dailySettle.makeDate |
+                                        formatTime}}
+                                    </a-tag>
+                                    </a-col>
                                 </a-row>
 
                                 <a-row type="flex" align="top" justify="start"
@@ -74,7 +70,10 @@
                                     <a-col span="16">
                                         <a-tag color="blue" v-for="id in i.normalInvoiceId" :key="id">{{id}}</a-tag>
                                     </a-col>
-                                    <a-col span="3">共计<a-tag color="blue">{{i.dailySettle.normalInvoiceAmount}}</a-tag>张</a-col>
+                                    <a-col span="4">共计
+                                        <a-tag color="blue">{{i.dailySettle.normalInvoiceAmount}}</a-tag>
+                                        张
+                                    </a-col>
                                 </a-row>
 
                                 <a-row type="flex" align="top" justify="start"
@@ -83,7 +82,10 @@
                                     <a-col span="16">
                                         <a-tag color="blue" v-for="id in i.anewInvoiceId" :key="id">{{id}}</a-tag>
                                     </a-col>
-                                    <a-col span="3">共计<a-tag color="blue">{{i.dailySettle.anewInvoiceAmount}}</a-tag>张</a-col>
+                                    <a-col span="4">共计
+                                        <a-tag color="blue">{{i.dailySettle.anewInvoiceAmount}}</a-tag>
+                                        张
+                                    </a-col>
                                 </a-row>
 
                                 <table>
@@ -185,14 +187,26 @@
                 let that = this
                 this.$api.get("/daily_settle/getSettleInfo/" + id, null, res => {
                     if (res.code === '100') {
-                        that.settleTableList = res.data
-                        // that.currentTollKeeper = that.settleTableList.dailySettle.adminUser
+                        that.settleTableList = res.data.settleList
+                        that.currentTollKeeper = res.data.admin
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                 }, () => {
                     that.$message.error("网络异常")
                 })
             },
+
+            check(settleId) {
+                let that = this
+                this.$api.post("/daily_settle/check/" + settleId, null, res => {
+                    if (res.code === '100') {
+                        that.selectTollKeeper(that.currentTollKeeper.id)
+                    } else if (res.code === '502')
+                        that.$message.error(res.message)
+                }, () => {
+                    that.$message.error("网络异常")
+                })
+            }
         },
         mounted() {
             this.getTollKeeper()
@@ -206,6 +220,7 @@
         margin-top: 40px;
         margin-bottom: 20px;
     }
+
     .invoice-box {
         max-width: 800px;
         margin: auto;
@@ -217,26 +232,32 @@
         font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
         color: #555;
     }
+
     .invoice-box table {
         width: 95%;
         line-height: inherit;
         text-align: left;
     }
+
     .invoice-box table td {
         padding: 5px;
         vertical-align: top;
     }
+
     .invoice-box table tr td:nth-child(2) {
         text-align: right;
     }
+
     .invoice-box table tr.heading {
         background: #eee;
         border-bottom: 1px solid #ddd;
         font-weight: bold;
     }
+
     .invoice-box table tr.details {
         padding-bottom: 20px;
     }
+
     .details td:nth-child(2) {
         text-align: right;
     }
@@ -249,7 +270,6 @@
     .tag-date {
         font-size: 16px;
     }
-
 
 
 </style>

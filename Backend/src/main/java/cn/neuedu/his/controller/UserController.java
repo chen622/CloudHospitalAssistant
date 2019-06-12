@@ -81,6 +81,7 @@ public class UserController {
         } else if (typeId.equals(map.get("财务管理员"))) { //605
             urls.add(new url("门诊财务管理", "/finance/manage", "manage"));
             urls.add(new url("日结核对", "/finance/check", "check"));
+            urls.add(new url("工作量统计", "/finance/workload", "workload"));
         }
         return CommonUtil.successJson(urls);
     }

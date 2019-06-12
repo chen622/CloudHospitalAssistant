@@ -32,7 +32,7 @@
 
 
 <!--  获取为审核的日结表-->
-  <resultMap id="settleAndAdminAndMakeUser" type="cn.neuedu.his.model.DailySettle">
+  <resultMap id="settleAndMakeUser" type="cn.neuedu.his.model.DailySettle">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
     <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
@@ -48,11 +48,10 @@
     <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
     <result column="is_pass" jdbcType="BIT" property="isPass" />
     <result column="check_id" jdbcType="INTEGER" property="checkId" />
-    <association property="adminUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = admin_id}"/>
     <association property="makeUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = make_id}"/>
   </resultMap>
 
-  <select id="selectNotCheckByAdminId" resultMap="settleAndAdminAndMakeUser">
+  <select id="selectNotCheckByAdminId" resultMap="settleAndMakeUser">
     select * from daily_settle where admin_id = #{adminId} and is_pass = false order by make_date desc
   </select>
 
