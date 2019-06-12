@@ -309,16 +309,15 @@ import { Promise, resolve, reject } from 'q';
                 this.$api.get("/payment_type/getAll", null,
                 res => {
                         if (res.code === "100") {
-                            console.log(res)
+                          console.log(res)
                            var map=new Map();
                            var name=res.data
-                           var id=res.data.id
                            for(let i=0;i<name.length;i++){
                                 that.paymentTypeList.push({
-                                  name:name[i],
-                                  id:id[i]
+                                  name:name[i].name,
+                                  id:name[i].id
                               })
-                              map.set(id[i],name[i])
+                              map.set(name[i].id,name[i].name)
                            }
                            that.paymentTypeMap=map
                            console.log(that.paymentTypeMap)
