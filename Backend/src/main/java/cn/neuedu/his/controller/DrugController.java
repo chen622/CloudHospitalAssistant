@@ -237,8 +237,22 @@ public class DrugController {
             auth = false;
         }
         List<ConstantVariable> constantVariables = drugService.getTypeAndDrugs(auth);
-
         return CommonUtil.successJson(constantVariables);
     }
+
+
+    @GetMapping("/getAllDrugWithout")
+    public JSONObject getAllDrugWithout(Authentication authentication) {
+        Boolean auth = null;
+        try {
+            PermissionCheck.getIdByDrugAdmin(authentication);
+        } catch (Exception e) {
+            auth = false;
+        }
+        List<Drug> constantVariables = drugService.getAllDrug();
+        return CommonUtil.successJson(constantVariables);
+    }
+
+
 
 }
