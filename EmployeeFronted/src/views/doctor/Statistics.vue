@@ -305,18 +305,18 @@ import { stat } from 'fs';
                 this.$api.get("/payment_type/getAll", null,
                 res => {
                         if (res.code === "100") {
-                          console.log(res)
-                           var map=new Map();
+                          var map=new Map();
                            var name=res.data
+                           var id=[]
                            for(let i=0;i<name.length;i++){
                                 that.paymentTypeList.push({
-                                  name:name[i].name,
-                                  id:name[i].id
-                              })
-                              map.set(name[i].id,name[i].name)
+                                    name:name[i].name,
+                                    id:name[i].id
+                                })
+                                map.set(name[i].id,name[i].name) 
                            }
                            that.paymentTypeMap=map
-                           console.log(that.paymentTypeMap)
+     
                         }
                     }, res => {
                         that.$message.error(res)
