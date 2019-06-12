@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface PaymentService extends Service<Payment> {
     List<Payment> getByDoctor(Integer patientId,Integer doctorId);
+    List<Payment> getAll(Integer patientId,Date start,Date end);
 
 
     Payment createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
@@ -28,6 +29,6 @@ public interface PaymentService extends Service<Payment> {
     List<Payment> getByRegistrationId(Integer id, Integer type);
     ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end);
     public ArrayList<Payment> findAllByItemAndPaymentType(Integer itemId, Integer paymentTypeId);
-    ArrayList<Payment> findAllByItemAndPaymentTypeAndState(Integer itemId, Integer paymentTypeId, Integer state);
+    ArrayList<Payment> findAllByItemAndPaymentTypeAndState(Integer itemId, Integer paymentTypeId, Integer state) throws RuntimeException;
     ArrayList<Payment> getForStatistics(Integer doctorId,Integer patientId,String start,String end);
 }

@@ -12,4 +12,6 @@ public interface PaymentTypeService extends Service<PaymentType> {
     PaymentType getPaymentTypeByName(String paymentTypeName);
     Integer getTotalPaymentType(Integer typeId);
     ArrayList<PaymentType> findAllNotDelete();
+
+    void insertPaymentType(PaymentType paymentType);//插入结算类型
 }
