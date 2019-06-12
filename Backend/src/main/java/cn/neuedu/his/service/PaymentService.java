@@ -30,4 +30,5 @@ public interface PaymentService extends Service<Payment> {
     ArrayList<Payment> findByAllDoctor(Integer doctorId, Date start, Date end);
     public ArrayList<Payment> findAllByItemAndPaymentType(Integer itemId, Integer paymentTypeId);
     ArrayList<Payment> findAllByItemAndPaymentTypeAndState(Integer itemId, Integer paymentTypeId, Integer state);
+    ArrayList<Payment> getForStatistics(Integer doctorId,Integer patientId,Long start,Long end);
 }

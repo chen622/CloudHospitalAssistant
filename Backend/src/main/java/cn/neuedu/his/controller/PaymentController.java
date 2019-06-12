@@ -50,8 +50,25 @@ public class PaymentController {
             Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
-            Patient patient = patientService.findById(patientId);
             List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+
+    @GetMapping("/getByDoctor")
+    public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
+        try {
+            Integer patientId= (Integer) object.get("patientId");
+            Long start=(Long)object.get("start");
+            Long end=(Long)object.get("end");
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            Patient patient = patientService.findById(patientId);
+            List<Payment> paymentList = paymentService.getForStatistics(patientId, doctorId,start,end);
             patient.setPaymentList(paymentList);
             return CommonUtil.successJson(patient);
         } catch (AuthenticationServiceException e) {

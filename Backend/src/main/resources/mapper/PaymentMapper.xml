@@ -152,4 +152,31 @@
           and payment.patient_id = #{patientId}
           and DATEDIFF(payment.create_time, now()) = 0
     </select>
+
+    <select id="getForStatistics" resultMap="WithPaymentType">
+        select payment.*,
+               payment_type.id   as typeId,
+               payment_type.name as typeName,
+               prescription.*,
+               drug.id           as drugId,
+               drug.name         as drugName,
+               inspection_application.*,
+               non_drug.id       as nonDrugId,
+               non_drug.name     as nonDrugName,
+               state.id          as stateId,
+               state.name        as stateName
+        from payment
+                 join payment_type on payment.payment_type_id = payment_type.id
+                 left join prescription on payment.item_id = prescription.id
+                 left join drug on prescription.drug_id = drug.id
+                 left join inspection_application on payment.item_id = inspection_application.id
+                 left join non_drug on inspection_application.non_drug_id = non_drug.id
+                 left join constant_variable as state on payment.state = state.id
+        where payment.doctor_id = #{doctorId}
+          and payment.patient_id = #{patientId}
+          and DATEDIFF(payment.create_time, #{start}) >=0 and  DATEDIFF(#{end},payment.create_time) >=0
+          group  by payment.payment_type_id
+    </select>
+
+
 </mapper>
