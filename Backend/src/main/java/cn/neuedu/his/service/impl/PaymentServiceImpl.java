@@ -45,15 +45,6 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         return payments;
     }
 
-    @Override
-    public List<Payment> getAll(Integer patientId, Date start, Date end) {
-        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByPatientId(patientId, start, end);
-        if (payments == null) {
-            payments = new ArrayList<>();
-        }
-        return payments;
-    }
-
     /**
      * 生成挂号缴费单
      *

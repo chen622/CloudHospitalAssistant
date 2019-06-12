@@ -693,7 +693,7 @@ import { Promise, resolve, reject } from 'q';
                  // this.getDrugType();
                 await this.getDrugType()
 
-
+                
             },getForm () {
                 let that=this
                var p=new Promise((resolve,reject) => {
@@ -740,8 +740,6 @@ import { Promise, resolve, reject } from 'q';
                   .then(r=>{
                       this.getAllDrug();
                   })
-
-                 this.getAllDrug();
                   
             }, getPaymentType(){
                 let that=this
@@ -750,17 +748,14 @@ import { Promise, resolve, reject } from 'q';
                  res => {
                         if (res.code === "100") {
                            var map=new Map();
-                           var name=res.data
+                           var name=res.data.name
+                           var id=res.data.id
                            for(let i=0;i<name.length;i++){
                                 that.paymentTypeList.push({
-                                  name:name[i].name,
-                                  id:name[i].id,
-                                  code:name[i].code,
-                                  type:name[i].type,
-                                  isDelete:name[i].delete,
-                                  delete:name[i].delete
+                                  name:name[i],
+                                  id:id[i]
                               })
-                              map.set(name[i].id,name[i].name)
+                              map.set(id[i],name[i])
                            }
                            that.paymentTypeMap=map
                         }
@@ -772,7 +767,7 @@ import { Promise, resolve, reject } from 'q';
             },getAllDrug(){
                 let that=this
                 var p=new Promise((resolve,reject) => {
-                this.$api.get("/drug/getAllDrugWithout", null,
+                this.$api.get("/drug/getAllDrug", null,
                     res => {
                         if (res.code === "100") {
                            that.data=res.data        

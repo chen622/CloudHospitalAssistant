@@ -77,10 +77,6 @@
         <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
         <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
-        <association property="stateVariable" javaType="cn.neuedu.his.model.ConstantVariable">
-            <id column="stateId" jdbcType="INTEGER" property="id"></id>
-            <result column="stateName" jdbcType="VARCHAR" property="name"></result>
-        </association>
         <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
             <id column="typeId" jdbcType="INTEGER" property="id"/>
             <result column="typeName" jdbcType="VARCHAR" property="name"/>
@@ -101,34 +97,6 @@
         </association>
     </resultMap>
 
-    <select id="getAllPaymentWithPaymentTypeByPatientId" resultMap="WithPaymentType">
-        select payment.*,
-               payment_type.id   as typeId,
-               payment_type.name as typeName,
-               prescription.*,
-               drug.id           as drugId,
-               drug.name         as drugName,
-               inspection_application.*,
-               non_drug.id       as nonDrugId,
-               non_drug.name     as nonDrugName,
-               state.id          as stateId,
-               state.name        as stateName
-        from payment
-                 join payment_type on payment.payment_type_id = payment_type.id
-                 left join prescription on payment.item_id = prescription.id
-                 left join drug on prescription.drug_id = drug.id
-                 left join inspection_application on payment.item_id = inspection_application.id
-                 left join non_drug on inspection_application.non_drug_id = non_drug.id
-                 left join constant_variable as state on payment.state = state.id
-        where payment.patient_id = #{patientId}
-        <if test="start != null">
-            and payment.create_time <![CDATA[  >=  ]]> #{start}
-        </if>
-        <if test="end != null">
-            and payment.create_time <![CDATA[  <=  ]]> #{end}
-        </if>
-    </select>
-
     <select id="getAllPaymentWithPaymentTypeByDoctorIdAndPatientId" resultMap="WithPaymentType">
         select payment.*,
                payment_type.id   as typeId,
@@ -138,16 +106,13 @@
                drug.name         as drugName,
                inspection_application.*,
                non_drug.id       as nonDrugId,
-               non_drug.name     as nonDrugName,
-               state.id          as stateId,
-               state.name        as stateName
+               non_drug.name     as nonDrugName
         from payment
                  join payment_type on payment.payment_type_id = payment_type.id
                  left join prescription on payment.item_id = prescription.id
                  left join drug on prescription.drug_id = drug.id
                  left join inspection_application on payment.item_id = inspection_application.id
                  left join non_drug on inspection_application.non_drug_id = non_drug.id
-                 left join constant_variable as state on payment.state = state.id
         where payment.doctor_id = #{doctorId}
           and payment.patient_id = #{patientId}
           and DATEDIFF(payment.create_time, now()) = 0
