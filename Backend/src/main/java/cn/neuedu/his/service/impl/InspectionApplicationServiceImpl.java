@@ -54,6 +54,10 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public void confirmApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
+        //检测是否交钱
+        if (inspectionApplication.getCheck() == true)
+            throw new RuntimeException("634");
+
         inspectionApplication.setCheck(true);
         this.update(inspectionApplication);
     }
