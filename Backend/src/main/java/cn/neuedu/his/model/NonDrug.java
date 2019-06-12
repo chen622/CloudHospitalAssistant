@@ -58,7 +58,7 @@ public class NonDrug implements Serializable {
         return executiveDepartment;
     }
 
-    public void setExecutiveDepartment(Integer excutiveDepartment) {
+    public void setExecutiveDepartment(Integer executiveDepartment) {
         this.executiveDepartment = executiveDepartment;
     }
 
