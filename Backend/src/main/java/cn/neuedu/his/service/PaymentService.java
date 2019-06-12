@@ -14,6 +14,7 @@ import java.util.List;
  */
 public interface PaymentService extends Service<Payment> {
     List<Payment> getByDoctor(Integer patientId,Integer doctorId);
+    List<Payment> getAll(Integer patientId,Date start,Date end);
 
 
     Payment createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;

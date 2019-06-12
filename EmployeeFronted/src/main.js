@@ -12,6 +12,16 @@ Vue.use(Antd)
 Vue.prototype.$api = api
 
 
+Vue.prototype.dateToTimeStamp = function (date) {
+    return this.datetimeToTimeStamp(date + " 0:0:0")
+}
+
+Vue.prototype.datetimeToTimeStamp = function (datetime) {
+    //mytime是待转换时间字符串，格式：'2018-9-12 9:11:23'
+    let timestamp = Date.parse(datetime.replace(/-/g, '/'))    //返回'2018-9-12 9:11:23'的时间戳
+    return timestamp
+}
+
 new Vue({
     router,
     store,
