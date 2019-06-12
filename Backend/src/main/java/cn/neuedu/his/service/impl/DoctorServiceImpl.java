@@ -966,7 +966,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 feeMap.put(id, new BigDecimal(0));
             }
 
-            for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
+            ArrayList<Payment> paymentList = paymentService.findAllByDoctor(user.getId(), startDate, endDate);
+            for (Payment payment : paymentList) {
                 //更新某缴费项目类型的金额数据
                 feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
             }
