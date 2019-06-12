@@ -191,11 +191,11 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         //设置前端column值
         JSONArray columns = new JSONArray();
         columns.add(setColumn("部门名称", "department.name", 120, "left"));
-        columns.add(setColumn("发票数", "invoiceNumber", 90, "left"));
-        columns.add(setColumn("看诊人数", "visitNumber", 90, "left"));
+        columns.add(setColumn("发票数", "invoiceNumber", 120, "left"));
+        columns.add(setColumn("看诊人数", "visitNumber", 120, "left"));
 
         for (Integer key : paymentTypeMap.keySet())
-            columns.add(setColumn(paymentTypeMap.get(key), key.toString(), "200px"));
+            columns.add(setColumn(paymentTypeMap.get(key), key.toString(), 100));
 
         columns.add(setColumn("合计", "total", 90, "right"));
 
@@ -206,36 +206,22 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         JSONObject column = new JSONObject();
         column.put("title", title);
         column.put("dataIndex", dataIndex);
+        column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
+        column.put("sorter", true);
         return column;
     }
 
-    private JSONObject setColumn(String title, String dataIndex, String width) {
+    private JSONObject setColumn(String title, String dataIndex, Integer width) {
         JSONObject column = new JSONObject();
         column.put("title", title);
         column.put("dataIndex", dataIndex);
+        column.put("key", dataIndex);
         column.put("width", width);
         return column;
     }
 
-    private JSONObject setColumn(String title, String dataIndex, Integer width, String minWidth, String fixed) {
-        JSONObject column = new JSONObject();
-        column.put("title", title);
-        column.put("dataIndex", dataIndex);
-        column.put("width", width);
-        column.put("min-width", minWidth);
-        column.put("fixed", fixed);
-        return column;
-    }
 
-    private JSONObject setColumn2(String title, String dataIndex, Integer width, String minWidth) {
-        JSONObject column = new JSONObject();
-        column.put("title", title);
-        column.put("dataIndex", dataIndex);
-        column.put("width", width);
-        column.put("min-width", minWidth);
-        return column;
-    }
 }
 
