@@ -1,8 +1,6 @@
 package cn.neuedu.his.service.impl;
 
-import cn.neuedu.his.model.InspectionApplication;
-import cn.neuedu.his.model.MedicalRecord;
-import cn.neuedu.his.model.Prescription;
+import cn.neuedu.his.model.*;
 import cn.neuedu.his.util.SerializeUtil;
 import com.alibaba.fastjson.JSONObject;
 import redis.clients.jedis.Jedis;
@@ -501,6 +499,36 @@ public class RedisServiceImpl {
         } catch (Exception e) {
             //returnBrokenResource(jedis);
         } finally {
+            returnResource(jedis);
+        }
+    }
+
+    /**
+     * 添加一条记录 如果map_key存在 则更新value
+     * hset 如果哈希表不存在，一个新的哈希表被创建并进行 HSET 操作。
+     * 如果字段已经存在于哈希表中，旧值将被覆盖
+     *
+     * @param key
+     * @param field
+     * @param value
+     * @return
+     */
+    public long setHash(String key, String field, String value) {
+        Jedis jedis = getResource();
+        jedis.select(0);
+        long returnStatus = jedis.hset(key, field, value);
+        return returnStatus;
+    }
+
+
+    public void setPaymentType(PaymentType type){
+        Jedis jedis = getResource();
+
+        try {
+            setHash("paymentType",type.getName(),type.getType().toString());
+        } catch (Exception e) {
+            //returnBrokenResource(jedis);
+        }finally {
             returnResource(jedis);
         }
     }

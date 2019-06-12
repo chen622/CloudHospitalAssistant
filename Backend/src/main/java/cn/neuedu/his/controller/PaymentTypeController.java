@@ -33,7 +33,6 @@ public class PaymentTypeController {
 
     @PostMapping("/insertPaymentType")
     public JSONObject insertPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
-
         //检查权限
         try{
             PermissionCheck.isHosptialAdim(authentication);
@@ -49,11 +48,12 @@ public class PaymentTypeController {
 
         Map<String ,Integer> payment=redisService.getMapAll("paymentType");
         //判断类型是否正确
-        if(!payment.values().contains(paymentType.getType()))
+        if(payment.values().contains(paymentType.getType()))
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("结算类型"));
 
         try{
             paymentTypeService.save(paymentType);
+            redisService.setPaymentType(paymentType);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_605);
         }
@@ -64,7 +64,6 @@ public class PaymentTypeController {
     public JSONObject deletePaymentType(@PathVariable("id") Integer id, Authentication authentication){
 
         //检查权限
-
         try{
             PermissionCheck.isHosptialAdim(authentication);
         }catch (Exception e){
