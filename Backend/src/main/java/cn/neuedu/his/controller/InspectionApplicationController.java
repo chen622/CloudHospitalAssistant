@@ -171,7 +171,7 @@ public class InspectionApplicationController {
      * @param authentication
      * @return
      */
-    @GetMapping("/cancelInspectionApplication/{id}")
+    @PostMapping("/cancelInspectionApplication/{id}")
     JSONObject cancelInspectionApplication(@PathVariable(value = "id",required = false) Integer id, Authentication authentication){
 
         //判断权限（请求者是不是该部门的人）
