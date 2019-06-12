@@ -44,9 +44,8 @@ public class PaymentTypeController {
             }
         }
 
-        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
-
         try{
+            PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
             paymentTypeService.insertPaymentType(paymentType);
         }catch (RuntimeException e){
             if (e.getMessage().equals("501.1"))
@@ -74,18 +73,13 @@ public class PaymentTypeController {
             }
         }
 
-        PaymentType paymentType = paymentTypeService.findById(id);
-
-        //检查结算类型是否存在
-        if (paymentType == null)
-            return CommonUtil.errorJson(ErrorEnum.E_606);
-
-        paymentType.setDelete(true);
-
-        redisService.deletePaymentType(paymentType);
-        paymentTypeService.update(paymentType);
-
-        return CommonUtil.successJson(paymentType);
+        try{
+            paymentTypeService.deletePaymentType(id);
+        }catch (Exception e){
+            if (e.getMessage().equals("606"))
+                return CommonUtil.errorJson(ErrorEnum.E_606);
+        }
+        return CommonUtil.successJson();
     }
 
 
@@ -131,21 +125,15 @@ public class PaymentTypeController {
             }
         }
 
-        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
-
-        PaymentType lastPaymentType = paymentTypeService.getPaymentTypeByName(paymentType.getName());
-
-        //判断数据是否存在
-        if (lastPaymentType != null)
-            return CommonUtil.errorJson(ErrorEnum.E_606);
-
         try{
-            paymentType.setId(lastPaymentType.getId());
-        }catch (Exception e){
-            throw new RuntimeException("信息不能为空");
+            PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
+            paymentTypeService.modifyPaymentType(paymentType);
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("606"))
+                return CommonUtil.errorJson(ErrorEnum.E_605);
         }
 
-        return CommonUtil.successJson(paymentType);
+        return CommonUtil.successJson();
     }
 
 
