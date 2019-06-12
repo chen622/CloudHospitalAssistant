@@ -347,11 +347,9 @@ import { stat } from 'fs';
                         start=this.time[0].utc().format('YYYY-MM-DD'),
                         end=this.time[1].utc().format('YYYY-MM-DD')
                     }
-                     console.log(start)
-                     console.log(this.dateToTimeStamp(start))
                     var m={
-                        start:this.dateToTimeStamp(start),
-                        end:this.dateToTimeStamp(end),
+                        start:start,
+                        end:end,
                         patientId:value
                     }
                     console.log(m)
@@ -381,6 +379,8 @@ import { stat } from 'fs';
                             var pp=res.data
                             delete pp.paymentList
                             that.patients.push(pp)
+                            console.log(that.patients)
+                            console.log(that)
                         }else{
                             that.$message.error(res)
                         }

@@ -68,8 +68,8 @@ public class PaymentController {
     public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
         try {
             Integer patientId= (Integer) object.get("patientId");
-            Long start=(Long)object.get("start");
-            Long end=(Long)object.get("end");
+            String start=object.get("start").toString();
+            String end=object.get("end").toString();
             Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
