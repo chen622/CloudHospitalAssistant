@@ -1,13 +1,14 @@
 <template>
     <a-row type="flex" align="middle" justify="center" class="Inspection">
         <a-col span="20">
-            <a-card hoverable title="医技检查" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
+            <a-card hoverable title="医技检查" :headStyle="{fontSize:'30px'}">
                 <p style="font-size: 20px">患者查询</p>
                 <a-row type="flex" align="top" justify="start" style="margin: 5px 0 10px 0;">
                     <a-col>
                         <a-form layout="inline">
                             <a-form-item label="病历号">
-                                <a-input-search placeholder="病历号" @search="onSearch" enterButton v-model="id"></a-input-search>
+                                <a-input-search placeholder="病历号" @search="onSearch" enterButton
+                                                v-model="id"></a-input-search>
                             </a-form-item>
                         </a-form>
                     </a-col>
@@ -21,15 +22,19 @@
                         <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
                     <a-form-item label="联系方式">
-                        <a-textarea v-model="address" placeholder="联系方式" autosize style="width:300px">{{address}}</a-textarea>
+                        <a-textarea v-model="address" placeholder="联系方式" autosize style="width:300px">{{address}}
+                        </a-textarea>
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">项目明细</p>
-                <a-table :columns="columns"  :dataSource="data">
-                    <a slot="patient.username" slot-scope="text" href="javascript:;" @click="showmodal">{{text}}</a>
-                    <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}</template>
+                <a-table :columns="columns" :dataSource="data">
+                    <a slot="username" slot-scope="text,record" href="javascript:;"
+                       @click="visible=true;currentPatient=record">{{text}}</a>
+                    <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
+                    </template>
                     <span slot="action" slot-scope="text, record">
-                       <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers" @change="handleChange">
+                       <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76"
+                                 :headers="headers" @change="handleChange">
                            <a-button>结果录入</a-button>
                        </a-upload>
                     </span>
@@ -45,127 +50,108 @@
     </a-row>
 </template>
 <script>
-    import ARow from "ant-design-vue/es/grid/Row";
-    import AFormItem from "ant-design-vue/es/form/FormItem";
-    import ATextarea from "ant-design-vue/es/input/TextArea";
+
     export default {
-        name:'inspection',
-        data(){
-            return{
-                form:this.$form.createForm(this),
+        name: 'inspection',
+        data () {
+            return {
+                form: this.$form.createForm(this),
                 visible: false,
-                id:'',
-                username:'',
-                userid:'',
-                address:'',
-                projectName:'',
-                state:'',
-                headers:{
-                    authorization:'authorization-text',
+                id: '',
+                username: '',
+                userid: '',
+                address: '',
+                projectName: '',
+                state: '',
+                headers: {
+                    authorization: 'authorization-text',
                 },
-                columns:[{
-                    title:'病历号',
-                    dataIndex:'patientId',
-                    scopedSlots:{customRender:'patientId'}
-                },{
-                    title:'姓名',
-                    dataIndex:'patient.username',
-                    scopedSlots:{customRender:'patient.username'}
-                },{
-                    title:'项目名称',
-                    dataIndex:'paymentType.name',
-                    scopedSlots:{customRender:'paymentType.name'}
-                },{
-                    title:'单价',
-                    dataIndex:'unitPrice',
-                    scopedSlots:{customRender:'unitPrice'}
-                },{
-                    title:'数量',
-                    dataIndex:'application.quantity',
-                    scopedSlots:{customRender:'application.quantity'}
-                },{
-                    title:'开立时间',
-                    dataIndex:'application.createTime',
-                    scopedSlots:{customRender:'application.createTime'}
-                },{
-                    title:'状态',
-                    dataIndex:'state',
-                    scopedSlots:{customRender:'state'}
-                },{
-                    title:'执行科室',
-                    dataIndex:'application.nonDrug.department.name',
-                    scopedSlots:{customRender:'application.nonDrug.department.name'}
-                },{
-                    title:'操作',
-                    dataIndex:'action',
-                    key:'action',
-                    scopedSlots:{customRender:'action'}
-                }],
-                data:[]
-
-
+                columns: [
+                    {
+                        title: '病历号',
+                        dataIndex: 'patientId',
+                    }, {
+                        title: '姓名',
+                        dataIndex: 'patient.username',
+                        scopedSlots: {customRender: 'username'}
+                    }, {
+                        title: '项目名称',
+                        dataIndex: 'paymentType.name',
+                    }, {
+                        title: '单价',
+                        dataIndex: 'unitPrice',
+                    }, {
+                        title: '数量',
+                        dataIndex: 'application.quantity',
+                    }, {
+                        title: '开立时间',
+                        dataIndex: 'application.createTime',
+                        scopedSlots: {customRender: 'application.createTime'}
+                    }, {
+                        title: '状态',
+                        dataIndex: 'state',
+                    }, {
+                        title: '执行科室',
+                        dataIndex: 'application.nonDrug.department.name',
+                    }, {
+                        title: '操作',
+                        dataIndex: 'action',
+                        key: 'action',
+                        scopedSlots: {customRender: 'action'}
+                    }],
+                data: [],
+                currentPatient: null
             }
         },
-        components: {
-            ARow,
-            AFormItem,
-            ATextarea
+        mounted: function () {
+            this.getPatient()
         },
-        mounted:function(){
-          this.getPatient()
-        },
-        methods:{
-            showmodal(){
-                this.visible = true
+        methods: {
+            handleok () {
+                this.visible = falses
             },
-            handleok(){
-                this.visible = false
-            },
-            handleChange(info){
-                if (info.file.status === 'done'){
+            handleChange (info) {
+                if (info.file.status === 'done') {
                     this.$message.success(`${info.file.name} file upload successfully`);
-                }
-                else if (info.file.status === 'error'){
+                } else if (info.file.status === 'error') {
                     this.$message.error(`${info.file.name} file upload failed`)
                 }
             },
-            onSearch(value){
-                if (value === null || value === undefined){
+            onSearch (value) {
+                if (value === null || value === undefined) {
                     value === null
                 }
                 let that = this
-                this.$api.get("/inspection_application/selectPatientInformationByNameOrId/id/"+ value, null,
-                res=>{
-                    if (res.code === "100"){
-                        that.data = res.data
-                        this.username = this.data[0].user.realName
-                        this.userid = this.data[0].user.identifyId
-                        console.log(res.data)
-                        this.address = this.data[0].patient.phoneNumber
-                        this.id = this.data[0].patientId
-                        this.projectName = this.data[0].paymentType.name
-                        this.state = this.data[0].state
-                    }
-                    else {
+                this.$api.get("/inspection_application/selectPatientInformationByNameOrId/id/" + value, null,
+                    res => {
+                        if (res.code === "100") {
+                            that.data = res.data
+                            this.username = this.data[0].user.realName
+                            this.userid = this.data[0].user.identifyId
+                            console.log(res.data)
+                            this.address = this.data[0].patient.phoneNumber
+                            this.id = this.data[0].patientId
+                            this.projectName = this.data[0].paymentType.name
+                            this.state = this.data[0].state
+                        } else {
+                            that.$message.error(res)
+                        }
+                    }, res => {
                         that.$message.error(res)
-                    }
-                }, res=>{
-                    that.$message.error(res)
                     })
 
             },
-            getPatient(){
+            getPatient () {
                 let that = this
-                this.$api.get("/inspection_application/selectPatientInformationByNameOrId",null,
-                res =>{
-                    if (res.code === "100"){
-                        that.data = res.data
-                    }
-                    else{
+                this.$api.get("/inspection_application/selectPatientInformationByNameOrId", null,
+                    res => {
+                        if (res.code === "100") {
+                            that.data = res.data
+                        } else {
+                            that.$message.error(res)
+                        }
+                    }, res => {
                         that.$message.error(res)
-                    }
-                },res =>{
-                    that.$message.error(res)
                     })
             }
 
@@ -174,8 +160,8 @@
 </script>
 
 <style scoped>
-.Inspection{
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
+    .Inspection {
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
 </style>

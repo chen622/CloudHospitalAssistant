@@ -6,7 +6,7 @@
         <a-col span="20" v-if="patient!=null">
             <a-card :body-style="{padding: 0}">
                 <template slot="title">
-                    <span>{{patient.realName}}  费用信息</span>
+                    <span>{{patient.realName}}费用信息</span>
                 </template>
                 <a-form layout="inline" style="margin-left: 20px">
                     <a-form-item label="范围选择">
@@ -29,7 +29,7 @@
         data () {
             return {
                 patient: null,
-                timeRange: null
+                timeRange: null,
             }
         },
         components: {

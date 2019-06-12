@@ -10,13 +10,16 @@
             <span v-else-if="record.paymentType.type===3">{{record.user.realName}} 医生</span>
             <span v-else>{{record.paymentType.name}}</span>
         </template>
+        <template slot="time" slot-scope="text">
+            {{new Date(text).toLocaleString()}}
+        </template>
         <template slot="action" slot-scope="text,record">
             <!--形成订单-->
             <div v-if="record.state===1201" class="action">
                 <a>缴费</a>
             </div>
             <!--订单缴费-->
-            <div v-if="record.state===1202" class="action">
+            <div v-else-if="record.state===1202" class="action">
                 <a>退费</a>
             </div>
         </template>
@@ -46,6 +49,11 @@
                     title: '数量',
                     dataIndex: 'quantity',
                     align: 'center'
+                }, {
+                    title: '创建时间',
+                    dataIndex: 'createTime',
+                    align: 'center',
+                    scopedSlots: {customRender: 'time'},
                 }, {
                     title: '状态',
                     dataIndex: 'stateVariable.name',
