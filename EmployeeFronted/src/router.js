@@ -33,10 +33,6 @@ export default new Router({
             name: 'doctor',
             component: () => import('./views/doctor/Index')
         },{
-            path: '/doctor/statistics',
-            name: 'doctor',
-            component: () => import('./views/doctor/Statistics')
-        },{
             path: '/about',
             name: 'about',
             // route level code-splitting

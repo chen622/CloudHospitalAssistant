@@ -181,5 +181,12 @@
         group by payment.payment_type_id
     </select>
 
+    <select id="getAllPayments" resultType="Integer">
+        select count(*)
+        from payment
+        where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
+          and create_time <![CDATA[>=]]> #{startDate}
+          and create_time <![CDATA[<=]]> #{endDate} and  payment_type_id=#{id}
+    </select>
 
 </mapper>
