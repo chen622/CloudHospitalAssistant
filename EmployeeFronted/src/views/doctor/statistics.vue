@@ -151,6 +151,7 @@
 import { constants } from 'crypto';
 import { Promise, resolve, reject } from 'q';
  import moment from 'moment'//导入文件 
+import { stat } from 'fs';
 
     export default {
         data() {
@@ -294,12 +295,7 @@ import { Promise, resolve, reject } from 'q';
                 return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
             }
         },methods: {
-            getTimeStamp(mytime){
-                //mytime是待转换时间字符串，格式：'2018-9-12 9:11:23'
-                dateTmp = mytime.replace(/-/g,'/')   //为了兼容IOS，需先将字符串转换为'2018/9/11 9:11:23'
-                timestamp = Date.parse(dateTmp)    //返回'2018-9-12 9:11:23'的时间戳
-                return timestamp
-            },async  getData(){
+          async  getData(){
                 let that = this
                 // this.getPaymentType();
                 await this.getPaymentType()
@@ -338,7 +334,7 @@ import { Promise, resolve, reject } from 'q';
                 var p=new Promise((resolve,reject) => {
                 let that=this
                 var start,end
-                console.log('///')
+               
                 that.value=[]
                     if(this.time==null || this.time.length==0){
                         start=moment().format('YYYY-MM-DD')
@@ -351,11 +347,12 @@ import { Promise, resolve, reject } from 'q';
                         start=this.time[0].utc().format('YYYY-MM-DD'),
                         end=this.time[1].utc().format('YYYY-MM-DD')
                     }
-
+                     console.log(start)
+                     console.log(this.getTimeStamp(start))
                     var m={
-                    start:this.getTimeStamp(start),
-                    end:this.getTimeStamp(end),
-                    patientId:value
+                        start:this.getTimeStamp(start),
+                        end:this.getTimeStamp(end),
+                        patientId:value
                     }
                     console.log(m)
                     that.getOnePatient(m)
@@ -365,7 +362,8 @@ import { Promise, resolve, reject } from 'q';
                 this.$api.post("/payment/getForStatistics", m,
                     res => {
                         if (res.code === "100") {
-                            console.log(res.datas)
+                            
+                            console.log(res.data)
                         }else{
                             that.$message.error(res)
                         }
