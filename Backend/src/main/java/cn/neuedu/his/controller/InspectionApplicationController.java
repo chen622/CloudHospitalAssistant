@@ -112,6 +112,7 @@ public class InspectionApplicationController {
     /**
      * 模糊查询信息（病历号和名字）
      * 获得所有信息
+     *
      * @param name
      * @param id
      * @param authentication
@@ -165,18 +166,18 @@ public class InspectionApplicationController {
         }
     }
 
-    @PostMapping("/confirmApplication")
-    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
+    @PostMapping("/confirmApplication/{id}")
+    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication) {
 
-        try{
+        try {
             PermissionCheck.isTechnicalDoctor(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
         try {
             inspectionApplicationService.confirmApplication(id);
-        }catch (Exception e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("634"))
                 return CommonUtil.errorJson(ErrorEnum.E_634);
         }
@@ -184,30 +185,33 @@ public class InspectionApplicationController {
     }
 
     @PostMapping("/cancelApplication/{id}")
-    public JSONObject cancelApplication(@PathVariable("id") Integer id,Authentication authentication){
+    public JSONObject cancelApplication(@PathVariable("id") Integer id, Authentication authentication) {
 
-        try{
+        try {
             PermissionCheck.isTechnicalDoctor(authentication);
-        }catch (Exception e){
+            //todo 已交钱项目应退钱
+            inspectionApplicationService.cancelApplication(id);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_635);
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
-        inspectionApplicationService.cancelApplication(id);
-        return CommonUtil.successJson();
     }
 
     @PostMapping("/entryApplicationResult")
-    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject,Authentication authentication){
-        try{
+    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
             PermissionCheck.isTechnicalDoctor(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         //判断权限
         Integer id = (Integer) data.get("id");
 
-        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
+        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject, InspectionResult.class);
         inspectionResult.setOperatorId(id);
 
         inspectionApplicationService.entryApplicationResult(inspectionResult);
