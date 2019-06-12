@@ -12,6 +12,20 @@ Vue.use(Antd)
 Vue.prototype.$api = api
 
 
+Vue.prototype.dateToTimeStamp = function (date) {
+  
+    return this.datetimeToTimeStamp(date + " 00:00:00")
+}
+
+Vue.prototype.datetimeToTimeStamp = function (datetime) {
+    console.log(datetime)
+    let Time = new Date(datetime);
+    console.log(Time)
+    let timestamp = Time.getTime();
+    console.log(timestamp)
+    return timestamp
+}
+
 new Vue({
     router,
     store,
