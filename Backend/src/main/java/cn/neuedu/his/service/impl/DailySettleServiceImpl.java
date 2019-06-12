@@ -114,6 +114,7 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
         dailySettle.setRegistrationFee(registrationFee);
         dailySettle.setNormalInvoiceAmount(normal);
         dailySettle.setAnewInvoiceAmount(anew);
+        dailySettle.setTotalFee(drugFee.add(inspectionFee).add(registrationFee));
         update(dailySettle);
     }
 

@@ -369,4 +369,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         return paymentMapper.getAllByItemIdAndPaymentTypeIdAndState(itemId, paymentTypeId, state);
     }
 
+    @Override
+    public ArrayList<Payment> getForStatistics(Integer doctorId, Integer patientId, String start, String end) {
+        ArrayList<Payment> list=paymentMapper.getForStatistics(doctorId, patientId, start, end);
+        if(list==null){
+            list=new ArrayList<>();
+        }
+        return list;
+    }
+
 }

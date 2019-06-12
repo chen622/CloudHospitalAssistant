@@ -1,7 +1,9 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.Invoice;
+import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.model.Payment;
+import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -25,6 +27,22 @@ public class PaymentController {
 
     @Autowired
     PaymentService paymentService;
+    @Autowired
+    PatientService patientService;
+
+    @PostMapping("/getAll")
+    public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            Integer patientId = jsonObject.getInteger("patientId");
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            List<Payment> paymentList = paymentService.getAll(patientId, jsonObject.getDate("start"), jsonObject.getDate("end"));
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
 
     @GetMapping("/getByDoctor/{patientId}")
     public JSONObject getByDoctor(@PathVariable("patientId") Integer patientId, Authentication authentication) {
@@ -34,6 +52,32 @@ public class PaymentController {
                 return CommonUtil.errorJson(ErrorEnum.E_501);
             List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
             return CommonUtil.successJson(paymentList);
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+
+    /**
+     * 添加获得病人某时间在某个医生下开的所有payment
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getForStatistics")
+    public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
+        try {
+            Integer patientId= (Integer) object.get("patientId");
+            String start=object.get("start").toString();
+            String end=object.get("end").toString();
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            Patient patient = patientService.findById(patientId);
+            List<Payment> paymentList = paymentService.getForStatistics(patientId, doctorId,start,end);
+            patient.setPaymentList(paymentList);
+            return CommonUtil.successJson(patient);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
