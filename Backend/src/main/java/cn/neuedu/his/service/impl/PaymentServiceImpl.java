@@ -37,6 +37,17 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     RedisServiceImpl redisService;
 
     @Override
+    public List<Payment> getAll(Integer patientId, Date start, Date end) {
+        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByPatientId(patientId, start, end);
+        if (payments == null) {
+            payments = new ArrayList<>();
+        }
+        return payments;
+    }
+
+
+
+    @Override
     public List<Payment> getByDoctor(Integer patientId, Integer doctorId) {
         List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByDoctorIdAndPatientId(doctorId, patientId);
         if (payments == null) {
