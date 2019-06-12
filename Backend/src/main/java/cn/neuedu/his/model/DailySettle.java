@@ -19,6 +19,10 @@ public class DailySettle {
     @Column(name = "make_date")
     private Date makeDate = new Date(System.currentTimeMillis());
 
+    private User adminUser;
+    private User makeUser;
+    private User checkUser;
+
     /**
      * 收费员id
      */
@@ -304,5 +308,29 @@ public class DailySettle {
 
     public void setCheckId(Integer checkId) {
         this.checkId = checkId;
+    }
+
+    public User getAdminUser() {
+        return adminUser;
+    }
+
+    public void setAdminUser(User adminUser) {
+        this.adminUser = adminUser;
+    }
+
+    public User getMakeUser() {
+        return makeUser;
+    }
+
+    public void setMakeUser(User makeUser) {
+        this.makeUser = makeUser;
+    }
+
+    public User getCheckUser() {
+        return checkUser;
+    }
+
+    public void setCheckUser(User checkUser) {
+        this.checkUser = checkUser;
     }
 }

@@ -179,6 +179,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         this.update(user);
     }
 
+    /**
+     * 获取所有收费员
+     * @return
+     */
+    @Override
+    public ArrayList<User> findAllTollKeeper() throws Exception{
+        Map<String, Integer> map = redisService.getMapAll("userType");
+        return userMapper.getAllTollKeeper(map.get("挂号收费员"));
+    }
+
 
     @Override
     public User getUserAllInformationByName(String username){

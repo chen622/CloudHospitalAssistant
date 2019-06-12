@@ -313,5 +313,21 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getAllTollKeeper")
+    public JSONObject getAllTollKeeper(Authentication authentication) {
+        try {
+            PermissionCheck.isFinancialOfficer(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            return CommonUtil.successJson(userService.findAllTollKeeper());
+        }catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+
+    }
+
 
 }
