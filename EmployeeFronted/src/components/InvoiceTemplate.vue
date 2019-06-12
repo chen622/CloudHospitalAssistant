@@ -133,6 +133,7 @@
                         that.settlementType = res.data.settlementType
                         that.item = res.data.item
                         that.currentTime = res.data.currentTime;
+                        that.isRetreat = res .data.invoice.isRetreat
                     } else {
                         that.$message.error(res.msg)
                     }
