@@ -57,7 +57,7 @@ public class InspectionApplicationTest {
 
         String request = jsonObject.toJSONString();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/entryApplicationResult")
+        mockMvc.perform(MockMvcRequestBuilders.get("/inspection_application/selectPatientInformationByNameOrId")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(request)
                 .header(Constants.TOKEN_HEADER, token)

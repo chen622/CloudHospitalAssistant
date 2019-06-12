@@ -2,7 +2,9 @@ package cn.neuedu.his.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "inspection_application")
 public class InspectionApplication implements Serializable {
@@ -45,8 +47,18 @@ public class InspectionApplication implements Serializable {
     private Patient patient;
     private User user;
 
+    private List<InspectionResult> results = new ArrayList<>();
+
     public Patient getPatient() {
         return patient;
+    }
+
+    public List<InspectionResult> getResults() {
+        return results;
+    }
+
+    public void setResults(List<InspectionResult> results) {
+        this.results = results;
     }
 
     public void setPatient(Patient patient) {
