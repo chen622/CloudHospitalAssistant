@@ -55,7 +55,7 @@
                             <td>备注</td>
                         </tr>
 
-                        <tr class="details" v-for="i in item" :key="i.name">
+                        <tr class="details" v-for="i in item" :key="i.id">
                             <td>{{i.name}}</td>
                             <td>{{i.paymentType}}</td>
                             <td>{{i.quantity}}</td>
@@ -149,9 +149,8 @@
 
 <style scoped>
     .invoice-box {
-        max-width: 800px;
+        min-width: 1000px;
         margin: auto;
-        padding: 30px;
         border: 1px solid #eee;
         box-shadow: 0 0 10px rgba(0, 0, 0, .15);
         font-size: 16px;
