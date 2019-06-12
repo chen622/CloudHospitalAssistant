@@ -52,7 +52,6 @@ public class PaymentController {
                 return CommonUtil.errorJson(ErrorEnum.E_501);
             List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
             return CommonUtil.successJson(paymentList);
-            return CommonUtil.successJson(paymentList);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }

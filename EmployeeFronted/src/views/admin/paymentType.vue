@@ -1,9 +1,9 @@
 <template>
     <div>
-        <a-row type="flex" align="middle" justify="center" class="info-medicine">
+        <a-row type="flex"  align="middle" justify="center" class="info-medicine" >
             <a-col span="23">
                 <a-card hoveracble title="费用类别管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
-
+                     
                      <a-row type="flex" align="top" justify="space-between" style="margin:5px 0 10px 0;text-align: center;width:85%">
                             <a-col span="6" style="margin-left:20px;" >
                                 <a-input-search placeholder="请输入费用编码" @search="onSearchByCode" enterButton></a-input-search>
@@ -14,7 +14,7 @@
                             <a-col span="3" >
                                 <a-button  @click="add" style="color:#1890FF"><a-icon type="edit" />新增类型</a-button>
                             </a-col>
-
+                          
                             <a-col span="3"  >
                                 <a-button @click="deleteAll" type="danger"><a-icon type="plus-circle"/>全部删除</a-button>
                             </a-col>
@@ -28,9 +28,9 @@
                             </a-col>
                         </a-row>
 
-
+                     
                     <a-table :columns="columns" style="width:85%;text-align: center" :dataSource="paymentTypeList" bordered :rowSelection="{slectedRowKeys:selectedRowKeys, onChange:onSelectChange}" >
-
+      
                         <template slot="type" slot-scope="text,record">
                             <a-select
                               v-if="record.editable"
@@ -71,7 +71,7 @@
                             </div>
                         </template>
 
-
+                        
                         <template slot="action" slot-scope="text, record">
                             <div class='editable-row-operations'>
                                 <span v-if="record.editable">
@@ -89,82 +89,6 @@
                             </div>
                         </template>
                     </a-table>
-                <a-card hoveracble title="门诊财务管理" :headStyle="{fontSize:'30px'}" :bodyStyle="{padding:'5px 0'}">
-                    <a-tabs>
-                        <a-tab-pane tab="费用科目管理" key="1">
-
-                        </a-tab-pane>
-
-
-                        <a-tab-pane tab="日结核对" key="2">
-                            <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
-                                <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
-                                    <span slot="title" style="font-size: 22px">收费员列表
-                                        <!--                                        <a-button @click="getPatient" type="primary" shape="circle" icon="reload"-->
-                                        <!--                                            style="float: right;"></a-button>-->
-                                    </span>
-                                    <a-collapse defaultActiveKey="1" :bordered="false">
-                                        <a-collapse-panel header="收费员查询" key="1">
-                                            <a-row type="flex" align="top" justify="start"
-                                                   style="margin: 5px 0 10px 0;">
-                                                <a-input-search
-                                                        placeholder="收费员编号"
-                                                        @search="onSearch"
-                                                        enterButton
-                                                />
-                                            </a-row>
-                                            <a-row type="flex" align="top" justify="start"
-                                                   style="margin: 5px 0 10px 0;">
-                                                <a-date-picker
-                                                        :mode="mode1"
-                                                        showTime
-                                                        format="YYYY-MM-DD hh:mm:ss"
-                                                        @openChange="handleOpenChange1"
-                                                        @panelChange="handlePanelChange1"
-                                                        style="width: 80%"
-                                                />
-                                            </a-row>
-                                        </a-collapse-panel>
-                                        <a-collapse-panel header="全部收费员" key="2">
-                                            <!--                                            <a-list :loading="load.patient" itemLayout="horizontal"-->
-                                            <!--                                                    :dataSource="patient.waitPatient"-->
-                                            <!--                                                    style="overflow: auto;max-height: 400px">-->
-                                            <!--                                                <a-list-item slot="renderItem" slot-scope="item"-->
-                                            <!--                                                             @click="selectPatient(0,item)">-->
-                                            <a-list-item-meta>
-                                                        <span slot="title" style="font-size: 17px;line-height: 25px;">
-                                                            <span>123</span>
-                                                            <span style="padding-left: 40%">真名</span>
-                                                        </span>
-                                            </a-list-item-meta>
-                                            <!--                                                </a-list-item>-->
-                                            <!--                                            </a-list>-->
-                                        </a-collapse-panel>
-                                    </a-collapse>
-                                </a-card>
-                            </a-col>
-
-                            <a-col :span="showList?17:21" :xl="showList?17:22">
-                                <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}" style="margin-left: 3%">
-                                    <span slot="title" style="font-size: 22px">日结表信息
-
-                                    </span>
-                                </a-card>
-                            </a-col>
-
-                            <a-col :span="showList?16:21" :xl="showList?16:22">
-
-                            </a-col>
-
-                        </a-tab-pane>
-
-
-                        <a-tab-pane tab="工作量统计" key="3">
-
-
-                        </a-tab-pane>
-
-                    </a-tabs>
 
                 </a-card>
             </a-col>
@@ -172,6 +96,8 @@
 
 
     </div>
+    
+    
 </template>
 
 
@@ -331,9 +257,9 @@ import { Promise, resolve, reject } from 'q';
                         return
                     }
                     this.paymentTypeTemp.code=value
-                }
-            },saveRow(record){
-                let that=this
+                }      
+            },saveRow(record){  
+                let that=this  
                 if(record.isAdd){
                     record=this.paymentTypeTemp
                     var t=this.nameKeyMap.get(record.type)
@@ -341,11 +267,11 @@ import { Promise, resolve, reject } from 'q';
                         record.type=t
                     }
                     record.delete=record.isDelete
-                    console.log(record)
+                    console.log(record)                
                     this.$api.post("/payment_type/insertPaymentType", record,
                         res => {
                             if (res.code === "100") {
-
+                                                            
                                 alert('更新成功')
                                 that.getPaymentList()
                             } else {
@@ -368,7 +294,7 @@ import { Promise, resolve, reject } from 'q';
                 this.$api.post("/payment_type/updatePaymentType", p,
                     res => {
                         if (res.code === "100") {
-                            resolve('')
+                            resolve('')                             
                             alert('更新成功')
                         } else {
                             alert('更新失败')
@@ -397,12 +323,12 @@ import { Promise, resolve, reject } from 'q';
                     this.modalVisible=true
                     this.paymentTypeTemp=value
                     this.paymentTypeList=newData
-                }
+                } 
             },deleteRow(value){
                 var p=new Promise((resolve,reject) => {
                     this.$api.post("/payment_type/deletePaymentType/"+value, null,
                         res => {
-                            if (res.code === "100") {
+                            if (res.code === "100") {                             
                                 alert('更新成功')
                                 resolve('')
                             } else {
@@ -417,7 +343,7 @@ import { Promise, resolve, reject } from 'q';
                       that.getPaymentList();
                   })
             },ok(){
-
+                
             },cancle(){
                 this.modalVisible=false
             },onSelectChange(rowKeys){
@@ -425,14 +351,6 @@ import { Promise, resolve, reject } from 'q';
                 console.log(this.selectedRowKeys)
             }
         }
-        data: () => ({
-            load: {
-                patient: true
-            },
-
-            showList: true,
-
-        })
 
     }
 </script>
