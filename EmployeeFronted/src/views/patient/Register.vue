@@ -132,7 +132,7 @@
                 showRegister: false,
                 showDoctor: false,
                 showPayment: false,
-                showInvoice: true,
+                showInvoice: false,
                 invoiceId: null,
                 doctor: [],
                 requestObject: {
