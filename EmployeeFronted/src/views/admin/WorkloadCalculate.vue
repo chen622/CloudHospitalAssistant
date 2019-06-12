@@ -22,7 +22,7 @@
         </a-col>
 
         <a-col span="4" style="text-align: center;margin-top:10px" >
-            <a-button type="primary" style="text-align:center; margin-left" @click="search" >查询</a-button>
+            <a-button type="primary" style="text-align:center;" @click="search" >查询</a-button>
         </a-col>
 
     </a-row>
