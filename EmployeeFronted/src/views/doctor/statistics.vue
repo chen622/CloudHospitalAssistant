@@ -350,6 +350,11 @@ import { stat } from 'fs';
                     var m={
                         start:start,
                         end:end,
+                     console.log(start)
+                     console.log(this.getTimeStamp(start))
+                    var m={
+                        start:this.getTimeStamp(start),
+                        end:this.getTimeStamp(end),
                         patientId:value
                     }
                     console.log(m)
