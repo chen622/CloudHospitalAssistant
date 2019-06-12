@@ -19,6 +19,8 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
 
     @Autowired
     private ConstantVariableMapper constantVariableMapper;
+    @Autowired
+    private RedisServiceImpl redisService;
 
 
     @Override
@@ -40,8 +42,12 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
         return constantVariableMapper.justifyPrimaryType(id);
     }
 
+    /**
+     *
+     * @param constantVariable
+     */
     @Override
-    public void insertConstant(ConstantVariable constantVariable) {
+    public void insertConstant(ConstantVariable constantVariable,String key) {
         //判断大类type0是否存在
         if (constantVariable.getType() != 0){
             ConstantVariable constantVariable1 = this.justifyPrimaryType(constantVariable.getType());
@@ -53,33 +59,47 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
         if (this.getConstantByName(constantVariable.getType(),constantVariable.getName()) != null)
             throw new RuntimeException("630");
 
+        if(constantVariable.getType() != 0){
+            redisService.setHash(key,constantVariable.getName(),constantVariable.getId().toString());
+        }
         this.save(constantVariable);
     }
 
     @Override
-    public void deleteConstant(Integer id){
+    public void deleteConstant(Integer id,String type){
 
         ConstantVariable constantVariable = this.findById(id);
         if (constantVariable == null)
             throw new RuntimeException("629");
 
+        if (constantVariable.getType() !=0)
+            redisService.deleteHash(type, constantVariable.getName(),constantVariable.getId().toString());
+        else if (this.getConstantByType(constantVariable.getId()) != null){
+            throw new RuntimeException("633");
+        }
+        redisService.deleteHash(type,constantVariable.getName(),constantVariable.getId().toString());
         constantVariable.setDelete(true);
         this.update(constantVariable);
     }
 
     @Override
-    public void modifyConstant(ConstantVariable constantVariable) {
+    public void modifyConstant(ConstantVariable constantVariable, String type) {
         //判断大类type0是否存在
         if (constantVariable.getType() != 0){
             ConstantVariable constantVariable1 = this.justifyPrimaryType(constantVariable.getType());
             if (constantVariable1 == null)
                 throw new RuntimeException("629");
+        }else if (this.getConstantByType(constantVariable.getId()) != null){
+            throw new RuntimeException("633");
         }
 
         //判断常量是否存在
-        if (this.getConstantByName(constantVariable.getType(),constantVariable.getName()) != null)
+        ConstantVariable constantVariable1 = this.getConstantByName(constantVariable.getType(),constantVariable.getName());
+        if (constantVariable1 != null && constantVariable1.getId()!= constantVariable.getId())
             throw new RuntimeException("630");
 
+        constantVariable.setDelete(false);
+        redisService.setHash(type,constantVariable.getName(),constantVariable.getId().toString());
         this.update(constantVariable);
     }
 

@@ -48,54 +48,67 @@ public class ConstantVariableController {
      * @param authentication
      * @return
      */
-    @PostMapping("/insert")
-    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
-        try {
+    @PostMapping("/insert/{type}")
+    public JSONObject insertConstant(@RequestBody JSONObject jsonObject,@PathVariable("type") String type, Authentication authentication) {
+        try{
             PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
             ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.insertConstant(constantVariable);
-            return CommonUtil.successJson();
+            constantVariableService.insertConstant(constantVariable,type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+        return CommonUtil.successJson();
     }
 
-    @PostMapping("/delete")
-    public JSONObject deleteConstant(@PathVariable("id") Integer id, Authentication authentication) {
-        try {
+    @PostMapping("/delete/{type}/{id}")
+    public JSONObject deleteConstant(@PathVariable("id") Integer id, @PathVariable("type") String type,  Authentication authentication) {
+        try{
             PermissionCheck.isHosptialAdim(authentication);
-            constantVariableService.deleteConstant(id);
-            return CommonUtil.successJson();
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            constantVariableService.deleteConstant(id,type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
+            else if (e.getMessage().equals("633"))
+                return CommonUtil.errorJson(ErrorEnum.E_633);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+        return CommonUtil.successJson();
     }
 
-    @PostMapping("/modify")
-    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
-        try {
+    @PostMapping("/modify/{type}")
+    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject,@PathVariable("type") String type, Authentication authentication) {
+        try{
             PermissionCheck.isHosptialAdim(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
             ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.modifyConstant(constantVariable);
-            return CommonUtil.successJson();
+            constantVariableService.modifyConstant(constantVariable,type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
+            else if (e.getMessage().equals("633"))
+                return CommonUtil.errorJson(ErrorEnum.E_633);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
+        return CommonUtil.successJson();
     }
 
     @GetMapping("/getSettlementType")
