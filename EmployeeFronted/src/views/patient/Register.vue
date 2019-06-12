@@ -132,7 +132,6 @@
         },
         methods: {
             selectPatient (record) {
-                console.log(record)
                 this.showDoctor = true
                 this.requestObject.patientId = record.id
             },
