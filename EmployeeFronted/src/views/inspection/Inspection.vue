@@ -28,7 +28,7 @@
                 <a-table :columns="columns"  :dataSource="data">
                     <a slot="name" slot-scope="text" href="javascript:;" @click="showmodal">{{text}}</a>
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}</template>
-                    <span slot="action" slot-scope="text, record">
+                    <span slot="action" slot-scope="">
                        <a-upload name="file" :multiple="true" action="http://www.mocky.io/v2/5cc8019d300000980a055e76" :headers="headers" @change="handleChange">
                            <a-button>结果录入</a-button>
                        </a-upload>
@@ -116,7 +116,7 @@
             showmodal(){
                 this.visible = true
             },
-            handleok(event){
+            handleok(){
                 this.visible = false
             },
             handleChange(info){
@@ -136,7 +136,6 @@
                 res=>{
                     if (res.code === "100"){
                         that.data = res.data
-                        console.log(this.data)
                     }
                     else {
                         that.$message.error(res)
