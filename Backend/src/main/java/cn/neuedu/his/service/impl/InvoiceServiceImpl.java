@@ -83,7 +83,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @return
      */
     @Override
-    public Integer addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException{
+    public Invoice addInvoiceByPaymentList(ArrayList<Integer> paymentIdList) throws NullPointerException{
         Invoice invoice = new Invoice();
         Integer invoiceId;
         //从redis取出发票号
@@ -113,7 +113,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         invoice.setOperatorId(paymentService.findById(paymentIdList.get(0)).getOperatorId());
 
         save(invoice);
-        return invoiceId;
+        return invoice;
     }
 
     /**
