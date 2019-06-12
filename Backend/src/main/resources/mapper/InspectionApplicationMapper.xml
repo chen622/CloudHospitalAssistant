@@ -250,9 +250,9 @@
 
     <select id="getAllByMedical" resultMap="inspectionByMedical">
         select i.*, d.*, nd.*, nd.name as nonDrug_name, nd.id as nonDrug_id
-        from inspection_application i
-                 join non_drug nd on i.non_drug_id = nd.id
-                 join department d on nd.executive_department = d.id
+        from inspection_application i join non_drug nd on i.non_drug_id = nd.id
+              join department d on nd.executive_department = d.id
+              left join inspection_result ir on i.id = ir.inspection_application_id
         where i.item_id = #{medicalId}
           and is_template = false
     </select>
