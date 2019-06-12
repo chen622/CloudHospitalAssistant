@@ -11,7 +11,7 @@ import java.util.List;
 public interface ConstantVariableService extends Service<ConstantVariable> {
     List<ConstantVariable> getDepartmentType();
 
-    void insertConstant(ConstantVariable constantVariable);
+    void insertConstant(ConstantVariable constantVariable,String key);
 
     List<ConstantVariable> getPrimaryConstant();
 
@@ -19,9 +19,9 @@ public interface ConstantVariableService extends Service<ConstantVariable> {
 
     ConstantVariable justifyPrimaryType(Integer id);
 
-    void deleteConstant(Integer id);
+    void deleteConstant(Integer id,String type);
 
-    void modifyConstant(ConstantVariable constantVariable);
+    void modifyConstant(ConstantVariable constantVariable, String type);
 
     List<ConstantVariable> getConstantByType(Integer type);
 
