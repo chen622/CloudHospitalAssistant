@@ -29,12 +29,21 @@
                     </a-popconfirm>
                 </div>
                 <div class="action" v-if="$store.state.inspections.length && !record.temp">
-                    <a v-if="record.results&&record.results.length> 0"
-                       @click="showResultMethod(record.results)">查看结果</a>
-                    <span v-else>无结果</span>
+                    <div v-if="record.state===1206||record.state===1207">
+                        <span>已退费</span>
+                    </div>
+                    <div v-else>
+                        <a v-if="record.results&&record.results.length> 0"
+                           @click="showResultMethod(record.results)">查看结果</a>
+                        <span v-else>无结果</span>
+                    </div>
                 </div>
                 <a-modal title="结果" v-if="showResult" v-model="showResult">
-                    <img v-for="(result,index) in results" :key="index" :src="result.picture" style="width: 100%"/>
+                    <div v-for="(result,index) in results" :key="index">
+                        <a-divider>{{index+1}}</a-divider>
+                        <img :src="result.picture" style="width: 100%"/>
+                    </div>
+
                 </a-modal>
             </template>
         </a-table>

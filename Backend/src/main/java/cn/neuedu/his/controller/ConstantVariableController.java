@@ -49,16 +49,16 @@ public class ConstantVariableController {
      * @return
      */
     @PostMapping("/insert/{type}")
-    public JSONObject insertConstant(@RequestBody JSONObject jsonObject,@PathVariable("type") String type, Authentication authentication) {
-        try{
+    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+        try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         try {
             ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.insertConstant(constantVariable,type);
+            constantVariableService.insertConstant(constantVariable, type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
@@ -69,15 +69,15 @@ public class ConstantVariableController {
     }
 
     @PostMapping("/delete/{type}/{id}")
-    public JSONObject deleteConstant(@PathVariable("id") Integer id, @PathVariable("type") String type,  Authentication authentication) {
-        try{
+    public JSONObject deleteConstant(@PathVariable("id") Integer id, @PathVariable("type") String type, Authentication authentication) {
+        try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         try {
-            constantVariableService.deleteConstant(id,type);
+            constantVariableService.deleteConstant(id, type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
@@ -90,16 +90,16 @@ public class ConstantVariableController {
     }
 
     @PostMapping("/modify/{type}")
-    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject,@PathVariable("type") String type, Authentication authentication) {
-        try{
+    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+        try {
             PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         try {
             ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.modifyConstant(constantVariable,type);
+            constantVariableService.modifyConstant(constantVariable, type);
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
@@ -134,7 +134,7 @@ public class ConstantVariableController {
         try {
             Map<String, Integer> map = redisService.getMapAll("formulation");
             ArrayList<Map> list = new ArrayList<>();
-            for (String string:map.keySet()){
+            for (String string : map.keySet()) {
                 Map map1 = new HashMap();
                 map1.put("name", string);
                 map1.put("id", map.get(string));
@@ -147,13 +147,8 @@ public class ConstantVariableController {
     }
 
     @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") Integer type,Authentication authentication){
+    public JSONObject getConstantByType(@PathVariable("type") Integer type, Authentication authentication) {
         //检查权限
-        try {
-            PermissionCheck.isHosptialAdim(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
 
         List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(type);
         return CommonUtil.successJson(constantVariables);
@@ -161,7 +156,7 @@ public class ConstantVariableController {
 
 
     @GetMapping("/getAll")
-    public JSONObject getAll(){
+    public JSONObject getAll() {
 
         List<ConstantVariable> constantVariables = constantVariableService.findAll();
         return CommonUtil.successJson(constantVariables);

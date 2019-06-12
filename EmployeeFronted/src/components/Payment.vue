@@ -39,6 +39,11 @@
                             <a>重打发票</a>
                         </a-popconfirm>
                     </div>
+                    <div v-else-if="record.state===1207">
+                        <a-popconfirm title='确定重打吗?' @confirm="invoiceId = record.invoiceId;showInvoice=true">
+                            <a>重打发票</a>
+                        </a-popconfirm>
+                    </div>
                 </div>
                 <div v-else>
                     <!--订单已缴费-->
@@ -61,7 +66,8 @@
                 </div>
             </template>
         </a-table>
-        <a-modal v-if="showPay" :visible="showPay" title="缴费" @ok="pay" @cancel="showPay =false">
+        <a-modal :confirmLoading="loading" v-if="showPay" :visible="showPay" title="缴费" @ok="pay"
+                 @cancel="showPay =false">
             <a-form layout="inline" style="text-align: center">
                 <a-form-item label="缴费类型">
                     <a-select v-model="settlementType">
@@ -71,7 +77,7 @@
                 </a-form-item>
             </a-form>
         </a-modal>
-        <a-modal v-if="showRetreat" :visible="showRetreat" title="退费" @ok="retreatWithoutTake"
+        <a-modal :confirmLoading="loading" v-if="showRetreat" :visible="showRetreat" title="退费" @ok="retreatWithoutTake"
                  @cancel="showRetreat =false">
             <a-form layout="inline" style="text-align: center">
                 <a-form-item label="数量">
@@ -105,6 +111,7 @@
         },
         props: ['patientId', 'isDoctor'],
         data: () => ({
+            loading: false,
             columns: [
                 {
                     title: '名称',
@@ -152,28 +159,33 @@
         methods: {
             retreatWithTake (record) {
                 let that = this
+                this.loading = true
                 this.$api.post("/payment/retreatDrugFee/" + record.id, null,
                     res => {
+                        that.loading = false
                         if (res.code === '100') {
                             that.invoiceId = res.data.id
                             that.showInvoice = true
                             that.$message.success("退费成功")
                             that.selectedRowKeys = []
                             that.$emit("reload")
+                        } else {
+                            that.$message.error(res.msg)
                         }
-                        that.$message.error(res.msg)
-
                     },
                     () => {
+                        that.loading = false
                         that.$message.error("网络错误")
                     }
                 )
             },
             retreatWithoutTake () {
                 let that = this
+                this.loading = true
                 this.$api.post("/payment/produceRetreatPayment",
                     {paymentId: this.retreatPayment.id, quantity: this.retreatQuantity},
                     res => {
+                        that.loading = false
                         if (res.code === '100') {
                             that.invoiceId = res.data.id
                             that.showRetreat = false
@@ -181,11 +193,12 @@
                             that.$message.success("退费成功")
                             that.selectedRowKeys = []
                             that.$emit("reload")
+                        } else {
+                            that.$message.error(res.msg)
                         }
-                        that.$message.error(res.msg)
-
                     },
                     () => {
+                        that.loading = false
                         that.$message.error("网络错误")
                     }
                 )
@@ -225,10 +238,12 @@
                     return
                 }
                 let that = this
+                this.loading = true
                 this.$api.post('/payment/pay', {
                     paymentIdList: this.selectedRowKeys,
                     settlementType: this.settlementType
                 }, res => {
+                    that.loading = false
                     if (res.code === '100') {
                         if (res.data.failId.length === 0) {
                             that.$message.success("已选订单全部缴费成功")
@@ -245,6 +260,7 @@
                     that.selectedRowKeys = []
                     that.$emit("reload")
                 }, () => {
+                    that.loading = false
                     that.$message.error("网络异常")
                 })
             },
