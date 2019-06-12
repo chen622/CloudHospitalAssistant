@@ -26,6 +26,20 @@ public class PaymentController {
     @Autowired
     PaymentService paymentService;
 
+    @PostMapping("/getAll")
+    public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            Integer patientId = jsonObject.getInteger("patientId");
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            List<Payment> paymentList = paymentService.getAll(patientId, jsonObject.getDate("start"), jsonObject.getDate("end"));
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
     @GetMapping("/getByDoctor/{patientId}")
     public JSONObject getByDoctor(@PathVariable("patientId") Integer patientId, Authentication authentication) {
         try {
