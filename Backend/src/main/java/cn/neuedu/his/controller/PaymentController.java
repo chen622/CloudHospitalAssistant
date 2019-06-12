@@ -7,6 +7,7 @@ import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -70,13 +72,18 @@ public class PaymentController {
             Integer patientId= (Integer) object.get("patientId");
             String start=object.get("start").toString();
             String end=object.get("end").toString();
+
             Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
             if (doctorId == null || patientId == null)
                 return CommonUtil.errorJson(ErrorEnum.E_501);
             Patient patient = patientService.findById(patientId);
-            List<Payment> paymentList = paymentService.getForStatistics(patientId, doctorId,start,end);
-            patient.setPaymentList(paymentList);
-            return CommonUtil.successJson(patient);
+            patient.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
+
+            Map<Integer ,Integer> result = paymentService.getForStatistics(patientId, doctorId,start,end);
+            JSONObject o=new JSONObject();
+            o.put("patient", patient);
+            o.put("result", result);
+            return CommonUtil.successJson(o);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }

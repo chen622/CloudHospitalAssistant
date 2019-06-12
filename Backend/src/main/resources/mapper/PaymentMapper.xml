@@ -165,18 +165,8 @@
           and DATEDIFF(payment.create_time, now()) = 0
     </select>
 
-    <select id="getForStatistics" resultMap="WithPaymentType">
-        select payment.*,
-               payment_type.id   as typeId,
-               payment_type.name as typeName,
-               prescription.*,
-               drug.id           as drugId,
-               drug.name         as drugName,
-               inspection_application.*,
-               non_drug.id       as nonDrugId,
-               non_drug.name     as nonDrugName,
-               state.id          as stateId,
-               state.name        as stateName
+    <select id="getForStatistics" resultType="Map">
+        select payment.payment_type_id,count(*)
         from payment
                  join payment_type on payment.payment_type_id = payment_type.id
                  left join prescription on payment.item_id = prescription.id
