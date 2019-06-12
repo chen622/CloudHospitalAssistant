@@ -169,8 +169,6 @@
         and  patient.id like concat('%',#{id},'%')
       </if>
       <if test="auth == false">
-          AND is_canceled = 0 #未被删除
-          AND state = 1202 #已缴费
           AND user.department_id = #{department_id} #医生部门需相同
       </if>
   </select>
@@ -227,6 +225,5 @@
         join department d on nd.executive_department = d.id
     where i.item_id = #{medicalId} and is_template = false
   </select>
-
 
 </mapper>

@@ -95,7 +95,14 @@ public class UserController {
      * @return 是否成功
      */
     @PostMapping("/register")
-    public JSONObject register(@RequestBody JSONObject jsonObject) throws Exception {
+    public JSONObject register(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
+
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
         //创立医生对象

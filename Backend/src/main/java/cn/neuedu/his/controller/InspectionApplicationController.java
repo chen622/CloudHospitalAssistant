@@ -165,36 +165,7 @@ public class InspectionApplicationController {
         }
     }
 
-
-    /**
-     * 取消申请
-     * @param id
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/cancelInspectionApplication/{id}")
-    JSONObject cancelInspectionApplication(@PathVariable(value = "id",required = false) Integer id, Authentication authentication){
-
-        //判断权限（请求者是不是该部门的人）
-        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        Integer doctorId = (Integer) data.get("id");
-
-        //判断权限
-        if (doctorService.findById((Integer) data.get("id"))== null){
-            return CommonUtil.errorJson(ErrorEnum.E_632);
-        }
-
-        User user = userService.findById(doctorId);
-        InspectionApplication inspectionApplication = inspectionApplicationService.findById(id);
-
-        inspectionApplication.setCanceled(true);
-        inspectionApplicationService.update(inspectionApplication);
-
-        return CommonUtil.successJson();
-    }
-
-
-    @PostMapping("/confirmApplication/{id}")
+    @PostMapping("/confirmApplication")
     public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
 
         try{
@@ -207,7 +178,12 @@ public class InspectionApplicationController {
             }
         }
 
-        inspectionApplicationService.confirmApplication(id);
+        try {
+            inspectionApplicationService.confirmApplication(id);
+        }catch (Exception e){
+            if (e.getMessage().equals("634"))
+                return CommonUtil.errorJson(ErrorEnum.E_634);
+        }
         return CommonUtil.successJson();
     }
 
@@ -223,6 +199,7 @@ public class InspectionApplicationController {
                 return CommonUtil.errorJson(ErrorEnum.E_632);
             }
         }
+
         inspectionApplicationService.cancelApplication(id);
         return CommonUtil.successJson();
     }
