@@ -58,7 +58,13 @@ public class PaymentController {
     }
 
 
-    @GetMapping("/getByDoctor")
+    /**
+     * 添加获得病人某时间在某个医生下开的所有payment
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getForStatistics")
     public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
         try {
             Integer patientId= (Integer) object.get("patientId");
