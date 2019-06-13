@@ -57,8 +57,9 @@ export default new Vuex.Store({
         setDiagnose (state, data) {
             if (data.isFinial) {
                 state.finalDiagnose = data.disease
-            } else
+            } else {
                 state.diagnose = data.disease
+            }
         },
         clear (state) {
             state.diagnose = []

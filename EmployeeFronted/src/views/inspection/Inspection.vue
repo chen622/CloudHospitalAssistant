@@ -30,16 +30,25 @@
                 <a-table :columns="columns" :dataSource="data" rowKey="id">
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
                     </template>
-                    <template slot="check" slot-scope="text,record">{{record.application.done?'已完成':(text?'已诊':'待诊')}}
+                    <template slot="check" slot-scope="text,record">{{record.application.done?'已完成':(text?'已缴费':'未缴费')}}
                     </template>
                     <span slot="action" slot-scope="text, record">
-                       <a-upload name="smfile" :multiple="true" accept="image/*" action="/api/upload"
+                       <a-upload v-if="!record.application.done" name="smfile" :multiple="true" accept="image/*"
+                                 action="/api/upload"
                                  @change="uploading($event,record)">
                            <a>结果录入</a>
                        </a-upload>
-                        <a v-if="!record.done" @click="changeState(record)">更改状态</a>
+                        <a v-if="!record.application.done" @click="changeState(record)">更改状态</a><br/>
+                        <a v-if="record.application.results&&record.application.results.length> 0"
+                           @click="showResultMethod(record.application.results)">查看结果</a>
                     </span>
                 </a-table>
+                <a-modal title="结果" v-if="showResult" v-model="showResult">
+                    <div v-for="(result,index) in results" :key="index">
+                        <a-divider>{{index+1}}</a-divider>
+                        <img :src="result.picture" style="width: 100%"/>
+                    </div>
+                </a-modal>
                 <a-modal title="项目信息确认" v-if="visible" v-model="visible" @cancel="visible=false"
                          style="text-align: center">
                     <p style="font-size: 20px">姓名: {{currentPatient.user.realName}}</p>
@@ -72,7 +81,7 @@
                         scopedSlots: {customRender: 'patient.realName'}
                     }, {
                         title: '项目名称',
-                        dataIndex: 'paymentType.name',
+                        dataIndex: 'application.nonDrug.name',
                     }, {
                         title: '单价',
                         dataIndex: 'unitPrice',
@@ -97,6 +106,8 @@
                         scopedSlots: {customRender: 'action'}
                     }],
                 data: [],
+                showResult: false,
+                results: [],
                 currentPatient: null,
                 record: null
             }
@@ -105,6 +116,10 @@
             this.getPatient()
         },
         methods: {
+            showResultMethod (results) {
+                this.showResult = true
+                this.results = results
+            },
             changeState (record) {
                 this.visible = true
                 this.currentPatient = record
@@ -116,6 +131,8 @@
                     res => {
                         if (res.code === "100") {
                             that.$message.success("执行操作成功")
+                            that.onSearch('')
+
                         } else {
                             that.$message.error(res.msg)
                         }
@@ -130,8 +147,9 @@
                     res => {
                         if (res.code === "100") {
                             that.$message.success("执行操作成功")
+                            that.onSearch('')
                         } else {
-                            that.$message.error(res)
+                            that.$message.error(res.msg)
                         }
                     }, res => {
                         that.$message.error(res)
@@ -140,7 +158,7 @@
             uploading (event, record) {
                 if (event.file.status === 'done') {
                     let data = {
-                        url: event.file.response.data.url,
+                        picture: event.file.response.data.url,
                         text: '',
                         inspectionApplicationId: record.application.id
                     }
@@ -154,6 +172,7 @@
                     res => {
                         if (res.code === '100') {
                             that.$message.success('提交成功')
+                            that.onSearch('')
                         } else {
                             that.$message.error(res.msg)
                         }

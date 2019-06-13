@@ -100,7 +100,7 @@
                 let that = this
                 this.$api.post('/medical_record/finalDiagnose', data,
                     res => {
-                        if (res === '100') {
+                        if (res.code === '100') {
                             that.$message.success("提交成功")
                         }
                     }, () => {

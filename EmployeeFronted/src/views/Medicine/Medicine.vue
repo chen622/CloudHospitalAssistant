@@ -1240,8 +1240,7 @@
                         if (res.code === "100") {
                             that.$message.success('退药成功')
                         } else {
-                            alert(res.code)
-                            that.$message.error(res)
+                            that.$message.error(res.msg)
                         }
                     }, res => {
                         that.$message.error(res)
