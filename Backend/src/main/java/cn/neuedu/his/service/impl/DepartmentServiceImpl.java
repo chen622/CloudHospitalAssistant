@@ -190,7 +190,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private JSONArray setColumns(Map<Integer, String> paymentTypeMap) {
         //设置前端column值
         JSONArray columns = new JSONArray();
-        columns.add(setColumn("部门名称", "department.realName", 120, "left"));
+        columns.add(setColumn("部门名称", "department.name", 120, "left"));
         columns.add(setColumn("发票数", "invoiceNumber", 120, "left"));
         columns.add(setColumn("看诊人数", "visitNumber", 120, "left"));
 
