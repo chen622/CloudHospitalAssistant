@@ -34,7 +34,7 @@
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
                                     <a-table :columns="columns" :dataSource="dataSource" :scroll="{ x: 2410, y:300}"
-                                       :rowKey="dataSource => dataSource.department.id"/>
+                                             :rowKey="dataSource => dataSource.department.id" :loading="loading"/>
                                 </template>
                             </a-row>
                         </a-tab-pane>
@@ -66,7 +66,7 @@
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
                                     <a-table :columns="columns" :dataSource="dataSource" :scroll="{ x: 2410, y:300}"
-                                             :rowKey="dataSource => dataSource.doctor.id"/>
+                                             :rowKey="dataSource => dataSource.doctor.id" :loading="load"/>
                                 </template>
                             </a-row>
 
@@ -87,38 +87,44 @@
             start: null,
             end: null,
             value: null,
+            loading: false,
+            load: false
         }),
         methods: {
             getClinicDepartmentWorkLoad() {
-                if (this.start==null){
+                if (this.start == null) {
                     this.$message.error("请选择起始时间")
                     return
                 }
                 let request = {
-                    start: this.start? this.start.utc().valueOf(): this.start,
-                    end: this.end? this.end.utc().valueOf(): this.end
+                    start: this.start ? this.start.utc().valueOf() : this.start,
+                    end: this.end ? this.end.utc().valueOf() : this.end
                 }
                 let that = this
+                this.loading = true
                 this.$api.post("/department/departmentClinicWorkload", request, res => {
                     if (res.code === '100') {
                         that.columns = res.data.columns
                         that.dataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
+                    that.loading = false
                 }, () => {
                     that.$message.error("网络异常")
+                    that.loading = false
                 })
             },
 
             getTechniqueDepartmentWorkLoad() {
-                if (this.start==null){
+                if (this.start == null) {
                     this.$message.error("请选择起始时间")
                     return
                 }
                 let request = {
-                    start: this.start? this.start.utc().valueOf(): this.start,
-                    end: this.end? this.end.utc().valueOf(): this.end
+                    start: this.start ? this.start.utc().valueOf() : this.start,
+                    end: this.end ? this.end.utc().valueOf() : this.end
                 }
+                this.loading = true
                 let that = this
                 this.$api.post("/department/departmentTechniqueWorkload", request, res => {
                     if (res.code === '100') {
@@ -126,8 +132,10 @@
                         that.dataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
+                    that.loading = false
                 }, () => {
                     that.$message.error("网络异常")
+                    that.loading = false
                 })
             },
 
@@ -139,14 +147,15 @@
             },
 
             getDoctor() {
-                if (this.start==null){
+                if (this.start == null) {
                     this.$message.error("请选择起始时间")
                     return
                 }
                 let request = {
-                    start: this.start? this.start.utc().valueOf(): this.start,
-                    end: this.end? this.end.utc().valueOf(): this.end
+                    start: this.start ? this.start.utc().valueOf() : this.start,
+                    end: this.end ? this.end.utc().valueOf() : this.end
                 }
+                this.load = true
                 let that = this
                 this.$api.post("/doctor/getDoctorWorkload", request, res => {
                     if (res.code === '100') {
@@ -154,8 +163,10 @@
                         that.dataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
+                    that.load = false;
                 }, () => {
                     that.$message.error("网络异常")
+                    that.load = false;
                 })
             }
         }
