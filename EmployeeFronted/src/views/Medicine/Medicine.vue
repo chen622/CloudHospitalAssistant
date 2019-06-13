@@ -702,7 +702,6 @@
             async getData () {
                 this.isOk = false
                 await this.getPaymentType()
-
             }, getForm () {
                 let that = this
                 that.isOk = false
@@ -848,6 +847,7 @@
                                     Object.assign(target2, target)
                                     delete target2.editable
                                     that.data = newData
+                                    that.getPatient()
                                 } else {
                                     that.$message.error(res.msg)
                                 }
@@ -975,7 +975,6 @@
                                 if (this.data[0]) {
                                     this.data[0].add = true
                                     this.data[0].editable = true
-
                                 }
                             } else {
                                 this.$message.error(res.msg)
@@ -1133,6 +1132,7 @@
                             if (res.code === "100") {
                                 pay.return = pay.return - quantity1
                                 that.returnData = newData
+                                that.getPatient()
                             } else {
                                 that.$message.error(res)
                             }
