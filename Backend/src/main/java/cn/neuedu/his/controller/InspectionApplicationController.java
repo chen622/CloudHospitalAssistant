@@ -112,6 +112,7 @@ public class InspectionApplicationController {
     /**
      * 模糊查询信息（病历号和名字）
      * 获得所有信息
+     *
      * @param name
      * @param id
      * @param authentication
@@ -165,22 +166,18 @@ public class InspectionApplicationController {
         }
     }
 
-    @PostMapping("/confirmApplication")
-    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication){
+    @PostMapping("/confirmApplication/{id}")
+    public JSONObject confirmApplication(@PathVariable("id") Integer id, Authentication authentication) {
 
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+        try {
+            PermissionCheck.isTechnicalDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
         try {
             inspectionApplicationService.confirmApplication(id);
-        }catch (Exception e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("634"))
                 return CommonUtil.errorJson(ErrorEnum.E_634);
         }
@@ -188,37 +185,36 @@ public class InspectionApplicationController {
     }
 
     @PostMapping("/cancelApplication/{id}")
-    public JSONObject cancelApplication(@PathVariable("id") Integer id,Authentication authentication){
+    public JSONObject cancelApplication(@PathVariable("id") Integer id, Authentication authentication) {
 
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+        try {
+            PermissionCheck.isTechnicalDoctor(authentication);
+            //todo 已交钱项目应退钱
+            inspectionApplicationService.cancelApplication(id);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_635);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_632);
         }
 
-        inspectionApplicationService.cancelApplication(id);
-        return CommonUtil.successJson();
     }
 
     @PostMapping("/entryApplicationResult")
-    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject,Authentication authentication){
-
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
-            Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-            //判断权限
-            if (doctorService.findById((Integer) data.get("id")) == null){
-                return CommonUtil.errorJson(ErrorEnum.E_632);
-            }
+    public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.isTechnicalDoctor(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
         }
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        //判断权限
+        Integer id = (Integer) data.get("id");
 
-        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject,InspectionResult.class);
-        inspectionResultService.save(inspectionResult);
+        InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject, InspectionResult.class);
+        inspectionResult.setOperatorId(id);
+
+        inspectionApplicationService.entryApplicationResult(inspectionResult);
         return CommonUtil.successJson();
     }
 }

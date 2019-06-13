@@ -720,13 +720,13 @@ public class DoctorController {
     }
 
     /**
-     * 计算医生工作量
+     * 计算门诊医生工作量
      *
      * @param jsonObject
      * @param authentication
      * @return
      */
-    @GetMapping("/getDoctorWorkload")
+    @PostMapping("/getDoctorWorkload")
     public JSONObject getDoctorWorkload(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isFinancialOfficer(authentication);
@@ -736,7 +736,11 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
-        return CommonUtil.successJson(doctorService.doctorWorkCalculate(jsonObject.getDate("start"), jsonObject.getDate("end")));
+        Date end = jsonObject.getDate("end");
+        if (end == null)
+            end = new Date(System.currentTimeMillis());
+
+        return CommonUtil.successJson(doctorService.doctorWorkCalculate(jsonObject.getDate("start"), end));
     }
 
     @PostMapping("/getDoctorStatistics")

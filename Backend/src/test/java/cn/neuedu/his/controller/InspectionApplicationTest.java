@@ -39,7 +39,7 @@ public class InspectionApplicationTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 3)
-                .claim("typeId", 606)
+                .claim("typeId", 603)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
         //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -50,8 +50,16 @@ public class InspectionApplicationTest {
     @Test
     public void get() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/cancelApplication/5")
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("text", "");
+        jsonObject.put("picture", "https://i.loli.net/2019/06/13/5d013e124eed968227.png");
+        jsonObject.put("inspectionApplicationId", 5);
+
+        String request = jsonObject.toJSONString();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/inspection_application/selectPatientInformationByNameOrId")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

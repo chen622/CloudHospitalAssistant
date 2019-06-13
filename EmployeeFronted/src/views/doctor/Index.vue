@@ -272,8 +272,8 @@
                         res.data.firstDiagnose.forEach(item => {
                             diagnose.push(item.diseaseSecond)
                         })
-                        diagnose = []
                         that.$store.commit("setDiagnose", {isFinial: false, disease: diagnose})
+                        diagnose = []
                         res.data.finalDiagnose.forEach(item => {
                             diagnose.push(item.diseaseSecond)
                         })

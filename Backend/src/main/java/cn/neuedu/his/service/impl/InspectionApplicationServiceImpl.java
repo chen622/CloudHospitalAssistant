@@ -2,8 +2,10 @@ package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.InspectionApplicationMapper;
 import cn.neuedu.his.model.InspectionApplication;
+import cn.neuedu.his.model.InspectionResult;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InspectionApplicationService;
+import cn.neuedu.his.service.InspectionResultService;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
 
     @Autowired
     private InspectionApplicationMapper inspectionApplicationMapper;
+    @Autowired
+    private InspectionResultService inspectionResultService;
 
     @Override
     public Boolean hasMedicalRecordInspectionNotDone(Integer medicalRecordId) {
@@ -55,17 +59,27 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     public void confirmApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
         //检测是否交钱
-        if (inspectionApplication.getCheck() == true)
+        if (!inspectionApplication.getCheck())
             throw new RuntimeException("634");
 
-        inspectionApplication.setCheck(true);
+        inspectionApplication.setDone(true);
         this.update(inspectionApplication);
     }
 
     @Override
     public void cancelApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
+        if (inspectionApplication.getDone()){
+            throw new RuntimeException();
+        }
         inspectionApplication.setCanceled(true);
         this.update(inspectionApplication);
+    }
+
+    @Override
+    public void entryApplicationResult(InspectionResult inspectionResult) {
+        InspectionApplication inspectionApplication = inspectionApplicationMapper.getDepartmentId(inspectionResult.getInspectionApplicationId());
+        inspectionResult.setDepartmentId(inspectionApplication.getNonDrug().getExecutiveDepartment());
+        inspectionResultService.save(inspectionResult);
     }
 }

@@ -1,5 +1,6 @@
 package cn.neuedu.his.service;
 import cn.neuedu.his.model.InspectionApplication;
+import cn.neuedu.his.model.InspectionResult;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.inter.Service;
 
@@ -19,4 +20,5 @@ public interface InspectionApplicationService extends Service<InspectionApplicat
     ArrayList<InspectionApplication> findAllByMedical(Integer medicalId);
     void confirmApplication(Integer id) throws RuntimeException;
     void cancelApplication(Integer id) throws RuntimeException;
+    void entryApplicationResult(InspectionResult inspectionResult);
 }
