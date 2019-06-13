@@ -81,6 +81,10 @@ export default new Router({
             path:'/finance/workload',
             name:'workload',
             component:()=> import('./views/admin/WorkloadCalculate')
+        },{
+            path:'/admin/constant',
+            name:'constant',
+            component: ()=> import('./views/admin/Constant')
         }
     ]
 })
