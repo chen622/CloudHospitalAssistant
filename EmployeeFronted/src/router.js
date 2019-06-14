@@ -75,12 +75,12 @@ export default new Router({
         {
             path:'/finance/check',
             name:'check',
-            component:()=> import('./views/admin/DailySettle')
+            component:()=> import('./views/Finance/DailySettle')
         },
         {
             path:'/finance/workload',
             name:'workload',
-            component:()=> import('./views/admin/WorkloadCalculate')
+            component:()=> import('./views/Finance/WorkloadCalculate')
         }
     ]
 })
