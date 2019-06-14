@@ -44,7 +44,7 @@
   </select>
 
   <select id="getUserByDepartmentId" resultMap="BaseResultMap">
-    select * from user where department_id = #{departmentId}
+    select * from user where department_id = #{departmentId} and is_delete = 0
   </select>
 
   <!-- 获得模糊搜索的用户信息-->
@@ -144,5 +144,7 @@
   <select id="getAllTollKeeper" resultMap="BaseResultMap">
     select * from user where type_id = #{tollType} and is_delete = false
   </select>
+
+
 
 </mapper>
