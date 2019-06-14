@@ -37,6 +37,7 @@
             <a-col :span="showList?17:21" :xl="showList?17:22">
                 <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}" style="margin-left: 5%">
                     <span slot="title" style="font-size: 22px">日结表信息</span>
+                    <a-card :loading="loading">
                     <a-collapse :bordered="false" style="margin: 0 3% 1% 3%; font-size: 16px"
                                 v-for="(i,index) in settleTableList" :key="i.id">
                         <a-collapse-panel :key="index">
@@ -126,6 +127,7 @@
                         </a-collapse-panel>
                     </a-collapse>
                 </a-card>
+                </a-card>
             </a-col>
 
         </a-col>
@@ -142,7 +144,8 @@
             tollKeeper: [],
             currentTollKeeper: null,
             showList: true,
-            settleTableList: []
+            settleTableList: [],
+            loading:false
         }),
         filters: {
             formatTime: function (value) {
@@ -184,6 +187,7 @@
             },
 
             selectTollKeeper(id) {
+                this.loading = true
                 let that = this
                 this.$api.get("/daily_settle/getSettleInfo/" + id, null, res => {
                     if (res.code === '100') {
@@ -191,8 +195,10 @@
                         that.currentTollKeeper = res.data.admin
                     } else if (res.code === '502')
                         that.$message.error(res.message)
+                    that.loading = false
                 }, () => {
                     that.$message.error("网络异常")
+                    that.loading = false
                 })
             },
 

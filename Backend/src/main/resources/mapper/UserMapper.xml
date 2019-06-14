@@ -97,7 +97,7 @@
   </select>
 
   <select id="selectInvoiceByUserId" resultMap="paymentAndInvoice">
-    select * from invoice where operator_id = #{userId} and datediff(created_date, #{startDate}) &gt;= 0 and datediff(created_date, #{endDate}) &lt; 0
+    select * from invoice where operator_id = #{userId} and created_date >= #{startDate} and created_date &lt; #{endDate}
   </select>
 
   <select id="selectPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">

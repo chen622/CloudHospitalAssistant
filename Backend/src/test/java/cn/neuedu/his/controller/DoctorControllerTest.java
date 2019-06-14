@@ -870,7 +870,7 @@ public class DoctorControllerTest {
         Date end = new Date();
         try {
             start = formatter.parse("2019-05-29 06:00:00");
-            end = formatter.parse("2019-06-04 00:24:48");
+            end = formatter.parse("2019-06-13 00:24:48");
         } catch (ParseException e) {
             e.printStackTrace();
         }
