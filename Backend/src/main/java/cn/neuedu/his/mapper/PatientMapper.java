@@ -24,4 +24,6 @@ public interface PatientMapper extends MyMapper<Patient> {
     List<Patient> selectPatientByPhone(String phoneNumber);
 
     List<Patient> selectPatientByIdentifyIdAndNameAndPhone(String identifyId,String name, String phone);
+
+
 }
