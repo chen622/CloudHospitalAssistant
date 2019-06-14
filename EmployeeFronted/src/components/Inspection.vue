@@ -73,7 +73,7 @@
 </template>
 
 <script>
-    import Prescription from '../components/Prescription'
+    import Prescription from './doctor/Prescription'
 
     export default {
         name: "Inspection",

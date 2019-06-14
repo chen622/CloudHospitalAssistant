@@ -170,9 +170,9 @@
 
 <script>
 
-    import Diagnose from '../../components/Diagnose'
+    import Diagnose from '../../components/doctor/Diagnose'
     import Inspection from '../../components/Inspection'
-    import Prescription from '../../components/Prescription'
+    import Prescription from '../../components/doctor/Prescription'
     import Payment from '../../components/Payment'
 
     export default {
