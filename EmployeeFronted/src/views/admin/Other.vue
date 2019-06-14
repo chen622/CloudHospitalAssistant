@@ -49,8 +49,9 @@
                     </a-button>
                 </a-row>
 
-                <a-table :columns="columns" :dataSource="data" :pagination="{defaultPageSize: 20}" rowKey="id"
-                         :loading="deptLoading">
+                <a-table :columns="deptColumns" :dataSource="departments" :pagination="{defaultPageSize: 10}"
+                         rowKey="id"
+                         :loading="loading.department">
                     <template v-for="col in ['name', 'code']" :slot="col" slot-scope="text, record">
                         <div :key="col">
                             <a-input
@@ -95,8 +96,10 @@
                 isCreating: false,
                 createLoading: false,
             },
-            deptLoading: true,
-            columns: [
+            loading: {
+                department: true
+            },
+            deptColumns: [
                 {
                     title: '名称',
                     dataIndex: 'name',
@@ -131,19 +134,7 @@
                     scopedSlots: {customRender: 'operation'},
                 }
             ],
-            data: [
-                {
-                    id: 1,
-                    name: "123",
-                    code: "xasxa",
-                    departmentKind: {
-                        kindName: "123",
-                        constantVariable: {
-                            name: "cla"
-                        }
-                    }
-                }
-            ],
+            departments: [],
             rules: {
                 kindId: [{required: true, message: '请选择科室类别'}],
                 typeId: [{required: true, message: '请选择科室分类'}],
@@ -184,12 +175,13 @@
             },
             getDepartment () {
                 let that = this
+                that.loading.department = true
                 this.$api.get("/department/get", null,
                     res => {
                         if (res.code === "100") {
-                            that.data = res.data
+                            that.departments = res.data
                             that.cacheData = res.data.map(item => ({...item}))
-                            that.deptLoading = false
+                            that.loading.department =false
                         } else {
                             that.$message.error(res)
                         }
@@ -216,12 +208,13 @@
                 if (value === null || value === undefined)
                     value = null
                 let that = this
+                that.loading.department = true
                 this.$api.get("/department/getDepartmentList/" + value, null,
                     res => {
                         if (res.code === "100") {
-                            that.data = res.data
+                            that.departments = res.data
                             that.cacheData = res.data.map(item => ({...item}))
-                            that.deptLoading = false
+                            that.loading.department = false
                         } else {
                             that.$message.error(res)
                         }
@@ -230,23 +223,23 @@
                     })
             },
             handleChange (value, key, column) {
-                const newData = [...this.data]
+                const newData = [...this.departments]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target[column] = value
-                    this.data = newData
+                    this.departments = newData
                 }
             },
             edit (key) {
-                const newData = [...this.data]
+                const newData = [...this.departments]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     target.editable = true
-                    this.data = newData
+                    this.departments = newData
                 }
             },
             save (key) {
-                const newData = [...this.data]
+                const newData = [...this.departments]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     delete target.editable
@@ -280,12 +273,12 @@
                     })
             },
             cancel (key) {
-                const newData = [...this.data]
+                const newData = [...this.departments]
                 const target = newData.filter(item => key === item.id)[0]
                 if (target) {
                     Object.assign(target, this.cacheData.filter(item => key === item.id)[0])
                     delete target.editable
-                    this.data = newData
+                    this.departments = newData
                 }
             },
         },

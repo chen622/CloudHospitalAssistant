@@ -38,7 +38,7 @@ public class InspectionApplication implements Serializable {
 
     private Integer feeTypeId;
 
-    private Boolean isCheck = true;
+    private Boolean isCheck;
 
     private Payment payment;
     private Department department;

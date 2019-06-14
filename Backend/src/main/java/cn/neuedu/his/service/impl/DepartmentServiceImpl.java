@@ -27,6 +27,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Autowired
     private DepartmentMapper departmentMapper;
     @Autowired
+    private DepartmentKindService departmentKindService;
+    @Autowired
     private UserService userService;
     @Autowired
     private PaymentTypeService paymentTypeService;
@@ -38,6 +40,10 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     private DoctorService doctorService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    NonDrugService nonDrugService;
+    @Autowired
+    InspectionApplicationService inspectionApplicationService;
 
     @Override
     public List<Department> getAllDepartmentInformation() {
@@ -72,6 +78,20 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         if (department == null)
             throw new RuntimeException("610");
 
+        if (userService.findUserByDepartmentId(id).size() != 0)
+            throw new RuntimeException("636");
+
+        //检测是否该部门有未做完的项目
+        if (inspectionApplicationService.getApplicationDepartmentId(id).size() != 0)
+            throw new RuntimeException("637");
+
+        //将所属部门下的nondrdrug设为删除
+        List<NonDrug> nonDrugs = nonDrugService.getNonDrugByDepartmentId(id);
+        nonDrugs.forEach(nonDrug -> {
+            nonDrug.setDelete(true);
+            nonDrugService.update(nonDrug);
+        });
+
         department.setDelete(true);
 
         this.update(department);
@@ -87,7 +107,9 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         //return CommonUtil.errorJson(ErrorEnum.E_611);
 
         //检测部门类型是否存在
-        if (this.findById(department.getKindId()) == null)
+        DepartmentKind departmentKind = departmentKindService.findById(department.getKindId());
+
+        if (departmentKind == null||departmentKind.getDelete() == false)
             throw new RuntimeException("612");
         //return CommonUtil.errorJson(ErrorEnum.E_612);
 
@@ -103,9 +125,9 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
 
 
         try {
-            Map<String ,Integer> map=redisService.getMapAll("departmentType");
             //检测部门类型是否存在
-            if (!map.values().contains(department.getKindId()))
+            DepartmentKind departmentKind = departmentKindService.findById(department.getKindId());
+            if (departmentKind == null||departmentKind.getDelete() == false)
                 throw new RuntimeException("612");
         } catch (Exception e) {
             throw new Exception("802");
@@ -220,7 +242,6 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("width", width);
         return column;
     }
-
 
 }
 

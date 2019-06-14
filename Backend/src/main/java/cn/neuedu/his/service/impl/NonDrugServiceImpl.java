@@ -120,4 +120,9 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
     public List<PaymentType> getTypeAndNonDrug(String name, String code, Boolean auth) {
         return nonDrugMapper.getTypeAndNonDrug(name,code,auth);
     }
+
+    @Override
+    public List<NonDrug> getNonDrugByDepartmentId(Integer id) {
+        return nonDrugMapper.getNonDrugByDepartmentId(id);
+    }
 }

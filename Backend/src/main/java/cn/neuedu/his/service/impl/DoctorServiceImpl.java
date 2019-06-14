@@ -942,7 +942,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     /**
      * 门诊医生工作量统计
-     *
+     * cjq
      * @param startDate
      * @param endDate
      * @return
@@ -995,6 +995,12 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return result;
     }
 
+    /**
+     * 前端表内列设置
+     * cjq
+     * @param paymentTypeMap
+     * @return
+     */
     private JSONArray setColumns(Map<Integer, String> paymentTypeMap) {
         //设置前端column值
         JSONArray columns = new JSONArray();
@@ -1010,6 +1016,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return columns;
     }
 
+    /**
+     * 前端内列表设置（默认基本方法）
+     * cjq
+     * @param title
+     * @param dataIndex
+     * @param width
+     * @param fixed
+     * @return
+     */
     private JSONObject setColumn(String title, String dataIndex, Integer width, String fixed) {
         JSONObject column = new JSONObject();
         column.put("title", title);
@@ -1020,6 +1035,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return column;
     }
 
+    /**
+     * 前端内列表设置（默认基本方法）
+     * cjq
+     * @param title
+     * @param dataIndex
+     * @param width
+     * @return
+     */
     private JSONObject setColumn(String title, String dataIndex, Integer width) {
         JSONObject column = new JSONObject();
         column.put("title", title);
@@ -1028,6 +1051,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         column.put("width", width);
         return column;
     }
+
+
+
 
     @Autowired
     ConstantVariableService constantVariableService;

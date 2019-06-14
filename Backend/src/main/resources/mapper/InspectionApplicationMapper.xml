@@ -272,4 +272,10 @@
         where inspection_application.id = #{id}
     </select>
 
+    <select id="getApplicationDepartmentId" resultMap="inspectionAndNonDrug">
+        select * from  inspection_application join non_drug nd on inspection_application.non_drug_id = nd.id
+        where inspection_application.is_done = 0 and inspection_application.is_canceled = 0 #未取消，未执行
+        and nd.executive_department = #{id}
+    </select>
+
 </mapper>

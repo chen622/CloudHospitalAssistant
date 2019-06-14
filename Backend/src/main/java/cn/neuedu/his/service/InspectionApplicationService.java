@@ -21,4 +21,5 @@ public interface InspectionApplicationService extends Service<InspectionApplicat
     void confirmApplication(Integer id) throws RuntimeException;
     void cancelApplication(Integer id) throws RuntimeException;
     void entryApplicationResult(InspectionResult inspectionResult);
+    ArrayList<InspectionApplication> getApplicationDepartmentId(Integer id);
 }

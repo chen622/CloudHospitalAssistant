@@ -56,7 +56,7 @@ public class DepartmentControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 605)
+                .claim("typeId", 606)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -199,7 +199,7 @@ public class DepartmentControllerTest {
     @Test
     public void getDepartmentList() throws Exception{
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/department/getDepartmentList/外科")
+        mockMvc.perform(MockMvcRequestBuilders.post("/department/delete/2")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

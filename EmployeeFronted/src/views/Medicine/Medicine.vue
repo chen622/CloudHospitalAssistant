@@ -434,7 +434,7 @@
                                 v-decorator="[
                         'quantity',
                         {
-                            initialValue: this.quantity,
+
                              rules: [{ required: true, validator:'请输入数字' }],
                         }
                         ]"
@@ -663,6 +663,7 @@
                 returnData: [],
                 patients: [],
                 isOk: false,
+                reload:false,
             }
         },
 
@@ -1083,12 +1084,13 @@
                 })
             }, async getPatient (value) {
                 let that = this
+                that.reload=true
                 this.paymentData = []
                 this.returnData = []
                 that.time = that.value
+
                 await that.onSearchByPid(this.patient.id)
-                var item = that.patients.filter(item => this.patient.id === item.id)[0]
-                await that.selectPatient(item)
+
                 if (value == 1) {
                     alert('发药成功')
                 }
@@ -1097,7 +1099,7 @@
                 this.$api.post("/drug/takeDrug/" + record.id + '/' + record.drugId, null,
                     res => {
                         if (res.code === "100") {
-                            this.getPatient(1)
+                            that.getPatient(1)
                         } else if (res.code == "512") {
                             alert('请稍后！')
                         } else {
@@ -1187,6 +1189,11 @@
                                     AllReturn: res.data.token.AllReturn,
                                 }
                             )
+                            if(that.reload){
+                                var item = that.patients.filter(item => this.patient.id === item.id)[0]
+                                that.selectPatient(item)
+                                that.reload=false
+                            }
                         } else {
                             that.$message.error(res)
                         }
@@ -1239,6 +1246,7 @@
                     res => {
                         if (res.code === "100") {
                             that.$message.success('退药成功')
+                            that.getPatient()
                         } else {
                             that.$message.error(res.msg)
                         }
