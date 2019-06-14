@@ -31,4 +31,6 @@ public interface PaymentMapper extends MyMapper<Payment> {
     ArrayList<Payment> getAllPaymentWithPaymentTypeByPatientId(Integer patientId, Date start, Date end);
 
     Map<Integer,Integer> getForStatistics(Integer doctorId, Integer patientId, String start, String end);
+
+    Integer getStatistics(Integer patientId,String start,String end,Integer type);
 }

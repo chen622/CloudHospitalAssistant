@@ -1,9 +1,11 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Doctor {
@@ -36,15 +38,27 @@ public class Doctor {
     @Transient
     private String realName;
 
-    private JSONObject feeMap;
-
-    public JSONObject getFeeMap() {
+    public JSONArray getFeeMap() {
         return feeMap;
     }
 
-    public void setFeeMap(JSONObject feeMap) {
+    public void setFeeMap(JSONArray feeMap) {
         this.feeMap = feeMap;
     }
+
+    private JSONArray feeMap;
+
+    private ArrayList<Registration> registrations;
+
+    public ArrayList<Registration> getRegistrations() {
+        return registrations;
+    }
+
+    public void setRegistrations(ArrayList<Registration> registrations) {
+        this.registrations = registrations;
+    }
+
+
 
     public Boolean getDelete() {
         return isDelete;

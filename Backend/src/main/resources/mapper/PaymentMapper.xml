@@ -183,11 +183,21 @@
     </select>
 
     <select id="getAllPayments" resultType="Integer">
-        select count(*)
+        select sum(quantity*unit_price)
         from payment
         where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
           and create_time <![CDATA[>=]]> #{startDate}
           and create_time <![CDATA[<=]]> #{endDate} and  payment_type_id=#{id}
     </select>
+
+    <select id="getStatistics" resultType="Integer">
+        select count(*)
+        from  payment
+        where create_time <![CDATA[<=]]> #{end} and  create_time <![CDATA[>=]]> #{start}
+        and  patient_id =#{patientId} and payment_type_id in (
+        select  id from payment_type where  type = #{type}
+        )
+    </select>
+
 
 </mapper>
