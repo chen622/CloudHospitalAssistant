@@ -1,6 +1,11 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.mapper.RegistrationMapper;
+import cn.neuedu.his.model.Patient;
+import cn.neuedu.his.model.Registration;
+import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -84,6 +90,37 @@ public class RegistrationControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Autowired
+    RegistrationMapper mapper;
+    @Autowired
+    PatientService patientService;
+    @Test
+    public void getPatient() throws Exception{
+       ArrayList<Registration> list= mapper.getPatient(1, "2019-01-01", "2019-11-01", 2,1 );
+
+        Integer patientId=null;
+        Patient patient=null;
+        JSONArray a=new JSONArray();
+        for(Registration registration:list){
+            if(patientId==null || !patientId.equals(registration.getPatientId())){
+                if(patient!=null){
+                    a.add(patient);
+                }
+                patientId=registration.getPatientId();
+                patient=patientService.findById(patientId);
+                JSONArray array=new JSONArray();
+                array.add(registration);
+                patient.setRegistrations(array);
+            }else{
+                patient.addRegistrations(registration);
+            }
+        }
+        if(patient!=null){
+            a.add(patient);
+        }
+        System.out.println(a);
     }
 
 }

@@ -1,9 +1,11 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.DoctorMapper;
+import cn.neuedu.his.mapper.RegistrationMapper;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.CommonUtil;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
@@ -952,11 +954,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         ArrayList<User> doctorList = doctorMapper.getAllClinicNotDelete();
 
         //取出所有paymentType的id和名字
+        //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
-            if (paymentType.getId() > 100) {
-                paymentTypeMap.put(paymentType.getId(), paymentType.getName());
-            }
+        Map<String, Integer> redisMap;
+        try {
+            redisMap =  redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
+        }
+        for (String key : redisMap.keySet()) {
+            paymentTypeMap.put(redisMap.get(key), key);
         }
 
         for (User user : doctorList) {
@@ -969,7 +976,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             ArrayList<Payment> paymentList = paymentService.findAllByDoctor(user.getId(), startDate, endDate);
             for (Payment payment : paymentList) {
                 //更新某缴费项目类型的金额数据
-                feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null? new BigDecimal(0): feeMap.get(payment.getPaymentTypeId());
+                feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
             }
 
             JSONObject detail = new JSONObject();
@@ -1030,6 +1038,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
+        column.put("align", "center");
         return column;
     }
 
@@ -1047,6 +1056,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         column.put("dataIndex", dataIndex);
         column.put("key", dataIndex);
         column.put("width", width);
+        column.put("align", "center");
         return column;
     }
 
@@ -1055,6 +1065,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Autowired
     ConstantVariableService constantVariableService;
+
+    @Autowired
+    RegistrationMapper registrationMapper;
 
     /**
      *
@@ -1083,19 +1096,61 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         //使用map记录每个医生的每个paymentType对应的总额
 
-
-        JSONObject object=new JSONObject();
+        JSONArray array=new JSONArray();
         Integer count=0;
         for (Integer id : paymentTypeMap.keySet()) {
             count=paymentService.getAllPayments(doctorId, start, end,id);
-            if (count>0)
-                object.put(id.toString(), new BigDecimal(count));
+            if (count!=null && count.intValue()>0){
+                JSONObject object=new JSONObject();
+                object.put("name",paymentTypeMap.get(id));
+                object.put("value", new BigDecimal(count));
+                object.put("key",id);
+                array.add(object);
+            }
         }
-        doctor.setFeeMap(object);
+        doctor.setFeeMap(array);
         return CommonUtil.successJson(doctor);
     }
 
 
+
+    @Autowired
+    PatientService patientService;
+
+    @Override
+    public JSONObject getRegistrationStatistics(Integer doctorId,String start,String end){
+        JSONArray patients=new JSONArray();
+        ArrayList<Registration> list= registrationMapper.getPatient(doctorId,start, end,2,1);
+
+        Integer patientId=null;
+        Patient patient=null;
+        JSONArray a=new JSONArray();
+        for(Registration registration:list){
+            if(registration.getMedicalFee()==null){
+                registration.setMedicalFee(0);
+            }
+            if(registration.getInspectionFee()==null){
+                registration.setInspectionFee(0);
+            }
+            if(patientId==null || !patientId.equals(registration.getPatientId())){
+                if(patient!=null){
+                    a.add(patient);
+                }
+                patientId=registration.getPatientId();
+                patient=patientService.findById(patientId);
+                patient.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
+                JSONArray array=new JSONArray();
+                array.add(registration);
+                patient.setRegistrations(array);
+            }else{
+                patient.addRegistrations(registration);
+            }
+        }
+        if(patient!=null){
+            a.add(patient);
+        }
+        return CommonUtil.successJson(a);
+    }
 
     private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal, List<Prescription> prescriptions) {
 

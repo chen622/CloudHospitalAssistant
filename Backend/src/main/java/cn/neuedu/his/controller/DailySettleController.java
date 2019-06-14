@@ -62,7 +62,7 @@ public class DailySettleController {
 
         ArrayList<DailySettle> dailySettleList = dailySettleService.getSettleInfo(adminId);
         if (dailySettleList.isEmpty())
-            return CommonUtil.successJson(new ArrayList<DailySettle>());
+            dailySettleList = new ArrayList<DailySettle>();
 
         JSONArray resultArray = new JSONArray();
         for (DailySettle dailySettle: dailySettleList) {

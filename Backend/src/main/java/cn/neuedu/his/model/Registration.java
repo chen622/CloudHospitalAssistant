@@ -1,9 +1,7 @@
 package cn.neuedu.his.model;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Registration {
@@ -46,6 +44,13 @@ public class Registration {
 
     private Patient patient;
 
+    @Transient
+    private Integer medicalFee;
+    @Transient
+    private Integer inspectionFee;
+    @Transient
+    private Integer theOtherFee;
+
     private RegistrationType registrationType;
 
     public Patient getPatient() {
@@ -54,6 +59,30 @@ public class Registration {
 
     public void setPatient(Patient patient) {
         this.patient = patient;
+    }
+
+    public Integer getMedicalFee() {
+        return medicalFee;
+    }
+
+    public void setMedicalFee(Integer medicalFee) {
+        this.medicalFee = medicalFee;
+    }
+
+    public Integer getInspectionFee() {
+        return inspectionFee;
+    }
+
+    public void setInspectionFee(Integer inspectionFee) {
+        this.inspectionFee = inspectionFee;
+    }
+
+    public Integer getTheOtherFee() {
+        return theOtherFee;
+    }
+
+    public void setTheOtherFee(Integer theOtherFee) {
+        this.theOtherFee = theOtherFee;
     }
 
     /**

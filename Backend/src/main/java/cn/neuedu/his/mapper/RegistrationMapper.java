@@ -22,4 +22,7 @@ public interface RegistrationMapper extends MyMapper<Registration> {
      Integer getRegistrationInof(Date time, Integer doctorId);
      Integer getRegistrationState(Integer id);
      Registration getRegistrationAndType(Integer id);
+     ArrayList<Registration> getStatistics(String start,String end,Integer doctorId);
+     ArrayList<Registration> getPatient(Integer doctorId,String start,String end,@Param("medicalTypeId") Integer medicalTypeId,Integer inspectionTypeId);
+     Registration getFee(Integer registrationId,@Param("medicalTypeId") Integer medicalTypeId,Integer inspectionTypeId);
 }
