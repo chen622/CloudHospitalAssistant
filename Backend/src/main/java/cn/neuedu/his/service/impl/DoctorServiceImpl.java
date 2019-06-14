@@ -952,11 +952,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         ArrayList<User> doctorList = doctorMapper.getAllClinicNotDelete();
 
         //取出所有paymentType的id和名字
+        //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
-            if (paymentType.getId() > 100) {
-                paymentTypeMap.put(paymentType.getId(), paymentType.getName());
-            }
+        Map<String, Integer> redisMap;
+        try {
+            redisMap =  redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
+        }
+        for (String key : redisMap.keySet()) {
+            paymentTypeMap.put(redisMap.get(key), key);
         }
 
         for (User user : doctorList) {
@@ -969,7 +974,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             ArrayList<Payment> paymentList = paymentService.findAllByDoctor(user.getId(), startDate, endDate);
             for (Payment payment : paymentList) {
                 //更新某缴费项目类型的金额数据
-                feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null? new BigDecimal(0): feeMap.get(payment.getPaymentTypeId());
+                feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
             }
 
             JSONObject detail = new JSONObject();
@@ -1030,6 +1036,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
+        column.put("align", "center");
         return column;
     }
 
@@ -1047,6 +1054,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         column.put("dataIndex", dataIndex);
         column.put("key", dataIndex);
         column.put("width", width);
+        column.put("align", "center");
         return column;
     }
 

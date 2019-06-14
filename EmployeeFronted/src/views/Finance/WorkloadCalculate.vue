@@ -23,7 +23,7 @@
 
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
-                                    <a-table :columns="departmentColumns" :dataSource="departmentDataSource" :scroll="{ x: 2600, y:300}"
+                                    <a-table :columns="departmentColumns" :dataSource="departmentDataSource" :scroll="{ x: departmentScrollX, y:300}"
                                              :rowKey="departmentDataSource => departmentDataSource.department.id" :loading="loading"/>
                                 </template>
                             </a-row>
@@ -45,7 +45,7 @@
 
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
-                                    <a-table :columns="doctorColumns" :dataSource="doctorDataSource" :scroll="{ x: 2600, y:300}"
+                                    <a-table :columns="doctorColumns" :dataSource="doctorDataSource" :scroll="{ x: doctorScrollX, y:300}"
                                              :rowKey="doctorDataSource => doctorDataSource.doctor.id" :loading="load"/>
                                 </template>
                             </a-row>
@@ -66,12 +66,14 @@
             doctorColumns: [],
             departmentDataSource: [],
             doctorDataSource: [],
+            departmentScrollX: null,
+            doctorScrollX: null,
             pickTime: [],
             pickTimeDoctor: [],
             value: null,
             loading: false,
             load: false,
-            timeFormat: 'YYYY-MM-DD hh:mm:ss'
+            timeFormat: 'YYYY-MM-DD hh:mm:ss',
         }),
         methods: {
             getClinicDepartmentWorkLoad() {
@@ -88,6 +90,11 @@
                 this.$api.post("/department/departmentClinicWorkload", request, res => {
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
+                        that.departmentColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.departmentScrollX = (that.departmentColumns.length + 1) * 100
                         that.departmentDataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
@@ -113,6 +120,11 @@
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
                         that.departmentDataSource = res.data.data
+                        that.departmentColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.departmentScrollX = (that.departmentColumns.length + 1) * 100
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                     that.loading = false
@@ -143,6 +155,11 @@
                 this.$api.post("/doctor/getDoctorWorkload", request, res => {
                     if (res.code === '100') {
                         that.doctorColumns = res.data.columns
+                        that.doctorColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.doctorScrollX = (that.doctorColumns.length + 1) * 100
                         that.doctorDataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)

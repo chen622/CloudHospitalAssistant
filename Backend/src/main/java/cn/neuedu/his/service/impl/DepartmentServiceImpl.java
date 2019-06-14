@@ -18,6 +18,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static javax.swing.UIManager.get;
+
 /**
  * Created by ccm on 2019/05/24.
  */
@@ -136,12 +138,15 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             throw new IllegalArgumentException("classification");
 
         //取出所有paymentType的id和名字
-        //todo:后期可改为调用redis
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
-            if (paymentType.getId() > 100) {
-                paymentTypeMap.put(paymentType.getId(), paymentType.getName());
-            }
+        Map<String, Integer> redisMap;
+        try {
+            redisMap =  redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
+        }
+        for (String key : redisMap.keySet()) {
+            paymentTypeMap.put(redisMap.get(key), key);
         }
 
         for (Department department : departmentList) {
@@ -156,7 +161,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             for (User user : userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
                 for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
                     //更新某缴费项目类型的金额数据
-                    feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+                    BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null? new BigDecimal(0): feeMap.get(payment.getPaymentTypeId());
+                    feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
 
                 //计算发票总数
@@ -209,6 +215,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
+        column.put("align", "center");
         return column;
     }
 
@@ -218,6 +225,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("dataIndex", dataIndex);
         column.put("key", dataIndex);
         column.put("width", width);
+        column.put("align", "center");
         return column;
     }
 
