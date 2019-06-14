@@ -70,7 +70,7 @@ export default new Router({
         {
             path:'/finance/manage',
             name:'manage',
-            component:()=> import('./views/admin/PaymentTypeCopy')
+            component:()=> import('./views/admin/PaymentType')
         },
         {
             path:'/finance/check',

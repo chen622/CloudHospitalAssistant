@@ -104,16 +104,11 @@
                 </a-card>
             </a-col>
         </a-row>
-
-
     </div>
-
-
 </template>
 
 
 <script>
-import { constants } from 'crypto';
     export default {
         data () {
             return {
@@ -245,9 +240,9 @@ import { constants } from 'crypto';
             }, typeChange (e) {
                 this.paymentTypeTemp.type = e
             }, deleteChange (e) {
-                if(e=="0")
+                if (e == "0")
                     this.paymentTypeTemp.isDelete = 0
-                if(e=="1")
+                if (e == "1")
                     this.paymentTypeTemp.isDelete = 1
             }, handleChange (value, record, name) {
                 var newData = [...this.paymentTypeList]
@@ -278,19 +273,19 @@ import { constants } from 'crypto';
                     this.$api.post("/payment_type/insertPaymentType", record,
                         res => {
                             if (res.code === "100") {
-                                const newData=[...this.paymentTypeList]
-                                const tar=newData.filter(item => item.id === record.id)[0]
-                                tar.id=record.id
-                                tar.code=record.code
-                                tar.name=record.name
-                                tar.delete=p.delete
-                                tar.type=that.idKeyMap.get(record.type)
+                                const newData = [...this.paymentTypeList]
+                                const tar = newData.filter(item => item.id === record.id)[0]
+                                tar.id = record.id
+                                tar.code = record.code
+                                tar.name = record.name
+                                tar.delete = p.delete
+                                tar.type = that.idKeyMap.get(record.type)
                                 delete tar.editable
-                                tar.isDelete=record.delete
-                                that.paymentTypeList=newData
+                                tar.isDelete = record.delete
+                                that.paymentTypeList = newData
                                 that.$message.success('更新成功')
                             } else {
-                                that.$message.error('更新失败: '+res.msg)
+                                that.$message.error('更新失败: ' + res.msg)
                             }
                         }, res => {
                             that.$message.error(res)
@@ -301,26 +296,26 @@ import { constants } from 'crypto';
                 if (value != this.paymentTypeTemp.id)
                     return
                 let p = this.paymentTypeTemp
-              
+
                 let t = this.nameKeyMap.get(p.type)
                 if (t != null && t >= 0 && t < 100) {
                     p.type = t
                 }
                 p.delete = p.isDelete
-                if(p.delete){       
+                if (p.delete) {
                     this.$api.post("/payment_type/updatePaymentType", p,
                         res => {
                             if (res.code === "100") {
-                                const newData=[...that.paymentTypeList]
-                                const tar=newData.filter(item => item.id === p.id)[0]
-                                tar.id=p.id
-                                tar.code=p.code
-                                tar.name=p.name
-                                tar.type=that.idKeyMap.get(p.type)
+                                const newData = [...that.paymentTypeList]
+                                const tar = newData.filter(item => item.id === p.id)[0]
+                                tar.id = p.id
+                                tar.code = p.code
+                                tar.name = p.name
+                                tar.type = that.idKeyMap.get(p.type)
                                 delete tar.editable
-                                tar.isDelete=true
-                                tar.delete=true
-                                that.paymentTypeList=newData
+                                tar.isDelete = true
+                                tar.delete = true
+                                that.paymentTypeList = newData
                                 that.$message.success('更新成功')
                             } else {
                                 that.$message.error(res.msg)
@@ -328,7 +323,7 @@ import { constants } from 'crypto';
                         }, res => {
                             that.$message.error(res)
                         })
-                }else{
+                } else {
                     this.retreatDelete(p)
                 }
             }, cancel (record) {
@@ -354,15 +349,14 @@ import { constants } from 'crypto';
                 }
             }, deleteRow (value) {
                 let that = this
-                console.log(value)
                 this.$api.post("/payment_type/deletePaymentType/" + value, null,
                     res => {
                         if (res.code === "100") {
                             that.$message.success('更新成功')
-                            const target=that.paymentTypeList.filter(item => value === item.id)[0]
-                            target.isDelete=true
+                            const target = that.paymentTypeList.filter(item => value === item.id)[0]
+                            target.isDelete = true
                         } else {
-                            that.$message.error('更新失败: '+res.msg)
+                            that.$message.error('更新失败: ' + res.msg)
                         }
                     }, res => {
                         that.$message.error(res)
@@ -373,21 +367,21 @@ import { constants } from 'crypto';
                 this.modalVisible = false
             }, onSelectChange (rowKeys) {
                 this.selectedRowKeys = rowKeys
-            },retreatDelete(p){
-                let that=this
+            }, retreatDelete (p) {
+                let that = this
                 this.$api.post("/payment_type/recoverPaymentType", p,
                     res => {
                         if (res.code === "100") {
-                            const newData=[...that.paymentTypeList]
-                            const tar=newData.filter(item => item.id === p.id)[0]
-                            tar.id=p.id
-                            tar.code=p.code
-                            tar.name=p.name
-                            tar.type=that.idKeyMap.get(p.type)
+                            const newData = [...that.paymentTypeList]
+                            const tar = newData.filter(item => item.id === p.id)[0]
+                            tar.id = p.id
+                            tar.code = p.code
+                            tar.name = p.name
+                            tar.type = that.idKeyMap.get(p.type)
                             delete tar.editable
-                            tar.isDelete=false
-                            tar.delete=false
-                            that.paymentTypeList=newData
+                            tar.isDelete = false
+                            tar.delete = false
+                            that.paymentTypeList = newData
                             that.$message.success('更新成功')
                         } else {
                             that.$message.error(res.msg)
