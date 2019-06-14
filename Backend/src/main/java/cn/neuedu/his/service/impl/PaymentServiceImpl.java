@@ -31,27 +31,9 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     @Autowired
     private JobScheduleService jobScheduleService;
     @Autowired
-    RedisServiceImpl redisService;
-
-    @Override
-    public List<Payment> getAll(Integer patientId, Date start, Date end) {
-        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByPatientId(patientId, start, end);
-        if (payments == null) {
-            payments = new ArrayList<>();
-        }
-        return payments;
-    }
-
-
-
-    @Override
-    public List<Payment> getByDoctor(Integer patientId, Integer doctorId) {
-        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByDoctorIdAndPatientId(doctorId, patientId);
-        if (payments == null) {
-            payments = new ArrayList<>();
-        }
-        return payments;
-    }
+    private RedisServiceImpl redisService;
+    @Autowired
+    private InspectionApplicationService inspectionApplicationService;
 
     /**
      * 生成挂号缴费单
@@ -140,6 +122,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
             update(payment);
             successId.add(paymentId);
+
+            //若为检查项目，改变其“可检查”字段
+            if(paymentTypeService.getTotalPaymentType(payment.getPaymentTypeId()).equals(Constants.NON_DRUG_PAYMENT_TYPE)) {
+                InspectionApplication inspectionApplication = inspectionApplicationService.findById(payment.getItemId());
+                inspectionApplication.setCheck(true);
+                inspectionApplicationService.update(inspectionApplication);
+            }
         }
 
         JSONObject result = new JSONObject();
@@ -182,6 +171,13 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         //填入新的信息
         Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId, Constants.HAVE_RETREAT);
+
+        //若为检查项目，改变其“可检查”字段
+        if(totalTypeId.equals(Constants.NON_DRUG_PAYMENT_TYPE)) {
+            InspectionApplication inspectionApplication = inspectionApplicationService.findById(originalPayment.getItemId());
+            inspectionApplication.setCheck(false);
+            inspectionApplicationService.update(inspectionApplication);
+        }
 
         //生成冲红发票，若无法生成，抛出异常
         return invoiceService.addInvoiceByPayment(newPaymentId);
@@ -329,6 +325,41 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         return newPayment.getId();
 
+    }
+
+
+
+
+    /**
+     *
+     * @param patientId
+     * @param start
+     * @param end
+     * @return
+     */
+    @Override
+    public List<Payment> getAll(Integer patientId, Date start, Date end) {
+        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByPatientId(patientId, start, end);
+        if (payments == null) {
+            payments = new ArrayList<>();
+        }
+        return payments;
+    }
+
+
+    /**
+     *
+     * @param patientId
+     * @param doctorId
+     * @return
+     */
+    @Override
+    public List<Payment> getByDoctor(Integer patientId, Integer doctorId) {
+        List<Payment> payments = paymentMapper.getAllPaymentWithPaymentTypeByDoctorIdAndPatientId(doctorId, patientId);
+        if (payments == null) {
+            payments = new ArrayList<>();
+        }
+        return payments;
     }
 
 

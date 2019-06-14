@@ -243,6 +243,5 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         return column;
     }
 
-
 }
 
