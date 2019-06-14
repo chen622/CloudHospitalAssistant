@@ -65,6 +65,10 @@ public class DepartmentController {
         } catch (RuntimeException e) {
             if (e.getMessage().equals("610"))
                 return CommonUtil.errorJson(ErrorEnum.E_610);
+            else if (e.getMessage().equals("636"))
+                return CommonUtil.errorJson(ErrorEnum.E_636);
+            else if (e.getMessage().equals("637"))
+                return CommonUtil.errorJson(ErrorEnum.E_637);
         }
         return CommonUtil.successJson();
     }
@@ -110,6 +114,23 @@ public class DepartmentController {
             else  if(e.getMessage().equals("802")){
                 return CommonUtil.errorJson(ErrorEnum.E_802);
             }
+        }
+        return CommonUtil.successJson();
+    }
+
+    @PostMapping("/retreat/{id}")
+    public JSONObject modifyDepartment(@PathVariable("id") Integer id, Authentication authentication) {
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            departmentService.retreatDepartment(id);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return CommonUtil.successJson();
     }

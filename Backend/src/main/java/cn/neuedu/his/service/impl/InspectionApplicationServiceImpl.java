@@ -82,4 +82,9 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
         inspectionResult.setDepartmentId(inspectionApplication.getNonDrug().getExecutiveDepartment());
         inspectionResultService.save(inspectionResult);
     }
+
+    @Override
+    public ArrayList<InspectionApplication> getApplicationDepartmentId(Integer id) {
+        return inspectionApplicationMapper.getApplicationDepartmentId(id);
+    }
 }

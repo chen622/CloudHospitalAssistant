@@ -1,5 +1,7 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.fastjson.JSONArray;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +39,30 @@ public class Patient {
     private Date lastPasswordModifyTime;
     @Transient
     private  Integer age;
+
+    @Transient
+    private Registration registration;
+
+    private JSONArray registrations;
+
+    public void addRegistrations(Registration registration){
+        registrations.add(registration);
+    }
+    public JSONArray getRegistrations() {
+        return registrations;
+    }
+
+    public void setRegistrations(JSONArray registrations) {
+        this.registrations = registrations;
+    }
+
+    public Registration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
 
     public Integer getAge() {
         return age;

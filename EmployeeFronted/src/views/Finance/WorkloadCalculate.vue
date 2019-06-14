@@ -6,21 +6,11 @@
                     <a-tabs>
                         <a-tab-pane tab="科室工作量统计" key="1">
                             <a-row type="flex" align="middle" justify="center" class="search-card">
-                                <a-col span="5" type="flex" align="top" justify="start">
-                                    <a-date-picker
-                                            showTime
-                                            format="YYYY-MM-DD hh:mm:ss"
-                                            placeholder="起始日期"
-                                            style="width: 90%"
-                                            v-model="start"></a-date-picker>
-                                </a-col>
-                                <a-col span="5" type="flex" align="top" justify="start">
-                                    <a-date-picker
-                                            showTime
-                                            v-model="end"
-                                            format="YYYY-MM-DD hh:mm:ss"
-                                            placeholder="截止日期"
-                                            style="width: 90%"></a-date-picker>
+                                <a-col span="10" type="flex" align="top" justify="start">
+                                    <a-range-picker showTime
+                                                    :format="timeFormat"
+                                                    v-model="pickTime">
+                                    </a-range-picker>
                                 </a-col>
 
                                 <a-col span="8" type="flex" align="top" justify="start">
@@ -33,29 +23,19 @@
 
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
-                                    <a-table :columns="columns" :dataSource="dataSource" :scroll="{ x: 2410, y:300}"
-                                             :rowKey="dataSource => dataSource.department.id" :loading="loading"/>
+                                    <a-table :columns="departmentColumns" :dataSource="departmentDataSource" :scroll="{ x: departmentScrollX, y:300}"
+                                             :rowKey="departmentDataSource => departmentDataSource.department.id" :loading="loading"/>
                                 </template>
                             </a-row>
                         </a-tab-pane>
 
                         <a-tab-pane tab="门诊医生工作量统计" key="2">
                             <a-row type="flex" align="middle" justify="center" class="search-card">
-                                <a-col span="5" type="flex" align="top" justify="start">
-                                    <a-date-picker
-                                            showTime
-                                            format="YYYY-MM-DD hh:mm:ss"
-                                            placeholder="起始日期"
-                                            style="width: 90%"
-                                            v-model="start"></a-date-picker>
-                                </a-col>
-                                <a-col span="5" type="flex" align="top" justify="start">
-                                    <a-date-picker
-                                            showTime
-                                            v-model="end"
-                                            format="YYYY-MM-DD hh:mm:ss"
-                                            placeholder="截止日期"
-                                            style="width: 90%"></a-date-picker>
+                                <a-col span="10" type="flex" align="top" justify="start">
+                                    <a-range-picker showTime
+                                                    :format="timeFormat"
+                                                    v-model="pickTimeDoctor">
+                                    </a-range-picker>
                                 </a-col>
 
                                 <a-col span="8" type="flex" align="top" justify="start">
@@ -65,8 +45,8 @@
 
                             <a-row style="padding: 2% 3% 0 3%; ">
                                 <template>
-                                    <a-table :columns="columns" :dataSource="dataSource" :scroll="{ x: 2410, y:300}"
-                                             :rowKey="dataSource => dataSource.doctor.id" :loading="load"/>
+                                    <a-table :columns="doctorColumns" :dataSource="doctorDataSource" :scroll="{ x: doctorScrollX, y:300}"
+                                             :rowKey="doctorDataSource => doctorDataSource.doctor.id" :loading="load"/>
                                 </template>
                             </a-row>
 
@@ -82,30 +62,40 @@
 <script>
     export default {
         data: () => ({
-            columns: [],
-            dataSource: [],
-            start: null,
-            end: null,
+            departmentColumns: [],
+            doctorColumns: [],
+            departmentDataSource: [],
+            doctorDataSource: [],
+            departmentScrollX: null,
+            doctorScrollX: null,
+            pickTime: [],
+            pickTimeDoctor: [],
             value: null,
             loading: false,
-            load: false
+            load: false,
+            timeFormat: 'YYYY-MM-DD hh:mm:ss',
         }),
         methods: {
             getClinicDepartmentWorkLoad() {
-                if (this.start == null) {
-                    this.$message.error("请选择起始时间")
+                if (this.pickTime[0] == null) {
+                    this.$message.error("请选择时间")
                     return
                 }
                 let request = {
-                    start: this.start ? this.start.utc().valueOf() : this.start,
-                    end: this.end ? this.end.utc().valueOf() : this.end
+                    start: this.pickTime[0] ? this.pickTime[0].utc().valueOf() : this.pickTime[0],
+                    end: this.pickTime[1] ? this.pickTime[1].utc().valueOf() : this.pickTime[1]
                 }
                 let that = this
                 this.loading = true
                 this.$api.post("/department/departmentClinicWorkload", request, res => {
                     if (res.code === '100') {
-                        that.columns = res.data.columns
-                        that.dataSource = res.data.data
+                        that.departmentColumns = res.data.columns
+                        that.departmentColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.departmentScrollX = (that.departmentColumns.length + 1) * 100
+                        that.departmentDataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                     that.loading = false
@@ -116,20 +106,25 @@
             },
 
             getTechniqueDepartmentWorkLoad() {
-                if (this.start == null) {
-                    this.$message.error("请选择起始时间")
+                if (this.pickTime[0] == null) {
+                    this.$message.error("请选择时间")
                     return
                 }
                 let request = {
-                    start: this.start ? this.start.utc().valueOf() : this.start,
-                    end: this.end ? this.end.utc().valueOf() : this.end
+                    start: this.pickTime[0] ? this.pickTime[0].utc().valueOf() : this.pickTime[0],
+                    end: this.pickTime[1] ? this.pickTime[1].utc().valueOf() : this.pickTime[1]
                 }
                 this.loading = true
                 let that = this
                 this.$api.post("/department/departmentTechniqueWorkload", request, res => {
                     if (res.code === '100') {
-                        that.columns = res.data.columns
-                        that.dataSource = res.data.data
+                        that.departmentColumns = res.data.columns
+                        that.departmentDataSource = res.data.data
+                        that.departmentColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.departmentScrollX = (that.departmentColumns.length + 1) * 100
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                     that.loading = false
@@ -147,20 +142,25 @@
             },
 
             getDoctor() {
-                if (this.start == null) {
-                    this.$message.error("请选择起始时间")
+                if (this.pickTimeDoctor[0] == null) {
+                    this.$message.error("请选择时间")
                     return
                 }
                 let request = {
-                    start: this.start ? this.start.utc().valueOf() : this.start,
-                    end: this.end ? this.end.utc().valueOf() : this.end
+                    start: this.pickTimeDoctor[0] ? this.pickTimeDoctor[0].utc().valueOf() : this.pickTimeDoctor[0],
+                    end: this.pickTimeDoctor[1] ? this.pickTimeDoctor[1].utc().valueOf() : this.pickTimeDoctor[1]
                 }
                 this.load = true
                 let that = this
                 this.$api.post("/doctor/getDoctorWorkload", request, res => {
                     if (res.code === '100') {
-                        that.columns = res.data.columns
-                        that.dataSource = res.data.data
+                        that.doctorColumns = res.data.columns
+                        that.doctorColumns.forEach(column=>{
+                            if (column.dataIndex == 'total')
+                                column.sorter = (a, b) => a.total - b.total
+                        })
+                        that.doctorScrollX = (that.doctorColumns.length + 1) * 100
+                        that.doctorDataSource = res.data.data
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                     that.load = false;
@@ -169,7 +169,7 @@
                     that.load = false;
                 })
             }
-        }
+        },
     }
 </script>
 

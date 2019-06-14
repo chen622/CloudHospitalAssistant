@@ -43,8 +43,8 @@ public class DailySettleControllerTest {
                 .setAudience(Constants.TOKEN_AUDIENCE)
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 7)
-                .claim("typeId", 605)
+                .claim("id", 8)
+                .claim("typeId", 601)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -53,7 +53,7 @@ public class DailySettleControllerTest {
     @Test
     public void makeDailySettleTable() throws Exception{
         JSONObject param = new JSONObject();
-        param.put("admin", 2);
+        param.put("admin", 8);
         param.put("endDate", null);
 
         String requestJson = param.toJSONString();

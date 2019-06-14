@@ -80,4 +80,9 @@
     from non_drug
     where code = #{code} and is_delete=false ;
   </select>
+
+  <!--根据部门类型选取nondrug-->
+  <select id="getNonDrugByDepartmentId" resultMap="BaseResultMap">
+    select *    from non_drug where is_delete = 0 and executive_department = #{id}
+  </select>
 </mapper>

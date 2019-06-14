@@ -18,4 +18,5 @@ public interface InspectionApplicationMapper extends MyMapper<InspectionApplicat
     InspectionApplication getInspectionAndNonDrug(Integer id);
     ArrayList<InspectionApplication> getAllByMedical(Integer id);
     InspectionApplication getDepartmentId(Integer id);
+    ArrayList<InspectionApplication> getApplicationDepartmentId(Integer id);
 }
