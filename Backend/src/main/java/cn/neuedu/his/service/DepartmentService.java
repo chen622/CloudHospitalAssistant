@@ -31,6 +31,8 @@ public interface DepartmentService extends Service<Department> {
     List<Department> getDepartmentListByName(String name);
     List<Department> getAllDepartmentInformation();
 
+    void retreatDepartment(Integer id) throws Exception;
+
     JSONObject workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException;
 
 }

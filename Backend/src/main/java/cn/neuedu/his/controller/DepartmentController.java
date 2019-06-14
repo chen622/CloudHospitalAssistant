@@ -118,6 +118,23 @@ public class DepartmentController {
         return CommonUtil.successJson();
     }
 
+    @PostMapping("/retreat/{id}")
+    public JSONObject modifyDepartment(@PathVariable("id") Integer id, Authentication authentication) {
+        //检查权限
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        try {
+            departmentService.retreatDepartment(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CommonUtil.successJson();
+    }
+
     @GetMapping("/getAllDepartmentKind")
     public JSONObject getAllDepartmentMatchKind() {
         try {

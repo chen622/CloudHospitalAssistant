@@ -135,6 +135,18 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         this.update(department);
     }
 
+    /**
+     * 还原科室
+     * @param id
+     * @throws Exception
+     */
+    @Override
+    public void retreatDepartment(Integer id) throws Exception {
+        Department department = this.findById(id);
+        department.setDelete(false);
+        this.update(department);
+    }
+
     @Override
     public List<Department> getDepartmentListByName(String name) {
         return departmentMapper.getDepartmentListByName(name);
