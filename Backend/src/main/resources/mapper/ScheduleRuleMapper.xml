@@ -11,7 +11,7 @@
     <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
     <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
     <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
-    <result column="day" jdbcType="TIMESTAMP" property="day" />
+    <result column="day" jdbcType="INTEGER" property="day" />
   </resultMap>
   
   <select id="getLegalSchedule" resultMap="BaseResultMap">

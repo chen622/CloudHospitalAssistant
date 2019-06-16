@@ -1,14 +1,23 @@
 <template>
     <div>
-        <a-card>
+        <a-table bordered :columns="columns">
             <span slot="title">排班规则</span>
-        </a-card>
+
+        </a-table>
     </div>
 </template>
 
 <script>
     export default {
-        name: "ScheduleRule"
+        name: "ScheduleRule",
+        data:()=>({
+            columns: [
+                {
+                    title: '',
+                    dataIndex: ''
+                }
+            ]
+        })
     }
 </script>
 

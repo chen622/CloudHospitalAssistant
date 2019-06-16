@@ -23,7 +23,7 @@ public class ScheduleRule {
     @Column(name = "registration_type_id")
     private Integer registrationTypeId;
 
-    private Date day;
+    private Integer day;
 
     /**
      * @return id
@@ -109,17 +109,11 @@ public class ScheduleRule {
         this.registrationTypeId = registrationTypeId;
     }
 
-    /**
-     * @return day
-     */
-    public Date getDay() {
+    public Integer getDay() {
         return day;
     }
 
-    /**
-     * @param day
-     */
-    public void setDay(Date day) {
+    public void setDay(Integer day) {
         this.day = day;
     }
 }
