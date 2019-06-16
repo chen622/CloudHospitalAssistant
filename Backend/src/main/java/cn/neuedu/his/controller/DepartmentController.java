@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.crypto.Data;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,15 @@ public class DepartmentController {
     @Autowired
     RedisServiceImpl redisService;
 
+    @GetMapping("/getByKind/{kindId}")
+    public JSONObject getByKind(@PathVariable("kindId") Integer kindId) {
+        List<Department> departments = departmentService.getByKindId(kindId);
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
+        return CommonUtil.successJson(departments);
+    }
+
     /**
      * 获得部门的详细信息
      *
@@ -47,6 +57,9 @@ public class DepartmentController {
     @GetMapping("/get")
     public JSONObject getDepartmentInformation() {
         List<Department> departments = departmentService.getDepartmentInformation();
+        if (departments == null) {
+            departments = new ArrayList<>();
+        }
         return CommonUtil.successJson(departments);
 
     }
@@ -107,12 +120,13 @@ public class DepartmentController {
             Department department = JSONObject.toJavaObject(jsonObject, Department.class);
             departmentService.modifyDepartment(department);
         } catch (Exception e) {
-            if (e.getMessage().equals("611"))
-                return CommonUtil.errorJson(ErrorEnum.E_611);
-            else if (e.getMessage().equals("612"))
-                return CommonUtil.errorJson(ErrorEnum.E_612);
-            else  if(e.getMessage().equals("802")){
-                return CommonUtil.errorJson(ErrorEnum.E_802);
+            switch (e.getMessage()) {
+                case "611":
+                    return CommonUtil.errorJson(ErrorEnum.E_611);
+                case "612":
+                    return CommonUtil.errorJson(ErrorEnum.E_612);
+                case "802":
+                    return CommonUtil.errorJson(ErrorEnum.E_802);
             }
         }
         return CommonUtil.successJson();
@@ -197,7 +211,7 @@ public class DepartmentController {
             end = new Date(System.currentTimeMillis());
 
         try {
-            Map<String ,Integer> map = redisService.getMapAll("departmentType");
+            Map<String, Integer> map = redisService.getMapAll("departmentType");
             return CommonUtil.successJson(departmentService.workCalculate(map.get("临床科室"), jsonObject.getDate("start"), end));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
@@ -220,7 +234,7 @@ public class DepartmentController {
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         } catch (Exception e) {
-           return CommonUtil.errorJson(ErrorEnum.E_802);
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
 
         Date end = jsonObject.getDate("end");
@@ -228,12 +242,12 @@ public class DepartmentController {
             end = new Date(System.currentTimeMillis());
 
         try {
-            Map<String ,Integer> map = redisService.getMapAll("departmentType");
+            Map<String, Integer> map = redisService.getMapAll("departmentType");
             return CommonUtil.successJson(departmentService.workCalculate(map.get("医技科室"), jsonObject.getDate("start"), end));
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         } catch (Exception e) {
-            return  CommonUtil.errorJson(ErrorEnum.E_802);
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 

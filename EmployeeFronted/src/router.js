@@ -19,6 +19,10 @@ export default new Router({
             // this generates a separate chunk (about.[hash].js) for this route
             // which is lazy-loaded when the route is visited.
             component: () => import('./views/admin/User')
+        }, {
+            path: '/admin/rule',
+            name: 'schedule',
+            component: ()=>import('./views/admin/Schedule')
         },
         {
             path: '/admin/other',
@@ -38,7 +42,7 @@ export default new Router({
             path: '/doctor/statistics',
             name: 'doctorS',
             component: () => import('./views/doctor/Statistics')
-        },{
+        }, {
             path: '/login',
             name: 'login',
             component: Login
@@ -56,7 +60,7 @@ export default new Router({
         {
             path: '/medicine/index',
             name: 'medicine',
-            component: () => import( './views/Medicine/Medicine')
+            component: () => import( './views/medicine/Medicine')
         },
         {
             path: '/inspection/index',
@@ -74,19 +78,19 @@ export default new Router({
             component: () => import('./views/patient/Search')
         },
         {
-            path:'/finance/manage',
-            name:'manage',
-            component:()=> import('./views/admin/PaymentType')
+            path: '/finance/manage',
+            name: 'manage',
+            component: () => import('./views/Finance/PaymentType')
         },
         {
-            path:'/finance/check',
-            name:'check',
-            component:()=> import('./views/Finance/DailySettle')
+            path: '/finance/check',
+            name: 'check',
+            component: () => import('./views/Finance/DailySettle')
         },
         {
-            path:'/finance/workload',
-            name:'workload',
-            component:()=> import('./views/Finance/WorkloadCalculate')
+            path: '/finance/workload',
+            name: 'workload',
+            component: () => import('./views/Finance/WorkloadCalculate')
         }
     ]
 })

@@ -67,6 +67,34 @@ public class PermissionCheck {
     }
 
     /**
+     * 收费员权限检验
+     *
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer getIdByPaymentAdminAndHospitalAdmin(Authentication authentication) throws AuthenticationServiceException {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        try {
+            Map<String, Integer> map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("挂号收费员")) || typeId.equals(map.get("医院管理员"))) {
+                Integer id = (Integer) data.get("id");
+                if (id == null)
+                    throw new Exception();
+                else
+                    return id;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("");
+        }
+
+
+    }
+
+    /**
      * 收费员或药房操作员（可以生成账单）
      *
      * @param authentication
@@ -143,15 +171,16 @@ public class PermissionCheck {
     /**
      * 医院管理员权限检验
      * 异常类型返回用户Id
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
     public static Integer isHosptialAdimReturnUserId(Authentication authentication) throws AuthenticationServiceException {
-        try{
+        try {
             Integer userId = isHosptialAdim(authentication);
             return userId;
-        }catch (Exception e){
+        } catch (Exception e) {
             Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
             Integer typeId = (Integer) data.get("id");
             throw new AuthenticationServiceException(typeId.toString());
