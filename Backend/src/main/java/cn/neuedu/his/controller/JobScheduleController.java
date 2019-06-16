@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -51,5 +52,39 @@ public class JobScheduleController {
             jobSchedules = new ArrayList<>();
         }
         return CommonUtil.successJson(jobSchedules);
+    }
+
+    @GetMapping("/getScheduleAndLastAndNextWithMonth/{departmentId}/{date}")
+    public JSONObject getScheduleAndLastAndNextByMonth(@PathVariable("departmentId") Integer departmentId, @PathVariable("date") String date, Authentication authentication) {
+        Date day = new Date(Long.parseLong(date));
+        try {
+            PermissionCheck.isHosptialAdim(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(day);
+        JSONObject returnJSON = new JSONObject();
+        ArrayList<JobSchedule> jobSchedules = jobScheduleService.getScheduleByMonth(departmentId, day);
+        if (jobSchedules == null) {
+            jobSchedules = new ArrayList<>();
+        }
+        returnJSON.put("current", jobSchedules);
+
+        calendar.add(Calendar.MONTH, 1);
+        jobSchedules = jobScheduleService.getScheduleByMonth(departmentId, calendar.getTime());
+        if (jobSchedules == null) {
+            jobSchedules = new ArrayList<>();
+        }
+        returnJSON.put("next", jobSchedules);
+
+        calendar.add(Calendar.MONTH, -2);
+        jobSchedules = jobScheduleService.getScheduleByMonth(departmentId, calendar.getTime());
+        if (jobSchedules == null) {
+            jobSchedules = new ArrayList<>();
+        }
+        returnJSON.put("last", jobSchedules);
+
+        return CommonUtil.successJson(returnJSON);
     }
 }

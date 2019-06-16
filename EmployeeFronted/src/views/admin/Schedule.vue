@@ -14,7 +14,7 @@
                 />
                 <a-form layout="inline" style="margin: 20px 0">
                     <a-row>
-                        <a-col span="10">
+                        <a-col span="14" offset="6">
                             <a-form-item :label-col="{ span: 4}"
                                          :wrapper-col="{ span: 18 }" style="width: 100%">
                                 <span slot="label" style="font-size: 22px;font-weight: bold">科室</span>
@@ -22,13 +22,6 @@
                                             :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
                                             :options="departmentKinds" :loadData="loadData" placeholder="选择科室"/>
 
-                            </a-form-item>
-                        </a-col>
-                        <a-col span="10">
-                            <a-form-item :label-col="{ span: 4}"
-                                         :wrapper-col="{ span: 20 }" style="width: 100%">
-                                <span slot="label" style="font-size: 22px;font-weight: bold">日期</span>
-                                <a-month-picker style="width: 100%" v-model="month" placeholder="选择月份"/>
                             </a-form-item>
                         </a-col>
                         <a-col :span="4">
@@ -43,11 +36,11 @@
 
         <a-col :xl="22">
             <a-tabs type="card" size="large" :tabBarStyle="{margin: 0}">
-                <a-tab-pane tab="排班规则" key="1">
-                    <rule></rule>
+                <a-tab-pane tab="排班结果" key="1">
+                    <schedule :department="department" ref="result"></schedule>
                 </a-tab-pane>
-                <a-tab-pane tab="排班结果" key="2">
-                    <schedule></schedule>
+                <a-tab-pane tab="排班规则" key="2">
+                    <rule></rule>
                 </a-tab-pane>
             </a-tabs>
         </a-col>
@@ -69,7 +62,6 @@
         },
         data: () => ({
             departmentKinds: [],
-            month: moment(),
             department: null
         }),
         methods: {
@@ -77,17 +69,7 @@
                 if (this.department === null) {
                     this.$message.info("请选择科室后查看")
                 } else {
-                    let that = this
-                    this.$api.get("/job_schedule/getScheduleWithMonth/" + this.department[2] + "/" + moment.utc().valueOf(), null,
-                        res => {
-                            if (res.code === '100') {
-                                console.log(res.data)
-                            } else {
-                                that.$message.error(res.msg)
-                            }
-                        }, () => {
-                        }
-                    )
+                    this.$refs.result.selectDate(moment())
                 }
             },
             loadData (selectedOptions) {
