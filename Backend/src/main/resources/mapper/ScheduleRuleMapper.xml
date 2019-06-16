@@ -1,28 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.ScheduleRuleMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.ScheduleRule">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="period" jdbcType="INTEGER" property="period" />
-    <result column="registration_quantity" jdbcType="INTEGER" property="registrationQuantity" />
-    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-    <result column="doctor_id" jdbcType="INTEGER" property="doctorId" />
-    <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId" />
-    <result column="day" jdbcType="INTEGER" property="day" />
-  </resultMap>
-  
-  <select id="getLegalSchedule" resultMap="BaseResultMap">
-    select *
-    from schedule_rule
-    where doctor_id = #{doctorId} and period != #{period}
-  </select>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.ScheduleRule">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="period" jdbcType="INTEGER" property="period"/>
+        <result column="registration_quantity" jdbcType="INTEGER" property="registrationQuantity"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId"/>
+        <result column="day" jdbcType="INTEGER" property="day"/>
+    </resultMap>
 
-  <select id="getDoctorSchedule" resultMap="BaseResultMap">
-    select *
-    from schedule_rule
-    where doctor_id = #{doctorId}
-  </select>
+    <select id="getLegalSchedule" resultMap="BaseResultMap">
+        select *
+        from schedule_rule
+        where doctor_id = #{doctorId}
+          and period != #{period}
+    </select>
+
+    <resultMap id="RuleWithFull" type="cn.neuedu.his.model.ScheduleRule">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="period" jdbcType="INTEGER" property="period"/>
+        <result column="registration_quantity" jdbcType="INTEGER" property="registrationQuantity"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <result column="registration_type_id" jdbcType="INTEGER" property="registrationTypeId"/>
+        <result column="day" jdbcType="INTEGER" property="day"/>
+        <association property="periodVariable" javaType="cn.neuedu.his.model.ConstantVariable">
+            <id column="periodId" jdbcType="INTEGER" property="id"/>
+            <result column="periodName" jdbcType="VARCHAR" property="name"/>
+        </association>
+        <association property="user" javaType="cn.neuedu.his.model.User">
+            <id column="userId" jdbcType="INTEGER" property="id"/>
+            <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        </association>
+        <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
+            <id column="userId" jdbcType="INTEGER" property="id"/>
+            <result column="title_id" jdbcType="INTEGER" property="titleId"/>
+            <result column="can_arrange" jdbcType="BIT" property="canArrange"/>
+            <association property="title" javaType="cn.neuedu.his.model.ConstantVariable">
+                <id column="titleId" jdbcType="INTEGER" property="id"/>
+                <result column="titleName" jdbcType="VARCHAR" property="name"/>
+            </association>
+        </association>
+        <association property="registrationType" javaType="cn.neuedu.his.model.RegistrationType">
+            <id column="registrationTypeId" jdbcType="INTEGER" property="id"/>
+            <result column="registrationTypeName" jdbcType="VARCHAR" property="name"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getDoctorSchedule" resultMap="BaseResultMap">
+        select *
+        from schedule_rule
+        where doctor_id = #{doctorId}
+    </select>
+
+    <select id="getFullByDepartmentId" resultMap="RuleWithFull">
+        select schedule_rule.*,user.*,doctor.*,
+               user.id                as userId,
+               title.id               as titleId,
+               title.name             as titleName,
+               registration_type.id   as registrationTypeId,
+               registration_type.name as registrationTypeName,
+               period.id              as periodId,
+               period.name            as periodName
+        from user
+                 join doctor on user.id = doctor.id
+                 join constant_variable as title on doctor.title_id = title.id
+                 right join schedule_rule on doctor.id = schedule_rule.doctor_id
+                 join registration_type on schedule_rule.registration_type_id = registration_type.id
+                 join constant_variable as period on schedule_rule.period = period.id
+        where department_id = #{departmentId}
+          and not user.is_delete
+          and not doctor.is_delete;
+    </select>
 </mapper>

@@ -25,6 +25,14 @@ public class ScheduleRule {
 
     private Integer day;
 
+    private ConstantVariable periodVariable;
+
+    private RegistrationType registrationType;
+
+    private User user;
+
+    private Doctor doctor;
+
     /**
      * @return id
      */
@@ -115,5 +123,37 @@ public class ScheduleRule {
 
     public void setDay(Integer day) {
         this.day = day;
+    }
+
+    public RegistrationType getRegistrationType() {
+        return registrationType;
+    }
+
+    public void setRegistrationType(RegistrationType registrationType) {
+        this.registrationType = registrationType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public ConstantVariable getPeriodVariable() {
+        return periodVariable;
+    }
+
+    public void setPeriodVariable(ConstantVariable periodVariable) {
+        this.periodVariable = periodVariable;
     }
 }

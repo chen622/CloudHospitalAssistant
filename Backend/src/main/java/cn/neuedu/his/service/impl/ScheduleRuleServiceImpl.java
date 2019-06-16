@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -35,8 +34,13 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
 
 
     @Override
-    public List<ScheduleRule> getDoctorSchedule(Integer doctorId) {
+    public List<ScheduleRule> getDoctorScheduleByDoctorId(Integer doctorId) {
         return scheduleRuleMapper.getDoctorSchedule(doctorId);
+    }
+
+    @Override
+    public List<ScheduleRule> getDoctorScheduleByDepartmentId(Integer departmentId) {
+        return scheduleRuleMapper.getFullByDepartmentId(departmentId);
     }
 
     @Override
@@ -44,7 +48,7 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
 
         try {
             check(scheduleRule);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw e;
         }
 
@@ -55,14 +59,14 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     public void modifyScheduleRule(ScheduleRule scheduleRule) {
         try {
             check(scheduleRule);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw e;
         }
 
         this.update(scheduleRule);
     }
 
-    public void check(ScheduleRule scheduleRule){
+    public void check(ScheduleRule scheduleRule) {
         if (userService.findById(scheduleRule.getOperatorId()) == null)
             throw new RuntimeException("616");
         //return CommonUtil.errorJson(ErrorEnum.E_616);
@@ -78,7 +82,7 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
         //return CommonUtil.errorJson(ErrorEnum.E_618);
 
         //判断时间是否冲突
-        if (this.getLegalSchedule(scheduleRule.getDoctorId(),scheduleRule.getPeriod()) != null)
+        if (this.getLegalSchedule(scheduleRule.getDoctorId(), scheduleRule.getPeriod()) != null)
             throw new RuntimeException("619");
         //return CommonUtil.errorJson(ErrorEnum.E_619);
     }

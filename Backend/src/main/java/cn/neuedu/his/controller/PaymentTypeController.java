@@ -1,6 +1,5 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.PaymentTypeService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
@@ -12,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -35,7 +31,7 @@ public class PaymentTypeController {
     public JSONObject insertPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);
@@ -64,7 +60,7 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);
@@ -87,7 +83,7 @@ public class PaymentTypeController {
     public JSONObject recoverPaymentType(@RequestBody JSONObject object, Authentication authentication){
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);
@@ -116,7 +112,7 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);
@@ -142,7 +138,7 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);
@@ -175,7 +171,7 @@ public class PaymentTypeController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             try{
                 PermissionCheck.isFinancialOfficer(authentication);

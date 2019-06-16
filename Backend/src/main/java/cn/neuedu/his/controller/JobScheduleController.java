@@ -43,7 +43,7 @@ public class JobScheduleController {
     public JSONObject getScheduleByMonth(@PathVariable("departmentId") Integer departmentId, @PathVariable("date") String date, Authentication authentication) {
         Date day = new Date(Long.parseLong(date));
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
@@ -58,7 +58,7 @@ public class JobScheduleController {
     public JSONObject getScheduleAndLastAndNextByMonth(@PathVariable("departmentId") Integer departmentId, @PathVariable("date") String date, Authentication authentication) {
         Date day = new Date(Long.parseLong(date));
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }

@@ -1,6 +1,5 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Department;
 import cn.neuedu.his.model.Doctor;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DepartmentService;
@@ -17,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Map;
 
@@ -101,7 +99,7 @@ public class UserController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
@@ -139,7 +137,7 @@ public class UserController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
@@ -206,7 +204,7 @@ public class UserController {
     public JSONObject adminModifyUserInformation(JSONObject jsonObject, Authentication authentication) throws Exception {
 
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
@@ -274,7 +272,7 @@ public class UserController {
             authentication) throws Exception {
 
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -301,7 +299,7 @@ public class UserController {
     public JSONObject findUser(@PathVariable("name") String name, Authentication authentication) {
 
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }

@@ -8,9 +8,7 @@ import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
-import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +66,7 @@ public class DepartmentController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -91,7 +88,7 @@ public class DepartmentController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -112,7 +109,7 @@ public class DepartmentController {
     public JSONObject modifyDepartment(@RequestBody JSONObject jsonObject, Authentication authentication) {
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -136,7 +133,7 @@ public class DepartmentController {
     public JSONObject modifyDepartment(@PathVariable("id") Integer id, Authentication authentication) {
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -174,7 +171,7 @@ public class DepartmentController {
     public JSONObject getDepartmentListByname(@PathVariable(name = "name", required = false) String name, Authentication authentication) {
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }

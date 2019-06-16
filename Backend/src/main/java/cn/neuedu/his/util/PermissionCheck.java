@@ -1,7 +1,6 @@
 package cn.neuedu.his.util;
 
 import cn.neuedu.his.service.impl.RedisServiceImpl;
-import cn.neuedu.his.util.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
-
-import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  * 权限校验类
@@ -148,7 +145,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer isHospitalAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         Map<String, Integer> map = null;
@@ -178,7 +175,7 @@ public class PermissionCheck {
      */
     public static Integer isHosptialAdimReturnUserId(Authentication authentication) throws AuthenticationServiceException {
         try {
-            Integer userId = isHosptialAdim(authentication);
+            Integer userId = isHospitalAdmin(authentication);
             return userId;
         } catch (Exception e) {
             Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();

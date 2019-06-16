@@ -10,14 +10,24 @@
 <script>
     export default {
         name: "ScheduleRule",
-        data:()=>({
+        props: ['department'],
+        data: () => ({
             columns: [
                 {
                     title: '',
                     dataIndex: ''
                 }
             ]
-        })
+        }),
+        methods: {
+            getRule () {
+                this.$api.get("/schedule_rule/getByDepartmentId/" + this.department[2], null,
+                    res => {
+                        alert(res)
+                    }, () => {
+                    })
+            }
+        },
     }
 </script>
 

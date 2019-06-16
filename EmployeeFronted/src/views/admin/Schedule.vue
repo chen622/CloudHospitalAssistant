@@ -40,7 +40,7 @@
                     <schedule :department="department" ref="result"></schedule>
                 </a-tab-pane>
                 <a-tab-pane tab="排班规则" key="2">
-                    <rule></rule>
+                    <rule :department="department" ref="rule"></rule>
                 </a-tab-pane>
             </a-tabs>
         </a-col>
@@ -70,6 +70,7 @@
                     this.$message.info("请选择科室后查看")
                 } else {
                     this.$refs.result.selectDate(moment())
+                    this.$refs.rule.getRule()
                 }
             },
             loadData (selectedOptions) {
