@@ -122,6 +122,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Override
     public void modifyDepartment(Department department) throws Exception {
         //检测部门是否存在
+        this.getDepartmentByName(department.getName());
         if (this.getDepartmentByName(department.getName()) != null)
             throw new RuntimeException("611");
 

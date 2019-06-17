@@ -13,10 +13,7 @@ import org.springframework.boot.autoconfigure.data.ConditionalOnRepositoryType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -147,11 +144,34 @@ public class ConstantVariableController {
     }
 
     @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") Integer type, Authentication authentication) {
-        //检查权限
+    public JSONObject getConstantByType(@PathVariable("type") Integer typeId, Authentication authentication) {
+        List list = new ArrayList();
+        String type = null;
 
-        List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(type);
-        return CommonUtil.successJson(constantVariables);
+        try {
+            Map<String, Integer> map = redisService.getMapAll("typeKind");
+            Iterator<Map.Entry<String, Integer>> iterator = map.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Integer> entry = iterator.next();
+                if (entry.getValue().equals(typeId)){
+                    type = entry.getKey();
+                    break;
+                }
+            }
+
+            map = redisService.getMapAll(type);
+            ConstantVariable constantVariable = new ConstantVariable();
+
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                constantVariable.setName(entry.getKey());
+                constantVariable.setId(entry.getValue());
+                list.add(constantVariable);
+            }
+        } catch (Exception e) {
+
+        }finally {
+            return CommonUtil.successJson(list);
+        }
     }
 
 
