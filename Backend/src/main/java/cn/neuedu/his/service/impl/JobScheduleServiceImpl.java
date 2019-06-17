@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.logging.SimpleFormatter;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -23,10 +22,6 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     @Autowired
     private JobScheduleMapper jobScheduleMapper;
 
-    @Override
-    public void uodateHaveRegistration(Integer doctorId, Date date) {
-        jobScheduleMapper.uodateHaveRegistration(doctorId,date);
-    }
 
     @Override
     public JobSchedule getByDoctorId(Integer doctorId, Date date) {
@@ -34,12 +29,13 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     }
 
     @Override
-    public Integer getRegistrationInof(Date time, Integer doctorId) {
-        return jobScheduleMapper.getRegistrationInof(time,doctorId);
+    public Integer getRegistrationInfo(Date time, Integer doctorId) {
+        return jobScheduleMapper.getRegistrationInfo(time, doctorId);
     }
 
     /**
      * 获取排班信息
+     *
      * @return
      */
     @Override
@@ -48,6 +44,11 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
         SimpleDateFormat formatter = new SimpleDateFormat("HH");
         Integer hour = Integer.parseInt(formatter.format(date));
         return jobScheduleMapper.getScheduleByPeriod(date, hour, departmentId);
+    }
+
+    @Override
+    public ArrayList<JobSchedule> getScheduleByMonth(Integer departmentId, Date date) {
+        return jobScheduleMapper.getScheduleByMonth(date, departmentId);
     }
 
     @Override

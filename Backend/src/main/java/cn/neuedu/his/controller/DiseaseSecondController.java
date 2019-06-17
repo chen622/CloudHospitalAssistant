@@ -35,7 +35,7 @@ public class DiseaseSecondController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -64,7 +64,7 @@ public class DiseaseSecondController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -85,7 +85,7 @@ public class DiseaseSecondController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -104,7 +104,7 @@ public class DiseaseSecondController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -123,7 +123,7 @@ public class DiseaseSecondController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }

@@ -1,6 +1,5 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.RegistrationType;
 import cn.neuedu.his.model.ScheduleRule;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.RegistrationTypeService;
@@ -11,13 +10,14 @@ import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -33,13 +33,27 @@ public class ScheduleRuleController {
     @Autowired
     RegistrationTypeService registrationTypeService;
 
+    @GetMapping("/getByDepartmentId/{departmentId}")
+    public JSONObject getByDepartmentId(@PathVariable("departmentId") Integer departmentId, Authentication authentication) {
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        List<ScheduleRule> scheduleRules = scheduleRuleService.getDoctorScheduleByDepartmentId(departmentId);
+        if (scheduleRules == null) {
+            scheduleRules = new ArrayList<>();
+        }
+        return CommonUtil.successJson(scheduleRules);
+    }
+
     @PostMapping("/delete/{id}")
-    public JSONObject deleteScheduleRule(@PathVariable Integer id, Authentication authentication){
+    public JSONObject deleteScheduleRule(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -49,20 +63,20 @@ public class ScheduleRuleController {
     }
 
     @PostMapping("/insert")
-    public JSONObject insertScheduleRule(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject insertScheduleRule(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
-        ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject,ScheduleRule.class);
-        scheduleRuleService.insertScheduleRule(scheduleRule);
-        return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        try {
+            ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject, ScheduleRule.class);
+            scheduleRuleService.insertScheduleRule(scheduleRule);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("616"))
                 return CommonUtil.errorJson(ErrorEnum.E_616);
             else if (e.getMessage().equals("617"))
@@ -78,19 +92,19 @@ public class ScheduleRuleController {
 
 
     @PostMapping("/modify")
-    public JSONObject modifyScheduleRule(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyScheduleRule(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-        try{
-            ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject,ScheduleRule.class);
+        try {
+            ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject, ScheduleRule.class);
             scheduleRuleService.modifyScheduleRule(scheduleRule);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("616"))
                 return CommonUtil.errorJson(ErrorEnum.E_616);
             else if (e.getMessage().equals("617"))
@@ -106,16 +120,16 @@ public class ScheduleRuleController {
     }
 
     @GetMapping("/select/{doctorId}")
-    public JSONObject selectScheduleRule(@PathVariable("doctorId") Integer doctorId, Authentication authentication){
+    public JSONObject selectScheduleRule(@PathVariable("doctorId") Integer doctorId, Authentication authentication) {
 
         //检查权限
-        try{
-            PermissionCheck.isHosptialAdim(authentication);
-        }catch (Exception e){
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        List<ScheduleRule> scheduleRules = scheduleRuleService.getDoctorSchedule(doctorId);
+        List<ScheduleRule> scheduleRules = scheduleRuleService.getDoctorScheduleByDoctorId(doctorId);
 
         return CommonUtil.successJson(scheduleRules);
     }

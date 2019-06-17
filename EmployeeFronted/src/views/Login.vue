@@ -34,7 +34,7 @@
 
                     <a-form-item style="margin-top:24px">
                         <a-button size="large" type="primary" class="login-button"
-                                  style="width: 100%" @click="handleSubmit">登陆
+                                  style="width: 100%" @click="handleSubmit">登录
                         </a-button>
                     </a-form-item>
                 </a-form>

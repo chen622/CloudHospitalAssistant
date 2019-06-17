@@ -11,5 +11,8 @@ import java.util.List;
 
 public interface ScheduleRuleMapper extends MyMapper<ScheduleRule> {
     ScheduleRule getLegalSchedule(Integer doctorId, Integer period);
+
     List<ScheduleRule> getDoctorSchedule(Integer doctorId);
+
+    List<ScheduleRule> getFullByDepartmentId(Integer departmentId);
 }

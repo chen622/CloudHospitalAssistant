@@ -8,13 +8,11 @@ import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +37,7 @@ public class DepartmentKindController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -67,7 +65,7 @@ public class DepartmentKindController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -97,7 +95,7 @@ public class DepartmentKindController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }

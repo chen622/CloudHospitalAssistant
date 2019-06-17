@@ -12,9 +12,9 @@ import java.util.HashMap;
  */
 public interface JobScheduleService extends Service<JobSchedule> {
 
-    void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
     ArrayList<JobSchedule> getAfterThreeDays();
-    Integer getRegistrationInof(Date time, Integer doctorId);
+    Integer getRegistrationInfo(Date time, Integer doctorId);
     ArrayList<JobSchedule> getScheduleToday(Integer departmentId);
+    ArrayList<JobSchedule> getScheduleByMonth(Integer departmentId,Date date);
 }

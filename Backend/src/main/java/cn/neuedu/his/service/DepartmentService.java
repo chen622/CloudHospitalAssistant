@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface DepartmentService extends Service<Department> {
 
+    List<Department> getByKindId(Integer kindId);
+
     Department getDepartmentByName(String name);
 
     List<Department> getAllDepartmentInformationByClassificationId(Integer classificationId);
@@ -30,6 +32,8 @@ public interface DepartmentService extends Service<Department> {
 
     List<Department> getDepartmentListByName(String name);
     List<Department> getAllDepartmentInformation();
+
+    void retreatDepartment(Integer id) throws Exception;
 
     JSONObject workCalculate(Integer classification, Date startDate, Date endDate) throws IllegalArgumentException;
 

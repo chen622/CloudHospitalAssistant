@@ -18,6 +18,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static javax.swing.UIManager.get;
+
 /**
  * Created by ccm on 2019/05/24.
  */
@@ -44,6 +46,10 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     NonDrugService nonDrugService;
     @Autowired
     InspectionApplicationService inspectionApplicationService;
+
+    public List<Department> getByKindId(Integer kindId) {
+        return departmentMapper.getByKindId(kindId);
+    }
 
     @Override
     public List<Department> getAllDepartmentInformation() {
@@ -102,14 +108,16 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     public void addDepartment(Department department) {
 
         //检测部门是否存在
-        if (this.getDepartmentByName(department.getName()) != null)
+        if (this.getDepartmentByName(department.getName()) != null) {
+
             throw new RuntimeException("611");
+        }
         //return CommonUtil.errorJson(ErrorEnum.E_611);
 
         //检测部门类型是否存在
         DepartmentKind departmentKind = departmentKindService.findById(department.getKindId());
 
-        if (departmentKind == null||departmentKind.getDelete() == false)
+        if (departmentKind == null || departmentKind.getDelete())
             throw new RuntimeException("612");
         //return CommonUtil.errorJson(ErrorEnum.E_612);
 
@@ -120,18 +128,32 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
     @Override
     public void modifyDepartment(Department department) throws Exception {
         //检测部门是否存在
-        if (this.getDepartmentByName(department.getName()) != null)
+        Department dept = this.getDepartmentByName(department.getName());
+        if (dept != null && !department.getId().equals(dept.getId())) {
             throw new RuntimeException("611");
-
+        }
 
         try {
             //检测部门类型是否存在
             DepartmentKind departmentKind = departmentKindService.findById(department.getKindId());
-            if (departmentKind == null||departmentKind.getDelete() == false)
+            if (departmentKind == null || departmentKind.getDelete())
                 throw new RuntimeException("612");
         } catch (Exception e) {
             throw new Exception("802");
         }
+        this.update(department);
+    }
+
+    /**
+     * 还原科室
+     *
+     * @param id
+     * @throws Exception
+     */
+    @Override
+    public void retreatDepartment(Integer id) throws Exception {
+        Department department = this.findById(id);
+        department.setDelete(false);
         this.update(department);
     }
 
@@ -158,12 +180,15 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             throw new IllegalArgumentException("classification");
 
         //取出所有paymentType的id和名字
-        //todo:后期可改为调用redis
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        for (PaymentType paymentType : paymentTypeService.findAllNotDelete()) {
-            if (paymentType.getId() > 100) {
-                paymentTypeMap.put(paymentType.getId(), paymentType.getName());
-            }
+        Map<String, Integer> redisMap;
+        try {
+            redisMap = redisService.getMapAll("paymentType");
+        } catch (Exception e) {
+            throw new UnsupportedOperationException("redis");
+        }
+        for (String key : redisMap.keySet()) {
+            paymentTypeMap.put(redisMap.get(key), key);
         }
 
         for (Department department : departmentList) {
@@ -178,7 +203,8 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             for (User user : userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
                 for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
                     //更新某缴费项目类型的金额数据
-                    feeMap.put(payment.getPaymentTypeId(), feeMap.get(payment.getPaymentTypeId()).add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+                    BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null ? new BigDecimal(0) : feeMap.get(payment.getPaymentTypeId());
+                    feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
 
                 //计算发票总数
@@ -231,6 +257,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("key", dataIndex);
         column.put("width", width);
         column.put("fixed", fixed);
+        column.put("align", "center");
         return column;
     }
 
@@ -240,6 +267,7 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
         column.put("dataIndex", dataIndex);
         column.put("key", dataIndex);
         column.put("width", width);
+        column.put("align", "center");
         return column;
     }
 

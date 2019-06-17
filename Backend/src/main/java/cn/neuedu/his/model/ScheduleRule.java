@@ -23,7 +23,15 @@ public class ScheduleRule {
     @Column(name = "registration_type_id")
     private Integer registrationTypeId;
 
-    private Date day;
+    private Integer day;
+
+    private ConstantVariable periodVariable;
+
+    private RegistrationType registrationType;
+
+    private User user;
+
+    private Doctor doctor;
 
     /**
      * @return id
@@ -109,17 +117,43 @@ public class ScheduleRule {
         this.registrationTypeId = registrationTypeId;
     }
 
-    /**
-     * @return day
-     */
-    public Date getDay() {
+    public Integer getDay() {
         return day;
     }
 
-    /**
-     * @param day
-     */
-    public void setDay(Date day) {
+    public void setDay(Integer day) {
         this.day = day;
+    }
+
+    public RegistrationType getRegistrationType() {
+        return registrationType;
+    }
+
+    public void setRegistrationType(RegistrationType registrationType) {
+        this.registrationType = registrationType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public ConstantVariable getPeriodVariable() {
+        return periodVariable;
+    }
+
+    public void setPeriodVariable(ConstantVariable periodVariable) {
+        this.periodVariable = periodVariable;
     }
 }
