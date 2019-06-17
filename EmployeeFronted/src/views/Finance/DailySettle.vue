@@ -183,7 +183,6 @@
                         that.load.tollKeeper = false
                     }
                 }, res => {
-                    that.$message.error(res)
                 })
             },
 
@@ -199,7 +198,6 @@
                     }
                     that.load.record = false
                 }, () => {
-                    that.$message.error("网络异常")
                     that.load.record = false
                 })
             },
@@ -212,7 +210,6 @@
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                 }, () => {
-                    that.$message.error("网络异常")
                 })
             }
         },

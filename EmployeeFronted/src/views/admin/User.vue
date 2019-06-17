@@ -161,8 +161,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             },
             onSearch (value) {

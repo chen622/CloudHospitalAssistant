@@ -136,8 +136,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             },
             handleCancel () {
@@ -151,8 +150,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             },
             uploading (event, record) {
@@ -190,8 +188,7 @@
                             } else {
                                 that.$message.error(res)
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
 
                 } else {
@@ -202,8 +199,7 @@
                             } else {
                                 that.$message.error(res)
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                 }
             },
@@ -216,8 +212,7 @@
                         } else {
                             that.$message.error(res)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }
 

@@ -244,7 +244,6 @@
                             that.$message.error(res.msg)
                         }
                     }, () => {
-                        that.$message.error("网络错误")
                     })
             },
             selectPatient (type, patient) {
@@ -292,8 +291,6 @@
                                             that.$message.error(res.msg)
                                         }
                                     }, () => {
-                                        that.$message.error("网络异常")
-
                                     })
                             },
                             onCancel () {
@@ -326,8 +323,7 @@
                             that.patient.outPatient = res.data.out
                             that.load.patient = false
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             },
             refreshMR () {
@@ -344,7 +340,6 @@
                         that.$store.commit('setPayment', res.data)
                     }
                 }, () => {
-                    that.$message.error('网络异常')
                 })
             },
             getInspectionAndPrescription () {
@@ -362,7 +357,6 @@
                             })
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             getTempInspectionAndPrescription () {

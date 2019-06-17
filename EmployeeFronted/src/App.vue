@@ -70,8 +70,7 @@
                 this.$api.get("/user/function", null, res => {
                     that.$store.commit("setLogin", true)
                     that.$store.commit("setUrls", res.data)
-                }, res => {// eslint-disable-next-line
-                    console.log('API error: ' + res)
+                }, () => {
                 })
             }
         },
@@ -115,11 +114,16 @@
     }
 
     .ant-menu-submenu {
-        height: 70px;
-        line-height: 70px;
+        height: 70px !important;
+        line-height: 70px !important;
         min-width: 72px;
         font-size: 18px;
+    }
 
+    .ant-menu-sub > .ant-menu-item {
+        font-size: 14px;
+        height: 40px;
+        line-height: 40px;
     }
 
     .footer-title {

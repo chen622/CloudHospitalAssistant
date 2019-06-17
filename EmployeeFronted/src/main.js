@@ -18,7 +18,7 @@ Vue.prototype.$api = api
 
 
 Vue.prototype.dateToTimeStamp = function (date) {
-  
+
     return this.datetimeToTimeStamp(date + " 00:00:00")
 }
 
@@ -28,10 +28,13 @@ Vue.prototype.datetimeToTimeStamp = function (datetime) {
     return timestamp
 }
 
-new Vue({
+let vue = new Vue({
     router,
     store,
     render: h => h(App)
 }).$mount('#app')
+
+
+export default vue
 
 

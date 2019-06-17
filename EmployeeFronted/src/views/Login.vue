@@ -90,6 +90,8 @@
                                         if (err.response && err.response.status === 403) {
                                             sessionStorage.removeItem("token")
                                             that.$message.error("用户名或密码错误");
+                                        } else {
+                                            that.$message.error("网络错误")
                                         }
                                         // eslint-disable-next-line
                                         console.log('API error: ' + err)

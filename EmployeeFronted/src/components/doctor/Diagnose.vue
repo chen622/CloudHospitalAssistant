@@ -104,7 +104,6 @@
                             that.$message.success("提交成功")
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             changeType (value) {
@@ -156,7 +155,6 @@
                             that.$message.error(res.msg)
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
         },

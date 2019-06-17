@@ -176,7 +176,6 @@
                                 that.newDepartment.createLoading = false
 
                             }, () => {
-                                that.$message.error('网络异常')
                                 that.newDepartment.createLoading = false
                             })
                     }
@@ -196,7 +195,6 @@
                         }
                     },
                     () => {
-                        that.$message.error('网络异常')
                     })
             },
             getDepartmentKind () {
@@ -210,7 +208,6 @@
                             that.$message.error(res)
                         }
                     }, res => {
-                        that.$message.error(res)
                     })
             },
             onSearch (value) {
@@ -228,7 +225,6 @@
                             that.$message.error(res)
                         }
                     }, () => {
-                        that.$message.error('网络异常')
                     })
             },
             handleChange (value, key, column) {
@@ -267,7 +263,6 @@
                         }
                     },
                     () => {
-                        that.$message.error("网络异常！")
                     })
 
             },
@@ -282,7 +277,6 @@
                             that.$message.error(res.msg)
                         }
                     }, () => {
-                        that.$message.error("网络异常！")
                     })
             },
             cancel (key) {

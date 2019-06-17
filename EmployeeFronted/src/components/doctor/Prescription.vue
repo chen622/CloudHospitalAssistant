@@ -146,7 +146,6 @@
                             that.deletePrescription(index)
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             addPrescription () {
@@ -201,8 +200,6 @@
                             that.refreshMR()
                         }
                     }, () => {
-                        that.$message.error("网络异常")
-
                     })
             },
             getUseage () {
@@ -213,7 +210,6 @@
                             that.useage = res.data
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             selectDrugsType (index) {
@@ -231,7 +227,6 @@
                             that.drugs = res.data[0].drugs
                         }
                     }, () => {
-                        that.$message.error('网络异常')
                     }
                 )
             },

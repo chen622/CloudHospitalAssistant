@@ -721,8 +721,7 @@
                             } else {
                                 this.$message.error(res.msg)
                             }
-                        }, res => {
-                            this.$message.error(res)
+                        }, () => {
                         })
                 })
             }, getDrugType () {
@@ -744,8 +743,7 @@
                                 that.drugTypeMap = map
                                 that.getAllDrug()
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                 })
 
@@ -769,8 +767,7 @@
                                 that.paymentTypeMap = map
                                 that.getForm()
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                 })
             }, getAllDrug () {
@@ -788,8 +785,7 @@
                                     that.data[i].paymentType = that.paymentTypeMap.get(that.data[i].feeTypeId)
                                 }
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                 })
 
@@ -853,7 +849,6 @@
                                     that.$message.error(res.msg)
                                 }
                             }, () => {
-                                that.$message.error("网络异常！")
                             })
                     }
                 }
@@ -919,7 +914,6 @@
                             that.$message.error(res.msg)
                         }
                     }, () => {
-                        that.$message.error("网络异常！")
                     })
             }, getName (value) {
                 return this.formulationNameMap.get(value)
@@ -940,7 +934,7 @@
                     }
                 }
             }, onSearchByCode (value) {
-                if (this.wholeData.length == 0) {
+                if (this.wholeData.length === 0) {
                     this.wholeData = this.data
                 } else {
                     this.data = this.wholeData
@@ -981,7 +975,6 @@
                                 this.$message.error(res.msg)
                             }
                         }, () => {
-                            this.$message.error("网络异常！")
                         })
                     delete this.drugTemp.add
                 }
@@ -1091,7 +1084,7 @@
 
                 await that.onSearchByPid(this.patient.id)
 
-                if (value == 1) {
+                if (value === 1) {
                     alert('发药成功')
                 }
             }, async sendDrug (record) {
@@ -1100,13 +1093,12 @@
                     res => {
                         if (res.code === "100") {
                             that.getPatient(1)
-                        } else if (res.code == "512") {
+                        } else if (res.code === "512") {
                             alert('请稍后！')
                         } else {
                             that.$message.error(res)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }, returnDrug (payemny) {
                 if (!payemny.isFrozen && payemny.state.indexOf('药全退') < 0) {
@@ -1138,8 +1130,7 @@
                             } else {
                                 that.$message.error(res)
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
 
                 } else {
@@ -1197,8 +1188,7 @@
                         } else {
                             that.$message.error(res)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }, getCurrentStyle (current) {
                 const style = {}
@@ -1250,8 +1240,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }
 

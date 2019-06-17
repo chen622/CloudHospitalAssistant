@@ -7,7 +7,7 @@
                     <a-col>
                         <a-form layout="inline">
                             <a-form-item label="病历号">
-                                <a-input-search placeholder="病历号" @search="getPatient" enterButton ></a-input-search>
+                                <a-input-search placeholder="病历号" @search="getPatient" enterButton></a-input-search>
                             </a-form-item>
                         </a-form>
                     </a-col>
@@ -21,7 +21,8 @@
                         <a-input v-model="userid" placeholder="身份证号">{{userid}}</a-input>
                     </a-form-item>
                     <a-form-item label="家庭住址">
-                        <a-textarea v-model="address" placeholder="家庭住址" autosize style="width: 300px">{{address}}</a-textarea>
+                        <a-textarea v-model="address" placeholder="家庭住址" autosize style="width: 300px">{{address}}
+                        </a-textarea>
                     </a-form-item>
                 </a-form>
                 <p style="font-size: 20px">患者挂号信息：</p>
@@ -30,8 +31,9 @@
                     <span slot="customTitle">姓名</span>
                     <span slot="action" slot-scope="text, record">
                 <a href="javascript:;">退号</a>
-                <a-divider type="vertical" />
-                <a-popconfirm v-if="data.length" title="Sure to delete?" @confirm="() => onDelete(record.key)"><a href="javascript:;">删除</a></a-popconfirm>
+                <a-divider type="vertical"/>
+                <a-popconfirm v-if="data.length" title="Sure to delete?" @confirm="() => onDelete(record.key)"><a
+                        href="javascript:;">删除</a></a-popconfirm>
               </span>
                 </a-table>
             </a-card>
@@ -46,52 +48,52 @@
     export default {
         data () {
             return {
-                form:this.$form.createForm(this),
-                username:'',
-                userid:'',
-                address:'',
-                columns : [{
-                    title:'病历号',
-                    dataIndex:'id',
+                form: this.$form.createForm(this),
+                username: '',
+                userid: '',
+                address: '',
+                columns: [{
+                    title: '病历号',
+                    dataIndex: 'id',
                     key: 'id',
-                    scopedSlots:{customRender:'id'}
-                },{
-                    title:'姓名',
+                    scopedSlots: {customRender: 'id'}
+                }, {
+                    title: '姓名',
                     dataIndex: 'name',
                     key: 'name',
-                    scopedSlots: { customRender: 'name' },
+                    scopedSlots: {customRender: 'name'},
                 }, {
                     title: '身份证号',
                     dataIndex: 'IdNumber',
                     key: 'IdNumber',
-                    scopedSlots:{customRender:'IdNumber'}
+                    scopedSlots: {customRender: 'IdNumber'}
                 }, {
                     title: '挂号日期',
                     key: 'date',
                     dataIndex: 'date',
-                    scopedSlots: { customRender: 'date' },
+                    scopedSlots: {customRender: 'date'},
                 }, {
                     title: '挂号午别',
                     key: 'NoonBreak',
-                    dataIndex:'NoonBreak',
-                    scopedSlots: { customRender: 'NoonBreak' },
-                },{
-                    title:'看诊科室',
-                    key:'office',
-                    dataIndex:'office',
-                    scopedSlots:{customRender:'offfice'}
-                },{
-                    title:'看诊状态',
-                    key:'state',
-                    dataIndex:'state',
-                    scopedSlots:{customRender:'state'}
-                },{
-                    title:'操作',
-                    key:'action',
-                    dataIndex:'action',
-                    scopedSlots:{customRender:'action'}
+                    dataIndex: 'NoonBreak',
+                    scopedSlots: {customRender: 'NoonBreak'},
+                }, {
+                    title: '看诊科室',
+                    key: 'office',
+                    dataIndex: 'office',
+                    scopedSlots: {customRender: 'offfice'}
+                }, {
+                    title: '看诊状态',
+                    key: 'state',
+                    dataIndex: 'state',
+                    scopedSlots: {customRender: 'state'}
+                }, {
+                    title: '操作',
+                    key: 'action',
+                    dataIndex: 'action',
+                    scopedSlots: {customRender: 'action'}
                 }],
-                data:[]
+                data: []
             }
         },
         components: {
@@ -104,18 +106,16 @@
                 const data = [...this.data]
                 this.data = data.filter(item => item.key !== key)
             },
-            getPatient(value){
+            getPatient (value) {
                 let that = this
-                that.$api.get("/registration/getWaitingRegistration/" + value , null,
-                res=>{
-                    if (res.code === "100"){
-                        that.data = res.data
-                    }
-                    else {
-                        that.$message.error(res)
-                    }
-                }, res=>{
-                    that.$message.error(res)
+                that.$api.get("/registration/getWaitingRegistration/" + value, null,
+                    res => {
+                        if (res.code === "100") {
+                            that.data = res.data
+                        } else {
+                            that.$message.error(res)
+                        }
+                    }, () => {
                     })
 
             }
@@ -125,7 +125,7 @@
 </script>
 
 <style>
-    .info-search{
+    .info-search {
         margin-top: 40px;
         margin-bottom: 20px;
     }

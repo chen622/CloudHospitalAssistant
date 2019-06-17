@@ -170,7 +170,6 @@
                             that.$message.error("res.msg")
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             register () {
@@ -207,7 +206,6 @@
                         }
                     }, () => {
                         that.load.register = false
-                        that.$message.error("网络错误")
                     })
             },
             searchDoctor () {
@@ -230,7 +228,6 @@
                                     that.$message.error(res.msg)
                                 }
                             }, () => {
-                                that.$message.error("网络异常")
                             })
                     }
                 })
@@ -246,7 +243,6 @@
                         } else
                             that.$message.error(res.msg)
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             getDepartment () {
@@ -256,7 +252,6 @@
                         if (res.code === "100")
                             that.departmentKind = res.data
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             }
         }
