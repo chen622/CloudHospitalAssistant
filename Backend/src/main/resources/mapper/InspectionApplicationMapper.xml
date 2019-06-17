@@ -176,7 +176,7 @@
 
     <select id="selectPatientInformationByNameOrId" resultMap="getPatientInformationAndInspection">
         SELECT *, department.name as deptname,non_drug.id as nonDrug_id,inspection_application.id as application_id,
-               non_drug.name as nonDrug_name
+        non_drug.name as nonDrug_name
         FROM payment JOIN inspection_application ON payment.item_id = inspection_application.id
         left join inspection_result ir on inspection_application.id = ir.inspection_application_id
         JOIN patient on patient.id = payment.patient_id
@@ -232,7 +232,13 @@
         <result column="is_template" jdbcType="BIT" property="isTemplate"/>
         <result column="is_check" jdbcType="BIT" property="isCheck"/>
         <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-        <association property="department" resultMap="cn.neuedu.his.mapper.DepartmentMapper.BaseResultMap"/>
+        <association property="department" javaType="cn.neuedu.his.model.Department">
+            <id column="deptId" jdbcType="INTEGER" property="id"/>
+            <result column="deptName" jdbcType="VARCHAR" property="name"/>
+            <result column="kind_id" jdbcType="INTEGER" property="kindId"/>
+            <result column="code" jdbcType="VARCHAR" property="code"/>
+            <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        </association>
         <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
             <id column="nonDrug_id" jdbcType="INTEGER" property="id"/>
             <result column="nonDrug_name" jdbcType="VARCHAR" property="name"/>
@@ -244,16 +250,17 @@
             <result column="is_delete" jdbcType="BIT" property="isDelete"/>
         </association>
         <collection property="results" ofType="cn.neuedu.his.model.InspectionResult">
-            <result column="text" jdbcType="VARCHAR" property="text" />
-            <result column="picture" jdbcType="VARCHAR" property="picture" />
+            <result column="text" jdbcType="VARCHAR" property="text"/>
+            <result column="picture" jdbcType="VARCHAR" property="picture"/>
         </collection>
     </resultMap>
 
     <select id="getAllByMedical" resultMap="inspectionByMedical">
-        select *, nd.name as nonDrug_name, nd.id as nonDrug_id
-        from inspection_application i join non_drug nd on i.non_drug_id = nd.id
-              join department d on nd.executive_department = d.id
-              left join inspection_result ir on i.id = ir.inspection_application_id
+        select *, nd.name as nonDrug_name, nd.id as nonDrug_id, d.id as deptId, d.name as deptName
+        from inspection_application i
+                 join non_drug nd on i.non_drug_id = nd.id
+                 join department d on nd.executive_department = d.id
+                 left join inspection_result ir on i.id = ir.inspection_application_id
         where i.item_id = #{medicalId}
           and is_template = false
     </select>
@@ -273,9 +280,12 @@
     </select>
 
     <select id="getApplicationDepartmentId" resultMap="inspectionAndNonDrug">
-        select * from  inspection_application join non_drug nd on inspection_application.non_drug_id = nd.id
-        where inspection_application.is_done = 0 and inspection_application.is_canceled = 0 #未取消，未执行
-        and nd.executive_department = #{id}
+        select *
+        from inspection_application
+                 join non_drug nd on inspection_application.non_drug_id = nd.id
+        where inspection_application.is_done = 0
+          and inspection_application.is_canceled = 0 #未取消，未执行
+          and nd.executive_department = #{id}
     </select>
 
 </mapper>
