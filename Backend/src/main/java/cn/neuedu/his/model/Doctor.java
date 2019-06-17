@@ -31,12 +31,22 @@ public class Doctor {
     @Column(name = "is_delete")
     private Boolean isDelete;
 
+    private ConstantVariable title;
+
 
     @Transient
     private String titleName;
 
     @Transient
     private String realName;
+
+    public ConstantVariable getTitle() {
+        return title;
+    }
+
+    public void setTitle(ConstantVariable title) {
+        this.title = title;
+    }
 
     public JSONArray getFeeMap() {
         return feeMap;

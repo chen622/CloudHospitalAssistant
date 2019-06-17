@@ -8,12 +8,10 @@ import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -33,7 +31,7 @@ public class DiseaseFirstController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -55,7 +53,7 @@ public class DiseaseFirstController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -78,7 +76,7 @@ public class DiseaseFirstController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -101,7 +99,7 @@ public class DiseaseFirstController {
 
         //检查权限
         try{
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -132,7 +130,7 @@ public class DiseaseFirstController {
         Boolean auth;
         //判断权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
             auth = true;
         } catch (Exception e) {
             auth = false;

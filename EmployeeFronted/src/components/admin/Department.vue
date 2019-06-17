@@ -62,8 +62,12 @@
                 </template>
 
                 <template slot="kind" slot-scope="text,record">
-                    <a-select :sdefaultValue="record.kindId" style="width: 120px" @change="handleChange" v-if="record.editable">
-                        <a-select-option v-for="item in departmentKind.departmentKinds[record.departmentKind.constantVariable.id]" :key="item.id">{{item.kindName}}</a-select-option>
+                    <a-select :defaultValue="record.kindId" @change="e => handleSelect(e,record.id)"
+                              v-if="record.editable">
+                        <a-select-option
+                                v-for="item in departmentKind.departmentKinds[record.departmentKind.constantVariable.id]"
+                                :key="item.id">{{item.kindName}}
+                        </a-select-option>
                     </a-select>
                     <template v-else>{{text}}</template>
                 </template>
@@ -71,14 +75,14 @@
                 <template slot="operation" slot-scope="text, record">
                     <div class='editable-row-operations'>
                             <span v-if="record.editable">
-                                <a-popconfirm title='确定保存次修改吗?' @confirm="() => save(record.id)">
+                                <a-popconfirm title='确定保存次修改吗?' @confirm="save(record)">
                                     <a>保存</a>
                                 </a-popconfirm>
                             <a @click="() => cancel(record.id)">取消</a>
                             </span>
                         <span v-else>
                                 <a @click="() => edit(record.id)">编辑</a>
-                                <a-popconfirm title='确定删除该科室吗?' @confirm="() => remove(record.id)">
+                                <a-popconfirm title='确定删除该科室吗?' @confirm="remove(record.id)">
                                     <a style="color: #f5222d;">删除</a>
                                 </a-popconfirm>
                             </span>
@@ -109,10 +113,12 @@
                     title: '名称',
                     dataIndex: 'name',
                     width: '20%',
+                    scopedSlots: {customRender: 'name'},
                     align: 'center'
                 }, {
                     title: '科室编号',
                     dataIndex: 'code',
+                    scopedSlots: {customRender: 'code'},
                     width: '20%',
                     align: 'center'
                 }, {
@@ -233,6 +239,14 @@
                     this.departments = newData
                 }
             },
+            handleSelect (e, key) {
+                const newData = [...this.departments]
+                const target = newData.filter(item => key === item.id)[0]
+                if (target) {
+                    target.kindId = e
+                    this.departments = newData
+                }
+            },
             edit (key) {
                 const newData = [...this.departments]
                 const target = newData.filter(item => key === item.id)[0]
@@ -241,25 +255,21 @@
                     this.departments = newData
                 }
             },
-            save (key) {
-                const newData = [...this.departments]
-                const target = newData.filter(item => key === item.id)[0]
-                if (target) {
-                    delete target.editable
-                    let that = this
-                    this.$api.post("/department/modify", target,
-                        res => {
-                            if (res.code === '100') {
-                                that.$message.success("修改成功")
-                                that.getDepartment()
-                            } else {
-                                that.$message.error(res.msg)
-                            }
-                        },
-                        () => {
-                            that.$message.error("网络异常！")
-                        })
-                }
+            save (record) {
+                let that = this
+                this.$api.post("/department/modify", record,
+                    res => {
+                        if (res.code === '100') {
+                            that.$message.success("修改成功")
+                            that.getDepartment()
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                    },
+                    () => {
+                        that.$message.error("网络异常！")
+                    })
+
             },
             remove (key) {
                 let that = this
@@ -284,11 +294,13 @@
                     this.departments = newData
                 }
             },
-        },
+        }
+        ,
         mounted () {
             this.getDepartment()
             this.getDepartmentKind()
-        },
+        }
+        ,
     }
 </script>
 

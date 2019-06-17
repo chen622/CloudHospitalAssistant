@@ -14,9 +14,13 @@ import java.util.HashMap;
 @Component
 
 public interface JobScheduleMapper extends MyMapper<JobSchedule> {
-    void uodateHaveRegistration(Integer doctorId, Date date);
     JobSchedule getByDoctorId(Integer doctorId, Date date);
+
     ArrayList<JobSchedule> getByDate(Date date);
-    Integer getRegistrationInof(Date time, Integer doctorId);
+
+    Integer getRegistrationInfo(Date time, Integer doctorId);
+
     ArrayList<JobSchedule> getScheduleByPeriod(@Param("date") Date date, @Param("hour") Integer hour, @Param("departmentId") Integer departmentId);
+
+    ArrayList<JobSchedule> getScheduleByMonth(@Param("date") Date date, @Param("departmentId") Integer departmentId);
 }

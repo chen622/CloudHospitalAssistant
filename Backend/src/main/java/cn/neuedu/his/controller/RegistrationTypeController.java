@@ -6,7 +6,6 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +32,7 @@ public class RegistrationTypeController {
 
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -61,7 +60,7 @@ public class RegistrationTypeController {
     public JSONObject deleteRegisterType(@PathVariable("id") Integer id, Authentication authentication){
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -87,7 +86,7 @@ public class RegistrationTypeController {
     public JSONObject modifyRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication){
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -115,7 +114,7 @@ public class RegistrationTypeController {
     public JSONObject selectRegisterType(@PathVariable("name") String name, Authentication authentication){
         //检查权限
         try {
-            PermissionCheck.isHosptialAdim(authentication);
+            PermissionCheck.isHospitalAdmin(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }

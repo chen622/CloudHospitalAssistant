@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.Doc;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -79,7 +78,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     public JSONObject getRegistrationInof(Date time, Integer doctorId) {
-        Integer limit = scheduleService.getRegistrationInof(time, doctorId);
+        Integer limit = scheduleService.getRegistrationInfo(time, doctorId);
         Integer amount = registrationService.getRegistrationInof(time, doctorId);
         JSONObject object = new JSONObject();
         object.put("limitAmount", limit);

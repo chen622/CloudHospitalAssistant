@@ -1,7 +1,6 @@
 package cn.neuedu.his.util;
 
 import cn.neuedu.his.service.impl.RedisServiceImpl;
-import cn.neuedu.his.util.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
-
-import static cn.neuedu.his.util.constants.Constants.*;
 
 /**
  * 权限校验类
@@ -51,6 +48,34 @@ public class PermissionCheck {
         try {
             Map<String, Integer> map = redisService.getMapAll("userType");
             if (typeId.equals(map.get("挂号收费员"))) {
+                Integer id = (Integer) data.get("id");
+                if (id == null)
+                    throw new Exception();
+                else
+                    return id;
+            } else {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("");
+        }
+
+
+    }
+
+    /**
+     * 收费员权限检验
+     *
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static Integer getIdByPaymentAdminAndHospitalAdmin(Authentication authentication) throws AuthenticationServiceException {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        Integer typeId = (Integer) data.get("typeId");
+        try {
+            Map<String, Integer> map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("挂号收费员")) || typeId.equals(map.get("医院管理员"))) {
                 Integer id = (Integer) data.get("id");
                 if (id == null)
                     throw new Exception();
@@ -120,7 +145,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isHosptialAdim(Authentication authentication) throws AuthenticationServiceException {
+    public static Integer isHospitalAdmin(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         Map<String, Integer> map = null;
@@ -143,15 +168,16 @@ public class PermissionCheck {
     /**
      * 医院管理员权限检验
      * 异常类型返回用户Id
+     *
      * @param authentication
      * @return
      * @throws AuthenticationServiceException
      */
     public static Integer isHosptialAdimReturnUserId(Authentication authentication) throws AuthenticationServiceException {
-        try{
-            Integer userId = isHosptialAdim(authentication);
+        try {
+            Integer userId = isHospitalAdmin(authentication);
             return userId;
-        }catch (Exception e){
+        } catch (Exception e) {
             Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
             Integer typeId = (Integer) data.get("id");
             throw new AuthenticationServiceException(typeId.toString());
