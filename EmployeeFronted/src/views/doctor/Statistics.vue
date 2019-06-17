@@ -179,7 +179,7 @@
                 
                 <a-table :columns="rColumns" :dataSource="rData">
                     <template slot="time" slot-scope="text">
-                        <span name>{{text| formatDate}}</span>
+                        <span name>{{text| timeStampToDate}}</span>
                     </template>
                 </a-table>       
 
@@ -270,22 +270,6 @@
                     wrapperCol: {span: 14},
                 } : {};
             },
-        }, filters: {
-            formatDate: function (value) {
-                let date = new Date(value);
-                let y = date.getFullYear();
-                let MM = date.getMonth() + 1;
-                MM = MM < 10 ? ('0' + MM) : MM;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                let h = date.getHours();
-                h = h < 10 ? ('0' + h) : h;
-                let m = date.getMinutes();
-                m = m < 10 ? ('0' + m) : m;
-                let s = date.getSeconds();
-                s = s < 10 ? ('0' + s) : s;
-                return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
-            }
         }, created () {
             this.getPaymentType();
         }, methods: {
@@ -316,7 +300,6 @@
                             that.result = res.data.feeMap
                             delete res.data.feeMap
                             that.doctor = res.data
-                            let i = 0
                             // this.$chart.bar1('chart1','工作量统计','',that.name,that.value)
                             that.showDoctor = true
                             that.getRStatistics()

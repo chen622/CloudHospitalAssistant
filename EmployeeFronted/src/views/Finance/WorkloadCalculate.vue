@@ -91,7 +91,7 @@
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
                         that.departmentColumns.forEach(column=>{
-                            if (column.dataIndex == 'total')
+                            if (column.dataIndex === 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.departmentScrollX = (that.departmentColumns.length + 1) * 100

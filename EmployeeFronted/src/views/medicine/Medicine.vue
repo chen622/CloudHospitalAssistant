@@ -196,7 +196,7 @@
                                                 </template>
 
                                                 <template slot="create_time" slot-scope="text">
-                                                    <span name>{{text| formatDate}}</span>
+                                                    <span name>{{text| timeStampToDate}}</span>
                                                 </template>
 
                                             </a-table>
@@ -228,7 +228,7 @@
                                                 </template>
 
                                                 <template slot="create_time" slot-scope="text">
-                                                    <span>{{text| formatDate}}</span>
+                                                    <span>{{text| timeStampToDate}}</span>
                                                 </template>
 
                                                 <template slot="isFrozen" slot-scope="text">
@@ -663,7 +663,7 @@
                 returnData: [],
                 patients: [],
                 isOk: false,
-                reload:false,
+                reload: false,
             }
         },
 
@@ -683,22 +683,6 @@
             },
         }, created () {
             this.getData();
-        }, filters: {
-            formatDate: function (value) {
-                let date = new Date(value);
-                let y = date.getFullYear();
-                let MM = date.getMonth() + 1;
-                MM = MM < 10 ? ('0' + MM) : MM;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                let h = date.getHours();
-                h = h < 10 ? ('0' + h) : h;
-                let m = date.getMinutes();
-                m = m < 10 ? ('0' + m) : m;
-                let s = date.getSeconds();
-                s = s < 10 ? ('0' + s) : s;
-                return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
-            }
         }, methods: {
             async getData () {
                 this.isOk = false
@@ -1077,7 +1061,7 @@
                 })
             }, async getPatient (value) {
                 let that = this
-                that.reload=true
+                that.reload = true
                 this.paymentData = []
                 this.returnData = []
                 that.time = that.value
@@ -1180,10 +1164,10 @@
                                     AllReturn: res.data.token.AllReturn,
                                 }
                             )
-                            if(that.reload){
+                            if (that.reload) {
                                 var item = that.patients.filter(item => this.patient.id === item.id)[0]
                                 that.selectPatient(item)
-                                that.reload=false
+                                that.reload = false
                             }
                         } else {
                             that.$message.error(res)
