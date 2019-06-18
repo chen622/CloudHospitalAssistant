@@ -80,17 +80,21 @@ export default new Router({
         {
             path: '/finance/manage',
             name: 'manage',
-            component: () => import('./views/finance/PaymentType')
+            component: () => import('./views/Finance/PaymentType')
         },
         {
             path: '/finance/check',
             name: 'check',
-            component: () => import('./views/finance/DailySettle')
+            component: () => import('./views/Finance/DailySettle')
         },
         {
             path: '/finance/workload',
             name: 'workload',
             component: () => import('./views/finance/WorkloadCalculate')
+        },{
+            path:'/constant',
+            name:'constant',
+            component:() => import('./views/admin/Constant')
         }
     ]
 })
