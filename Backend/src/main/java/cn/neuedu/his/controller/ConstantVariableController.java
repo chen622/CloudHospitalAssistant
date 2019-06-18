@@ -144,15 +144,14 @@ public class ConstantVariableController {
 
     @GetMapping("/getType/{type}")
     public JSONObject getConstantByType(@PathVariable("type") Integer typeId, Authentication authentication) {
-        List list = new ArrayList();
-        String type = null;
+
 
         try {
+            List<ConstantVariable> list = new ArrayList<>();
+            String type = null;
             Map<String, Integer> map = redisService.getMapAll("typeKind");
-            Iterator<Map.Entry<String, Integer>> iterator = map.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, Integer> entry = iterator.next();
-                if (entry.getValue().equals(typeId)){
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue().equals(typeId)) {
                     type = entry.getKey();
                     break;
                 }
@@ -162,15 +161,15 @@ public class ConstantVariableController {
             ConstantVariable constantVariable;
 
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                constantVariable  = new ConstantVariable();
+                constantVariable = new ConstantVariable();
                 constantVariable.setName(entry.getKey());
                 constantVariable.setId(entry.getValue());
                 list.add(constantVariable);
             }
-        } catch (Exception e) {
-
-        }finally {
             return CommonUtil.successJson(list);
+
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }
 

@@ -762,6 +762,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
 
     @Override
+    public List<Doctor> getByDepartmentId(Integer departmentId) {
+        return doctorMapper.getByDepartmentId(departmentId);
+    }
+
+    @Override
     @Transactional
     public void saveDiagnose(List<Integer> diagnoses, Integer itemId, Boolean isMajor, Boolean isTemplate) {
         if (diagnoses != null) {
@@ -942,6 +947,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     /**
      * 门诊医生工作量统计
      * cjq
+     *
      * @param startDate
      * @param endDate
      * @return
@@ -957,7 +963,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Map<Integer, String> paymentTypeMap = new HashMap<>();
         Map<String, Integer> redisMap;
         try {
-            redisMap =  redisService.getMapAll("paymentType");
+            redisMap = redisService.getMapAll("paymentType");
         } catch (Exception e) {
             throw new UnsupportedOperationException("redis");
         }
@@ -975,7 +981,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             ArrayList<Payment> paymentList = paymentService.findAllByDoctor(user.getId(), startDate, endDate);
             for (Payment payment : paymentList) {
                 //更新某缴费项目类型的金额数据
-                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null? new BigDecimal(0): feeMap.get(payment.getPaymentTypeId());
+                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null ? new BigDecimal(0) : feeMap.get(payment.getPaymentTypeId());
                 feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
             }
 
@@ -1003,6 +1009,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     /**
      * 前端表内列设置
      * cjq
+     *
      * @param paymentTypeMap
      * @return
      */
@@ -1024,6 +1031,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     /**
      * 前端内列表设置（默认基本方法）
      * cjq
+     *
      * @param title
      * @param dataIndex
      * @param width
@@ -1044,6 +1052,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     /**
      * 前端内列表设置（默认基本方法）
      * cjq
+     *
      * @param title
      * @param dataIndex
      * @param width
@@ -1060,8 +1069,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
-
-
     @Autowired
     ConstantVariableService constantVariableService;
 
@@ -1069,41 +1076,41 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     RegistrationMapper registrationMapper;
 
     /**
-     *
      * 获得医生某时间所有费用详情
+     *
      * @param doctorId
      * @param start
      * @param end
      * @return
      */
     @Override
-    public JSONObject getDoctorStatistics(Integer doctorId,String start,String end){
+    public JSONObject getDoctorStatistics(Integer doctorId, String start, String end) {
 
-        User user=userService.findById(doctorId);
-        Doctor doctor=doctorService.findById(doctorId);
-        if(doctor==null){
-            return  CommonUtil.errorJson(ErrorEnum.E_617);
+        User user = userService.findById(doctorId);
+        Doctor doctor = doctorService.findById(doctorId);
+        if (doctor == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_617);
         }
         doctor.setRealName(user.getRealName());
         doctor.setTitleName(constantVariableService.findById(doctor.getTitleId()).getName());
         //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
-        ArrayList<PaymentType> smallPaymentType=paymentTypeService.getSmallPaymentType();
+        ArrayList<PaymentType> smallPaymentType = paymentTypeService.getSmallPaymentType();
         for (PaymentType paymentType : smallPaymentType) {
             paymentTypeMap.put(paymentType.getId(), paymentType.getName());
         }
 
         //使用map记录每个医生的每个paymentType对应的总额
 
-        JSONArray array=new JSONArray();
-        Integer count=0;
+        JSONArray array = new JSONArray();
+        Integer count = 0;
         for (Integer id : paymentTypeMap.keySet()) {
-            count=paymentService.getAllPayments(doctorId, start, end,id);
-            if (count!=null && count.intValue()>0){
-                JSONObject object=new JSONObject();
-                object.put("name",paymentTypeMap.get(id));
+            count = paymentService.getAllPayments(doctorId, start, end, id);
+            if (count != null && count.intValue() > 0) {
+                JSONObject object = new JSONObject();
+                object.put("name", paymentTypeMap.get(id));
                 object.put("value", new BigDecimal(count));
-                object.put("key",id);
+                object.put("key", id);
                 array.add(object);
             }
         }
@@ -1112,40 +1119,39 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
 
-
     @Autowired
     PatientService patientService;
 
     @Override
-    public JSONObject getRegistrationStatistics(Integer doctorId,String start,String end){
-        JSONArray patients=new JSONArray();
-        ArrayList<Registration> list= registrationMapper.getPatient(doctorId,start, end,2,1);
+    public JSONObject getRegistrationStatistics(Integer doctorId, String start, String end) {
+        JSONArray patients = new JSONArray();
+        ArrayList<Registration> list = registrationMapper.getPatient(doctorId, start, end, 2, 1);
 
-        Integer patientId=null;
-        Patient patient=null;
-        JSONArray a=new JSONArray();
-        for(Registration registration:list){
-            if(registration.getMedicalFee()==null){
+        Integer patientId = null;
+        Patient patient = null;
+        JSONArray a = new JSONArray();
+        for (Registration registration : list) {
+            if (registration.getMedicalFee() == null) {
                 registration.setMedicalFee(0);
             }
-            if(registration.getInspectionFee()==null){
+            if (registration.getInspectionFee() == null) {
                 registration.setInspectionFee(0);
             }
-            if(patientId==null || !patientId.equals(registration.getPatientId())){
-                if(patient!=null){
+            if (patientId == null || !patientId.equals(registration.getPatientId())) {
+                if (patient != null) {
                     a.add(patient);
                 }
-                patientId=registration.getPatientId();
-                patient=patientService.findById(patientId);
+                patientId = registration.getPatientId();
+                patient = patientService.findById(patientId);
                 patient.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
-                JSONArray array=new JSONArray();
+                JSONArray array = new JSONArray();
                 array.add(registration);
                 patient.setRegistrations(array);
-            }else{
+            } else {
                 patient.addRegistrations(registration);
             }
         }
-        if(patient!=null){
+        if (patient != null) {
             a.add(patient);
         }
         return CommonUtil.successJson(a);

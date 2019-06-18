@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.Doc;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,19 +30,26 @@ public class DoctorController {
 
     @Autowired
     DoctorService doctorService;
-
     @Autowired
     RegistrationService registrationService;
-
     @Autowired
     MedicalRecordService medicalRecordService;
-
     @Autowired
     RedisServiceImpl redisService;
     @Autowired
     private PrescriptionService prescriptionService;
     @Autowired
     private InspectionApplicationService inspectionApplicationService;
+
+    @GetMapping("/getByDepartmentId/{id}")
+    public JSONObject getByDepartmentId(@PathVariable("id") Integer departmentId) {
+        List<Doctor> doctors = doctorService.getByDepartmentId(departmentId);
+        if (doctors == null) {
+            doctors = new ArrayList<>();
+        }
+        return CommonUtil.successJson(doctors);
+    }
+
 
     @GetMapping("/getPrescriptionAndInspection/{registrationId}")
     public JSONObject getAllByMedical(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
@@ -50,11 +58,11 @@ public class DoctorController {
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
-        if (registrationId==null){
+        if (registrationId == null) {
             return CommonUtil.errorJson(ErrorEnum.E_501);
         }
         MedicalRecord medicalRecord = medicalRecordService.getByRegistrationId(registrationId);
-        if (medicalRecord==null){
+        if (medicalRecord == null) {
             return CommonUtil.errorJson(ErrorEnum.E_501);
         }
         JSONObject result = new JSONObject();
@@ -744,52 +752,52 @@ public class DoctorController {
     }
 
     @PostMapping("/getDoctorStatistics")
-    public JSONObject getDoctorStatistics(@RequestBody JSONObject object,Authentication authentication){
+    public JSONObject getDoctorStatistics(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId;
-        try{
-            doctorId=PermissionCheck.isOutpatientDoctor(authentication);
-        }catch (Exception e){
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
             try {
-                doctorId=PermissionCheck.isTechnicalDoctor(authentication);
+                doctorId = PermissionCheck.isTechnicalDoctor(authentication);
             } catch (Exception ex) {
                 return CommonUtil.errorJson(ErrorEnum.E_502);
             }
         }
 
-        String start= (String) object.get("start");
-        String end= (String) object.get("end");
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置格式
-        if(start==null || start.equals("")){
-            start=format.format(System.currentTimeMillis());                                //获得带格式的字符串
+        String start = (String) object.get("start");
+        String end = (String) object.get("end");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置格式
+        if (start == null || start.equals("")) {
+            start = format.format(System.currentTimeMillis());                                //获得带格式的字符串
         }
-        if(end==null || end.equals("")){
-            end=format.format(System.currentTimeMillis());
+        if (end == null || end.equals("")) {
+            end = format.format(System.currentTimeMillis());
         }
         return doctorService.getDoctorStatistics(doctorId, start, end);
     }
 
     @PostMapping("/getRStatistics")
-    public JSONObject getRStatistics(@RequestBody JSONObject object,Authentication authentication){
+    public JSONObject getRStatistics(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId;
-        try{
-            doctorId=PermissionCheck.isOutpatientDoctor(authentication);
-        }catch (Exception e){
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (Exception e) {
             try {
-                doctorId=PermissionCheck.isTechnicalDoctor(authentication);
+                doctorId = PermissionCheck.isTechnicalDoctor(authentication);
             } catch (Exception ex) {
                 return CommonUtil.errorJson(ErrorEnum.E_502);
             }
         }
-        String start=(String)object.get("start");
-        String end=(String) object.get("end") ;
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置格式
-        if(start==null || start.equals("")){
-            start=format.format(System.currentTimeMillis());                                //获得带格式的字符串
+        String start = (String) object.get("start");
+        String end = (String) object.get("end");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置格式
+        if (start == null || start.equals("")) {
+            start = format.format(System.currentTimeMillis());                                //获得带格式的字符串
         }
-        if(end==null || end.equals("")){
-            end=format.format(System.currentTimeMillis());
+        if (end == null || end.equals("")) {
+            end = format.format(System.currentTimeMillis());
         }
-        return  doctorService.getRegistrationStatistics(doctorId,start,end);
+        return doctorService.getRegistrationStatistics(doctorId, start, end);
     }
 }
 
