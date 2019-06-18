@@ -12,16 +12,6 @@
             </a-calendar>
         </a-card>
 
-        <a-modal
-                v-model="loading"
-                :footer="false"
-                :closable="false"
-                :maskClosable="false"
-                :bodyStyle="{textAlign: 'center'}"
-        >
-            <a-spin tip="正在查询..." size="large">
-            </a-spin>
-        </a-modal>
     </div>
 </template>
 
@@ -44,6 +34,7 @@
             selectDate (date) {
                 let that = this
                 this.loading = true
+                that.$store.commit('setLoading', true)
                 this.currentMoment = date
                 this.$api.get("/job_schedule/getScheduleAndLastAndNextWithMonth/" + this.department[2] + "/" + date.utc().valueOf(), null,
                     res => {
@@ -68,7 +59,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                        this.loading = false
+                        that.$store.commit('setLoading', false)
                     }, () => {
                     }
                 )

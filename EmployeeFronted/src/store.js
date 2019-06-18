@@ -13,9 +13,13 @@ export default new Vuex.Store({
         inspections: [],
         inspectionPrescriptions: [],
         diagnoseType: true,
-        payments: []
+        payments: [],
+        loading: false
     },
     mutations: {
+        setLoading (state, loading) {
+            state.loading = loading
+        },
         setPayment (state, payments) {
             state.payments = payments
         },

@@ -32,6 +32,16 @@
                 </a-row>
             </a-layout-header>
             <a-layout-content style="background: #fff">
+                <a-modal
+                        v-model="loading"
+                        :footer="false"
+                        :closable="false"
+                        :maskClosable="false"
+                        :bodyStyle="{textAlign: 'center'}"
+                >
+                    <a-spin tip="正在加载..." size="large">
+                    </a-spin>
+                </a-modal>
                 <router-view></router-view>
             </a-layout-content>
             <a-layout-footer style="background: #000;color: white">
@@ -48,6 +58,7 @@
                 </a-row>
             </a-layout-footer>
         </a-layout>
+
     </a-locale-provider>
 </template>
 
@@ -77,6 +88,11 @@
         mounted () {
             if (sessionStorage.getItem("token") != null) {
                 this.urls()
+            }
+        },
+        computed: {
+            loading: function () {
+                return this.$store.state.loading
             }
         }
     }
