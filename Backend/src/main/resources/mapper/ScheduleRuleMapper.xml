@@ -17,8 +17,9 @@
     <select id="getLegalSchedule" resultMap="BaseResultMap">
         select *
         from schedule_rule
-        where doctor_id = #{doctorId}
-          and period != #{period}
+        where doctor_id in (select id from user where identify_id = #{identifyId})
+          and period = #{period}
+          and day = #{day}
     </select>
 
     <resultMap id="RuleWithFull" type="cn.neuedu.his.model.ScheduleRule">

@@ -10,7 +10,7 @@ import java.util.List;
 
 
 public interface ScheduleRuleMapper extends MyMapper<ScheduleRule> {
-    ScheduleRule getLegalSchedule(Integer doctorId, Integer period);
+    ScheduleRule getLegalSchedule(String identifyId, Integer period, Integer day);
 
     List<ScheduleRule> getDoctorSchedule(Integer doctorId);
 

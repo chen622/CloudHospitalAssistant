@@ -53,7 +53,7 @@ public class ConstantVariableControllerTest {
     }
     @Test
     public void get() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getUnit")
+        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

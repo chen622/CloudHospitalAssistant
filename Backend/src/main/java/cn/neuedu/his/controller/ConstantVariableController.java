@@ -159,9 +159,10 @@ public class ConstantVariableController {
             }
 
             map = redisService.getMapAll(type);
-            ConstantVariable constantVariable = new ConstantVariable();
+            ConstantVariable constantVariable;
 
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                constantVariable  = new ConstantVariable();
                 constantVariable.setName(entry.getKey());
                 constantVariable.setId(entry.getValue());
                 list.add(constantVariable);

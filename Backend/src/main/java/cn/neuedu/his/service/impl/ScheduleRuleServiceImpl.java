@@ -27,11 +27,6 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     @Autowired
     private RegistrationTypeService registrationTypeService;
 
-    @Override
-    public ScheduleRule getLegalSchedule(Integer doctorId, Integer period) {
-        return scheduleRuleMapper.getLegalSchedule(doctorId, period);
-    }
-
 
     @Override
     public List<ScheduleRule> getDoctorScheduleByDoctorId(Integer doctorId) {
@@ -82,7 +77,9 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
         //return CommonUtil.errorJson(ErrorEnum.E_618);
 
         //判断时间是否冲突
-        if (this.getLegalSchedule(scheduleRule.getDoctorId(), scheduleRule.getPeriod()) != null)
+        ScheduleRule scheduleRule1 = scheduleRuleMapper.getLegalSchedule(userService.findById(scheduleRule.getDoctorId()).getIdentifyId()
+                , scheduleRule.getPeriod(),scheduleRule.getDay());
+        if (scheduleRule1 != null &&scheduleRule.getId()!=scheduleRule1.getId())
             throw new RuntimeException("619");
         //return CommonUtil.errorJson(ErrorEnum.E_619);
     }
