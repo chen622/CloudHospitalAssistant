@@ -74,10 +74,13 @@
                     <a-tab-pane tab="病历首页" key="1">
                         <a-row type="flex" align="middle" justify="center">
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%">暂存</a-button>
+                                <a-button style="width: 80%" @click="loadTemp">载入暂存信息</a-button>
                             </a-col>
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%" @click="resetForm">清空当前页面</a-button>
+                                <a-button type="primary" style="width: 80%" @click="saveTemp">暂存</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button type="danger" style="width: 80%" @click="resetForm">清空当前页面</a-button>
                             </a-col>
                         </a-row>
                         <a-form :form="record">
@@ -207,6 +210,46 @@
 
         }),
         methods: {
+            loadTemp () {
+                if (this.currentPatient == null) {
+                    this.$message.error("请选择病人")
+                } else {
+                    let that = this
+                    this.$api.get('/medical_record/getTemporaryMR/' + this.currentPatient.id, null,
+                        res => {
+                            if (res.code === "100") {
+                                that.$message.success("获取暂存信息成功")
+                            } else if (res.cord === '638') {
+                                that.$message.info("不存在暂存信息")
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, () => {
+                        })
+                }
+            },
+            saveTemp () {
+                if (this.currentPatient == null) {
+                    this.$message.error("请选择病人")
+                } else {
+                    let data = {
+                        medicalRecord: this.record.getFieldsValue(),
+                        registrationId: this.currentPatient.id,
+                        diagnoses: this.$store.state.diagnose,
+                    }
+                    let that = this
+                    data.medicalRecord.isWesternMedicine = this.$store.state.diagnoseType
+                    this.$api.post('/medical_record/saveTemporaryMR', data,
+                        res => {
+                            if (res.code === "100") {
+                                that.$message.success("暂存成功")
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, () => {
+                        })
+                }
+            },
             submitRecord () {
                 if (this.currentPatient == null) {
                     this.$message.error("请选择病人")
@@ -220,7 +263,7 @@
                                 data.medicalRecord = this.record.getFieldsValue()
                                 data.registrationId = this.currentPatient.id
                                 data.diagnoses = this.$store.state.diagnose
-                                data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
+                                data.medicalRecord.isWesternMedicine = this.$store.state.diagnoseType
                                 this.createMedicalRecord(data)
                             }
                         }

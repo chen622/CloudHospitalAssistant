@@ -49,4 +49,13 @@ public class RedisServiceImplTest {
 
         }
     }
+
+    @Test
+    public void getTemporaryMedicalRecord() {
+        try {
+            System.out.println(redisService.getTemporaryMedicalRecord(11111111));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

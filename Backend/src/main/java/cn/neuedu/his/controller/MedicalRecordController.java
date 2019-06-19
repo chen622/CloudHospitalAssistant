@@ -41,11 +41,23 @@ public class MedicalRecordController {
      * @return
      */
     @PostMapping("/saveTemporaryMR")
-    public JSONObject saveTemporaryMR(@RequestBody JSONObject object) {
-        Integer id = Integer.parseInt(object.get("registrationId").toString());
-        MedicalRecord record = JSONObject.parseObject(object.get("record").toString(), MedicalRecord.class);
+    public JSONObject saveTemporaryMR(@RequestBody JSONObject object, Authentication authentication) {
         try {
-            redisService.setTemporaryMedicalRecord(id, record);
+            PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        Integer registrationId = object.getInteger("registrationId");
+        if (registrationId == null) {
+            return CommonUtil.errorJson(ErrorEnum.E_501);
+        }
+        MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
+        medicalRecord.setRegistrationId(registrationId);
+        ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
+        ArrayList<Integer> diagnosesIds = new ArrayList<>();
+        diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
+        try {
+            redisService.setTemporaryMedicalRecord(registrationId, medicalRecord);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_801);
         }
@@ -62,8 +74,8 @@ public class MedicalRecordController {
     public JSONObject getTemporaryMR(@PathVariable("registrationId") Integer registrationId) {
         try {
             MedicalRecord record = redisService.getTemporaryMedicalRecord(registrationId);
-            if (record == null)
-                record = new MedicalRecord();
+            if (record==null)
+                return CommonUtil.errorJson(ErrorEnum.E_638);
             return CommonUtil.successJson(record);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
@@ -161,18 +173,16 @@ public class MedicalRecordController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
         Integer registrationID = null;
-        try {
-            registrationID = Integer.parseInt(object.get("registrationId").toString());
-        } catch (NumberFormatException n) {
+        registrationID = object.getInteger("registrationId");
+        if (registrationID == null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        }
 
         //删除暂存病历
-//        try {
-//            redisService.deleteTemporaryMR(registrationID);
-//        } catch (Exception e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_803);
-//        }
+        try {
+            redisService.deleteTemporaryMR(registrationID);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_803);
+        }
 
         MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationID);
@@ -239,7 +249,7 @@ public class MedicalRecordController {
     @PostMapping("/updateMR")
     public JSONObject updateMR(@RequestBody JSONObject object, Authentication authentication) {
         try {
-             PermissionCheck.isOutpatientDoctor(authentication);
+            PermissionCheck.isOutpatientDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
