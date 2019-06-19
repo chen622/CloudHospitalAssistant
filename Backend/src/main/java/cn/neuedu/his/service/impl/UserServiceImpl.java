@@ -189,15 +189,9 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return userMapper.getAllTollKeeper(map.get("挂号收费员"));
     }
 
-
     @Override
     public User getUserAllInformationByName(String username){
         return userMapper.getUserAllInformationByUsername(username);
-    }
-
-    @Override
-    public User findUserAndInvoiceAndPaymentDuringDate(Integer userId, Date startDate, Date endDate) {
-        return userMapper.getUserAndInvoiceAndPaymentDuringDate(userId, startDate, endDate);
     }
 
     @Override

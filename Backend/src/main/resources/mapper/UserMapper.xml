@@ -1,150 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.UserMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="real_name" jdbcType="VARCHAR" property="realName" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
-    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
-    <result column="type_id" jdbcType="INTEGER" property="typeId" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
+        <result column="type_id" jdbcType="INTEGER" property="typeId"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="identify_id" jdbcType="VARCHAR" property="identifyId"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+    </resultMap>
 
-  <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="real_name" jdbcType="VARCHAR" property="realName" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
-    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
-    <result column="type_id" jdbcType="INTEGER" property="typeId" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-    <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
-      <id column="id" jdbcType="INTEGER" property="id" />
-      <result column="title_id" jdbcType="INTEGER" property="titleId" />
-      <result column="can_arrange" jdbcType="BIT" property="canArrange" />
-    </association>
-  </resultMap>
+    <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
+        <result column="type_id" jdbcType="INTEGER" property="typeId"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="identify_id" jdbcType="VARCHAR" property="identifyId"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <result column="title_id" jdbcType="INTEGER" property="titleId"/>
+            <result column="can_arrange" jdbcType="BIT" property="canArrange"/>
+        </association>
+    </resultMap>
 
-  <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
-    select * from user where username = #{username}
-  </select>
+    <select id="getUserByUsername" parameterType="String" resultMap="BaseResultMap">
+        select *
+        from user
+        where username = #{username}
+    </select>
 
-  <select id="getUserByDepartmentId" resultMap="BaseResultMap">
-    select * from user where department_id = #{departmentId} and is_delete = 0
-  </select>
+    <select id="getUserByDepartmentId" resultMap="BaseResultMap">
+        select *
+        from user
+        where department_id = #{departmentId}
+          and is_delete = 0
+    </select>
 
-  <!-- 获得模糊搜索的用户信息-->
-  <select id="findUser" parameterType="String" resultMap="BaseResultMap">
-    select * from user where username like concat('%',#{username},'%')
-  </select>
-
-
-
-  <!-- 选择用户和医生信息 -->
-  <select id="getUserAllInformationByUsername" parameterType="String" resultMap="UserAndDoctor">
-    SELECT *
-    FROM `user` JOIN doctor ON user.id = doctor.id
-    where username = #{username}
-  </select>
+    <!-- 获得模糊搜索的用户信息-->
+    <select id="findUser" parameterType="String" resultMap="BaseResultMap">
+        select *
+        from user
+        where username like concat('%', #{username}, '%')
+    </select>
 
 
-
-<!--  收费员的发票和缴费单信息-->
-  <resultMap id="adminAndInvoiceAndPaymentDuringDate" type="cn.neuedu.his.model.User">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="real_name" jdbcType="VARCHAR" property="realName" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
-    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
-    <result column="type_id" jdbcType="INTEGER" property="typeId" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-    <collection property="invoiceList" ofType="cn.neuedu.his.model.Invoice" select="selectInvoiceByUserId" column="{userId = id, startDate = startDate, endDate = endDate}"/>
-  </resultMap>
-
-  <resultMap id="paymentAndInvoice" type="cn.neuedu.his.model.Invoice">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
-    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
-    <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
-    <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
-    <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
-    <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-    <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="selectPaymentByInvoiceId" column="{invoiceId = id}"/>
-  </resultMap>
-
-  <select id="getUserAndInvoiceAndPaymentDuringDate" resultMap="adminAndInvoiceAndPaymentDuringDate">
-    select *, #{startDate} as startDate, #{endDate} as endDate from user where id = #{userId}
-  </select>
-
-  <select id="selectInvoiceByUserId" resultMap="paymentAndInvoice">
-    select * from invoice where operator_id = #{userId} and created_date >= #{startDate} and created_date &lt; #{endDate}
-  </select>
-
-  <select id="selectPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-    select * from payment where invoice_id = #{invoiceId}
-  </select>
+    <!-- 选择用户和医生信息 -->
+    <select id="getUserAllInformationByUsername" parameterType="String" resultMap="UserAndDoctor">
+        SELECT *
+        FROM `user`
+                 JOIN doctor ON user.id = doctor.id
+        where username = #{username}
+    </select>
 
 
 
-  <resultMap id="findAllWithName" type="cn.neuedu.his.model.User">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="username" jdbcType="VARCHAR" property="username" />
-    <result column="real_name" jdbcType="VARCHAR" property="realName" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
-    <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime" />
-    <result column="type_id" jdbcType="INTEGER" property="typeId" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="identify_id" jdbcType="VARCHAR" property="identifyId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-    <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
-    <association property="dept" javaType="cn.neuedu.his.model.Department" column="{id=department_id}" select="getDept"/>
-    <association property="type" javaType="String" column="type_id" select="getType"/>
-    <association property="title" javaType="String" column="id" select="getTile"/>
-  </resultMap>
+    <resultMap id="findAllWithName" type="cn.neuedu.his.model.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
+        <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
+        <result column="type_id" jdbcType="INTEGER" property="typeId"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="identify_id" jdbcType="VARCHAR" property="identifyId"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <association property="dept" javaType="cn.neuedu.his.model.Department" column="{id=department_id}"
+                     select="getDept"/>
+        <association property="type" javaType="String" column="type_id" select="getType"/>
+        <association property="title" javaType="String" column="id" select="getTile"/>
+    </resultMap>
 
-  <select id="findAllWithName" resultMap="findAllWithName">
-    select * from user;
-  </select>
-  <select id="getDept" resultMap="cn.neuedu.his.mapper.DepartmentMapper.BaseResultMap">
-    select * from department where id=#{id}
-  </select>
-  <select id="getType" resultType="String">
-    select name from  constant_variable where id=#{type_id}
-  </select>
-  <select id="getTile" resultType="String">
-    select c.name from  doctor ,constant_variable c where doctor.id=#{id} and title_id = c.id
-  </select>
+    <select id="findAllWithName" resultMap="findAllWithName">
+        select *
+        from user;
+    </select>
+    <select id="getDept" resultMap="cn.neuedu.his.mapper.DepartmentMapper.BaseResultMap">
+        select *
+        from department
+        where id = #{id}
+    </select>
+    <select id="getType" resultType="String">
+        select name
+        from constant_variable
+        where id = #{type_id}
+    </select>
+    <select id="getTile" resultType="String">
+        select c.name
+        from doctor,
+             constant_variable c
+        where doctor.id = #{id}
+          and title_id = c.id
+    </select>
 
-<!--  返回所有收费员信息-->
-  <select id="getAllTollKeeper" resultMap="BaseResultMap">
-    select * from user where type_id = #{tollType} and is_delete = false
-  </select>
-
+    <!--  返回所有收费员信息-->
+    <select id="getAllTollKeeper" resultMap="BaseResultMap">
+        select *
+        from user
+        where type_id = #{tollType}
+          and is_delete = false
+    </select>
 
 
 </mapper>

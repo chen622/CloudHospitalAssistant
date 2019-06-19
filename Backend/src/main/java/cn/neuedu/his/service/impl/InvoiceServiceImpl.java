@@ -269,4 +269,25 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     public Integer getInvoiceNumberByAllDoctor(Integer projectOperatorId, Date start, Date end) {
         return invoiceMapper.getInvoiceNumberByAllDoctor(projectOperatorId, start, end);
     }
+
+    @Override
+    public BigDecimal getTotalFeeByType(Integer type, Date start, Date end) {
+        BigDecimal result = invoiceMapper.getTotalFeeByType(type, start, end);
+        return result == null? new BigDecimal(0): result;
+    }
+
+    @Override
+    public Integer getNormalInvoiceNumber(Date start, Date end) {
+        return invoiceMapper.getNormalInvoiceNumber(start, end);
+    }
+
+    @Override
+    public Integer getAnewInvoiceNumber(Date start, Date end) {
+        return invoiceMapper.getAnewInvoiceNumber(start, end);
+    }
+
+    @Override
+    public ArrayList<Invoice> findInvoiceAndPaymentByUser(Integer userId, Date start, Date end) {
+        return invoiceMapper.getInvoiceAndPaymentByUser(userId, start, end);
+    }
 }

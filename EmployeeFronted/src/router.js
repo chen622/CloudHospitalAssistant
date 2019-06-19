@@ -91,6 +91,11 @@ export default new Router({
             path: '/finance/workload',
             name: 'workload',
             component: () => import('./views/Finance/WorkloadCalculate')
+        },
+        {
+            path: '/patient/make',
+            name: 'make',
+            component: () => import('./views/patient/MakeDailySettle')
         }
     ]
 })

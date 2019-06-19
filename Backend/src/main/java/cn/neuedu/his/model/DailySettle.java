@@ -62,8 +62,8 @@ public class DailySettle {
     /**
      * 其他费用
      */
-    @Column(name = "other_fee")
-    private Long otherFee;
+    @Column(name = "deal_fee")
+    private BigDecimal dealFee;
 
     /**
      * 一般发票数量
@@ -244,23 +244,7 @@ public class DailySettle {
         this.registrationFee = registrationFee;
     }
 
-    /**
-     * 获取其他费用
-     *
-     * @return other_fee - 其他费用
-     */
-    public Long getOtherFee() {
-        return otherFee;
-    }
 
-    /**
-     * 设置其他费用
-     *
-     * @param otherFee 其他费用
-     */
-    public void setOtherFee(Long otherFee) {
-        this.otherFee = otherFee;
-    }
 
     /**
      * 获取一般发票数量
@@ -332,5 +316,13 @@ public class DailySettle {
 
     public void setCheckUser(User checkUser) {
         this.checkUser = checkUser;
+    }
+
+    public BigDecimal getDealFee() {
+        return dealFee;
+    }
+
+    public void setDealFee(BigDecimal dealFee) {
+        this.dealFee = dealFee;
     }
 }

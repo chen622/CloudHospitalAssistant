@@ -2,7 +2,7 @@
     <a-row type="flex" align="top" justify="space-around" class="info-card">
         <a-col span="23">
             <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
-                <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}" >
+                <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
                     <span slot="title" style="font-size: 22px">收费员列表</span>
                     <a-collapse defaultActiveKey="1" :bordered="false">
                         <a-collapse-panel header="收费员查询" key="1">
@@ -37,7 +37,8 @@
             <a-col :span="showList?17:21" :xl="showList?17:22">
                 <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}" style="margin-left: 5%">
                     <span slot="title" style="font-size: 22px">日结表信息</span>
-                    <a-card :loading="load.record" :body-style="{minHeight: '10px'}" :bordered='false' style="text-align: center">
+                    <a-card :loading="load.record" :body-style="{minHeight: '10px'}" :bordered='false'
+                            style="text-align: center">
                         <span v-if="settleTableList.length == 0">无未核对日结单</span>
                         <a-collapse :bordered="false" style="margin: 0 3% 0 3%; font-size: 16px"
                                     v-for="(i,index) in settleTableList" :key="i.id">
@@ -97,8 +98,8 @@
                                         </tr>
 
                                         <tr class="details">
-                                            <td>检验费</td>
-                                            <td>{{i.dailySettle.inspectionFee}}</td>
+                                            <td>挂号费</td>
+                                            <td>{{i.dailySettle.registrationFee}}</td>
                                         </tr>
 
                                         <tr class="details">
@@ -107,12 +108,12 @@
                                         </tr>
 
                                         <tr class="details">
-                                            <td>挂号费</td>
-                                            <td>{{i.dailySettle.registrationFee}}</td>
+                                            <td>检验费</td>
+                                            <td>{{i.dailySettle.inspectionFee}}</td>
                                         </tr>
 
                                         <tr class="details">
-                                            <td>其他费用</td>
+                                            <td>处置费用</td>
                                             <td>{{i.dailySettle.otherFee}}</td>
                                         </tr>
 
@@ -194,7 +195,7 @@
                     if (res.code === '100') {
                         that.settleTableList = res.data.settleList
                         that.currentTollKeeper = res.data.admin
-                    } else if (res.code === '502'){
+                    } else if (res.code === '502') {
                         that.$message.error(res.message)
                     }
                     that.load.record = false

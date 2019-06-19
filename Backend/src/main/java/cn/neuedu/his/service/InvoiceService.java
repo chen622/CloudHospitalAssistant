@@ -4,6 +4,7 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -24,4 +25,8 @@ public interface InvoiceService extends Service<Invoice> {
     ArrayList<Integer> getInvoiceNormalIdList(Integer settleId);
     ArrayList<Integer> getInvoiceAnewIdList(Integer settleId);
     Integer getInvoiceNumberByAllDoctor(Integer doctorId, Date start, Date end);
+    BigDecimal getTotalFeeByType(Integer type, Date start, Date end);
+    Integer getNormalInvoiceNumber(Date start, Date end);
+    Integer getAnewInvoiceNumber(Date start, Date end);
+    ArrayList<Invoice> findInvoiceAndPaymentByUser(Integer userId, Date start, Date end);
 }
