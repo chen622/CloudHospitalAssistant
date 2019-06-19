@@ -23,8 +23,6 @@ public interface UserService extends Service<User> {
 
     User getUserAllInformationByName(String username);
 
-    User findUserAndInvoiceAndPaymentDuringDate(Integer userId, Date startDate, Date endDate);
-
     List<User> findAllUsers();
 
     ArrayList<User> findUserByDepartmentId(Integer departmentId);

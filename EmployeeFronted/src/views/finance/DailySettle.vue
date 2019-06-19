@@ -100,8 +100,8 @@
                                         </tr>
 
                                         <tr class="details">
-                                            <td>检验费</td>
-                                            <td>{{i.dailySettle.inspectionFee}}</td>
+                                            <td>挂号费</td>
+                                            <td>{{i.dailySettle.registrationFee}}</td>
                                         </tr>
 
                                         <tr class="details">
@@ -110,12 +110,12 @@
                                         </tr>
 
                                         <tr class="details">
-                                            <td>挂号费</td>
-                                            <td>{{i.dailySettle.registrationFee}}</td>
+                                            <td>检验费</td>
+                                            <td>{{i.dailySettle.inspectionFee}}</td>
                                         </tr>
 
                                         <tr class="details">
-                                            <td>其他费用</td>
+                                            <td>处置费用</td>
                                             <td>{{i.dailySettle.otherFee}}</td>
                                         </tr>
 

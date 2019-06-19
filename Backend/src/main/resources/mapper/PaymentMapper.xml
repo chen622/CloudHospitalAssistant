@@ -107,7 +107,6 @@
         </association>
     </resultMap>
 
-
     <select id="getAllPaymentWithPaymentTypeByPatientId" resultMap="WithPaymentType">
         select payment.*,
         payment_type.id as typeId,

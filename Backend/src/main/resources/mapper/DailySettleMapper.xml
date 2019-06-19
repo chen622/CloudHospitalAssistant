@@ -15,7 +15,7 @@
     <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
     <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
     <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
-    <result column="other_fee" jdbcType="DECIMAL" property="otherFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
     <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
     <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
     <result column="is_pass" jdbcType="BIT" property="isPass" />
@@ -43,7 +43,7 @@
     <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
     <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
     <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
-    <result column="other_fee" jdbcType="DECIMAL" property="otherFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
     <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
     <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
     <result column="is_pass" jdbcType="BIT" property="isPass" />
@@ -67,7 +67,7 @@
     <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
     <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
     <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
-    <result column="other_fee" jdbcType="DECIMAL" property="otherFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
     <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
     <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
     <result column="is_pass" jdbcType="BIT" property="isPass" />

@@ -1,49 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.InvoiceMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Invoice">
-    <!--
-      WARNING - @mbg.generated
-    -->
-      <id column="id" jdbcType="INTEGER" property="id" />
-      <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
-      <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
-      <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
-      <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
-      <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
-      <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Invoice">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price_amount" jdbcType="DECIMAL" property="priceAmount"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="anew_amount" jdbcType="INTEGER" property="anewAmount"/>
+        <result column="again_amount" jdbcType="INTEGER" property="againAmount"/>
+        <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+    </resultMap>
 
-  <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
-      <id column="id" jdbcType="INTEGER" property="id" />
-      <result column="price_amount" jdbcType="DECIMAL" property="priceAmount" />
-      <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
-      <result column="anew_amount" jdbcType="INTEGER" property="anewAmount" />
-      <result column="again_amount" jdbcType="INTEGER" property="againAmount" />
-      <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId" />
-      <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-      <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByInvoiceId" column="id"/>
-  </resultMap>
+    <resultMap id="InvoiceAndPaymentMap" type="cn.neuedu.his.model.Invoice">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price_amount" jdbcType="DECIMAL" property="priceAmount"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="anew_amount" jdbcType="INTEGER" property="anewAmount"/>
+        <result column="again_amount" jdbcType="INTEGER" property="againAmount"/>
+        <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByInvoiceId"
+                    column="id"/>
+    </resultMap>
 
-  <select id="getInvoiceAndPaymentByInvoiceId" resultMap="InvoiceAndPaymentMap">
-        select  * from invoice where id = #{invoiceId} ;
-  </select>
+    <select id="getInvoiceAndPaymentByInvoiceId" resultMap="InvoiceAndPaymentMap">
+        select *
+        from invoice
+        where id = #{invoiceId};
+    </select>
 
-  <select id="getPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-        SELECT * FROM payment where invoice_id = #{id} order by create_time asc
-   </select>
+    <select id="getPaymentByInvoiceId" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+        SELECT *
+        FROM payment
+        where invoice_id = #{id}
+        order by create_time asc
+    </select>
 
 
     <select id="getInvoiceNormalList" resultType="java.lang.Integer">
-        select id from invoice where daily_settle_id = #{settleId}
+        select id
+        from invoice
+        where daily_settle_id = #{settleId}
     </select>
 
     <select id="getInvoiceAnewList" resultType="java.lang.Integer">
-        select id from invoice where daily_settle_id = #{settleId} and anew_amount != 0
+        select id
+        from invoice
+        where daily_settle_id = #{settleId}
+          and anew_amount != 0
     </select>
 
     <select id="getInvoiceNumberByAllDoctor" resultType="java.lang.Integer">
-        select count(distinct invoice.id) from invoice, payment where invoice_id = invoice.id and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId}) and payment.create_time <![CDATA[>=]]> #{startDate} and payment.create_time <![CDATA[<=]]>#{endDate}
+        select count(distinct invoice.id)
+        from invoice,
+             payment
+        where invoice_id = invoice.id
+          and (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
+          and payment.create_time <![CDATA[>=]]> #{startDate}
+          and payment.create_time <![CDATA[<=]]> #{endDate}
     </select>
+
+    <!--    统计各类费用-->
+    <select id="getTotalFeeByType" resultType="java.math.BigDecimal">
+        select sum(p.unit_price * p.quantity)
+        from invoice i
+                 join payment p on i.id = p.invoice_id
+        where p.invoice_id = i.id
+          and (select pt.type from payment_type pt where pt.id = p.payment_type_id) = #{type}
+          and is_frozen = false
+          and i.created_date >= #{start}
+          and i.created_date &lt; #{end}
+    </select>
+
+    <!--    统计重打与正常发票-->
+    <select id="getNormalInvoiceNumber" resultType="java.lang.Integer">
+        select count(*)
+        from invoice
+        where created_date >= #{start}
+          and created_date &lt; #{end}
+    </select>
+
+    <!--    统计重打与正常发票-->
+    <select id="getAnewInvoiceNumber" resultType="java.lang.Integer">
+        select sum(anew_amount)
+        from invoice
+        where created_date >= #{start}
+          and created_date &lt; #{end}
+    </select>
+
+    <!--    获取某收费员下所有发票及对应payment-->
+    <select id="getInvoiceAndPaymentByUser" resultMap="InvoiceAndPaymentMap">
+        select *
+        from invoice
+        where operator_id = #{userId}
+          and created_date >= #{start}
+          and created_date &lt; #{end}
+    </select>
+
 
 </mapper>

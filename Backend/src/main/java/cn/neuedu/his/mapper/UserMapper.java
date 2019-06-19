@@ -14,7 +14,6 @@ import java.util.List;
 public interface UserMapper extends MyMapper<User> {
     User getUserByUsername(String username);
     ArrayList<User> getUserByDepartmentId(Integer departmentId);
-    User getUserAndInvoiceAndPaymentDuringDate(@Param("userId") Integer userId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     User getUserAllInformationByUsername(String username);
     ArrayList<User> findAllWithName();
