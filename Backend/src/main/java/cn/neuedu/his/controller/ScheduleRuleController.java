@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.JobSchedule;
 import cn.neuedu.his.model.ScheduleRule;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.RegistrationTypeService;
@@ -15,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +35,34 @@ public class ScheduleRuleController {
     DoctorService doctorService;
     @Autowired
     RegistrationTypeService registrationTypeService;
+
+    @PostMapping("/use")
+    public JSONObject useRule(@RequestBody JSONObject requestBody, Authentication authentication) {
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+            Integer departmentId = requestBody.getInteger("departmentId");
+            Date startDate = requestBody.getDate("start");
+            Date endDate = requestBody.getDate("end");
+
+            if (departmentId == null || startDate == null || endDate == null) {
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            }
+
+            Calendar start = Calendar.getInstance();
+            start.setTime(startDate);
+            Calendar end = Calendar.getInstance();
+            end.setTime(endDate);
+
+            List<JobSchedule> jobSchedules = new ArrayList<>();
+            while (start.compareTo(end) <= 0) {
+                jobSchedules.addAll(scheduleRuleService.useRuleToGenerateSchedule(departmentId, start));
+                start.add(Calendar.DAY_OF_YEAR, 1);
+            }
+            return CommonUtil.successJson(jobSchedules);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
 
     @GetMapping("/getByDepartmentId/{departmentId}")
     public JSONObject getByDepartmentId(@PathVariable("departmentId") Integer departmentId, Authentication authentication) {

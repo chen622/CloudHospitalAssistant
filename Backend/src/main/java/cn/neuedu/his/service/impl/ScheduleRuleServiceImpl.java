@@ -1,15 +1,17 @@
 package cn.neuedu.his.service.impl;
 
 import cn.neuedu.his.mapper.ScheduleRuleMapper;
+import cn.neuedu.his.model.JobSchedule;
 import cn.neuedu.his.model.ScheduleRule;
-import cn.neuedu.his.service.DoctorService;
-import cn.neuedu.his.service.RegistrationTypeService;
-import cn.neuedu.his.service.ScheduleRuleService;
-import cn.neuedu.his.service.UserService;
+import cn.neuedu.his.service.*;
+import cn.neuedu.his.util.StringUtils;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -26,6 +28,8 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     private DoctorService doctorService;
     @Autowired
     private RegistrationTypeService registrationTypeService;
+    @Autowired
+    private JobScheduleService jobScheduleService;
 
 
     @Override
@@ -36,6 +40,18 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     @Override
     public List<ScheduleRule> getDoctorScheduleByDepartmentId(Integer departmentId) {
         return scheduleRuleMapper.getFullByDepartmentId(departmentId);
+    }
+
+    @Override
+    @Transactional
+    public List<JobSchedule> useRuleToGenerateSchedule(Integer departmentId, Calendar current) {
+        jobScheduleService.removeByDate(current.getTime());
+        List<ScheduleRule> scheduleRules = scheduleRuleMapper.getFullByDepartmentIdAndDay(departmentId, StringUtils.castSundayToMonday(current.get(Calendar.DAY_OF_WEEK)));
+        List<JobSchedule> jobSchedules = new ArrayList<>();
+        scheduleRules.forEach(scheduleRule -> {
+            jobSchedules.add(jobScheduleService.generateByRule(scheduleRule, current.getTime()));
+        });
+        return jobSchedules;
     }
 
     @Override
@@ -78,8 +94,8 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
 
         //判断时间是否冲突
         ScheduleRule scheduleRule1 = scheduleRuleMapper.getLegalSchedule(userService.findById(scheduleRule.getDoctorId()).getIdentifyId()
-                , scheduleRule.getPeriod(),scheduleRule.getDay());
-        if (scheduleRule1 != null &&scheduleRule.getId()!=scheduleRule1.getId())
+                , scheduleRule.getPeriod(), scheduleRule.getDay());
+        if (scheduleRule1 != null && scheduleRule.getId() != scheduleRule1.getId())
             throw new RuntimeException("619");
         //return CommonUtil.errorJson(ErrorEnum.E_619);
     }

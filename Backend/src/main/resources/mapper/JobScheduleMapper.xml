@@ -106,5 +106,11 @@
         from constant_variable
         where id = #{title_id}
     </select>
+
+    <delete id="removeByDate">
+        delete
+        from job_schedule
+        where datediff(date, #{date}) = 0
+    </delete>
 </mapper>
 

@@ -61,7 +61,9 @@
     </select>
 
     <select id="getFullByDepartmentId" resultMap="RuleWithFull">
-        select schedule_rule.*,user.*,doctor.*,
+        select schedule_rule.*,
+               user.*,
+               doctor.*,
                user.id                as userId,
                title.id               as titleId,
                title.name             as titleName,
@@ -76,6 +78,16 @@
                  join registration_type on schedule_rule.registration_type_id = registration_type.id
                  join constant_variable as period on schedule_rule.period = period.id
         where department_id = #{departmentId}
+          and not user.is_delete
+          and not doctor.is_delete;
+    </select>
+    <select id="getFullByDepartmentIdAndDay" resultMap="BaseResultMap">
+        select schedule_rule.*
+        from user
+                 join doctor on user.id = doctor.id
+                 right join schedule_rule on doctor.id = schedule_rule.doctor_id
+        where department_id = #{departmentId}
+          and day = #{day}
           and not user.is_delete
           and not doctor.is_delete;
     </select>

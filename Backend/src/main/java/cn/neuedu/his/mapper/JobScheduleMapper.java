@@ -23,4 +23,6 @@ public interface JobScheduleMapper extends MyMapper<JobSchedule> {
     ArrayList<JobSchedule> getScheduleByPeriod(@Param("date") Date date, @Param("hour") Integer hour, @Param("departmentId") Integer departmentId);
 
     ArrayList<JobSchedule> getScheduleByMonth(@Param("date") Date date, @Param("departmentId") Integer departmentId);
+
+    void removeByDate(Date date);
 }
