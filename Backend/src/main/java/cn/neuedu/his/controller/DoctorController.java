@@ -123,11 +123,13 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
         List<Registration> list = registrationService.getAllWaitingRegistration(doctorID, Constants.WAITING_FOR_TREATMENT, time);
-
+        List<Registration> inside= registrationService.getAllWaitingRegistration(doctorID, Constants.INSIDE_DOCTOR, time);
         if (list == null) {
             list = new ArrayList<>();
+            if(inside!=null){
+                list.addAll(inside);
+            }
         }
-
         List<Registration> list2 = registrationService.getAllWaitingRegistration(doctorID, Constants.FIRST_DIAGNOSIS, time);
         if (list2 == null)
             list2 = new ArrayList<>();
