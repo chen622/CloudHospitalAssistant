@@ -139,7 +139,6 @@
                         that.$message.error(res.msg)
                     }
                 }, () => {
-                    that.$message.error("网络异常")
                 })
             }
         },

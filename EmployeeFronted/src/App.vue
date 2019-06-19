@@ -32,6 +32,16 @@
                 </a-row>
             </a-layout-header>
             <a-layout-content style="background: #fff">
+                <a-modal
+                        v-model="loading"
+                        :footer="false"
+                        :closable="false"
+                        :maskClosable="false"
+                        :bodyStyle="{textAlign: 'center'}"
+                >
+                    <a-spin tip="正在加载..." size="large">
+                    </a-spin>
+                </a-modal>
                 <router-view></router-view>
             </a-layout-content>
             <a-layout-footer style="background: #000;color: white">
@@ -48,6 +58,7 @@
                 </a-row>
             </a-layout-footer>
         </a-layout>
+
     </a-locale-provider>
 </template>
 
@@ -70,14 +81,18 @@
                 this.$api.get("/user/function", null, res => {
                     that.$store.commit("setLogin", true)
                     that.$store.commit("setUrls", res.data)
-                }, res => {// eslint-disable-next-line
-                    console.log('API error: ' + res)
+                }, () => {
                 })
             }
         },
         mounted () {
             if (sessionStorage.getItem("token") != null) {
                 this.urls()
+            }
+        },
+        computed: {
+            loading: function () {
+                return this.$store.state.loading
             }
         }
     }
@@ -115,11 +130,16 @@
     }
 
     .ant-menu-submenu {
-        height: 70px;
-        line-height: 70px;
+        height: 70px !important;
+        line-height: 70px !important;
         min-width: 72px;
         font-size: 18px;
+    }
 
+    .ant-menu-sub > .ant-menu-item {
+        font-size: 14px;
+        height: 40px;
+        line-height: 40px;
     }
 
     .footer-title {

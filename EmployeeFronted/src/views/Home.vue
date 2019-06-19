@@ -80,9 +80,7 @@
                             index++
                             that.departments.push(res.data.departments[index])
                         })
-                    },
-                    res => {
-                        this.$message.error(res.msg);
+                    }, () => {
                     })
             },
         },

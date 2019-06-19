@@ -175,7 +175,6 @@
                     },
                     () => {
                         that.loading = false
-                        that.$message.error("网络错误")
                     }
                 )
             },
@@ -199,7 +198,6 @@
                     },
                     () => {
                         that.loading = false
-                        that.$message.error("网络错误")
                     }
                 )
             },
@@ -261,7 +259,6 @@
                     that.$emit("reload")
                 }, () => {
                     that.loading = false
-                    that.$message.error("网络异常")
                 })
             },
             getSettlementType () {
@@ -274,7 +271,6 @@
                         } else
                             that.$message.error(res.msg)
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
         },

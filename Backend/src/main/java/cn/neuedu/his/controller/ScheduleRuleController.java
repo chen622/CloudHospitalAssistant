@@ -75,7 +75,6 @@ public class ScheduleRuleController {
         try {
             ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject, ScheduleRule.class);
             scheduleRuleService.insertScheduleRule(scheduleRule);
-            return CommonUtil.successJson();
         } catch (RuntimeException e) {
             if (e.getMessage().equals("616"))
                 return CommonUtil.errorJson(ErrorEnum.E_616);
@@ -85,9 +84,8 @@ public class ScheduleRuleController {
                 return CommonUtil.errorJson(ErrorEnum.E_618);
             else if (e.getMessage().equals("619"))
                 return CommonUtil.errorJson(ErrorEnum.E_619);
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_500);
         }
+        return CommonUtil.successJson();
     }
 
 

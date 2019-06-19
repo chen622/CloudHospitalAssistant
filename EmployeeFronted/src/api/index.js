@@ -1,4 +1,6 @@
 import axios from 'axios'
+import vue from '../main'
+
 
 // global.baseURL = 'http://his.ccm.ink:8078'
 global.baseURL = 'http://' + 'localhost:8078'
@@ -66,6 +68,8 @@ export default { // 自定义判断元素类型JS
                         alert("登录超时")
 
                     } else {
+                        vue.$message.destroy()
+                        vue.$message.error("网络异常")
                         // eslint-disable-next-line
                         console.log('API error: ' + err)
                         failure(err)

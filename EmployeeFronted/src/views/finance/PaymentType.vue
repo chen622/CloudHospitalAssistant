@@ -196,9 +196,9 @@
                             that.nameKeyMap = m
                             that.nameKeyMap.set('大类', 0)
                             that.typeList.push({id: 0, name: '大类'})
-                            var p = res.data.filter(item => 0 != item.type)
+                            var p = res.data.filter(item => 0 !== item.type)
                             for (let i = 0; i < p.length; i++) {
-                                if (p[i].type != 0) {
+                                if (p[i].type !== 0) {
                                     that.paymentTypeList.push({
                                         key: p[i].id,
                                         id: p[i].id,
@@ -213,8 +213,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }, onSearchByCode (value) {
                 if (value) {
@@ -240,13 +239,13 @@
             }, typeChange (e) {
                 this.paymentTypeTemp.type = e
             }, deleteChange (e) {
-                if (e == "0")
+                if (e === "0")
                     this.paymentTypeTemp.isDelete = 0
-                if (e == "1")
+                if (e === "1")
                     this.paymentTypeTemp.isDelete = 1
             }, handleChange (value, record, name) {
                 var newData = [...this.paymentTypeList]
-                if (name == "name") {
+                if (name === "name") {
                     var temp = newData.filter(item => value === item.name)
                     if (temp.length > 1) {
                         this.$message.error('名称重复')
@@ -287,8 +286,7 @@
                             } else {
                                 that.$message.error('更新失败: ' + res.msg)
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                     return
                 }
@@ -320,8 +318,7 @@
                             } else {
                                 that.$message.error(res.msg)
                             }
-                        }, res => {
-                            that.$message.error(res)
+                        }, () => {
                         })
                 } else {
                     this.retreatDelete(p)
@@ -358,8 +355,7 @@
                         } else {
                             that.$message.error('更新失败: ' + res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
 
             }, ok () {
@@ -386,8 +382,7 @@
                         } else {
                             that.$message.error(res.msg)
                         }
-                    }, res => {
-                        that.$message.error(res)
+                    }, () => {
                     })
             }
         }

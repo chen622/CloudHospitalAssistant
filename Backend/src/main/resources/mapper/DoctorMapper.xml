@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DoctorMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Doctor">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="title_id" jdbcType="INTEGER" property="titleId" />
-    <result column="can_arrange" jdbcType="BIT" property="canArrange" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Doctor">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title_id" jdbcType="INTEGER" property="titleId"/>
+        <result column="can_arrange" jdbcType="BIT" property="canArrange"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
 
-  <select id="getDeptNo" resultType="integer">
-        select u.department_id from  user u,doctor where u.id=doctor.id and doctor.id=#{id}
-  </select>
+    <select id="getDeptNo" resultType="integer">
+        select u.department_id
+        from user u,
+             doctor
+        where u.id = doctor.id
+          and doctor.id = #{id}
+    </select>
 
-  <select id="getAllClinicNotDelete" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap">
-    select u.* from doctor d join user u on d.id = u.id
-    where d.is_delete = false and u.is_delete = false
-        and u.department_id in
-            (select dd.id from department dd join department_kind dk on dd.kind_id = dk.id where dk.classification_id = 101)
-  </select>
+    <select id="getAllClinicNotDelete" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap">
+        select u.*
+        from doctor d
+                 join user u on d.id = u.id
+        where d.is_delete = false
+          and u.is_delete = false
+          and u.department_id in
+              (select dd.id
+               from department dd
+                        join department_kind dk on dd.kind_id = dk.id
+               where dk.classification_id = 101)
+    </select>
+
+    <resultMap id="DoctorWithDepartment" type="cn.neuedu.his.model.Doctor">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title_id" jdbcType="INTEGER" property="titleId"/>
+        <result column="can_arrange" jdbcType="BIT" property="canArrange"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <association property="d"/>
+    </resultMap>
+
+    <select id="getByDepartmentId" resultMap="cn.neuedu.his.mapper.UserMapper.UserAndDoctor">
+        select *
+        from doctor
+                 join user on doctor.id = user.id
+        where not doctor.is_delete
+          and not user.is_delete
+          and doctor.can_arrange
+          and user.department_id = #{departmentId}
+    </select>
 </mapper>

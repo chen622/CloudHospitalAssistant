@@ -73,7 +73,8 @@
                             sessionStorage.removeItem("token")
                             that.$api.get('/user/login', this.form.getFieldsValue(),
                                 function (res) {
-                                    sessionStorage.setItem("token", res.headers.authorization)
+                                    if (res.headers)
+                                        sessionStorage.setItem("token", res.headers.authorization)
                                     that.$api.get("/user/function", null,
                                         res => {
                                             that.$store.commit("setUrls", res.data)
@@ -82,50 +83,25 @@
                                             console.log('API error: ' + res)
                                         })
                                     that.$store.commit("setLogin", true)
-                                    that.$store.commit("setUserType", parseInt(res.headers.usertype))
+                                    if (res.headers)
+                                        that.$store.commit("setUserType", parseInt(res.headers.usertype))
                                     that.$router.replace({path: "/"})
-                                    that.$message.success("登录成功！")
+                                    that.$message.destroy()
+                                    if (res.config && res.config.method === 'get')
+                                        that.$message.success("登录成功！")
                                 }, function (err) {
                                     if (err) {
                                         if (err.response && err.response.status === 403) {
                                             sessionStorage.removeItem("token")
                                             that.$message.error("用户名或密码错误");
+                                        } else {
+                                            that.$message.error("网络错误")
                                         }
                                         // eslint-disable-next-line
                                         console.log('API error: ' + err)
                                     }
                                 }
                             )
-                            // axios({
-                            //     method: 'POST',
-                            //     url: 'http://localhost:8078/user/login',
-                            //     params: this.form.getFieldsValue()
-                            // }).then(function (res) {
-                            //     sessionStorage.setItem("token", res.headers.authorization)
-                            //     setTimeout(() => {
-                            //         that.$api.get("/user/function", null,
-                            //             res => {
-                            //                 that.$store.commit("setUrls", res.data)
-                            //             }, res => {
-                            //                 // eslint-disable-next-line
-                            //                 console.log('API error: ' + res)
-                            //             })
-                            //     }, 4000)
-                            //     that.$store.commit("setLogin", true)
-                            //     that.$store.commit("setUserType", parseInt(res.headers.usertype))
-                            //     that.$router.replace({path: "/"})
-                            //     that.$message.success("登录成功！")
-                            // }).catch(function (err) {
-                            //     console.log(err)
-                            //     if (err) {
-                            //         if (err.response && err.response.status === 403) {
-                            //             sessionStorage.removeItem("token")
-                            //             that.$message.error("用户名或密码错误");
-                            //         }
-                            //         // eslint-disable-next-line
-                            //         console.log('API error: ' + err)
-                            //     }
-                            // });
                         }
                     },
                 );

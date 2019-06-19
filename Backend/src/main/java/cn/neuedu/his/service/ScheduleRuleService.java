@@ -9,7 +9,6 @@ import java.util.List;
  * Created by ccm on 2019/05/24.
  */
 public interface ScheduleRuleService extends Service<ScheduleRule> {
-    ScheduleRule getLegalSchedule(Integer doctorId, Integer period);
 
     List<ScheduleRule> getDoctorScheduleByDoctorId(Integer doctorId);
 

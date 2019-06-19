@@ -43,7 +43,7 @@
                         <a-collapse :bordered="false" style="margin: 0 3% 0 3%; font-size: 16px"
                                     v-for="(i,index) in settleTableList" :key="i.id">
                             <a-collapse-panel :key="index">
-                                <template slot="header">{{i.dailySettle.endDate | formatDate}}<span> 日结单</span>
+                                <template slot="header">{{i.dailySettle.endDate | timeStampToDate}}<span> 日结单</span>
                                     <a-button style="margin-left: 60%;" @click="check(i.dailySettle.id)">核对通过</a-button>
                                 </template>
                                 <div class="invoice-box">
@@ -51,9 +51,11 @@
                                            style="margin: 15px 0 10px 0; font-size: 16px;line-height: 20px;">
                                         <a-col span="5">统计日期</a-col>
                                         <a-col span="16">
-                                            <a-tag class="tag-date">{{i.dailySettle.startDate | formatTime}}</a-tag>
+                                            <a-tag class="tag-date">{{i.dailySettle.startDate | timeStampToDatetime}}
+                                            </a-tag>
                                             &#12288;&#12288;至&#12288;&#12288;
-                                            <a-tag class="tag-date">{{i.dailySettle.endDate | formatTime}}</a-tag>
+                                            <a-tag class="tag-date">{{i.dailySettle.endDate | timeStampToDatetime}}
+                                            </a-tag>
                                         </a-col>
                                     </a-row>
 
@@ -62,7 +64,7 @@
                                         <a-col span="7">制表人：{{i.dailySettle.makeUser.realName}}</a-col>
                                         <a-col span="7">收费员：{{currentTollKeeper.realName}}</a-col>
                                         <a-col span="10">制表时间&#12288;<a-tag class="tag-date">{{i.dailySettle.makeDate |
-                                            formatTime}}
+                                            timeStampToDatetime}}
                                         </a-tag>
                                         </a-col>
                                     </a-row>
@@ -149,46 +151,19 @@
             showList: true,
             settleTableList: [],
         }),
-        filters: {
-            formatTime: function (value) {
-                let date = new Date(value);
-                let y = date.getFullYear();
-                let MM = date.getMonth() + 1;
-                MM = MM < 10 ? ('0' + MM) : MM;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                let h = date.getHours();
-                h = h < 10 ? ('0' + h) : h;
-                let m = date.getMinutes();
-                m = m < 10 ? ('0' + m) : m;
-                let s = date.getSeconds();
-                s = s < 10 ? ('0' + s) : s;
-                return y + '-' + MM + '-' + d + ' ' + h + ':' + m + ':' + s;
-            },
-            formatDate: function (value) {
-                let date = new Date(value);
-                let y = date.getFullYear();
-                let MM = date.getMonth() + 1;
-                MM = MM < 10 ? ('0' + MM) : MM;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                return y + '-' + MM + '-' + d;
-            }
-        },
         methods: {
-            getTollKeeper() {
+            getTollKeeper () {
                 let that = this
                 this.$api.get("/user/getAllTollKeeper", null, res => {
                     if (res.code === '100') {
                         that.tollKeeper = res.data
                         that.load.tollKeeper = false
                     }
-                }, res => {
-                    that.$message.error(res)
+                }, () => {
                 })
             },
 
-            selectTollKeeper(id) {
+            selectTollKeeper (id) {
                 this.load.record = true
                 let that = this
                 this.$api.get("/daily_settle/getSettleInfo/" + id, null, res => {
@@ -200,12 +175,11 @@
                     }
                     that.load.record = false
                 }, () => {
-                    that.$message.error("网络异常")
                     that.load.record = false
                 })
             },
 
-            check(settleId) {
+            check (settleId) {
                 let that = this
                 this.$api.post("/daily_settle/check/" + settleId, null, res => {
                     if (res.code === '100') {
@@ -213,11 +187,10 @@
                     } else if (res.code === '502')
                         that.$message.error(res.message)
                 }, () => {
-                    that.$message.error("网络异常")
                 })
             }
         },
-        mounted() {
+        mounted () {
             this.getTollKeeper()
         }
 

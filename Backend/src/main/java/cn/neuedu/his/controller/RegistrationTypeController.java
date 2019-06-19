@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -21,82 +23,95 @@ public class RegistrationTypeController {
     @Autowired
     RegistrationTypeService registrationTypeService;
 
+
+    @GetMapping("/get")
+    public JSONObject getAll() {
+        List<RegistrationType> registrationTypeList = registrationTypeService.findAll();
+        if (registrationTypeList == null) {
+            registrationTypeList = new ArrayList<>();
+        }
+        return CommonUtil.successJson(registrationTypeList);
+    }
+
     /**
      * 医院管理员插入挂号类型
+     *
      * @param jsonObject
      * @param authentication
      * @return
      */
     @PostMapping("/insertRegisterType")
-    public JSONObject insertRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject insertRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject,RegistrationType.class);
+        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject, RegistrationType.class);
 
-       try{
-           registrationTypeService.insertRegisterType(registrationType);
-           return CommonUtil.successJson();
-       }catch (RuntimeException e){
-           if (e.getMessage().equals("603"))
-               return CommonUtil.errorJson(ErrorEnum.E_603);
-           else
-               return CommonUtil.errorJson(ErrorEnum.E_500);
-       }
+        try {
+            registrationTypeService.insertRegisterType(registrationType);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("603"))
+                return CommonUtil.errorJson(ErrorEnum.E_603);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     /**
      * 医院管理员删除挂号类型
+     *
      * @param id
      * @param authentication
      * @return
      */
     @PostMapping("/deleteRegisterType/{id}")
-    public JSONObject deleteRegisterType(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject deleteRegisterType(@PathVariable("id") Integer id, Authentication authentication) {
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-       try {
-           registrationTypeService.deleteRegisterType(id);
-           return CommonUtil.successJson();
-       }catch (RuntimeException e){
-           if (e.getMessage().equals("604"))
-               return CommonUtil.errorJson(ErrorEnum.E_604);
-           else
-               return CommonUtil.errorJson(ErrorEnum.E_500);
-       }
+        try {
+            registrationTypeService.deleteRegisterType(id);
+            return CommonUtil.successJson();
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("604"))
+                return CommonUtil.errorJson(ErrorEnum.E_604);
+            else
+                return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
     }
 
     /**
      * 医院管理员修改挂号类型
+     *
      * @param jsonObject
      * @param authentication
      * @return
      */
     @PostMapping("/modifyRegisterType")
-    public JSONObject modifyRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyRegisterType(@RequestBody JSONObject jsonObject, Authentication authentication) {
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject,RegistrationType.class);
+        RegistrationType registrationType = JSONObject.toJavaObject(jsonObject, RegistrationType.class);
 
-        try{
+        try {
             registrationTypeService.modifyRegisterType(registrationType);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("604"))
                 return CommonUtil.errorJson(ErrorEnum.E_604);
             else
@@ -106,23 +121,24 @@ public class RegistrationTypeController {
 
     /**
      * 医院管理员查询数据
+     *
      * @param
      * @param authentication
      * @return
      */
     @GetMapping("/selectRegisterType/{name}")
-    public JSONObject selectRegisterType(@PathVariable("name") String name, Authentication authentication){
+    public JSONObject selectRegisterType(@PathVariable("name") String name, Authentication authentication) {
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        try{
+        try {
             RegistrationType registrationType = registrationTypeService.selectRegisterType(name);
             return CommonUtil.successJson(registrationType);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("604"))
                 return CommonUtil.errorJson(ErrorEnum.E_604);
             else

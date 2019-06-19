@@ -92,7 +92,6 @@
                             that.load.loadPatient = false
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             }
             ,
@@ -110,7 +109,6 @@
                                     that.$message.error(res)
                                 }
                             }, () => {
-                                that.$message.error("网络异常")
                             }
                         )
                     }

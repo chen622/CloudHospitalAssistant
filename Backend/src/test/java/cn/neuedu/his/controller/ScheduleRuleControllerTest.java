@@ -49,9 +49,20 @@ public class ScheduleRuleControllerTest {
     //插入医生信息
     @Test
     public void get() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id",4);
+        jsonObject.put("period",301);
+        jsonObject.put("registration_quantity",20);
+        jsonObject.put("operatorId",1);
+        jsonObject.put("doctorId",12);
+        jsonObject.put("registrationTypeId",1);
+        jsonObject.put("day",4);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/schedule_rule/select/1")
+        String request = jsonObject.toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/schedule_rule/modify")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(request)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
         )

@@ -96,6 +96,10 @@ export default new Router({
             path: '/patient/make',
             name: 'make',
             component: () => import('./views/patient/MakeDailySettle')
+        },{
+            path:'/constant',
+            name:'constant',
+            component:() => import('./views/admin/Constant')
         }
     ]
 })

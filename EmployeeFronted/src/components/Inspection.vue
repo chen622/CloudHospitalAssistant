@@ -97,11 +97,6 @@
                     dataIndex: 'department.name',
                     align: 'center',
                 },
-                // {
-                //     title: '状态',
-                //     align: 'center',
-                //     scopedSlots: {customRender: 'state'},
-                // },
                 {
                     title: '单价',
                     dataIndex: 'nonDrug.price',
@@ -162,7 +157,6 @@
                             that.nonDrugs = res.data[0].nonDrugs
                         }
                     }, () => {
-                        that.$message.error("网络错误")
                     })
             },
             selectNonDrugs (index) {
@@ -211,7 +205,6 @@
                             that.refreshMR()
                         }
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             refreshMR () {

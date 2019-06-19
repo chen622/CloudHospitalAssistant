@@ -70,7 +70,9 @@
                     this.$message.info("请选择科室后查看")
                 } else {
                     this.$refs.result.selectDate(moment())
-                    this.$refs.rule.getRule()
+                    if (this.$refs.rule) {
+                        this.$refs.rule.getRule()
+                    }
                 }
             },
             loadData (selectedOptions) {
@@ -88,7 +90,6 @@
                         }
                         that.departmentKinds = [...that.departmentKinds]
                     }, () => {
-                        that.$message.error("网络异常")
                     })
             },
             getKinds () {

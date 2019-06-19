@@ -19,8 +19,6 @@ public class Doctor {
     @Column(name = "title_id")
     private Integer titleId;
 
-
-
     /**
      * 是否排班
      */
@@ -32,7 +30,6 @@ public class Doctor {
     private Boolean isDelete;
 
     private ConstantVariable title;
-
 
     @Transient
     private String titleName;
@@ -67,7 +64,6 @@ public class Doctor {
     public void setRegistrations(ArrayList<Registration> registrations) {
         this.registrations = registrations;
     }
-
 
 
     public Boolean getDelete() {

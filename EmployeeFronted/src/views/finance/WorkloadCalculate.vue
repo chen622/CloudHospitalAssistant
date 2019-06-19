@@ -91,7 +91,7 @@
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
                         that.departmentColumns.forEach(column=>{
-                            if (column.dataIndex == 'total')
+                            if (column.dataIndex === 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.departmentScrollX = (that.departmentColumns.length + 1) * 100
@@ -100,7 +100,6 @@
                         that.$message.error(res.message)
                     that.loading = false
                 }, () => {
-                    that.$message.error("网络异常")
                     that.loading = false
                 })
             },
@@ -129,7 +128,6 @@
                         that.$message.error(res.message)
                     that.loading = false
                 }, () => {
-                    that.$message.error("网络异常")
                     that.loading = false
                 })
             },
@@ -137,7 +135,7 @@
             onChange() {
                 if (this.value === "a")
                     this.getClinicDepartmentWorkLoad()
-                else if (this.value == "b")
+                else if (this.value === "b")
                     this.getTechniqueDepartmentWorkLoad()
             },
 
@@ -156,7 +154,7 @@
                     if (res.code === '100') {
                         that.doctorColumns = res.data.columns
                         that.doctorColumns.forEach(column=>{
-                            if (column.dataIndex == 'total')
+                            if (column.dataIndex === 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.doctorScrollX = (that.doctorColumns.length + 1) * 100
@@ -165,7 +163,6 @@
                         that.$message.error(res.message)
                     that.load = false;
                 }, () => {
-                    that.$message.error("网络异常")
                     that.load = false;
                 })
             }
