@@ -53,9 +53,6 @@ public class MedicalRecordController {
         }
         MedicalRecord medicalRecord = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
         medicalRecord.setRegistrationId(registrationId);
-        ArrayList<DiseaseSecond> diagnoses = (ArrayList<DiseaseSecond>) object.getJSONArray("diagnoses").toJavaList(DiseaseSecond.class);
-        ArrayList<Integer> diagnosesIds = new ArrayList<>();
-        diagnoses.forEach(diseaseSecond -> diagnosesIds.add(diseaseSecond.getId()));
         try {
             redisService.setTemporaryMedicalRecord(registrationId, medicalRecord);
         } catch (Exception e) {

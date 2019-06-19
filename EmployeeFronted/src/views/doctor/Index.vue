@@ -1,5 +1,6 @@
 <template>
     <a-row type="flex" align="top" justify="space-around" class="info-card">
+        <template-drawer :showDrawer="showDrawer" @changeDrawer="e=>changeDrawer(e)"></template-drawer>
         <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
             <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
                 <span slot="title" style="font-size: 22px">患者列表
@@ -81,6 +82,9 @@
                             </a-col>
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
                                 <a-button type="danger" style="width: 80%" @click="resetForm">清空当前页面</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button style="width: 80%" @click="changeDrawer(true)">常用与模板</a-button>
                             </a-col>
                         </a-row>
                         <a-form :form="record">
@@ -177,6 +181,7 @@
     import Inspection from '../../components/Inspection'
     import Prescription from '../../components/doctor/Prescription'
     import Payment from '../../components/Payment'
+    import TemplateDrawer from '../../components/doctor/TemplateDrawer'
 
     export default {
         name: "Index",
@@ -184,7 +189,8 @@
             'diagnose': Diagnose,
             'inspection': Inspection,
             'prescription': Prescription,
-            'payment': Payment
+            'payment': Payment,
+            'template-drawer': TemplateDrawer
         },
         data: () => ({
             load: {
@@ -207,9 +213,12 @@
             record: null,
             showList: true,
             patientType: 0,
-
+            showDrawer: false
         }),
         methods: {
+            changeDrawer (boo) {
+                this.showDrawer = boo
+            },
             loadTemp () {
                 if (this.currentPatient == null) {
                     this.$message.error("请选择病人")
@@ -219,6 +228,16 @@
                         res => {
                             if (res.code === "100") {
                                 that.$message.success("获取暂存信息成功")
+                                that.record.setFieldsValue({
+                                        'selfDescription': res.data.selfDescription,
+                                        'bodyExamination': res.data.bodyExamination,
+                                        'allergyHistory': res.data.allergyHistory,
+                                        'historySymptom': res.data.historySymptom,
+                                        'previousTreatment': res.data.previousTreatment,
+                                        'currentSymptom': res.data.currentSymptom,
+                                        'isPregnant': res.data.isPregnant.toString(),
+                                    }
+                                )
                             } else if (res.cord === '638') {
                                 that.$message.info("不存在暂存信息")
                             } else {
@@ -420,7 +439,6 @@
                     })
             },
             callback () {
-
             }
         },
         mounted () {
