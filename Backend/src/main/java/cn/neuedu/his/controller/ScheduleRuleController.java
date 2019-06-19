@@ -64,28 +64,28 @@ public class ScheduleRuleController {
 
     @PostMapping("/insert")
     public JSONObject insertScheduleRule(@RequestBody JSONObject jsonObject, Authentication authentication) {
-
         //检查权限
         try {
-            PermissionCheck.isHospitalAdmin(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-        try {
+            Integer operatorId = PermissionCheck.isHospitalAdmin(authentication);
             ScheduleRule scheduleRule = JSONObject.toJavaObject(jsonObject, ScheduleRule.class);
+            scheduleRule.setOperatorId(operatorId);
             scheduleRuleService.insertScheduleRule(scheduleRule);
+            return CommonUtil.successJson();
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("616"))
-                return CommonUtil.errorJson(ErrorEnum.E_616);
-            else if (e.getMessage().equals("617"))
-                return CommonUtil.errorJson(ErrorEnum.E_617);
-            else if (e.getMessage().equals("618"))
-                return CommonUtil.errorJson(ErrorEnum.E_618);
-            else if (e.getMessage().equals("619"))
-                return CommonUtil.errorJson(ErrorEnum.E_619);
+            switch (e.getMessage()) {
+                case "616":
+                    return CommonUtil.errorJson(ErrorEnum.E_616);
+                case "617":
+                    return CommonUtil.errorJson(ErrorEnum.E_617);
+                case "618":
+                    return CommonUtil.errorJson(ErrorEnum.E_618);
+                case "619":
+                    return CommonUtil.errorJson(ErrorEnum.E_619);
+            }
+            return CommonUtil.errorJson(ErrorEnum.E_500);
         }
-        return CommonUtil.successJson();
     }
 
 

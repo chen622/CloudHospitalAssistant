@@ -12,7 +12,7 @@
                 </a-row>
                 <br/>
                 <a-table :columns="columns" :dataSource="data">
-                    <template v-for="col in ['id','name','type','isdelete']" :slot="col" slot-scope="text, record, index">
+                    <template v-for="col in ['id','name','type','isdelete']" :slot="col" slot-scope="text, record">
                         <div :key="col">
                             <a-input
                                     v-if="record.editable"
@@ -89,7 +89,7 @@
                 alert(value)
             },
             handleAdd(){
-                this.data = res.data
+                // this.data = res.data
 
             },
             onDelete (key) {
