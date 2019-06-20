@@ -2,8 +2,10 @@ package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.MedicalRecordTemplate;
+import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.MedicalRecordTemplateService;
+import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
@@ -20,7 +22,7 @@ import java.lang.reflect.InvocationTargetException;
  * Created by ccm on 2019/05/24.
  */
 @RestController
-@RequestMapping("/medical_record_template")
+@RequestMapping("/MRT")
 public class MedicalRecordTemplateController {
 
     @Autowired
@@ -29,27 +31,31 @@ public class MedicalRecordTemplateController {
     @Autowired
     DoctorService doctorService;
 
+    @Autowired
+    UserService userService;
+
     /**
      * 门诊医生查看病例模板
      *
      * @param authentication
      * @return
      */
-    @GetMapping("/getMRTemplate/{level}")
-    public JSONObject getHospitalMR(@PathVariable("level") Integer level, Authentication authentication) {
+    @GetMapping("/getMRT")
+    public JSONObject getHospitalMR(Authentication authentication) {
         try {
             Integer doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            if (level.equals(Constants.HOSPITALLEVEL) || level.equals(Constants.PERSONALLEVEL) || level.equals(Constants.DEPTLEVEL))
-                return CommonUtil.successJson(doctorService.getHospitalMR(doctorID, level));
-            else
-                return CommonUtil.errorJson(ErrorEnum.E_709);
+            User user = userService.findById(doctorID);
+            if (user == null) {
+                return CommonUtil.errorJson(ErrorEnum.E_502);
+            }
+            return CommonUtil.successJson(medicalRecordTemplateService.getWhichICanUse(doctorID, user.getDepartmentId()));
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
     }
 
 
-    @GetMapping("/getMedicalRecordTemByName/{name}")
+    @GetMapping("/getMRTByName/{name}")
     public JSONObject getMedicalRecordTemByName(@PathVariable("name") String name, Authentication authentication) {
         try {
             Integer doctorID = PermissionCheck.isOutpatientDoctor(authentication);
@@ -68,7 +74,7 @@ public class MedicalRecordTemplateController {
      * @param authentication
      * @return
      */
-    @PostMapping("/saveHospitalMRTemplate")
+    @PostMapping("/saveHospitalMRT")
     public JSONObject saveHospitalMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
         try {
@@ -94,7 +100,7 @@ public class MedicalRecordTemplateController {
      * @param authentication
      * @return
      */
-    @PostMapping("/saveDeptMRTemplate")
+    @PostMapping("/saveDeptMRT")
     public JSONObject saveDeptMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
         try {
@@ -120,7 +126,7 @@ public class MedicalRecordTemplateController {
      * @param authentication
      * @return
      */
-    @PostMapping("/savePersonalMRTemplate")
+    @PostMapping("/savePersonalMRT")
     public JSONObject savePersonalMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
         try {
@@ -138,7 +144,7 @@ public class MedicalRecordTemplateController {
         return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, Constants.PERSONALLEVEL));
     }
 
-    @PostMapping("/updateMedicalRecordTemp")
+    @PostMapping("/updateMRT")
     public JSONObject updateMedicalRecordTem(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorID = null;
         try {
@@ -159,7 +165,7 @@ public class MedicalRecordTemplateController {
         return CommonUtil.successJson(doctorService.updateMedicalRecordTem(record, doctorID));
     }
 
-    @GetMapping("/deleteMedicalRecordTemp/{id}")
+    @GetMapping("/deleteMRT/{id}")
     public JSONObject deleteMedicalRecordTemp(@PathVariable("id") Integer id, Authentication authentication) {
         Integer doctorID = null;
         try {

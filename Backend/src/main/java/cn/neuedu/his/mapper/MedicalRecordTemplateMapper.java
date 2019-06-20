@@ -9,11 +9,13 @@ import java.util.List;
 @Component
 
 public interface MedicalRecordTemplateMapper extends MyMapper<MedicalRecordTemplate> {
-    public List<MedicalRecordTemplate> getHospitalMR(Integer doctorID, Integer level) ;
+    List<MedicalRecordTemplate> getHospitalMRByLevel(Integer doctorID, Integer level);
 
-    public List<MedicalRecordTemplate> getDeptMR(Integer doctorID,Integer level) ;
+    List<MedicalRecordTemplate> getHospitalMRWhichICanUse(Integer doctorId, Integer departmentId);
 
-    public List<MedicalRecordTemplate> getPersonalMR(Integer doctorID,Integer level);
+    List<MedicalRecordTemplate> getDeptMR(Integer doctorID, Integer level);
+
+    List<MedicalRecordTemplate> getPersonalMR(Integer doctorID, Integer level);
 
     List<MedicalRecordTemplate> getMeicalRecordTemByName(String name);
 }

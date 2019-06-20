@@ -14,7 +14,7 @@ public class MedicalRecordTemplate {
     private String selfDescription;
 
     @Column(name = "name")
-    private String name ;
+    private String name;
 
     @Column(name = "is_pregnant")
     private Boolean isPregnant;
@@ -43,6 +43,16 @@ public class MedicalRecordTemplate {
 
     private List<Diagnose> firstDiagnose;
     private List<Diagnose> finalDiagnose;
+
+    private ConstantVariable level;
+
+    public ConstantVariable getLevel() {
+        return level;
+    }
+
+    public void setLevel(ConstantVariable level) {
+        this.level = level;
+    }
 
     public List<Diagnose> getFirstDiagnose() {
         return firstDiagnose;

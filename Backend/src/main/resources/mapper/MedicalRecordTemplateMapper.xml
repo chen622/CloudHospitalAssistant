@@ -1,51 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.MedicalRecordTemplateMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.MedicalRecordTemplate">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="self_description" jdbcType="VARCHAR" property="selfDescription" />
-    <result column="is_pregnant" jdbcType="BIT" property="isPregnant" />
-    <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom" />
-    <result column="history_symptom" jdbcType="VARCHAR" property="historySymptom" />
-    <result column="is_western_medicine" jdbcType="BIT" property="isWesternMedicine" />
-    <result column="allergy_history" jdbcType="VARCHAR" property="allergyHistory" />
-    <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination" />
-    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="level_id" jdbcType="INTEGER" property="levelId" />
-    <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment" />
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.MedicalRecordTemplate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="self_description" jdbcType="VARCHAR" property="selfDescription"/>
+        <result column="is_pregnant" jdbcType="BIT" property="isPregnant"/>
+        <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom"/>
+        <result column="history_symptom" jdbcType="VARCHAR" property="historySymptom"/>
+        <result column="is_western_medicine" jdbcType="BIT" property="isWesternMedicine"/>
+        <result column="allergy_history" jdbcType="VARCHAR" property="allergyHistory"/>
+        <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination"/>
+        <result column="created_by_id" jdbcType="INTEGER" property="createdById"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="level_id" jdbcType="INTEGER" property="levelId"/>
+        <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment"/>
 
-    <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst" column="{MRID =id}"></collection>
-    <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinall" column="{MRID =id}"></collection>
-  </resultMap>
+        <association property="level" javaType="cn.neuedu.his.model.ConstantVariable">
+            <id column="level_id" jdbcType="INTEGER" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+        </association>
 
-  <select id="getHospitalMR" resultMap="BaseResultMap">
-    select  * from  medical_record_template WHERE   level_id=#{level}
-  </select>
+        <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst"
+                    column="{MRID =id}"/>
+        <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinal"
+                    column="{MRID =id}"/>
+    </resultMap>
 
-  <select id="getDeptMR" resultMap="BaseResultMap">
-    select *
-    from medical_record_template t where  t.level_id =#{level} and  t.department_id in (
-    select  tt.department_id from medical_record_template tt where tt.created_by_id=#{doctorID}
-    )
-  </select>
+    <select id="getHospitalMRByLevel" resultMap="BaseResultMap">
+        select *
+        from medical_record_template
+                 join constant_variable on level_id = constant_variable.id
+        WHERE level_id = #{level}
+    </select>
 
-  <select id="getPersonalMR" resultMap="BaseResultMap">
-    select  * from  medical_record_template WHERE  created_by_id=#{doctorID} and  level_id=#{level}
-  </select>
+    <select id="getHospitalMRWhichICanUse" resultMap="BaseResultMap">
+        select *
+        from medical_record_template
+                 join constant_variable on level_id = constant_variable.id
+        where (level_id = 503 and created_by_id = #{doctorId})
+           or (level_id = 502 and department_id = #{departmentId})
+           or level_id = 501
 
-  <select id="getFirst" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
-        select * from diagnose where item_id=#{MRID} and  is_template= false
-  </select>
+    </select>
 
-  <select id="getFinall" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
-        select * from diagnose where item_id=#{MRID} and  is_template = true
-  </select>
+    <select id="getDeptMR" resultMap="BaseResultMap">
+        select *
+        from medical_record_template t
+        where t.level_id = #{level}
+          and t.department_id in (
+            select tt.department_id from medical_record_template tt where tt.created_by_id = #{doctorID}
+        )
+    </select>
 
-  <select id="getMeicalRecordTemByName" resultMap="BaseResultMap">
-     select * from  medical_record_template where  name like "%"#{name}"%"
-  </select>
+    <select id="getPersonalMR" resultMap="BaseResultMap">
+        select *
+        from medical_record_template
+        WHERE created_by_id = #{doctorID}
+          and level_id = #{level}
+    </select>
+
+    <select id="getFirst" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select *
+        from diagnose
+        where item_id = #{MRID}
+          and is_template = false
+    </select>
+
+    <select id="getFinal" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
+        select *
+        from diagnose
+        where item_id = #{MRID}
+          and is_template = true
+    </select>
+
+    <select id="getMeicalRecordTemByName" resultMap="BaseResultMap">
+        select *
+        from medical_record_template
+        where name like "%"#{name}"%"
+    </select>
 </mapper>

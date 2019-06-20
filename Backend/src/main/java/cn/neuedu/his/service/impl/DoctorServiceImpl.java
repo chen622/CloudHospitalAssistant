@@ -165,7 +165,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getHospitalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     /**
@@ -178,7 +178,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getDeptMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     /**
@@ -191,7 +191,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getPersonalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     private JSONObject getMRTemp(List<MedicalRecordTemplate> templates) {
@@ -207,7 +207,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     public JSONObject getMeicalRecordTemByName(String name) {
-        return getMRTemp(medicalRecordTemplateService.getMeicalRecordTemByName(name));
+        return getMRTemp(medicalRecordTemplateService.getMedicalRecordTemByName(name));
     }
 
 
