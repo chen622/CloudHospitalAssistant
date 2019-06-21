@@ -77,10 +77,18 @@ public class MedicalRecordTemplateController {
     @PostMapping("/saveHospitalMRT")
     public JSONObject saveHospitalMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
+        Integer level=JSONObject.parseObject(object.get("level").toString(), Integer.class);
         try {
             doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            PermissionCheck.isChiefDoctor(doctorService.findById(doctorID).getTitleId());
-
+            if(level.equals(Constants.HOSPITALLEVEL)){
+                PermissionCheck.isChiefDoctor(doctorService.findById(doctorID).getTitleId());
+            }else if(level.equals(Constants.DEPTLEVEL)){
+                PermissionCheck.aboveDeputyChiefDoctor(doctorService.findById(doctorID).getTitleId());
+            }else if(level.equals(Constants.PERSONALLEVEL)) {
+                PermissionCheck.aboveATTENDING_DOCTOR(doctorService.findById(doctorID).getTitleId());
+            }else {
+                return CommonUtil.errorJson(ErrorEnum.E_502);
+            }
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
         } catch (Exception e) {
@@ -90,59 +98,9 @@ public class MedicalRecordTemplateController {
         if (name == null || name.equals(""))
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("name"));
         MedicalRecord record = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
-        return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, Constants.HOSPITALLEVEL));
+        return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, level));
     }
 
-    /**
-     * 存为科室病历模板
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/saveDeptMRT")
-    public JSONObject saveDeptMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Integer doctorID = null;
-        try {
-            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            PermissionCheck.aboveDeputyChiefDoctor(doctorService.findById(doctorID).getTitleId());
-
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        String name = (String) object.get("name");
-        if (name == null || name.equals(""))
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("name"));
-        MedicalRecord record = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
-        return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, Constants.DEPTLEVEL));
-    }
-
-    /**
-     * 存为个人病历模板
-     *
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/savePersonalMRT")
-    public JSONObject savePersonalMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Integer doctorID = null;
-        try {
-            doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            PermissionCheck.aboveATTENDING_DOCTOR(doctorService.findById(doctorID).getTitleId());
-        } catch (AuthenticationServiceException a) {
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        String name = (String) object.get("name");
-        if (name == null || name.equals(""))
-            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("name"));
-        MedicalRecord record = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
-        return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, Constants.PERSONALLEVEL));
-    }
 
     @PostMapping("/updateMRT")
     public JSONObject updateMedicalRecordTem(@RequestBody JSONObject object, Authentication authentication) {
