@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>Cloud Hospital Assistant</name>
     <description>A springboot application to build backend for Cloud Hospital Assistant project</description>
-
+    <packaging>war</packaging>
     <properties>
         <java.version>1.8</java.version>
     </properties>
