@@ -39,7 +39,6 @@ public class StringUtils {
         } catch (ParseException e) {
             return 0;
         }
-        System.out.println(birthday);
 
         ////通过生日获取年龄
         Calendar calendar = Calendar.getInstance();

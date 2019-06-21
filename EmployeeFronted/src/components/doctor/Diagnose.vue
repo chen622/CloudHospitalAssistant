@@ -52,7 +52,7 @@
                         v-if="diagnose.length && record.temp"
                         title="确定删除？"
                         @confirm="() => deleteDiagnose(index)">
-                    <a href="javascript:;">删除</a>
+                    <a>删除</a>
                 </a-popconfirm>
             </template>
         </a-table>

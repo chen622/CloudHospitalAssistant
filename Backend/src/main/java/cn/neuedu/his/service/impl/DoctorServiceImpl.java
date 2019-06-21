@@ -326,7 +326,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             try {
                 if (dd != null) {
                     for (Diagnose d : dd) {
-                        System.out.println(d.getId());
                         diagnoseService.deleteById(d.getId());
                     }
                     doctorService.saveDiagnose(diagnoses, original.getId(), false, false);
@@ -779,7 +778,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 diagnose.setTemplate(isTemplate);
                 diagnose.setDiseaseId(integer);
                 diagnoseService.save(diagnose);
-                System.out.println("save :" + diagnose.getId());
             }
         }
     }

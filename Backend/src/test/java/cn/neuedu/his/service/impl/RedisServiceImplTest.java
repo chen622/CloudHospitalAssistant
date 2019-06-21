@@ -44,10 +44,6 @@ public class RedisServiceImplTest {
     public void getMapAll() throws Exception {
         Map<String, Integer> map = redisService.getMapAll("userType");
         Set<String> set = map.keySet();
-        for (String key : set) {
-            System.out.println(key + " " + map.get(key));
-
-        }
     }
 
     @Test

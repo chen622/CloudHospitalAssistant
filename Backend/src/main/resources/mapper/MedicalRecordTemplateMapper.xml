@@ -6,6 +6,7 @@
           WARNING - @mbg.generated
         -->
         <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="self_description" jdbcType="VARCHAR" property="selfDescription"/>
         <result column="is_pregnant" jdbcType="BIT" property="isPregnant"/>
         <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom"/>
@@ -20,7 +21,7 @@
 
         <association property="level" javaType="cn.neuedu.his.model.ConstantVariable">
             <id column="level_id" jdbcType="INTEGER" property="id"/>
-            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="levelName" jdbcType="VARCHAR" property="name"/>
         </association>
 
         <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst"
@@ -30,14 +31,14 @@
     </resultMap>
 
     <select id="getHospitalMRByLevel" resultMap="BaseResultMap">
-        select *
+        select *,constant_variable.name as levelName
         from medical_record_template
                  join constant_variable on level_id = constant_variable.id
         WHERE level_id = #{level}
     </select>
 
     <select id="getHospitalMRWhichICanUse" resultMap="BaseResultMap">
-        select *
+        select *,constant_variable.name as levelName
         from medical_record_template
                  join constant_variable on level_id = constant_variable.id
         where (level_id = 503 and created_by_id = #{doctorId})

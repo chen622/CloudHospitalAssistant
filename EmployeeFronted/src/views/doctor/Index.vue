@@ -1,6 +1,8 @@
 <template>
     <a-row type="flex" align="top" justify="space-around" class="info-card">
-        <template-drawer :showDrawer="showDrawer" @changeDrawer="e=>changeDrawer(e)"></template-drawer>
+        <template-drawer :type="drawerType" :showDrawer="showDrawer" :MRT="tempMRT"
+                         @changeDrawer="e=>changeDrawer(e)" @useTemplate="useTemplate"
+                         ref="templateDrawer"></template-drawer>
         <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
             <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
                 <span slot="title" style="font-size: 22px">患者列表
@@ -84,7 +86,10 @@
                                 <a-button type="danger" style="width: 80%" @click="resetForm">清空当前页面</a-button>
                             </a-col>
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button style="width: 80%" @click="changeDrawer(true)">常用与模板</a-button>
+                                <a-button style="width: 80%" @click="changeDrawer(true,1)">常用与模板</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button style="width: 80%" @click="saveTemplate">存为模板</a-button>
                             </a-col>
                         </a-row>
                         <a-form :form="record">
@@ -213,11 +218,41 @@
             record: null,
             showList: true,
             patientType: 0,
-            showDrawer: false
+            showDrawer: false,
+            drawerType: null,
+            tempMRT: null
         }),
         methods: {
-            changeDrawer (boo) {
+            useTemplate (template) {
+                this.record.setFieldsValue({
+                        'selfDescription': template.selfDescription,
+                        'bodyExamination': template.bodyExamination,
+                        'allergyHistory': template.allergyHistory,
+                        'historySymptom': template.historySymptom,
+                        'previousTreatment': template.previousTreatment,
+                        'currentSymptom': template.currentSymptom,
+                    }
+                )
+                this.$store.commit('changeDiagnoseType', template.isWesternMedicine)
+                template.firstDiagnose.forEach(item => {
+                    item.temp = true
+                    this.$store.commit('addDisease', {isFinial: false, disease: item})
+                })
+                template.finalDiagnose.forEach(item => {
+                    item.temp = true
+                    this.$store.commit('addDisease', {isFinial: true, disease: item})
+                })
+
+            },
+            changeDrawer (boo, type) {
                 this.showDrawer = boo
+                this.drawerType = type
+            },
+            saveTemplate () {
+                this.tempMRT = this.record.getFieldsValue()
+                this.showDrawer = true
+                this.drawerType = 2
+                this.$refs.templateDrawer.changeDrawer(true, 2)
             },
             loadTemp () {
                 if (this.currentPatient == null) {

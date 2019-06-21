@@ -28,7 +28,6 @@ public class CloudHospitalAssistantApplication {
         SpringApplication.run(CloudHospitalAssistantApplication.class, args);
         logger.info("服务器启动！");
 //        ConstantVariableController controller=new ConstantVariableController();
-//        System.out.println(controller.getNamebyId(1).toString());
 
 
     }
