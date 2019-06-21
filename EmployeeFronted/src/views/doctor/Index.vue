@@ -208,7 +208,7 @@
             },
             currentPatient: null,
             rules: {
-                selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}, {}],
+                selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}],
                 bodyExamination: [{required: true, message: '请输入', trigger: 'blur'}],
                 allergyHistory: [{required: true, message: '请输入', trigger: 'blur'}],
                 historySymptom: [{required: true, message: '请输入', trigger: 'blur'}],
@@ -252,7 +252,7 @@
                 this.tempMRT = this.record.getFieldsValue()
                 this.showDrawer = true
                 this.drawerType = 2
-                this.$refs.templateDrawer.changeDrawer(true, 2)
+                this.$refs.templateDrawer.changeDrawer(true, 1)
             },
             loadTemp () {
                 if (this.currentPatient == null) {

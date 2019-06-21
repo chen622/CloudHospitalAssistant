@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Diagnose;
 import cn.neuedu.his.model.MedicalRecord;
 import cn.neuedu.his.model.MedicalRecordTemplate;
 import cn.neuedu.his.model.User;
@@ -10,6 +11,7 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -17,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -77,16 +80,16 @@ public class MedicalRecordTemplateController {
     @PostMapping("/saveMRT")
     public JSONObject saveMRT(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
-        Integer level=JSONObject.parseObject(object.get("level").toString(), Integer.class);
+        Integer level = JSONObject.parseObject(object.get("levelId").toString(), Integer.class);
         try {
             doctorID = PermissionCheck.isOutpatientDoctor(authentication);
-            if(level.equals(Constants.HOSPITALLEVEL)){
+            if (level.equals(Constants.HOSPITALLEVEL)) {
                 PermissionCheck.isChiefDoctor(doctorService.findById(doctorID).getTitleId());
-            }else if(level.equals(Constants.DEPTLEVEL)){
+            } else if (level.equals(Constants.DEPTLEVEL)) {
                 PermissionCheck.aboveDeputyChiefDoctor(doctorService.findById(doctorID).getTitleId());
-            }else if(level.equals(Constants.PERSONALLEVEL)) {
+            } else if (level.equals(Constants.PERSONALLEVEL)) {
                 PermissionCheck.aboveATTENDING_DOCTOR(doctorService.findById(doctorID).getTitleId());
-            }else {
+            } else {
                 return CommonUtil.errorJson(ErrorEnum.E_502);
             }
         } catch (AuthenticationServiceException a) {
@@ -97,7 +100,18 @@ public class MedicalRecordTemplateController {
         String name = (String) object.get("name");
         if (name == null || name.equals(""))
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("name"));
-        MedicalRecord record = JSONObject.parseObject(object.get("medicalRecord").toString(), MedicalRecord.class);
+        MedicalRecord record = JSONObject.parseObject(object.toJSONString(), MedicalRecord.class);
+        JSONArray first = object.getJSONArray("firstDiagnose");
+        ArrayList<Diagnose> firstList = new ArrayList<>();
+        for (Object o : first) {
+            Diagnose diagnose = new Diagnose();
+            diagnose.setIsMajor(false);
+            diagnose.setItemId(record.getId());
+            diagnose.setTemplate(true);
+            diagnose.setDiseaseId(((JSONObject) o).getInteger("id"));
+            firstList.add(diagnose);
+        }
+        record.setFirstDiagnose(firstList);
         return CommonUtil.successJson(doctorService.saveMRTemplate(record, doctorID, name, level));
     }
 

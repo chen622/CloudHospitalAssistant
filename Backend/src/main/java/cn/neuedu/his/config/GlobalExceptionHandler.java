@@ -14,9 +14,9 @@ public class GlobalExceptionHandler {
 
     private static Logger logger = Logger.getLogger(GlobalExceptionHandler.class);
 
-    @ExceptionHandler
-    public void processException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
-        logger.error("[NotExpectError]  " + ex.toString());
-    }
+//    @ExceptionHandler
+//    public void processException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
+//        logger.error("[NotExpectError]  " + ex.toString());
+//    }
 
 }

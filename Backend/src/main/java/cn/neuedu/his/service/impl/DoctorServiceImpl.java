@@ -347,7 +347,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject saveMRTemplate(MedicalRecord record, Integer doctorID, String name, Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         MedicalRecordTemplate template = copyMedicalRecord(record);
         template = setImportantInfo(template, doctorID, name, level);
-        return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
+        return this.saveRecordAndDiagnoseAsTemp(record, template, doctorID);
     }
 
     private MedicalRecordTemplate setImportantInfo(MedicalRecordTemplate template, Integer doctorID, String name, Integer level) {
@@ -721,9 +721,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         try {
             List<Diagnose> firstD = record.getFirstDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(firstD, template.getId());
+            this.saveDiagnoseTemp(firstD, template.getId());
             List<Diagnose> finalD = record.getFinalDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(finalD, template.getId());
+            this.saveDiagnoseTemp(finalD, template.getId());
         } catch (Exception e) {
             throw new RuntimeException("diagnose");
         }

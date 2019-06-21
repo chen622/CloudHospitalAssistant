@@ -5,7 +5,7 @@
             :closable="false"
             :visible="showDrawer"
             @close="closeDrawer"
-            height="400"
+            height="500"
     >
         <a-row type="flex" align="top" justify="space-around">
             <a-col span="11" v-if="type===1">
@@ -32,7 +32,7 @@
             </a-col>
         </a-row>
         <edit-drawer :type="drawerType" :showDrawer="secondDrawer" :editMRT="MRT"
-                     @changeDrawer="e=>changeDrawer(e)"></edit-drawer>
+                     @changeDrawer="e=>changeDrawer(e)" @closeDrawer="closeDrawer"></edit-drawer>
     </a-drawer>
 </template>
 
@@ -102,7 +102,7 @@
     }
 
     .ant-drawer-body {
-        max-height: 340px;
+        max-height: 450px;
         overflow-y: scroll;
     }
 </style>
