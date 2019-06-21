@@ -380,6 +380,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return CommonUtil.errorJson(ErrorEnum.E_706.addErrorParamName("medicalRecordTemplate"));
         }
         medicalRecordTemplateService.deleteById(id);
+
         return CommonUtil.successJson();
     }
 
