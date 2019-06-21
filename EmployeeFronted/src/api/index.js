@@ -65,8 +65,8 @@ export default { // 自定义判断元素类型JS
                     if (url !== "/user/login" && err.response && err.response.status === 403) {
                         sessionStorage.removeItem("token")
                         location.href = '/#/login'
-                        alert("登录超时")
-
+                        vue.$message.destroy()
+                        vue.$message.error("登录超时")
                     } else {
                         vue.$message.destroy()
                         vue.$message.error("网络异常")

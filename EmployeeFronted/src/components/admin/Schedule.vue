@@ -2,7 +2,7 @@
     <div>
         <a-card>
             <a-calendar @change="selectDate">
-                <ul class="events" slot="dateCellRender" slot-scope="value">
+                <ul v-if="!loading" class="events" slot="dateCellRender" slot-scope="value">
                     <li v-for="item in getListData(value)" :key="item.id">
                         <a-alert type="success">
                             <span slot="message">({{(item.registrationType.name)[0]}})<span style="font-weight: bold">{{item.user.realName}}</span>-{{item.constantVariable.name}}-{{item.limitRegistrationAmount}}个</span>
@@ -56,6 +56,7 @@
                                 date = new Date(result.date)
                                 that.nextResults[date.getDate()].push(result)
                             })
+                            that.loading = false
                         } else {
                             that.$message.error(res.msg)
                         }
@@ -73,7 +74,8 @@
                     return this.lastResults[value.date()];
                 }
             }
-        }
+        },
+
     }
 </script>
 

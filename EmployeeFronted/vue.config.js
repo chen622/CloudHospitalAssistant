@@ -1,8 +1,9 @@
+//vue.config.js
 const CompressionPlugin = require("compression-webpack-plugin")
 
 
 module.exports = {
-    devServer: {
+    devServer: {//代理配置
         port: 8888,     // 端口
         proxy: {
             '/api': {
@@ -15,7 +16,7 @@ module.exports = {
             }
         }
     },
-    configureWebpack: () => {
+    configureWebpack: () => {//打包配置
         if (process.env.NODE_ENV === 'production') {
             return {
                 plugins: [

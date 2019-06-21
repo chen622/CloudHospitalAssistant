@@ -29,7 +29,7 @@ public class StringUtils {
      * @throws ParseException
      * @throws InvalidParameterException
      */
-    public static Integer identityIdTransferToAge(String identifyId){
+    public static Integer identityIdTransferToAge(String identifyId) {
         //通过身份证获取生日
         String birthdayStr = identifyId.substring(6, 14);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
@@ -39,7 +39,6 @@ public class StringUtils {
         } catch (ParseException e) {
             return 0;
         }
-        System.out.println(birthday);
 
         ////通过生日获取年龄
         Calendar calendar = Calendar.getInstance();
@@ -91,5 +90,13 @@ public class StringUtils {
             registration.setAge(identityIdTransferToAge(registration.getPatient().getIdentityId()));
         });
         return list;
+    }
+
+    public static Integer castSundayToMonday(Integer day) {
+        if (day >= 2) {
+            return day - 1;
+        } else {
+            return 7;
+        }
     }
 }
