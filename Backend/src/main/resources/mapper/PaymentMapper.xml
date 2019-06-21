@@ -198,5 +198,9 @@
         )
     </select>
 
+    <select id="getOneByInvoice" resultMap="BaseResultMap">
+        select * from payment where invoice_id = #{invoiceId} limit 1
+    </select>
+
 
 </mapper>

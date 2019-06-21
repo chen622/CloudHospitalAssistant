@@ -422,6 +422,11 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     @Override
+    public Payment findOneByInvoice(Integer invoiceId) {
+        return paymentMapper.getOneByInvoice(invoiceId);
+    }
+
+    @Override
     public Integer getAllPayments(Integer doctorId, String start, String end,Integer id) {
         return paymentMapper.getAllPayments(doctorId, start, end,id);
     }

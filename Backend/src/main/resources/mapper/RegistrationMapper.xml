@@ -15,7 +15,7 @@
         <result column="age" jdbcType="INTEGER" property="age"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
-        <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
+        <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
     </resultMap>
 
     <resultMap id="registrationWithPatient" type="cn.neuedu.his.model.Registration">
@@ -25,7 +25,7 @@
         <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
-        <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
+        <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
         <association property="patient" javaType="Patient">
             <id property="id" column="patientId"></id>
             <result property="realName" column="real_name"></result>
@@ -82,7 +82,7 @@
         select count(*)
         from registration
         where doctor_id = #{doctorId}
-          and TO_DATS(create_time) = TO_DATS(#{time})
+          and TO_DAYS(create_time) = TO_DAYS(#{time})
     </select>
 
     <select id="getRegistrationState" resultType="java.lang.Integer">
@@ -102,7 +102,7 @@
         <result column="age" jdbcType="INTEGER" property="age"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
-        <result column="serial_number" jdbcType="INTEGER" property="serialNumber"/>
+        <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
         <association property="registrationType" resultMap="cn.neuedu.his.mapper.RegistrationTypeMapper.BaseResultMap"/>
     </resultMap>
 
