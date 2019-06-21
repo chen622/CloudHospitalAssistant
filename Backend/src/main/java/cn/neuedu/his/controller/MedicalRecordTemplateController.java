@@ -74,8 +74,8 @@ public class MedicalRecordTemplateController {
      * @param authentication
      * @return
      */
-    @PostMapping("/saveHospitalMRT")
-    public JSONObject saveHospitalMRTemplate(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    @PostMapping("/saveMRT")
+    public JSONObject saveMRT(@RequestBody JSONObject object, Authentication authentication) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Integer doctorID = null;
         Integer level=JSONObject.parseObject(object.get("level").toString(), Integer.class);
         try {
