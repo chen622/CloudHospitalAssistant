@@ -16,8 +16,6 @@ import java.util.List;
  */
 public interface RegistrationService extends Service<Registration> {
     Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException;
-    Payment preRegistration(Integer patientId, Integer scheduleId);
-    void confirmPre(Integer registrarId, Integer registrationId) throws IllegalArgumentException;
     Invoice retreatRegistrationInfo(Integer registrationId, Integer registrarId);
     List<Registration> getAllWaitingRegistration(Integer doctorID, Integer state, Date time);
     List<Registration> getHadRegistration(Integer doctorID, Integer state, Date time);

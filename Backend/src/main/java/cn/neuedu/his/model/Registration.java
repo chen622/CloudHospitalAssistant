@@ -1,8 +1,6 @@
 package cn.neuedu.his.model;
 
 import javax.persistence.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -225,12 +223,5 @@ public class Registration {
 
     public void setRegistrationType(RegistrationType registrationType) {
         this.registrationType = registrationType;
-    }
-
-    public String setSerialNumber() {
-        SimpleDateFormat format = new SimpleDateFormat("yyMMdd");
-        String dateStr = format.format(createTime);
-        String dataStr = String.valueOf(id % 100000);
-        return dateStr + dataStr;
     }
 }

@@ -24,6 +24,10 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
     @Autowired
     private DailySettleMapper dailySettleMapper;
     @Autowired
+    private UserService userService;
+    @Autowired
+    private PaymentTypeService paymentTypeService;
+    @Autowired
     private PaymentService paymentService;
     @Autowired
     private InvoiceService invoiceService;
@@ -119,9 +123,12 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
      * @return
      */
     private Date lastSettleDate(Integer adminId) {
-        Date startDate = dailySettleMapper.selectLastTime(adminId);
-        if (startDate == null) //第一个日结信息
+        DailySettle lastDailySettle = dailySettleMapper.selectLastTime(adminId);
+        Date startDate;
+        if (lastDailySettle == null) //第一个日结信息
             startDate = new Date(System.currentTimeMillis() - 10 * 24 * 60 * 60 * 1000);
+        else
+            startDate = lastDailySettle.getStartDate();
 
         return startDate;
     }
