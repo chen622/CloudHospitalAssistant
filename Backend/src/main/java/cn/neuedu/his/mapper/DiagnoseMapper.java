@@ -6,4 +6,5 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface DiagnoseMapper extends MyMapper<Diagnose> {
+    void deleteByMRT(Integer id);
 }

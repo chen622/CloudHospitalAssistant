@@ -63,6 +63,19 @@ public class DepartmentControllerTest {
     }
 
     @Test
+    public void select() throws Exception{
+        mockMvc.perform(MockMvcRequestBuilders.get("/department/select")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
     public void getDepartmentById() throws Exception{
         mockMvc.perform(MockMvcRequestBuilders.get("/department/get/2")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)

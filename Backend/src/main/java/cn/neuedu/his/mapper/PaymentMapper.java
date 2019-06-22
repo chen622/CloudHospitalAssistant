@@ -33,6 +33,4 @@ public interface PaymentMapper extends MyMapper<Payment> {
     Map<Integer,Integer> getForStatistics(Integer doctorId, Integer patientId, String start, String end);
 
     Integer getStatistics(Integer patientId,String start,String end,Integer type);
-
-    Payment getOneByInvoice(Integer invoiceId);
 }

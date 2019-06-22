@@ -35,4 +35,5 @@ public interface UserService extends Service<User> {
 
     ArrayList<User> findAllTollKeeper() throws Exception;
 
+    List<User> getUserWithDocByDept(Integer typeId,Integer deptId);
 }

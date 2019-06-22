@@ -1,118 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DailySettleMapper">
-    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DailySettle">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
-        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
-        <result column="make_date" jdbcType="TIMESTAMP" property="makeDate"/>
-        <result column="admin_id" jdbcType="INTEGER" property="adminId"/>
-        <result column="make_id" jdbcType="INTEGER" property="makeId"/>
-        <result column="total_fee" jdbcType="DECIMAL" property="totalFee"/>
-        <result column="drug_fee" jdbcType="DECIMAL" property="drugFee"/>
-        <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee"/>
-        <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee"/>
-        <result column="deal_fee" jdbcType="DECIMAL" property="dealFee"/>
-        <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount"/>
-        <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount"/>
-        <result column="is_pass" jdbcType="BIT" property="isPass"/>
-        <result column="check_id" jdbcType="INTEGER" property="checkId"/>
-    </resultMap>
+  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DailySettle">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="make_date" jdbcType="TIMESTAMP" property="makeDate" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="make_id" jdbcType="INTEGER" property="makeId" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
+    <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
+    <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
+    <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
+    <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
+    <result column="is_pass" jdbcType="BIT" property="isPass" />
+    <result column="check_id" jdbcType="INTEGER" property="checkId" />
+  </resultMap>
 
-    <select id="selectLastTime" resultType="java.util.Date">
-        select end_date
-        from daily_settle
-        where admin_id = #{adminId}
-        order by make_date desc
-        limit 1
-    </select>
+  <select id="selectLastTime" resultMap="BaseResultMap">
+    select * from daily_settle where admin_id = #{adminId} order by make_date desc limit 1
+  </select>
 
-    <select id="getUser" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap">
-        select *
-        from user
-        where id = #{userId}
-    </select>
+  <select id="getUser" resultMap="cn.neuedu.his.mapper.UserMapper.BaseResultMap">
+    select * from user where id = #{userId}
+  </select>
 
 
-    <!--  获取为审核的日结表-->
-    <resultMap id="settleAndMakeUser" type="cn.neuedu.his.model.DailySettle">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
-        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
-        <result column="make_date" jdbcType="TIMESTAMP" property="makeDate"/>
-        <result column="admin_id" jdbcType="INTEGER" property="adminId"/>
-        <result column="make_id" jdbcType="INTEGER" property="makeId"/>
-        <result column="total_fee" jdbcType="DECIMAL" property="totalFee"/>
-        <result column="drug_fee" jdbcType="DECIMAL" property="drugFee"/>
-        <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee"/>
-        <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee"/>
-        <result column="deal_fee" jdbcType="DECIMAL" property="dealFee"/>
-        <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount"/>
-        <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount"/>
-        <result column="is_pass" jdbcType="BIT" property="isPass"/>
-        <result column="check_id" jdbcType="INTEGER" property="checkId"/>
-        <association property="makeUser" javaType="cn.neuedu.his.model.User" select="getUser"
-                     column="{userId = make_id}"/>
-    </resultMap>
+<!--  获取为审核的日结表-->
+  <resultMap id="settleAndMakeUser" type="cn.neuedu.his.model.DailySettle">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="make_date" jdbcType="TIMESTAMP" property="makeDate" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="make_id" jdbcType="INTEGER" property="makeId" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
+    <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
+    <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
+    <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
+    <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
+    <result column="is_pass" jdbcType="BIT" property="isPass" />
+    <result column="check_id" jdbcType="INTEGER" property="checkId" />
+    <association property="makeUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = make_id}"/>
+  </resultMap>
 
-    <select id="selectNotCheckByAdminId" resultMap="settleAndMakeUser">
-        select *
-        from daily_settle
-        where admin_id = #{adminId}
-          and is_pass = false
-        order by make_date desc
-    </select>
+  <select id="selectNotCheckByAdminId" resultMap="settleAndMakeUser">
+    select * from daily_settle where admin_id = #{adminId} and is_pass = false order by make_date desc
+  </select>
 
 
-    <resultMap id="settleAndAllUser" type="cn.neuedu.his.model.DailySettle">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>
-        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>
-        <result column="make_date" jdbcType="TIMESTAMP" property="makeDate"/>
-        <result column="admin_id" jdbcType="INTEGER" property="adminId"/>
-        <result column="make_id" jdbcType="INTEGER" property="makeId"/>
-        <result column="total_fee" jdbcType="DECIMAL" property="totalFee"/>
-        <result column="drug_fee" jdbcType="DECIMAL" property="drugFee"/>
-        <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee"/>
-        <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee"/>
-        <result column="deal_fee" jdbcType="DECIMAL" property="dealFee"/>
-        <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount"/>
-        <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount"/>
-        <result column="is_pass" jdbcType="BIT" property="isPass"/>
-        <result column="check_id" jdbcType="INTEGER" property="checkId"/>
-        <association property="adminUser" javaType="cn.neuedu.his.model.User" select="getUser"
-                     column="{userId = admin_id}"/>
-        <association property="makeUser" javaType="cn.neuedu.his.model.User" select="getUser"
-                     column="{userId = make_id}"/>
-        <association property="checkUser" javaType="cn.neuedu.his.model.User" select="getUser"
-                     column="{userId = check_id}"/>
-    </resultMap>
-
-<!--    <resultMap id="settleAndInvoice" type="cn.neuedu.his.model.DailySettle">-->
-<!--        <id column="id" jdbcType="INTEGER" property="id"/>-->
-<!--        <result column="start_date" jdbcType="TIMESTAMP" property="startDate"/>-->
-<!--        <result column="end_date" jdbcType="TIMESTAMP" property="endDate"/>-->
-<!--        <result column="make_date" jdbcType="TIMESTAMP" property="makeDate"/>-->
-<!--        <result column="admin_id" jdbcType="INTEGER" property="adminId"/>-->
-<!--        <result column="make_id" jdbcType="INTEGER" property="makeId"/>-->
-<!--        <result column="total_fee" jdbcType="DECIMAL" property="totalFee"/>-->
-<!--        <result column="drug_fee" jdbcType="DECIMAL" property="drugFee"/>-->
-<!--        <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee"/>-->
-<!--        <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee"/>-->
-<!--        <result column="deal_fee" jdbcType="DECIMAL" property="dealFee"/>-->
-<!--        <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount"/>-->
-<!--        <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount"/>-->
-<!--        <result column="is_pass" jdbcType="BIT" property="isPass"/>-->
-<!--        <result column="check_id" jdbcType="INTEGER" property="checkId"/>-->
-<!--        <collection property="adminUser" javaType="cn.neuedu.his.mapper.InvoiceMapper.InvoiceAndPaymentMap" select="getUser"-->
-<!--                    column="{userId = admin_id}"/>-->
-<!--    </resultMap>-->
-
-<!--    <select id="getAllByUser" resultMap="">-->
-
-<!--    </select>-->
+  <resultMap id="settleAndAllUser" type="cn.neuedu.his.model.DailySettle">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="make_date" jdbcType="TIMESTAMP" property="makeDate" />
+    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
+    <result column="make_id" jdbcType="INTEGER" property="makeId" />
+    <result column="total_fee" jdbcType="DECIMAL" property="totalFee" />
+    <result column="drug_fee" jdbcType="DECIMAL" property="drugFee" />
+    <result column="inspection_fee" jdbcType="DECIMAL" property="inspectionFee" />
+    <result column="registration_fee" jdbcType="DECIMAL" property="registrationFee" />
+    <result column="deal_fee" jdbcType="DECIMAL" property="dealFee" />
+    <result column="normal_invoice_amount" jdbcType="INTEGER" property="normalInvoiceAmount" />
+    <result column="anew_invoice_amount" jdbcType="INTEGER" property="anewInvoiceAmount" />
+    <result column="is_pass" jdbcType="BIT" property="isPass" />
+    <result column="check_id" jdbcType="INTEGER" property="checkId" />
+    <association property="adminUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = admin_id}"/>
+    <association property="makeUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = make_id}"/>
+    <association property="checkUser" javaType="cn.neuedu.his.model.User" select="getUser" column="{userId = check_id}"/>
+  </resultMap>
 
 </mapper>

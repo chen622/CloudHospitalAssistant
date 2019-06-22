@@ -222,15 +222,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IllegalArgumentException
      */
     @Override
-    public void addAnewInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException, UnsupportedOperationException {
+    public void addAnewInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException {
         Invoice invoice = findById(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
-        if(isFrozenInvoice(invoiceId))
-            throw new UnsupportedOperationException();
         invoice.setAnewAmount(invoice.getAnewAmount() + 1);
         invoice.setOperatorId(admin);
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
+        //todo:查看是否frozen
         update(invoice);
     }
 
@@ -241,28 +240,14 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
      * @throws IllegalArgumentException
      */
     @Override
-    public void addAgainInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException, UnsupportedOperationException {
+    public void addAgainInvoice(Integer invoiceId, Integer admin) throws IllegalArgumentException {
         Invoice invoice = findById(invoiceId);
         if (invoice == null)
             throw new IllegalArgumentException("invoiceId");
-        if(isFrozenInvoice(invoiceId))
-            throw new UnsupportedOperationException();
         invoice.setAgainAmount(invoice.getAgainAmount() + 1);
         invoice.setOperatorId(admin);
         invoice.setCreatedDate(new Date(System.currentTimeMillis()));
         update(invoice);
-    }
-
-    /**
-     * 发票是否已冻结
-     * @param invoiceId
-     * @return
-     */
-    private boolean isFrozenInvoice(Integer invoiceId) {
-        Payment payment = paymentService.findOneByInvoice(invoiceId);
-        if (payment == null)
-            return true;
-        return payment.getIsFrozen();
     }
 
     @Override
@@ -298,8 +283,7 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
 
     @Override
     public Integer getAnewInvoiceNumber(Date start, Date end) {
-        Integer count = invoiceMapper.getAnewInvoiceNumber(start, end);
-        return count == null? 0: count;
+        return invoiceMapper.getAnewInvoiceNumber(start, end);
     }
 
     @Override

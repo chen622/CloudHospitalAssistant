@@ -68,6 +68,14 @@
         where username = #{username}
     </select>
 
+    <!-- 按照科室得到医生信息 -->
+    <select id="getUserWithDocByDept"  resultMap="UserAndDoctor">
+        SELECT *
+        FROM user
+                 JOIN doctor ON user.id = doctor.id
+        where type_id=#{typeId} and department_id=#{deptId} and user.is_delete=false
+    </select>
+
 
 
     <resultMap id="findAllWithName" type="cn.neuedu.his.model.User">

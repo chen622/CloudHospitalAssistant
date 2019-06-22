@@ -17,4 +17,8 @@ public class DiagnoseServiceImpl extends AbstractService<Diagnose> implements Di
     @Autowired
     private DiagnoseMapper diagnoseMapper;
 
+    @Override
+    public void deleteByMRT(Integer id) {
+        diagnoseMapper.deleteByMRT(id);
+    }
 }

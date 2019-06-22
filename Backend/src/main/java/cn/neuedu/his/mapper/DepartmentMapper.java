@@ -22,4 +22,5 @@ public interface DepartmentMapper extends MyMapper<Department> {
 
     List<Department> getDepartmentListByName(String name);
 
+    List<Department> getAllClinical(Integer id);
 }

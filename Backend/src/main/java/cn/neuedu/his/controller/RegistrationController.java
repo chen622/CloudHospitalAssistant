@@ -69,59 +69,6 @@ public class RegistrationController {
     }
 
     /**
-     * 预约挂号
-     * @param scheduleId
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/preRegistration/{scheduleId}")
-    public JSONObject preRegistration(@PathVariable("scheduleId") Integer scheduleId, Authentication authentication) {
-        //todo:患者权限验证
-        Integer patientId = 0;
-        try {
-            registrationService.preRegistration(patientId, scheduleId);
-        } catch (IllegalArgumentException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
-        } catch (IndexOutOfBoundsException e1) {
-            return CommonUtil.errorJson(ErrorEnum.E_510);
-        } catch (UnsupportedOperationException e2) {
-            if (e2.getMessage().equals("schedule")) {
-                return CommonUtil.errorJson(ErrorEnum.E_510);
-            }
-            return CommonUtil.errorJson(ErrorEnum.E_500);
-        }
-
-        return CommonUtil.successJson();
-    }
-
-    /**
-     * 现场确认
-     * @param registrationId
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/confirmPre/{registrationId}")
-    public JSONObject confirmPre(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
-        //获取挂号收费员id
-        Integer registrarId = null;
-        try {
-            registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-
-        try {
-            registrationService.confirmPre(registrarId, registrationId);
-        }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-
-        return CommonUtil.successJson();
-    }
-
-    /**
      * 退号
      *
      * @param registrationId

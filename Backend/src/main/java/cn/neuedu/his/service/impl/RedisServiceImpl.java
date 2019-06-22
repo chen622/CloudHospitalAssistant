@@ -56,7 +56,7 @@ public class RedisServiceImpl {
         }
     }
 
-    public String get(String key) throws Exception {
+        public String get(String key) throws Exception {
         String result;
         Jedis jedis = null;
         try {

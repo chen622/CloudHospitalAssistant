@@ -117,7 +117,5 @@ public class Constants {
     public static final Integer HAPPEN_RETREAT_ALL = 1207;
 
 
-    //预约挂号员id
-    public static final Integer WEB_REGISTRAR_ID = 15;
 
 }
