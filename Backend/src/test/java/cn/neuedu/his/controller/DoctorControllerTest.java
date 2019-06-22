@@ -51,7 +51,7 @@ public class DoctorControllerTest {
                 .setSubject("ccmccm")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 1)
-                .claim("typeId", 605)
+                .claim("typeId", 602)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -107,7 +107,7 @@ public class DoctorControllerTest {
      */
     @Test
     public void getTemporaryMR() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryMR/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/MRT/delete/19")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)

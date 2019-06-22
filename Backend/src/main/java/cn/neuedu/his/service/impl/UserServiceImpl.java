@@ -214,4 +214,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         return userMapper.findUser(name);
     }
 
+    @Override
+    public List<User> getUserWithDocByDept(Integer typeId,Integer deptId){
+        List<User> users=userMapper.getUserWithDocByDept(typeId, deptId);
+        if(users==null){
+            users=new ArrayList<>();
+        }
+        return users;
+    }
 }

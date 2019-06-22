@@ -1,25 +1,26 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.mapper.DepartmentMapper;
 import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
 import cn.neuedu.his.service.DepartmentService;
+import cn.neuedu.his.service.UserService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.xml.internal.bind.v2.model.core.ID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -36,6 +37,10 @@ public class DepartmentController {
     ConstantVariableService constantVariableService;
     @Autowired
     RedisServiceImpl redisService;
+    @Autowired
+    DepartmentMapper departmentMapper;
+    @Autowired
+    UserService userService;
 
     @GetMapping("/getByKind/{kindId}")
     public JSONObject getByKind(@PathVariable("kindId") Integer kindId) {
@@ -248,5 +253,29 @@ public class DepartmentController {
         }
     }
 
+    @GetMapping("/select")
+    public JSONObject reserve() {
+        Map<String,Integer> map= null;
+        Map<String,Object> res=new HashMap<>();
+        try {
+            map = redisService.getMapAll("departmentType");
+            Integer id=map.get("临床科室");
+            Map<String,Integer> map2=redisService.getMapAll("userType");
+            Integer typeId=map2.get("门诊医生");
+            List<Department> clinicals=departmentMapper.getAllClinical(id);
+            if(clinicals==null){
+                clinicals=new ArrayList<>();
+                res.put("depts",clinicals);
+            }else {
+                List<User> users=userService.getUserWithDocByDept(typeId,clinicals.get(0).getId());
+                res.put("depts",clinicals);
+                res.put("users", users);
+
+            }
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+        return CommonUtil.successJson(res);
+    }
 
 }

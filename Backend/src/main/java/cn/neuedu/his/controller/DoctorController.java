@@ -41,6 +41,7 @@ public class DoctorController {
     @Autowired
     private InspectionApplicationService inspectionApplicationService;
 
+
     @GetMapping("/getByDepartmentId/{id}")
     public JSONObject getByDepartmentId(@PathVariable("id") Integer departmentId) {
         List<Doctor> doctors = doctorService.getByDepartmentId(departmentId);
