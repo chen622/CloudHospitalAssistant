@@ -11,6 +11,10 @@ import java.util.List;
  * Created by ccm on 2019/05/26.
  */
 public interface PatientService extends Service<Patient> {
+    JSONObject parseMiniProgramLoginRequest(JSONObject requestJson) throws RuntimeException;
+
+
+
     Patient findAllPayment(Integer patientId, Date start, Date end);
     Patient findNotPaidPayment(Integer patientId);
     Patient findNotConsumePayment(Integer patientId);

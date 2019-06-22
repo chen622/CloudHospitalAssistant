@@ -25,6 +25,8 @@ public class Constants {
     public static final String TOKEN_TYPE = "JWT";
     public static final String TOKEN_ISSUER = "his-api";
     public static final String TOKEN_AUDIENCE = "his-app";
+    public static final String APP_ID = "wx030a4bae225c8a36";
+    public static final String SECRIT_KEY = "0afeedfd1922f294d43d2e30b049857a";
 
 
     public enum Usage {
@@ -64,8 +66,6 @@ public class Constants {
     public static final Integer PERSONALLEVEL = 503;
 
 
-
-
     //看诊状态
     public static final Integer REGISTRATIONSTATE = 8;
     //预约
@@ -73,7 +73,7 @@ public class Constants {
     // 待诊
     public static final Integer WAITING_FOR_TREATMENT = 802;
     //进入诊室
-    public static final Integer INSIDE_DOCTOR=809;
+    public static final Integer INSIDE_DOCTOR = 809;
     //初诊
     public static final Integer FIRST_DIAGNOSIS = 803;
     // 疑诊
@@ -115,7 +115,6 @@ public class Constants {
     public static final Integer HAPPEN_RETREAT = 1206;
     //已全部退完
     public static final Integer HAPPEN_RETREAT_ALL = 1207;
-
 
 
 }

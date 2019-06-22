@@ -5,12 +5,16 @@ import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.util.Exchange;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,9 +30,71 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
     private PatientMapper patientMapper;
     @Autowired
     private PaymentService paymentService;
+    @Autowired
+    private Exchange exchange;
+
+    @Override
+    @Transactional
+    public JSONObject parseMiniProgramLoginRequest(JSONObject requestJson) throws RuntimeException {
+        JSONObject returnJson = new JSONObject();
+        // 插入轮播图数据
+        Patient customer = exchange.code2Session(requestJson.getString("code"));
+        System.out.println(customer.getSessionKey());
+        // 前端获取的头像链接
+        String avatarUrl = requestJson.getString("avatarUrl");
+        String name = requestJson.getString("name");
+        Patient oldCustomer = this.login(customer);
+        String token;
+        if (oldCustomer != null) {
+            // 此前已经登录过的老用户
+            oldCustomer.updateWechatData(customer.getOpenId(), customer.getSessionKey());
+            // 更新头像 性别和 用户名(微信昵称) 等基本属性
+            if (avatarUrl != null && name != null) {
+                oldCustomer.setAvatarUrl(avatarUrl);
+                oldCustomer.setUsername(name);
+            }
+            oldCustomer.setLastLoginTime(new Date(System.currentTimeMillis()));
+            this.update(oldCustomer);
+            returnJson.put("isNew", false);
+            token = Jwts.builder()
+                    .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
+                    .setHeaderParam("typ", Constants.TOKEN_TYPE)
+                    .setIssuer(Constants.TOKEN_ISSUER)
+                    .setAudience(Constants.TOKEN_AUDIENCE)
+                    .setSubject(oldCustomer.getUsername())
+                    .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
+                    .claim("id", oldCustomer.getId())
+                    .claim("typeId", -1)
+                    .compact();
+        } else {
+            // 白白胖胖的崭新的用户
+            returnJson.put("isNew", true);
+            // 保存新用户的头像 性别和 用户名(微信昵称) 等基本属性
+            customer.setAvatarUrl(avatarUrl);
+            customer.setUsername(name);
+            this.save(customer);
+            token = Jwts.builder()
+                    .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
+                    .setHeaderParam("typ", Constants.TOKEN_TYPE)
+                    .setIssuer(Constants.TOKEN_ISSUER)
+                    .setAudience(Constants.TOKEN_AUDIENCE)
+                    .setSubject(customer.getUsername())
+                    .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
+                    .claim("id", customer.getId())
+                    .claim("typeId", -1)
+                    .compact();
+        }
+        returnJson.put("token", token);
+        return returnJson;
+    }
+
+    private Patient login(Patient customer) {
+        return patientMapper.findByOpenId(customer.getOpenId());
+    }
 
     /**
      * 查找患者(某时间段内)所有缴费信息
+     *
      * @param patientId
      * @param start
      * @param end
@@ -77,13 +143,14 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
     /**
      * 查询相应的已缴费尚未发放的药品信息
+     *
      * @param patientId
      * @return
      * @throws IllegalArgumentException
      */
     @Override
-    public Patient findPatientAndNotTakeDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException{
-        Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_PAID, start, end);
+    public Patient findPatientAndNotTakeDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_PAID, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
         return patient;
@@ -91,6 +158,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
     /**
      * 查询相应的已取的药品信息
+     *
      * @param patientId
      * @param start
      * @param end
@@ -98,8 +166,8 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      * @throws IllegalArgumentException
      */
     @Override
-    public Patient findPatientAndTakenDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException{
-        Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_COMPLETED_PAID, start, end);
+    public Patient findPatientAndTakenDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAVE_COMPLETED_PAID, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -108,6 +176,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
     /**
      * 查询曾退还过的药品信息
+     *
      * @param patientId
      * @param start
      * @param end
@@ -115,8 +184,8 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      * @throws IllegalArgumentException
      */
     @Override
-    public Patient findPatientAndHappenRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException{
-        Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAPPEN_RETREAT, start, end);
+    public Patient findPatientAndHappenRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAPPEN_RETREAT, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -125,14 +194,15 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
     /**
      * 查询全部退还的药品信息
+     *
      * @param patientId
      * @param start
      * @param end
      * @return
      */
     @Override
-    public Patient findPatientAndAllRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException{
-        Patient patient =  patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAPPEN_RETREAT_ALL, start, end);
+    public Patient findPatientAndAllRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException {
+        Patient patient = patientMapper.getPatientAndDrugByTypeAndState(patientId, Constants.DRUG_PAYMENT_TYPE, Constants.HAPPEN_RETREAT_ALL, start, end);
         if (patient == null)
             throw new IllegalArgumentException("patientId");
 
@@ -141,6 +211,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
     /**
      * 查询所有已取过药之后状态的信息（用作退药时患者查询）
+     *
      * @param patientId
      * @param start
      * @param end
@@ -148,19 +219,19 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
      * @throws IllegalArgumentException
      */
     @Override
-    public JSONObject findPatientAndAllDrugInfo(Integer patientId, Date start, Date end) throws IllegalArgumentException{
+    public JSONObject findPatientAndAllDrugInfo(Integer patientId, Date start, Date end) throws IllegalArgumentException {
         JSONObject result = new JSONObject();
 
         Patient patient = findPatientAndHappenRetreatDrug(patientId, start, end);
         JSONArray jsonArray = new JSONArray();
-        for(Payment originalPayment: patient.getPaymentList()) {
+        for (Payment originalPayment : patient.getPaymentList()) {
             //所有退药信息
             ArrayList<Payment> allPaymentList = paymentService.findAllByItemAndPaymentTypeAndState(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), Constants.HAVE_RETURN_DRUG);
             allPaymentList.addAll(paymentService.findAllByItemAndPaymentTypeAndState(originalPayment.getItemId(), originalPayment.getPaymentTypeId(), Constants.HAVE_RETREAT));
 
             //计算退药数量
             Integer retreatQuantity = 0;
-            for (Payment item: allPaymentList) {
+            for (Payment item : allPaymentList) {
                 retreatQuantity = retreatQuantity + item.getQuantity();
             }
 
@@ -182,8 +253,6 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
 
         return result;
     }
-
-
 
 
     /**
