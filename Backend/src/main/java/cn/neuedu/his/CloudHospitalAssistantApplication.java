@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -17,9 +18,11 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.List;
 import java.util.Properties;
 
+
 @EnableTransactionManagement
 @SpringBootApplication
-@EnableScheduling
+@EnableEurekaClient
+//@EnableScheduling
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {
     private static Logger logger = Logger.getLogger(CloudHospitalAssistantApplication.class);

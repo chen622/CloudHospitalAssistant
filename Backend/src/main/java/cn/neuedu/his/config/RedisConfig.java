@@ -9,7 +9,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 @Component//需要@EnableConfigurationProperties
-@PropertySource("classpath:application.properties")//使用@PropertySource来指定自定义的资源目录
+@PropertySource("classpath:application.yml")//使用@PropertySource来指定自定义的资源目录
 @ConfigurationProperties(prefix = "spring.redis") //读取application.properties文件中以“spring.redis”开头的变量值。
 public class RedisConfig {
     private static Logger logger = Logger.getLogger(RedisConfig.class);
