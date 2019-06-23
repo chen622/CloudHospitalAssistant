@@ -93,4 +93,9 @@
           and is_delete = false;
     </select>
 
+    <select id="getAllClinical" resultMap="BaseResultMap">
+        select * from department where kind_id in (select  kind.id from department_kind kind where kind.classification_id=#{id}) and is_delete=false
+    </select>
+    
+    
 </mapper>

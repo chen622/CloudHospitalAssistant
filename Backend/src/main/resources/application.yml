@@ -1,0 +1,50 @@
+server:
+  port: 8078
+
+spring:
+  application:
+    name: eureka-producer
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+  redis:
+    database: 1
+    host-name: 129.211.61.153
+    password: neuedu
+    port: 6220
+    timeout: 3000
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 300
+        max-idle: 8
+        min-idle: 0
+
+eureka:
+  instance:
+    appname: ${spring.application.name}
+    instanceId: ${spring.application.name}
+    preferIpAddress: true
+    ipAddress: 127.0.0.1
+  client:
+      fetchRegistry: true
+      registerWithEureka: true
+      enabled: true
+      serviceUrl:
+        defaultZone: http://127.0.0.1:8001/eureka
+
+druid:
+  url: jdbc:mysql://129.211.61.153/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+  driver-class-name: com.mysql.cj.jdbc.Driver
+  username: root
+  password: NEUedu1118!@
+  initial-size: 1
+  min-idle: 1
+  max-active: 30
+  test-on-borrow: true
+mapper:
+  not-empty: false
+  identity: MYSQL
+mybatis:
+  type-aliases-package: cn.neuedu.his.model
+  mapper-locations: classpath:mapper/*.xml
+

@@ -15,4 +15,6 @@ public interface ScheduleRuleMapper extends MyMapper<ScheduleRule> {
     List<ScheduleRule> getDoctorSchedule(Integer doctorId);
 
     List<ScheduleRule> getFullByDepartmentId(Integer departmentId);
+
+    List<ScheduleRule> getFullByDepartmentIdAndDay(Integer departmentId, Integer day);
 }

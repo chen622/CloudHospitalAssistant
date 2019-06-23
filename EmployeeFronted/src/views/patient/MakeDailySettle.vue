@@ -21,13 +21,13 @@
                                                    placeholder="截止时间（可选填）">
                                     </a-date-picker>
                                 </a-col>
-                                <a-col span="4" type="flex" align="top" justify="start">
-                                    <a-select :defaultValue="allAdmin[self].realName" style="width: 120px"
-                                              @change="handleAdminChange">
-                                        <a-select-option v-for="(admin,index) in allAdmin" :key="index">
-                                            {{admin.realName}}
-                                        </a-select-option>
-                                    </a-select>
+                                <a-col span="6" type="flex" align="top" justify="middle" style="font-size: 16px">
+                                        <a-form layout="inline" :label-col="{ span: 2 }" :wrapper-col="{span: 2}">
+                                            <a-form-item label="收费员">
+                                                <a-input disabled :placeholder="currentAdmin.realName">
+                                                </a-input>
+                                            </a-form-item>
+                                        </a-form>
                                 </a-col>
                                 <a-col span="5" type="flex" align="top" justify="start">
                                     <a-button type="primary" @click="statistics">日结统计</a-button>
@@ -35,7 +35,7 @@
                             </a-row>
 
                             <div v-if="settle!=null">
-                                <a-card class="settle-card" :bordered="false">
+                                <a-card class="settle-card" :bordered="false" :loading="load.cardLoad">
                                     <p style="font-size: 20px">日结单信息</p>
                                     <a-row type="flex" align="top" justify="start"
                                            style="margin: 5px 0 10px 0;"></a-row>
@@ -63,6 +63,9 @@
                                             <a-tag style="width: 40px;">{{settle.dealFee}}</a-tag>
                                         </a-col>
                                     </a-row>
+                                    <a-row type="flex" align="middle" justify="end" class="search-card">
+                                        <a-button @click="confirm" style="margin-right: 10%">结算报账</a-button>
+                                    </a-row>
                                 </a-card>
                             </div>
 
@@ -81,17 +84,20 @@
 <script>
 
     import moment from 'moment'
+    import ARow from "ant-design-vue/es/grid/Row";
 
     export default {
+        components: {ARow},
         data: () => ({
             time: {
                 timeFormat: 'YYYY-MM-DD hh:mm:ss'
             },
+            load: {
+                cardLoad: false
+            },
             startTime: null,
             endTime: new moment(),
-            allAdmin: [],
             currentAdmin: null,
-            self: null,
             settle: null,
         }),
         filters: {
@@ -116,9 +122,7 @@
                 let that = this
                 this.$api.get("/daily_settle/initialize", null, res => {
                     if (res.code === '100') {
-                        that.allAdmin = res.data.userList
-                        that.self = res.data.self
-                        that.currentAdmin = that.allAdmin[that.self]
+                        that.currentAdmin = res.data
                     } else if (res.code === '502') {
                         that.$message.error(res.message)
                     }
@@ -126,14 +130,12 @@
                     that.$message.error("网络异常")
                 })
             },
-            handleAdminChange(value) {
-                this.currentAdmin = this.allAdmin[value]
-            },
             statistics() {
                 let request = {
                     admin: this.currentAdmin.id,
                     endDate: this.endTime
                 }
+                this.load.cardLoad = true
                 let that = this
                 this.$api.post("/daily_settle/produceSettleInfo", request, res => {
                     if (res.code === '100') {
@@ -144,8 +146,29 @@
                     } else if (res.code === '513') {
                         that.$message.error(res.message)
                     }
+                    that.load.cardLoad = false
                 }, () => {
                     that.$message.error("网络异常")
+                    that.load.cardLoad = false
+                })
+            },
+            confirm() {
+                let request = {
+                    dailySettle: this.settle
+                }
+                this.load.cardLoad = true
+                let that = this
+                this.$api.post("/daily_settle/makeTable", request, res => {
+                    if (res.code === '100') {
+                        that.settle = null
+                        that.$message.success("建表成功")
+                    } else if (res.code === '502') {
+                        that.$message.error(res.message)
+                    }
+                    that.load.cardLoad = false
+                }, () => {
+                    that.$message.error("网络异常")
+                    that.load.cardLoad = false
                 })
             }
         },

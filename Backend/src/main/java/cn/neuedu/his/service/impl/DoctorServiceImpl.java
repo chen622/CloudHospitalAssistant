@@ -165,7 +165,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getHospitalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     /**
@@ -178,7 +178,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getDeptMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     /**
@@ -191,7 +191,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     @Override
     @Transactional
     public JSONObject getPersonalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMR(doctorID, level));
+        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
     }
 
     private JSONObject getMRTemp(List<MedicalRecordTemplate> templates) {
@@ -207,7 +207,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
     @Override
     public JSONObject getMeicalRecordTemByName(String name) {
-        return getMRTemp(medicalRecordTemplateService.getMeicalRecordTemByName(name));
+        return getMRTemp(medicalRecordTemplateService.getMedicalRecordTemByName(name));
     }
 
 
@@ -326,7 +326,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             try {
                 if (dd != null) {
                     for (Diagnose d : dd) {
-                        System.out.println(d.getId());
                         diagnoseService.deleteById(d.getId());
                     }
                     doctorService.saveDiagnose(diagnoses, original.getId(), false, false);
@@ -348,7 +347,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject saveMRTemplate(MedicalRecord record, Integer doctorID, String name, Integer level) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         MedicalRecordTemplate template = copyMedicalRecord(record);
         template = setImportantInfo(template, doctorID, name, level);
-        return ((DoctorServiceImpl) AopContext.currentProxy()).saveRecordAndDiagnoseAsTemp(record, template, doctorID);
+        return this.saveRecordAndDiagnoseAsTemp(record, template, doctorID);
     }
 
     private MedicalRecordTemplate setImportantInfo(MedicalRecordTemplate template, Integer doctorID, String name, Integer level) {
@@ -381,6 +380,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             return CommonUtil.errorJson(ErrorEnum.E_706.addErrorParamName("medicalRecordTemplate"));
         }
         medicalRecordTemplateService.deleteById(id);
+        diagnoseService.deleteByMRT(id);
         return CommonUtil.successJson();
     }
 
@@ -722,9 +722,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         try {
             List<Diagnose> firstD = record.getFirstDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(firstD, template.getId());
+            this.saveDiagnoseTemp(firstD, template.getId());
             List<Diagnose> finalD = record.getFinalDiagnose();
-            ((DoctorServiceImpl) AopContext.currentProxy()).saveDiagnoseTemp(finalD, template.getId());
+            this.saveDiagnoseTemp(finalD, template.getId());
         } catch (Exception e) {
             throw new RuntimeException("diagnose");
         }
@@ -779,7 +779,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 diagnose.setTemplate(isTemplate);
                 diagnose.setDiseaseId(integer);
                 diagnoseService.save(diagnose);
-                System.out.println("save :" + diagnose.getId());
             }
         }
     }

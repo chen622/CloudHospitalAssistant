@@ -37,7 +37,7 @@
             <a-button style="float: right;margin: 0 10px" type="danger" v-if="isFinial"
                       @click="submit">提交诊断
             </a-button>
-            <a-button style="float: right;margin: 0 10px" type="primary"
+            <a-button style="float: right;margin: 0 10px" type="primary" v-if="!isTemplate"
                       @click="showDisease = true">添加诊断
             </a-button>
 
@@ -47,12 +47,12 @@
             <template slot="name" slot-scope="text">
                 <span>{{text}}</span>
             </template>
-            <template slot="action" slot-scope="text,record,index">
+            <template v-if="!isTemplate" slot="action" slot-scope="text,record,index">
                 <a-popconfirm
                         v-if="diagnose.length && record.temp"
                         title="确定删除？"
                         @confirm="() => deleteDiagnose(index)">
-                    <a href="javascript:;">删除</a>
+                    <a>删除</a>
                 </a-popconfirm>
             </template>
         </a-table>
@@ -62,7 +62,7 @@
 <script>
     export default {
         name: "Diagnose",
-        props: ['isFinial', 'registrationId'],
+        props: ['isFinial', 'registrationId','isTemplate'],
         data: () => ({
             disease: {
                 first: [],

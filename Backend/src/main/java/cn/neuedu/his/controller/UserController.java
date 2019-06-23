@@ -11,11 +11,13 @@ import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +62,20 @@ public class UserController {
     PasswordEncoder passwordEncoder;
     @Autowired
     RedisServiceImpl redisService;
+
+    @GetMapping("/getDocByDept/{deptId}")
+    public JSONObject getDocByDept(@PathVariable("deptId") Integer deptId ){
+        Map<String,Integer> map2= null;
+        try {
+            map2 = redisService.getMapAll("userType");
+        } catch (Exception e) {
+            return   CommonUtil.errorJson(ErrorEnum.E_638);
+        }
+        Integer typeId=map2.get("门诊医生");
+        List<User> users=userService.getUserWithDocByDept(typeId,deptId);
+        return CommonUtil.successJson(users);
+    }
+
 
     @GetMapping("/function")
     public JSONObject login(Authentication authentication) throws Exception {
@@ -341,5 +357,19 @@ public class UserController {
 
     }
 
-
+    @GetMapping("/getDoctorByDept")
+    public JSONObject getDoctorByDept(@Param("deptId") Integer deptId){
+        Map<String,Integer> map2= null;
+        try {
+            map2 = redisService.getMapAll("userType");
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_638);
+        }
+        Integer typeId=map2.get("门诊医生");
+        List<User> list=userService.getUserWithDocByDept(typeId, deptId);
+        if(list==null){
+            list=new ArrayList<>();
+        }
+        return CommonUtil.successJson(list);
+    }
 }

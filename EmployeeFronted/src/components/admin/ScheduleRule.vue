@@ -5,7 +5,7 @@
                 <a-button style="width: 80%" type="primary" @click="showAdd">新增</a-button>
             </a-col>
             <a-col span="4">
-                <a-button style="width: 80%" type="danger">生成排班</a-button>
+                <a-button style="width: 80%" type="danger" @click="showUse">生成排班</a-button>
             </a-col>
         </a-row>
         <a-table bordered :columns="columns" :dataSource="rules" rowKey="id">
@@ -37,6 +37,13 @@
                 </div>
                 <span v-else>周{{castNumber(text)}}</span>
             </template>
+            <template slot="registrationQuantity" slot-scope="text,record">
+                <div v-if="record.editable">
+                    <a-input-number :defaultValue="record.registrationQuantity" :min="1" :max="200"
+                                    @change="e => handleChange(e, record.id, 'registrationQuantity')"></a-input-number>
+                </div>
+                <span v-else>{{text}}</span>
+            </template>
             <template slot="action" slot-scope="text,record">
                 <span v-if="record.editable">
                      <a-popconfirm title='确定保存次修改吗?' @confirm="save(record)">
@@ -57,7 +64,15 @@
                 </span>
             </template>
         </a-table>
-        <a-modal title="创建排班规则" v-if="showAddRule" v-model="showAddRule" @ok="add">
+        <a-modal title="生成排班表" v-if="showUseRule" v-model="showUseRule" @cancel="showUseRule=false" @ok="useRule">
+            <a-form>
+                <a-form-item label="生成日期" :labelCol="{span:5,offset: 5}" :wrapperCol="{span:14}">
+                    <a-range-picker v-model="timeRange"
+                                    format="YYYY-MM-DD HH:mm:ss"></a-range-picker>
+                </a-form-item>
+            </a-form>
+        </a-modal>
+        <a-modal title="创建排班规则" v-if="showAddRule" v-model="showAddRule" @cancel="showAddRule = false" @ok="add">
             <a-form :form="ruleForm" style="text-align: center">
                 <a-form-item label="医师" :labelCol="{span:5,offset: 5}" :wrapperCol="{span:10}">
                     <a-select v-decorator="['doctorId',{rules: checkRules.doctor}]">
@@ -100,7 +115,6 @@
 
 <script>
 
-
     export default {
         name: "ScheduleRule",
         props: ['department'],
@@ -129,6 +143,10 @@
                     dataIndex: 'day',
                     scopedSlots: {customRender: 'day'},
                     sorter: (a, b) => a.day - b.day,
+                }, {
+                    title: '挂号数量',
+                    dataIndex: 'registrationQuantity',
+                    scopedSlots: {customRender: 'registrationQuantity'}
                 },
                 {
                     title: '操作',
@@ -151,9 +169,34 @@
             },
             ruleForm: null,
             loading: false,
-            showAddRule: false
+            showAddRule: false,
+            showUseRule: false,
+            timeRange: []
         }),
         methods: {
+            useRule () {
+                if (this.timeRange.length === 2) {
+                    let that = this
+                    let data = {
+                        start: this.timeRange[0],
+                        end: this.timeRange[1],
+                        departmentId: this.department[2]
+                    }
+                    this.$api.post('/schedule_rule/use', data,
+                        res => {
+                            if (res.code === '100') {
+                                that.$message.success("生成成功, 共生成 " + res.data.length + " 条")
+                                that.showUseRule = false
+                                that.$emit("refresh")
+                            } else {
+                                that.$message.error("生成失败")
+                            }
+                        }, () => {
+                        })
+                } else {
+                    this.$message.info("请选择日期范围")
+                }
+            },
             add () {
                 let that = this
                 this.ruleForm.validateFields((err) => {
@@ -183,6 +226,13 @@
                 }
             }
             ,
+            showUse () {
+                if (this.department) {
+                    this.showUseRule = true
+                } else {
+                    this.$message.info("请先选择科室")
+                }
+            },
             handleChange (value, id, column) {
                 const newData = [...this.rules]
                 const target = newData.filter(item => id === item.id)[0]

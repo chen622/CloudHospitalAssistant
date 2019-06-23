@@ -49,4 +49,5 @@
           and doctor.can_arrange
           and user.department_id = #{departmentId}
     </select>
+
 </mapper>

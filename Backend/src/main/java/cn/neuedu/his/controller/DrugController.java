@@ -192,8 +192,6 @@ public class DrugController {
     @GetMapping("/select/{name}")
     public JSONObject selectDrug(@PathVariable("name") String name, Authentication authentication) {
 
-        System.out.println(name);
-
         //检测是药物管理员权限
         try {
             PermissionCheck.getIdByDrugAdmin(authentication);

@@ -1,10 +1,13 @@
 package cn.neuedu.his.util;
 
+import cn.neuedu.his.model.Doctor;
+import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -15,7 +18,7 @@ import java.util.Map;
 @Component
 public class PermissionCheck {
     @Autowired
-    public RedisServiceImpl redisServiceTemp;
+    RedisServiceImpl redisServiceTemp;
 
     private static RedisServiceImpl redisService;
 
@@ -33,6 +36,22 @@ public class PermissionCheck {
     public static Integer getIdByUser(Authentication authentication) {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         return (Integer) data.get("id");
+    }
+
+
+    /**
+     * 患者的权限校验接口
+     *
+     * @param authentication
+     * @return
+     */
+    public static Integer getIdByPatient(Authentication authentication) throws AuthenticationServiceException {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        if ((Integer) data.get("typeId") != -1) {
+            throw new AuthenticationServiceException("");
+        } else {
+            return (Integer) data.get("id");
+        }
     }
 
     /**
@@ -134,6 +153,71 @@ public class PermissionCheck {
             }
         } catch (Exception e) {
             throw new AuthenticationServiceException("");
+        }
+    }
+
+
+    /**
+     * 主任医师权限检验
+     *
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static boolean isChiefDoctor(Integer titleId) throws Exception {
+        try {
+            Map<String, Integer> map = redisService.getMapAll("title");
+            if (titleId.equals(map.get("主任医师"))) {
+                return true;
+            } else {
+                throw new AuthenticationServiceException("ChiefDoctor");
+            }
+        } catch (Exception e) {
+            throw new Exception();
+        }
+
+    }
+
+
+    /**
+     * 副主任医师以及以上权限检验
+     *
+     * @param titleId
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static boolean aboveDeputyChiefDoctor(Integer titleId) throws Exception {
+        try {
+            Map<String, Integer> map = redisService.getMapAll("title");
+
+            if (titleId.equals(map.get("副主任医师")) || titleId.equals(map.get("主任医师"))) {
+                return true;
+            } else {
+                throw new AuthenticationServiceException("DeputyChiefDocto");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 主治医师以及以上权限检验
+     *
+     * @param titleId
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    public static boolean aboveATTENDING_DOCTOR(Integer titleId) throws Exception {
+        try {
+            Map<String, Integer> map = redisService.getMapAll("title");
+
+            if (titleId.equals(map.get("副主任医师")) || titleId.equals(map.get("主任医师")) || titleId.equals(map.get("主治医师"))) {
+                return true;
+            } else {
+                throw new AuthenticationServiceException("ATTENDING_DOCTOR");
+            }
+        } catch (Exception e) {
+            throw new Exception();
         }
     }
 

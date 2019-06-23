@@ -20,7 +20,7 @@ public class Patient {
     @Column(name = "password")
     private String password;
 
-    @Column(name =  "sex")
+    @Column(name = "sex")
     private Boolean sex;
 
     @Column(name = "real_name")
@@ -37,17 +37,58 @@ public class Patient {
 
     @Column(name = "last_password_modify_time")
     private Date lastPasswordModifyTime;
+
+    @Column(name = "open_id")
+    private String openId;
+
+    @Column(name = "session_key")
+    private String sessionKey;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @Transient
-    private  Integer age;
+    private Integer age;
 
     @Transient
     private Registration registration;
 
     private JSONArray registrations;
 
-    public void addRegistrations(Registration registration){
+
+    public void updateWechatData(String openId, String sessionKey) {
+        setSessionKey(sessionKey);
+        setOpenId(openId);
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    public void addRegistrations(Registration registration) {
         registrations.add(registration);
     }
+
     public JSONArray getRegistrations() {
         return registrations;
     }

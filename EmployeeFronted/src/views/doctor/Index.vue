@@ -1,5 +1,8 @@
 <template>
     <a-row type="flex" align="top" justify="space-around" class="info-card">
+        <template-drawer :type="drawerType" :showDrawer="showDrawer" :MRT="tempMRT"
+                         @changeDrawer="e=>changeDrawer(e)" @useTemplate="useTemplate"
+                         ref="templateDrawer"></template-drawer>
         <a-col :span="showList?6:3" :xl="showList?6:2" :style="showList?'':'text-align: center'">
             <a-card v-if="showList" hoverable :body-style="{padding: '10px 0 0 0'}">
                 <span slot="title" style="font-size: 22px">患者列表
@@ -74,10 +77,19 @@
                     <a-tab-pane tab="病历首页" key="1">
                         <a-row type="flex" align="middle" justify="center">
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%">暂存</a-button>
+                                <a-button style="width: 80%" @click="loadTemp">载入暂存信息</a-button>
                             </a-col>
                             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                                <a-button type="primary" style="width: 80%" @click="resetForm">清空当前页面</a-button>
+                                <a-button type="primary" style="width: 80%" @click="saveTemp">暂存</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button type="danger" style="width: 80%" @click="resetForm">清空当前页面</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button style="width: 80%" @click="changeDrawer(true,1)">常用与模板</a-button>
+                            </a-col>
+                            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                                <a-button style="width: 80%" @click="saveTemplate">存为模板</a-button>
                             </a-col>
                         </a-row>
                         <a-form :form="record">
@@ -174,6 +186,7 @@
     import Inspection from '../../components/Inspection'
     import Prescription from '../../components/doctor/Prescription'
     import Payment from '../../components/Payment'
+    import TemplateDrawer from '../../components/doctor/TemplateDrawer'
 
     export default {
         name: "Index",
@@ -181,7 +194,8 @@
             'diagnose': Diagnose,
             'inspection': Inspection,
             'prescription': Prescription,
-            'payment': Payment
+            'payment': Payment,
+            'template-drawer': TemplateDrawer
         },
         data: () => ({
             load: {
@@ -194,7 +208,7 @@
             },
             currentPatient: null,
             rules: {
-                selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}, {}],
+                selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}],
                 bodyExamination: [{required: true, message: '请输入', trigger: 'blur'}],
                 allergyHistory: [{required: true, message: '请输入', trigger: 'blur'}],
                 historySymptom: [{required: true, message: '请输入', trigger: 'blur'}],
@@ -204,9 +218,92 @@
             record: null,
             showList: true,
             patientType: 0,
-
+            showDrawer: false,
+            drawerType: null,
+            tempMRT: null
         }),
         methods: {
+            useTemplate (template) {
+                this.record.setFieldsValue({
+                        'selfDescription': template.selfDescription,
+                        'bodyExamination': template.bodyExamination,
+                        'allergyHistory': template.allergyHistory,
+                        'historySymptom': template.historySymptom,
+                        'previousTreatment': template.previousTreatment,
+                        'currentSymptom': template.currentSymptom,
+                    }
+                )
+                this.$store.commit('changeDiagnoseType', template.isWesternMedicine)
+                template.firstDiagnose.forEach(item => {
+                    item.temp = true
+                    this.$store.commit('addDisease', {isFinial: false, disease: item})
+                })
+                template.finalDiagnose.forEach(item => {
+                    item.temp = true
+                    this.$store.commit('addDisease', {isFinial: true, disease: item})
+                })
+
+            },
+            changeDrawer (boo, type) {
+                this.showDrawer = boo
+                this.drawerType = type
+            },
+            saveTemplate () {
+                this.tempMRT = this.record.getFieldsValue()
+                this.showDrawer = true
+                this.drawerType = 2
+                this.$refs.templateDrawer.changeDrawer(true, 1)
+            },
+            loadTemp () {
+                if (this.currentPatient == null) {
+                    this.$message.error("请选择病人")
+                } else {
+                    let that = this
+                    this.$api.get('/medical_record/getTemporaryMR/' + this.currentPatient.id, null,
+                        res => {
+                            if (res.code === "100") {
+                                that.$message.success("获取暂存信息成功")
+                                that.record.setFieldsValue({
+                                        'selfDescription': res.data.selfDescription,
+                                        'bodyExamination': res.data.bodyExamination,
+                                        'allergyHistory': res.data.allergyHistory,
+                                        'historySymptom': res.data.historySymptom,
+                                        'previousTreatment': res.data.previousTreatment,
+                                        'currentSymptom': res.data.currentSymptom,
+                                        'isPregnant': res.data.isPregnant.toString(),
+                                    }
+                                )
+                            } else if (res.cord === '638') {
+                                that.$message.info("不存在暂存信息")
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, () => {
+                        })
+                }
+            },
+            saveTemp () {
+                if (this.currentPatient == null) {
+                    this.$message.error("请选择病人")
+                } else {
+                    let data = {
+                        medicalRecord: this.record.getFieldsValue(),
+                        registrationId: this.currentPatient.id,
+                        diagnoses: this.$store.state.diagnose,
+                    }
+                    let that = this
+                    data.medicalRecord.isWesternMedicine = this.$store.state.diagnoseType
+                    this.$api.post('/medical_record/saveTemporaryMR', data,
+                        res => {
+                            if (res.code === "100") {
+                                that.$message.success("暂存成功")
+                            } else {
+                                that.$message.error(res.msg)
+                            }
+                        }, () => {
+                        })
+                }
+            },
             submitRecord () {
                 if (this.currentPatient == null) {
                     this.$message.error("请选择病人")
@@ -220,7 +317,7 @@
                                 data.medicalRecord = this.record.getFieldsValue()
                                 data.registrationId = this.currentPatient.id
                                 data.diagnoses = this.$store.state.diagnose
-                                data.medicalRecord.isWesternMedicine = !!this.$store.state.diagnoseType
+                                data.medicalRecord.isWesternMedicine = this.$store.state.diagnoseType
                                 this.createMedicalRecord(data)
                             }
                         }
@@ -377,7 +474,6 @@
                     })
             },
             callback () {
-
             }
         },
         mounted () {

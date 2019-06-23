@@ -17,6 +17,7 @@
         <result column="identify_id" jdbcType="VARCHAR" property="identifyId"/>
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
         <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="selfDescription" jdbcType="VARCHAR" property="selfDescription"/>
     </resultMap>
 
     <resultMap id="UserAndDoctor" type="cn.neuedu.his.model.User">
@@ -32,6 +33,7 @@
         <result column="identify_id" jdbcType="VARCHAR" property="identifyId"/>
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
         <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="selfDescription" jdbcType="VARCHAR" property="selfDescription"/>
         <association property="doctor" javaType="cn.neuedu.his.model.Doctor">
             <id column="id" jdbcType="INTEGER" property="id"/>
             <result column="title_id" jdbcType="INTEGER" property="titleId"/>
@@ -66,6 +68,14 @@
         FROM `user`
                  JOIN doctor ON user.id = doctor.id
         where username = #{username}
+    </select>
+
+    <!-- 按照科室得到医生信息 -->
+    <select id="getUserWithDocByDept"  resultMap="UserAndDoctor">
+        SELECT *
+        FROM user
+                 JOIN doctor ON user.id = doctor.id
+        where type_id=#{typeId} and department_id=#{deptId} and user.is_delete=false
     </select>
 
 

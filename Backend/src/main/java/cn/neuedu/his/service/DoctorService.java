@@ -26,7 +26,6 @@ public interface DoctorService extends Service<Doctor> {
     @Transactional
     void saveDiagnose(List<Integer> diagnoses, Integer itemId, Boolean isMajor, Boolean isTemplate);
 
-    @Transient
     JSONObject updateMR(Integer registrationID, MedicalRecord record, List<Integer> diagnoses);
 
     @Transactional
@@ -115,6 +114,8 @@ public interface DoctorService extends Service<Doctor> {
 
     @Transactional
     JSONObject getPrescriptionsTemByName(String name);
+
+    JSONObject saveRecordAndDiagnoseAsTemp(MedicalRecord record, MedicalRecordTemplate template, Integer doctorID) throws RuntimeException;
 
     @Transactional
     public JSONObject finishDiagnose(Integer registrationId);

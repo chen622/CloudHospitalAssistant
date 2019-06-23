@@ -21,4 +21,6 @@ public interface UserMapper extends MyMapper<User> {
     List<User> findUser(String name);
 
     ArrayList<User> getAllTollKeeper(Integer tollType);
+
+    List<User> getUserWithDocByDept(Integer typeId,Integer deptId);
 }

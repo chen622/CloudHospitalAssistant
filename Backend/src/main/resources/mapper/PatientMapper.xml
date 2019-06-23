@@ -15,9 +15,18 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="session_key" jdbcType="VARCHAR" property="sessionKey"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
     </resultMap>
 
-<!--    患者所有缴费单（可能带时间）-->
+    <select id="findByOpenId" resultMap="BaseResultMap">
+        select *
+        from patient
+        where open_id = #{openId}
+    </select>
+
+    <!--    患者所有缴费单（可能带时间）-->
     <resultMap id="patientAndAllPayment" type="cn.neuedu.his.model.Patient">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="identity_id" jdbcType="VARCHAR" property="identityId"/>
@@ -28,11 +37,17 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
-        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" column="{patientId = id, start = start, end = end}" select="getAllPayment"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="session_key" jdbcType="VARCHAR" property="sessionKey"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment"
+                    column="{patientId = id, start = start, end = end}" select="getAllPayment"/>
     </resultMap>
 
     <select id="getPatientAndAllPayment" resultMap="patientAndAllPayment">
-        select *, #{startDate} as start, #{endDate} as end from patient where patient.id = #{id}
+        select *, #{startDate} as start, #{endDate} as end
+        from patient
+        where patient.id = #{id}
     </select>
 
     <select id="getAllPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -46,7 +61,6 @@
     </select>
 
 
-
     <!--  患者及其所有未付款缴费单-->
     <resultMap id="patientAndNotPaidPayment" type="cn.neuedu.his.model.Patient">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -58,19 +72,28 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
-        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getNotPaidPayment" column="{patientId = id, paymentState = paymentState}"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="session_key" jdbcType="VARCHAR" property="sessionKey"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getNotPaidPayment"
+                    column="{patientId = id, paymentState = paymentState}"/>
     </resultMap>
 
     <select id="getPatientAndPaymentByState" resultMap="patientAndNotPaidPayment">
-        select *, #{state} as paymentState from patient where id = #{patientId}
+        select *, #{state} as paymentState
+        from patient
+        where id = #{patientId}
     </select>
 
     <select id="getNotPaidPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-        select * from payment
-        where patient_id = #{patientId} and is_frozen = false and state = #{paymentState} and is_frozen = false
+        select *
+        from payment
+        where patient_id = #{patientId}
+          and is_frozen = false
+          and state = #{paymentState}
+          and is_frozen = false
         order by create_time desc
     </select>
-
 
 
     <!--  患者信息及所有还未消费的缴费单-->
@@ -84,11 +107,17 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
-        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getNotConsumePayment" column="{patientId = id, noPaymentTotalTypeId = noPaymentTotalTypeId}"/>
+        <result column="open_id" jdbcType="VARCHAR" property="openId"/>
+        <result column="session_key" jdbcType="VARCHAR" property="sessionKey"/>
+        <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getNotConsumePayment"
+                    column="{patientId = id, noPaymentTotalTypeId = noPaymentTotalTypeId}"/>
     </resultMap>
 
     <select id="getPatientAndNotConsumePayment" resultMap="patientAndNotConsumePayment">
-        select *, #{noPaymentTotalTypeId} as noPaymentTotalTypeId from patient where id = #{patientId}
+        select *, #{noPaymentTotalTypeId} as noPaymentTotalTypeId
+        from patient
+        where id = #{patientId}
     </select>
 
     <select id="getNotConsumePayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -98,7 +127,6 @@
           and (select type from payment_type where payment_type_id = payment_type.id) != #{noPaymentTotalTypeId}
         order by create_time desc
     </select>
-
 
 
     <!--  根据状态及缴费类型获取患者和药物信息-->
@@ -112,57 +140,65 @@
         <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="last_password_modify_time" jdbcType="TIMESTAMP" property="lastPasswordModifyTime"/>
-        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByTypeAndState" column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state, , start = start, end = end}"/>
+        <collection property="paymentList" ofType="cn.neuedu.his.model.Payment" select="getPaymentByTypeAndState"
+                    column="{patientId = id, paymentTotalTypeId = paymentTotalTypeId, state = state, , start = start, end = end}"/>
     </resultMap>
 
     <resultMap id="paymentAndPrescriptionByTypeAndState" type="cn.neuedu.his.model.Payment">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="quantity" jdbcType="INTEGER" property="quantity" />
-        <result column="unit_price" jdbcType="DECIMAL" property="unitPrice" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="operator_id" jdbcType="INTEGER" property="operatorId" />
-        <result column="patient_id" jdbcType="INTEGER" property="patientId" />
-        <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId" />
-        <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId" />
-        <result column="item_id" jdbcType="INTEGER" property="itemId" />
-        <result column="invoice_id" jdbcType="INTEGER" property="invoiceId" />
-        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="patient_id" jdbcType="INTEGER" property="patientId"/>
+        <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId"/>
+        <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="invoice_id" jdbcType="INTEGER" property="invoiceId"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
-        <result column="is_frozen" jdbcType="BIT" property="isFrozen" />
+        <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
         <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
-        <association property="prescription" javaType="cn.neuedu.his.model.Prescription" column="item_id" select="getPrescriptionAndDrug"/>
+        <association property="prescription" javaType="cn.neuedu.his.model.Prescription" column="item_id"
+                     select="getPrescriptionAndDrug"/>
     </resultMap>
 
     <resultMap id="prescriptionAndDrug" type="cn.neuedu.his.model.Prescription">
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="usage_id" jdbcType="INTEGER" property="usageId" />
-        <result column="item_id" jdbcType="INTEGER" property="itemId" />
-        <result column="frequency" jdbcType="VARCHAR" property="frequency" />
-        <result column="drug_id" jdbcType="INTEGER" property="drugId" />
-        <result column="amount" jdbcType="INTEGER" property="amount" />
-        <result column="days" jdbcType="INTEGER" property="days" />
-        <result column="use_amount" jdbcType="VARCHAR" property="useAmount" />
-        <result column="note" jdbcType="VARCHAR" property="note" />
-        <result column="need_skin_test" jdbcType="BIT" property="needSkinTest" />
-        <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="usage_id" jdbcType="INTEGER" property="usageId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="frequency" jdbcType="VARCHAR" property="frequency"/>
+        <result column="drug_id" jdbcType="INTEGER" property="drugId"/>
+        <result column="amount" jdbcType="INTEGER" property="amount"/>
+        <result column="days" jdbcType="INTEGER" property="days"/>
+        <result column="use_amount" jdbcType="VARCHAR" property="useAmount"/>
+        <result column="note" jdbcType="VARCHAR" property="note"/>
+        <result column="need_skin_test" jdbcType="BIT" property="needSkinTest"/>
+        <result column="skin_test_result" jdbcType="BIT" property="skinTestResult"/>
         <result column="is_template" jdbcType="BIT" property="isTemplate"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-        <association property="drug" javaType="cn.neuedu.his.model.Drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
+        <association property="drug" javaType="cn.neuedu.his.model.Drug"
+                     resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
     </resultMap>
 
 
     <select id="getPatientAndDrugByTypeAndState" resultMap="patientAndPaymentByTypeAndState">
-        select *, #{paymentTotalTypeId} as paymentTotalTypeId, #{state} as state, #{startDate} as start, #{endDate} as end
-         from patient where id = #{patientId}
+        select *,
+               #{paymentTotalTypeId} as paymentTotalTypeId,
+               #{state}              as state,
+               #{startDate}          as start,
+               #{endDate}            as end
+        from patient
+        where id = #{patientId}
     </select>
 
     <select id="getPaymentByTypeAndState" resultMap="paymentAndPrescriptionByTypeAndState">
         select *
         from payment
         where patient_id = #{patientId}
-          and (select type from payment_type pt where payment_type_id = pt.id) = #{paymentTotalTypeId}
-          and state = #{state}
+        and (select type from payment_type pt where payment_type_id = pt.id) = #{paymentTotalTypeId}
+        and state = #{state}
         <if test="start != null">
             and datediff(payment.create_time, #{start}) &gt;= 0
         </if>
@@ -173,10 +209,11 @@
     </select>
 
     <select id="getPrescriptionAndDrug" resultMap="prescriptionAndDrug">
-        select * from prescription p join drug d on p.drug_id = d.id where p.id = #{item_id}
+        select *
+        from prescription p
+                 join drug d on p.drug_id = d.id
+        where p.id = #{item_id}
     </select>
-
-
 
 
     <!--根据身份证号模糊查询获得病人-->
@@ -208,16 +245,15 @@
 
 
     <resultMap id="simpleOne" type="cn.neuedu.his.model.Patient">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id"/>
-    <result column="identity_id" jdbcType="VARCHAR" property="identityId"/>
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="identity_id" jdbcType="VARCHAR" property="identityId"/>
 
-    <result column="sex" jdbcType="BIT" property="sex"/>
-    <result column="real_name" jdbcType="VARCHAR" property="realName"/>
+        <result column="sex" jdbcType="BIT" property="sex"/>
+        <result column="real_name" jdbcType="VARCHAR" property="realName"/>
     </resultMap>
-
 
 
 </mapper>
