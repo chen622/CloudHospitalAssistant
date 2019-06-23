@@ -459,7 +459,6 @@ public class DoctorController {
         return doctorService.finishDiagnose(registrationId);
     }
 
-
     @GetMapping("/paymentDetails/{registrationId}/{medicalRecordId}")
     public JSONObject getAllPaymentDetails(@PathVariable("registrationId") Integer registrationId, @PathVariable("medicalRecordId") Integer medicalRecordId, Authentication authentication) {
         Integer doctorId;

@@ -39,7 +39,6 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
         JSONObject returnJson = new JSONObject();
         // 插入轮播图数据
         Patient customer = exchange.code2Session(requestJson.getString("code"));
-        System.out.println(customer.getSessionKey());
         // 前端获取的头像链接
         String avatarUrl = requestJson.getString("avatarUrl");
         String name = requestJson.getString("name");

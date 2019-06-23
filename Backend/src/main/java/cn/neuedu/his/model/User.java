@@ -55,6 +55,15 @@ public class User {
     @Transient()
     private String title;
 
+    private String selfDescription;
+
+    public String getSelfDescription() {
+        return selfDescription;
+    }
+
+    public void setSelfDescription(String selfDescription) {
+        this.selfDescription = selfDescription;
+    }
 
     public String getAvatar() {
         return avatar;

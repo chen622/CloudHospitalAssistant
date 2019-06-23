@@ -23,6 +23,7 @@ public class WeChatController {
             JSONObject returnJson = patientService.parseMiniProgramLoginRequest(requestJson);
             return CommonUtil.successJson(returnJson);
         } catch (RuntimeException e) {
+            e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_500);
         }
     }
