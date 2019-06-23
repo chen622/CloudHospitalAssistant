@@ -38,6 +38,22 @@ public class PermissionCheck {
         return (Integer) data.get("id");
     }
 
+
+    /**
+     * 患者的权限校验接口
+     *
+     * @param authentication
+     * @return
+     */
+    public static Integer getIdByPatient(Authentication authentication) throws AuthenticationServiceException {
+        Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
+        if ((Integer) data.get("typeId") != -1) {
+            throw new AuthenticationServiceException("");
+        } else {
+            return (Integer) data.get("id");
+        }
+    }
+
     /**
      * 收费员权限检验
      *

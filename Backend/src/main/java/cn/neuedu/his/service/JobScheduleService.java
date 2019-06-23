@@ -21,6 +21,8 @@ public interface JobScheduleService extends Service<JobSchedule> {
 
     ArrayList<JobSchedule> getScheduleToday(Integer departmentId);
 
+    ArrayList<JobSchedule> getScheduleByDoctorIdAndDate(Integer doctorId,Date date);
+
     ArrayList<JobSchedule> getScheduleByMonth(Integer departmentId, Date date);
 
     void removeByDate(Date date);

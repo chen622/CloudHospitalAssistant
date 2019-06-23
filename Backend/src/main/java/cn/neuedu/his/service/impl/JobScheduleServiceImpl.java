@@ -48,6 +48,11 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     }
 
     @Override
+    public ArrayList<JobSchedule> getScheduleByDoctorIdAndDate(Integer doctorId, Date date) {
+        return jobScheduleMapper.getScheduleByDoctorIdAndDate(doctorId, date);
+    }
+
+    @Override
     public ArrayList<JobSchedule> getScheduleByMonth(Integer departmentId, Date date) {
         return jobScheduleMapper.getScheduleByMonth(date, departmentId);
     }
