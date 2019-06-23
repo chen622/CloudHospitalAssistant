@@ -63,6 +63,20 @@ public class UserController {
     @Autowired
     RedisServiceImpl redisService;
 
+    @GetMapping("/getDocByDept/{deptId}")
+    public JSONObject getDocByDept(@PathVariable("deptId") Integer deptId ){
+        Map<String,Integer> map2= null;
+        try {
+            map2 = redisService.getMapAll("userType");
+        } catch (Exception e) {
+            return   CommonUtil.errorJson(ErrorEnum.E_638);
+        }
+        Integer typeId=map2.get("门诊医生");
+        List<User> users=userService.getUserWithDocByDept(typeId,deptId);
+        return CommonUtil.successJson(users);
+    }
+
+
     @GetMapping("/function")
     public JSONObject login(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();

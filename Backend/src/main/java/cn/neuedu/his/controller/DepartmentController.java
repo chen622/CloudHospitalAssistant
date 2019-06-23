@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.mapper.DepartmentMapper;
 import cn.neuedu.his.model.ConstantVariable;
 import cn.neuedu.his.model.Department;
+import cn.neuedu.his.model.DepartmentKind;
 import cn.neuedu.his.model.User;
 import cn.neuedu.his.service.ConstantVariableService;
 import cn.neuedu.his.service.DepartmentKindService;
@@ -253,29 +254,6 @@ public class DepartmentController {
         }
     }
 
-    @GetMapping("/select")
-    public JSONObject reserve() {
-        Map<String,Integer> map= null;
-        Map<String,Object> res=new HashMap<>();
-        try {
-            map = redisService.getMapAll("departmentType");
-            Integer id=map.get("临床科室");
-            Map<String,Integer> map2=redisService.getMapAll("userType");
-            Integer typeId=map2.get("门诊医生");
-            List<Department> clinicals=departmentMapper.getAllClinical(id);
-            if(clinicals==null){
-                clinicals=new ArrayList<>();
-                res.put("depts",clinicals);
-            }else {
-                List<User> users=userService.getUserWithDocByDept(typeId,clinicals.get(0).getId());
-                res.put("depts",clinicals);
-                res.put("users", users);
 
-            }
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_500);
-        }
-        return CommonUtil.successJson(res);
-    }
 
 }
