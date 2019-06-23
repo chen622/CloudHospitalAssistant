@@ -84,7 +84,7 @@ public class PatientServiceImpl extends AbstractService<Patient> implements Pati
                     .claim("typeId", -1)
                     .compact();
         }
-        returnJson.put("token", token);
+        returnJson.put("token", Constants.TOKEN_PREFIX + token);
         return returnJson;
     }
 
