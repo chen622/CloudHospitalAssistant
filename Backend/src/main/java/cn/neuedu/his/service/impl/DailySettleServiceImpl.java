@@ -123,12 +123,9 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
      * @return
      */
     private Date lastSettleDate(Integer adminId) {
-        DailySettle lastDailySettle = dailySettleMapper.selectLastTime(adminId);
-        Date startDate;
-        if (lastDailySettle == null) //第一个日结信息
+        Date startDate = dailySettleMapper.selectLastTime(adminId);
+        if (startDate == null) //第一个日结信息
             startDate = new Date(System.currentTimeMillis() - 10 * 24 * 60 * 60 * 1000);
-        else
-            startDate = lastDailySettle.getStartDate();
 
         return startDate;
     }
