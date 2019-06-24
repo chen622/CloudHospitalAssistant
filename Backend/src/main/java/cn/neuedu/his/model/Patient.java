@@ -47,6 +47,9 @@ public class Patient {
     @Column(name = "avatar_url")
     private String avatarUrl;
 
+    @Column
+    private Boolean isConfirm;
+
     @Transient
     private Integer age;
 
@@ -59,6 +62,14 @@ public class Patient {
     public void updateWechatData(String openId, String sessionKey) {
         setSessionKey(sessionKey);
         setOpenId(openId);
+    }
+
+    public Boolean getConfirm() {
+        return isConfirm;
+    }
+
+    public void setConfirm(Boolean confirm) {
+        isConfirm = confirm;
     }
 
     public String getAvatarUrl() {

@@ -29,14 +29,25 @@ public class PatientController {
     PatientService patientService;
 
     @PostMapping("/add")
-    public JSONObject registerPatient(@RequestBody JSONObject jsonObject) {
-        Patient patient = jsonObject.toJavaObject(Patient.class);
-        patientService.save(patient);
-        return CommonUtil.successJson();
+    public JSONObject registerPatient(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+            Patient patient = jsonObject.toJavaObject(Patient.class);
+            List<Patient> patients = patientService.selectPatientByIdentifyId(patient.getIdentityId());
+            if (!(patients == null || patients.size() == 0)) {
+                return CommonUtil.errorJson(ErrorEnum.E_639);
+            }
+            patient.setConfirm(true);
+            patientService.save(patient);
+            return CommonUtil.successJson();
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
     }
 
     /**
      * 患者(某段时间内)所有缴费单信息
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -148,8 +159,8 @@ public class PatientController {
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
-        JSONObject re=new JSONObject();
-        re.put("notTake",patient);
+        JSONObject re = new JSONObject();
+        re.put("notTake", patient);
 
         re.put("token", result);
         return CommonUtil.successJson(re);
@@ -157,6 +168,7 @@ public class PatientController {
 
     /**
      * 获取患者退药信息
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -192,7 +204,7 @@ public class PatientController {
 
     @GetMapping("/getAll")
     public JSONObject findAll() {
-        List<Patient> patients = patientService.findAll();
+        List<Patient> patients = patientService.selectPatientByIdentifyId("");
         try {
             return CommonUtil.successJson(StringUtils.setAgeForPatientArray(patients));
         } catch (Exception e) {
@@ -208,9 +220,7 @@ public class PatientController {
         String identifyId = json.getString("id");
         String name = json.getString("realName");
         String phone = json.getString("phone");
-        if (identifyId == null) {
-            return CommonUtil.errorJson(ErrorEnum.E_501);
-        }
+        identifyId = identifyId == null ? "" : identifyId;
         name = name == null ? "" : name;
         phone = phone == null ? "" : name;
         List<Patient> patients = patientService.selectPatientByIdentifyIdAndNameAndPhone(identifyId, name, phone);
