@@ -24,10 +24,6 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
     @Autowired
     private DailySettleMapper dailySettleMapper;
     @Autowired
-    private UserService userService;
-    @Autowired
-    private PaymentTypeService paymentTypeService;
-    @Autowired
     private PaymentService paymentService;
     @Autowired
     private InvoiceService invoiceService;

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static cn.neuedu.his.util.constants.Constants.*;
-
 /**
  * Created by ccm on 2019/05/24.
  */
