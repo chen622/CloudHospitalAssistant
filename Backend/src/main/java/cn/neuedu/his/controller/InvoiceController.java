@@ -67,7 +67,7 @@ public class InvoiceController {
      * @param authentication
      * @return
      */
-    @PostMapping("/anewInvoice/{invoiceId")
+    @PostMapping("/anewInvoice/{invoiceId}")
     public JSONObject anewInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
         Integer admin;
         try {
@@ -93,7 +93,7 @@ public class InvoiceController {
      * @param authentication
      * @return
      */
-    @PostMapping("/againInvoice/{invoiceId")
+    @PostMapping("/againInvoice/{invoiceId}")
     public JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
         Integer admin;
         try {
