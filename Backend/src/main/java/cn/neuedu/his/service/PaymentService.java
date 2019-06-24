@@ -33,4 +33,5 @@ public interface PaymentService extends Service<Payment> {
     public ArrayList<Payment> findAllByItemAndPaymentType(Integer itemId, Integer paymentTypeId);
     ArrayList<Payment> findAllByItemAndPaymentTypeAndState(Integer itemId, Integer paymentTypeId, Integer state) throws RuntimeException;
     Map<Integer,Integer> getForStatistics(Integer doctorId, Integer patientId, String start, String end);
+    Payment findOneByInvoice(Integer invoiceId);
 }
