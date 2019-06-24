@@ -1,6 +1,7 @@
 package cn.neuedu.his.controller;
 
 
+import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.service.JobScheduleService;
 import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.util.CommonUtil;
@@ -34,8 +35,25 @@ public class WeChatController {
         }
     }
 
+    @PostMapping("/updatePatient")
+    public JSONObject updatePatient(@RequestBody JSONObject requestJson, Authentication authentication) {
+        try {
+            Integer patientId = PermissionCheck.getIdByPatient(authentication);
+            Patient patient = JSONObject.toJavaObject(requestJson, Patient.class);
+            patient.setId(patientId);
+            if (patient.getIdentityId() == null || patient.getSex() == null || patient.getRealName() == null || patient.getPhoneNumber() == null) {
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            }
+            patientService.update(patient);
+            return CommonUtil.successJson(patient);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
     /**
      * 获取明后两天某医生值班情况
+     *
      * @param doctorId
      * @param authentication
      * @return
@@ -47,10 +65,10 @@ public class WeChatController {
             PermissionCheck.getIdByPatient(authentication);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date(System.currentTimeMillis()));
-            calendar.add(Calendar.DAY_OF_MONTH,1);
-            result.put("1", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime()));
-            calendar.add(Calendar.DAY_OF_MONTH,1);
-            result.put("2", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime()));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            result.put("1", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId, calendar.getTime()));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            result.put("2", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId, calendar.getTime()));
             return CommonUtil.successJson(result);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
