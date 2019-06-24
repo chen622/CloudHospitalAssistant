@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @FeignClient(name= "eureka-producer")
 public interface GeneralRemote {
-    @GetMapping("/getAllDepartmentKind")
+    @GetMapping("/general/getAllDepartmentKind")
     JSONObject getAllDepartmentKind();
 }
