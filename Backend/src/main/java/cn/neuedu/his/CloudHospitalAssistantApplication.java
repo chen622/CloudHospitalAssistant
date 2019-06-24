@@ -20,7 +20,6 @@ import java.util.Properties;
 
 @EnableTransactionManagement
 @SpringBootApplication
-@EnableFeignClients
 //@EnableScheduling
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {

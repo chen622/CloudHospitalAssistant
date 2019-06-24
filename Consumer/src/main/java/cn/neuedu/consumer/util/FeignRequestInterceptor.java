@@ -1,4 +1,4 @@
-package cn.neuedu.server.util;
+package cn.neuedu.consumer.util;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

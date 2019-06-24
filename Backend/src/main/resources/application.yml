@@ -23,8 +23,6 @@ eureka:
   instance:
     appname: ${spring.application.name}
     instanceId: ${spring.application.name}
-    preferIpAddress: true
-#    ipAddress: 127.0.0.1
   client:
       fetchRegistry: true
       registerWithEureka: true

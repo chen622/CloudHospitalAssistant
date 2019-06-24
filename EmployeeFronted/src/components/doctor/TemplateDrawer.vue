@@ -31,7 +31,7 @@
                 <a-divider type="vertical" style="height: 290px"></a-divider>
             </a-col>
         </a-row>
-        <edit-drawer :type="drawerType" :showDrawer="secondDrawer" :editMRT="MRT"
+        <edit-drawer v-if="secondDrawer" :type="drawerType" :showDrawer="secondDrawer" :editMRT="MRT"
                      @changeDrawer="e=>changeDrawer(e)" @closeDrawer="closeDrawer"></edit-drawer>
     </a-drawer>
 </template>
@@ -102,7 +102,7 @@
     }
 
     .ant-drawer-body {
-        max-height: 450px;
+        max-height: 430px;
         overflow-y: scroll;
     }
 </style>
