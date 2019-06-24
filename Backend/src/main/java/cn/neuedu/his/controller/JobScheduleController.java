@@ -39,6 +39,20 @@ public class JobScheduleController {
         return CommonUtil.successJson(result);
     }
 
+    @GetMapping("/getPreSchedule/{departmentId}")
+    public JSONObject getPreSchedule(@PathVariable("departmentId") Integer departmentId, Authentication authentication) {
+        JSONObject result = new JSONObject();
+        //获取挂号收费员id
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+        result.put("schedule", jobScheduleService.getSchedulePre(departmentId));
+
+        return CommonUtil.successJson(result);
+    }
+
     @GetMapping("/getScheduleWithMonth/{departmentId}/{date}")
     public JSONObject getScheduleByMonth(@PathVariable("departmentId") Integer departmentId, @PathVariable("date") String date, Authentication authentication) {
         Date day = new Date(Long.parseLong(date));
