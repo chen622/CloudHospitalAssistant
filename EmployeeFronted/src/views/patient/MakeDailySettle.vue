@@ -22,12 +22,12 @@
                                     </a-date-picker>
                                 </a-col>
                                 <a-col span="6" type="flex" align="top" justify="middle" style="font-size: 16px">
-                                        <a-form layout="inline" :label-col="{ span: 2 }" :wrapper-col="{span: 2}">
-                                            <a-form-item label="收费员">
-                                                <a-input disabled :placeholder="currentAdmin.realName">
-                                                </a-input>
-                                            </a-form-item>
-                                        </a-form>
+                                    <a-form layout="inline" :label-col="{ span: 2 }" :wrapper-col="{span: 2}">
+                                        <a-form-item label="收费员">
+                                            <a-input disabled :placeholder="currentAdmin.realName">
+                                            </a-input>
+                                        </a-form-item>
+                                    </a-form>
                                 </a-col>
                                 <a-col span="5" type="flex" align="top" justify="start">
                                     <a-button type="primary" @click="statistics">日结统计</a-button>

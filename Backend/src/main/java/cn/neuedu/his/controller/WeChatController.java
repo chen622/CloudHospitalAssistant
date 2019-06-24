@@ -1,6 +1,9 @@
 package cn.neuedu.his.controller;
 
 
+import cn.neuedu.his.model.JobSchedule;
+import cn.neuedu.his.model.Patient;
+import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.service.JobScheduleService;
 import cn.neuedu.his.service.PatientService;
 import cn.neuedu.his.util.CommonUtil;
@@ -12,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -48,13 +52,26 @@ public class WeChatController {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date(System.currentTimeMillis()));
             calendar.add(Calendar.DAY_OF_MONTH,1);
-            result.put("1", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime()));
+            ArrayList<JobSchedule> list=jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime());
+            if (list==null)
+                list=new ArrayList<>();
             calendar.add(Calendar.DAY_OF_MONTH,1);
-            result.put("2", jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime()));
-            return CommonUtil.successJson(result);
+            list.addAll(jobScheduleService.getScheduleByDoctorIdAndDate(doctorId,calendar.getTime()));
+            return CommonUtil.successJson(list);
         } catch (AuthenticationServiceException e) {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
+    }
+
+    @GetMapping("/getPatient")
+    public JSONObject  getPatient(Authentication authentication){
+        try{
+            Integer id=PermissionCheck.getIdByPatient(authentication);
+            Patient patient = patientService.findById(id);
+            return CommonUtil.successJson(patient);
+        }catch (AuthenticationServiceException a){
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
     }
 }

@@ -47,7 +47,7 @@
     <select id="getPatientAndAllPayment" resultMap="patientAndAllPayment">
         select *, #{startDate} as start, #{endDate} as end
         from patient
-        where patient.id = #{id}
+        where patient.id = #{id} and patient.is_confirm
     </select>
 
     <select id="getAllPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -82,7 +82,7 @@
     <select id="getPatientAndPaymentByState" resultMap="patientAndNotPaidPayment">
         select *, #{state} as paymentState
         from patient
-        where id = #{patientId}
+        where id = #{patientId} and patient.is_confirm
     </select>
 
     <select id="getNotPaidPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -118,12 +118,14 @@
         select *, #{noPaymentTotalTypeId} as noPaymentTotalTypeId
         from patient
         where id = #{patientId}
+          and patient.is_confirm
     </select>
 
     <select id="getNotConsumePayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
         select *
         from payment
         where patient_id = #{patientId}
+
           and (select type from payment_type where payment_type_id = payment_type.id) != #{noPaymentTotalTypeId}
         order by create_time desc
     </select>
@@ -191,6 +193,7 @@
                #{endDate}            as end
         from patient
         where id = #{patientId}
+          and patient.is_confirm
     </select>
 
     <select id="getPaymentByTypeAndState" resultMap="paymentAndPrescriptionByTypeAndState">
@@ -217,28 +220,28 @@
 
 
     <!--根据身份证号模糊查询获得病人-->
-    <select id="getPatientByIdentifyId" resultMap="BaseResultMap">
+    <select id="selectPatientByIdentifyId" resultMap="BaseResultMap">
         select *
         from patient
-        where identity_id like concat('%', #{identifyId}, '%')
+        where patient.is_confirm and identity_id like concat('%', #{identifyId}, '%')
     </select>
     <!--根据姓名来模糊查询获得病人姓名-->
-    <select id="getPatientByName" resultMap="BaseResultMap">
+    <select id="selectPatientByName" resultMap="BaseResultMap">
         select *
         from patient
-        where real_name like concat('%', #{name}, '%')
+        where patient.is_confirm and real_name like concat('%', #{name}, '%')
     </select>
 
     <select id="selectPatientByPhone" resultMap="BaseResultMap">
         select *
         from patient
-        where phone_number like concat('%', #{phoneNumber}, '%')
+        where patient.is_confirm and phone_number like concat('%', #{phoneNumber}, '%')
     </select>
 
     <select id="selectPatientByIdentifyIdAndNameAndPhone" resultMap="BaseResultMap">
         select *
         from patient
-        where identity_id like concat('%', #{identifyId}, '%')
+        where patient.is_confirm and identity_id like concat('%', #{identifyId}, '%')
           and real_name like concat('%', #{name}, '%')
           and phone_number like concat('%', #{phone}, '%')
     </select>
