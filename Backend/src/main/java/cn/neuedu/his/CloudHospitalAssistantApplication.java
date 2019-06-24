@@ -19,7 +19,6 @@ import java.util.Properties;
 
 @EnableTransactionManagement
 @SpringBootApplication
-//@EnableScheduling
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {
     private static Logger logger = Logger.getLogger(CloudHospitalAssistantApplication.class);
@@ -31,7 +30,6 @@ public class CloudHospitalAssistantApplication {
 
 
     }
-
 
     /**
      * 使用@Bean注入fastJsonHttpMessageConvert
