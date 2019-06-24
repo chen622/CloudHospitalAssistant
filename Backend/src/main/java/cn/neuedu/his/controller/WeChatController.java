@@ -44,6 +44,7 @@ public class WeChatController {
             if (patient.getIdentityId() == null || patient.getSex() == null || patient.getRealName() == null || patient.getPhoneNumber() == null) {
                 return CommonUtil.errorJson(ErrorEnum.E_501);
             }
+            patient.setConfirm(true);
             patientService.update(patient);
             return CommonUtil.successJson(patient);
         } catch (AuthenticationServiceException e) {
