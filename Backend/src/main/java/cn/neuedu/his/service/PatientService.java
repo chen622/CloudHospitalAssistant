@@ -14,17 +14,23 @@ public interface PatientService extends Service<Patient> {
     JSONObject parseMiniProgramLoginRequest(JSONObject requestJson) throws RuntimeException;
 
 
-
     Patient findAllPayment(Integer patientId, Date start, Date end);
+
     Patient findNotPaidPayment(Integer patientId);
+
     Patient findNotConsumePayment(Integer patientId);
+
     Patient findPatientAndNotTakeDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException;
+
     Patient findPatientAndTakenDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException;
+
     Patient findPatientAndHappenRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException;
+
     Patient findPatientAndAllRetreatDrug(Integer patientId, Date start, Date end) throws IllegalArgumentException;
+
     JSONObject findPatientAndAllDrugInfo(Integer patientId, Date start, Date end) throws IllegalArgumentException;
 
-    List<Patient> selectPatientByIdentifyIdAndNameAndPhone(String identifyId,String name, String phone);
+    List<Patient> selectPatientByIdentifyIdAndNameAndPhone(String identifyId, String name, String phone);
 
     //根据身份证号模糊查询获得病人信息
     List<Patient> selectPatientByIdentifyId(String identifyId);
