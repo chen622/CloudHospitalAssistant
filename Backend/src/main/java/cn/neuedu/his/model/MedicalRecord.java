@@ -2,6 +2,8 @@ package cn.neuedu.his.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Table(name = "medical_record")
@@ -46,9 +48,36 @@ public class MedicalRecord implements Serializable {
     @Column(name = "check_advice")
     private String checkAdvice;
 
+    @Transient
+    private BigDecimal totalMoney;
+
     private List<Diagnose> firstDiagnose;
 
     private List<Diagnose> finalDiagnose;
+
+    public String getNotification() {
+        return notification;
+    }
+
+    public void setNotification(String notification) {
+        this.notification = notification;
+    }
+
+    public String getCheckAdvice() {
+        return checkAdvice;
+    }
+
+    public void setCheckAdvice(String checkAdvice) {
+        this.checkAdvice = checkAdvice;
+    }
+
+    public BigDecimal getTotalMoney() {
+        return totalMoney;
+    }
+
+    public void setTotalMoney(BigDecimal totalMoney) {
+        this.totalMoney = totalMoney;
+    }
 
     public Boolean getPregnant() {
         return isPregnant;

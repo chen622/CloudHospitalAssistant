@@ -25,6 +25,11 @@ public class MedicalRecordServiceImpl extends AbstractService<MedicalRecord> imp
     }
 
     @Override
+    public List<MedicalRecord> getAllByPatientIdTwo(Integer patient_id) {
+        return medicalRecordMapper.getAllByPatientIdTwo(patient_id);
+    }
+
+    @Override
     public MedicalRecord getMedicalRecordWithDiagnose(Integer id) {
         return medicalRecordMapper.getMedicalRecordWithDiagnose(id);
     }

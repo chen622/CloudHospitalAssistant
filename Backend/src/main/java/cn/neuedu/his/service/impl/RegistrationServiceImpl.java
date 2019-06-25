@@ -120,9 +120,9 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         //从redis中获取顺序号
         registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
 
-        registration.setSerialNumber();
         save(registration);
-
+        registration.setSerialNumber();
+        update(registration);
         //若去完号码后队列为空，则更新代码
         if (redisService.isRegistrationEmpty(schedule.getId())) {
             schedule.setIsValid(false);
@@ -226,5 +226,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Override
     public Registration findRegistrationAndType(Integer id) {
         return registrationMapper.getRegistrationAndType(id);
+    }
+
+    @Override
+    public ArrayList<Registration> getRegistrations(Integer id) {
+        return registrationMapper.getRegistrations(id);
     }
 }

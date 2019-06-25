@@ -38,6 +38,23 @@ public class WeChatController {
         }
     }
 
+    @PostMapping("/updatePatient")
+    public JSONObject updatePatient(@RequestBody JSONObject requestJson, Authentication authentication) {
+        try {
+            Integer patientId = PermissionCheck.getIdByPatient(authentication);
+            Patient patient = JSONObject.toJavaObject(requestJson, Patient.class);
+            patient.setId(patientId);
+            if (patient.getIdentityId() == null || patient.getSex() == null || patient.getRealName() == null || patient.getPhoneNumber() == null) {
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            }
+            patient.setConfirm(true);
+            patientService.update(patient);
+            return CommonUtil.successJson(patient);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
     /**
      * 获取明后两天某医生值班情况
      * @param doctorId

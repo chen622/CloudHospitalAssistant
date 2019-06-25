@@ -29,4 +29,5 @@ public interface RegistrationService extends Service<Registration> {
     Integer getRegistrationInof(Date time, Integer doctorId);
     Integer getRegistrationState(Integer id);
     Registration findRegistrationAndType(Integer id);
+    ArrayList<Registration> getRegistrations(Integer id);
 }
