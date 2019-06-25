@@ -25,6 +25,11 @@ public class InspectionTemplateServiceImpl extends AbstractService<InspectionTem
     private InspectionTemplateRelationshipService relationshipService;
 
     @Override
+    public List<InspectionTemplate> getWhichICanUse(Integer doctorId, Integer departmentId) {
+        return inspectionTemplateMapper.getWhichICanUse(doctorId, departmentId);
+    }
+
+    @Override
     public List<InspectionTemplate> getHospitalCheckTemps(Integer doctorID,Integer level) {
         return inspectionTemplateMapper.getHospitalCheckTemps(doctorID,level);
     }

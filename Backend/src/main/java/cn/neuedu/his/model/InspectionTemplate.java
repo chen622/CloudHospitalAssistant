@@ -21,8 +21,18 @@ public class InspectionTemplate {
     @Column(name = "created_by_id")
     private Integer createdById;
 
-    List<Prescription> prescriptions;
-    List<InspectionApplication> applications;
+    private ConstantVariable lev;
+
+    private List<Prescription> prescriptions;
+    private List<InspectionApplication> applications;
+
+    public ConstantVariable getLev() {
+        return lev;
+    }
+
+    public void setLev(ConstantVariable lev) {
+        this.lev = lev;
+    }
 
     public List<Prescription> getPrescriptions() {
         return prescriptions;

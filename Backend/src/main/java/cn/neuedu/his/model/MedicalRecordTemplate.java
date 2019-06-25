@@ -41,10 +41,15 @@ public class MedicalRecordTemplate {
     private Integer departmentId;
 
 
+
     private List<Diagnose> firstDiagnose;
     private List<Diagnose> finalDiagnose;
 
     private ConstantVariable level;
+
+
+
+
 
     public ConstantVariable getLevel() {
         return level;

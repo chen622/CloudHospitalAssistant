@@ -143,7 +143,7 @@
                     </a-tab-pane>
                     <a-tab-pane tab="检查申请" key="2">
                         <inspection v-if="currentPatient!=null" :registrationId="currentPatient.id"
-                                    @refresh="refreshMR"></inspection>
+                                    @refresh="refreshMR" @showTemplate="changeDrawer(true,2)"></inspection>
                         <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                     <a-tab-pane tab="门诊确诊" key="3">
@@ -245,6 +245,10 @@
 
             },
             changeDrawer (boo, type) {
+                if (type === 1)
+                    this.$refs.templateDrawer.getMRT()
+                else if (type === 2)
+                    this.$refs.templateDrawer.getIT()
                 this.showDrawer = boo
                 this.drawerType = type
             },

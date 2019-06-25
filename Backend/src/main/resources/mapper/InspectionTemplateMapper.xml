@@ -1,69 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.InspectionTemplateMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.InspectionTemplate">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="level" jdbcType="INTEGER" property="level" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.InspectionTemplate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="created_by_id" jdbcType="INTEGER" property="createdById"/>
+    </resultMap>
 
 
-  <resultMap id="withRelationship" type="cn.neuedu.his.model.InspectionTemplate">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="department_id" jdbcType="INTEGER" property="departmentId" />
-    <result column="level" jdbcType="INTEGER" property="level" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="created_by_id" jdbcType="INTEGER" property="createdById" />
-    <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription" select="getPrescription" column="id">
-    </collection>
-    <collection property="applications" ofType="cn.neuedu.his.model.InspectionApplication" select="getInspection" column="id">
-    </collection>
-  </resultMap>
+    <resultMap id="withRelationship" type="cn.neuedu.his.model.InspectionTemplate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="department_id" jdbcType="INTEGER" property="departmentId"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="created_by_id" jdbcType="INTEGER" property="createdById"/>
+        <association property="lev" javaType="cn.neuedu.his.model.ConstantVariable">
+            <id column="levelId" jdbcType="INTEGER" property="id"/>
+            <result column="levelName" jdbcType="VARCHAR" property="name"/>
+        </association>
 
-  <select id="getHospitalCheckTemps" resultMap="withRelationship">
-        select * from inspection_template i where i.created_by_id=#{doctorID} and  level=#{level }
-  </select>
+        <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription" select="getPrescription"
+                    column="id">
+        </collection>
+        <collection property="applications" ofType="cn.neuedu.his.model.InspectionApplication" select="getInspection"
+                    column="id">
+        </collection>
+    </resultMap>
 
-<!-- Relationship collection-->
-  <select id="getPrescription" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap" >
-        select * from inspection_template_relationship r,prescription p where r.item_id=p.id and  p.is_template=true and  r.template_id=#{id};
-  </select>
-<!-- Relationship collection-->
-  <select id="getInspection" resultMap="cn.neuedu.his.mapper.InspectionApplicationMapper.withItem" >
-        select * from inspection_template_relationship r,inspection_application a where r.item_id=a.id and r.template_id=#{id} and  a.is_template=true ;
-  </select>
 
-  <select id="getDeptCheckTemps" resultMap="withRelationship">
-    select *  from inspection_template where  level =#{level} and  inspection_template.created_by_id in(
-        select u.id from user as u  where u.department_id in (
-            select u2.department_id from user u2 where  u2.id=#{doctorID}
+    <!-- Relationship collection-->
+    <select id="getPrescription" resultMap="cn.neuedu.his.mapper.PrescriptionMapper.BaseResultMap">
+        select *
+        from inspection_template_relationship r,
+             prescription p
+        where r.item_id = p.id
+          and p.is_template = true
+          and r.template_id = #{id};
+    </select>
+    <!-- Relationship collection-->
+    <select id="getInspection" resultMap="cn.neuedu.his.mapper.InspectionApplicationMapper.withItem">
+        select *
+        from inspection_template_relationship r,
+             inspection_application a
+        where r.item_id = a.id
+          and r.template_id = #{id}
+          and a.is_template = true;
+    </select>
+
+    <select id="getWhichICanUse" resultMap="withRelationship">
+        select *, constant_variable.id as levelId, constant_variable.name as levelName
+        from inspection_template i
+                 left join constant_variable on i.level = constant_variable.id
+        where (i.created_by_id = #{doctorId}
+            and level = 503)
+           or (i.department_id = #{departmentId} and level = 502)
+           or level = 501
+    </select>
+
+    <select id="getHospitalCheckTemps" resultMap="withRelationship">
+        select *
+        from inspection_template i
+        where i.created_by_id = #{doctorID}
+          and level = #{level }
+    </select>
+
+
+
+    <select id="getDeptCheckTemps" resultMap="withRelationship">
+        select *
+        from inspection_template
+        where level = #{level}
+          and inspection_template.created_by_id in (
+            select u.id
+            from user as u
+            where u.department_id in (
+                select u2.department_id
+                from user u2
+                where u2.id = #{doctorID}
             )
         )
-  </select>
+    </select>
 
-  <select id="getPersonalCheckTemps" resultMap="withRelationship">
-    select *
-    from inspection_template where  level =#{level} and  inspection_template.created_by_id=#{doctorID}
-  </select>
+    <select id="getPersonalCheckTemps" resultMap="withRelationship">
+        select *
+        from inspection_template
+        where level = #{level}
+          and inspection_template.created_by_id = #{doctorID}
+    </select>
 
-  <delete id="deleteRelationship" parameterType="Integer">
-DELETE p.*, pp.*
-FROM prescription p
-         INNER JOIN inspection_application pp
-                    ON p.item_id = pp.item_id
+    <delete id="deleteRelationship" parameterType="Integer">
+        DELETE p.*, pp.*
+        FROM prescription p
+                 INNER JOIN inspection_application pp
+                            ON p.item_id = pp.item_id
 
-WHERE   p.item_id=#{id}  and p.is_template=TRUE and  pp.is_template=true
-  </delete>
+        WHERE p.item_id = #{id}
+          and p.is_template = TRUE
+          and pp.is_template = true
+    </delete>
 
-  <select id="getInspectionTemByName" resultMap="withRelationship">
-    select * from inspection_template where name like "%"#{name}"%"
-  </select>
+    <select id="getInspectionTemByName" resultMap="withRelationship">
+        select *
+        from inspection_template
+        where name like "%"#{name}"%"
+    </select>
 </mapper>
