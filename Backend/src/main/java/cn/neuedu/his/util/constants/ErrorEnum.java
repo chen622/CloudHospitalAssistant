@@ -81,6 +81,7 @@ public enum ErrorEnum {
     E_808("808", "保存诊断失败"),
     E_809("809", "诊断已结束"),
     E_810("810", "结算类型不存在"),
+    E_901("901", "处方模板不存在"),
     ;
 
     private String errorCode;

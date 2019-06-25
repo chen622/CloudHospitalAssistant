@@ -14,4 +14,5 @@ public interface PrescriptionService extends Service<Prescription> {
     ArrayList<Prescription> getByMedicalRecordId(Integer id);
     Prescription findPrescriptionAndDrug(Integer id);
     ArrayList<Prescription> findPrescriptionAndDrugByMedical(Integer medicalId);
+
 }

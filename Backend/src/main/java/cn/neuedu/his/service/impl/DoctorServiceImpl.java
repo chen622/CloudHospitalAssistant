@@ -695,6 +695,28 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     @Override
+    @Transactional
+    public JSONObject updatePrescriptionsTemp(DrugTemplate template, Integer doctorId) {
+        prescriptionService.deleteByTemplateId(template.getId());
+
+        drugTemplateService.update(template);
+
+        for (Prescription p : template.getPrescriptions()) {
+            p.setId(null);
+            p.setTemplate(true);
+            p.setItemId(template.getId());
+            p.setCreateTime(new Date(System.currentTimeMillis()));
+            String check = checkPrescription(p);
+            if (!check.equals("")) {
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(check));
+            }
+            prescriptionService.save(p);
+        }
+        return CommonUtil.successJson();
+    }
+
+
+    @Override
     public JSONObject getPrescriptionsTemByName(String name) {
         List<DrugTemplate> drugTemplates = drugTemplateService.getPrescriptionsTemByName(name);
         for (DrugTemplate drugTemplate : drugTemplates) {
