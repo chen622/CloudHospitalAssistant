@@ -74,7 +74,13 @@
     </select>
 
     <select id="getTotalMoney" resultType="BigDecimal">
-        select sum(unit_price*quantity) from payment where item_id=#{id}
+        select sum(unit_price*quantity)
+        from payment
+        where  item_id in (select prescription.id  from prescription where prescription.item_id=#{id} and prescription.is_template=false )
+        and payment_type_id IN (select d.fee_type_id from prescription p ,  drug d where p.drug_id=d.id and p.item_id=#{id}) or
+        (item_id in (select inspection_application.id  from inspection_application where inspection_application.item_id=#{id} and inspection_application.is_template=false )
+        and payment_type_id IN (select d.fee_type_id from inspection_application p join  non_drug d on p.non_drug_id=d.id) )
+        or (item_id=#{id} and payment_type_id=301)
     </select>
 
 
