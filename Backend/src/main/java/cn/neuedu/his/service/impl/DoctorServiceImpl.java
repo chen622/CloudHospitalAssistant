@@ -558,6 +558,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 }
                 InspectionApplication application = new InspectionApplication(tempId, r.getNonDrugId(), new Date(), false, r.getEmerged(), r.getQuantity(), false, true, drug.getFeeTypeId());
                 inspectionApplicationService.save(application);
+
+                saveInspectionRelationship(tempId, r.getId(), 0);
             }
         }
         //保存模板非药项目
@@ -572,9 +574,20 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                 p2.setTemplate(true);
                 p2.setItemId(tempId);
                 prescriptionService.save(p2);
+
+                saveInspectionRelationship(tempId, p2.getId(), 1);
             }
         }
         return CommonUtil.successJson();
+    }
+
+    @Transactional
+    public void saveInspectionRelationship(Integer tId,Integer itemId,Integer type){
+        InspectionTemplateRelationship relationship = new InspectionTemplateRelationship();
+        relationship.setTemplateId(tId);
+        relationship.setItemType(type);
+        relationship.setItemId(itemId);
+        inspectionTemplateRelationshipService.save(relationship);
     }
 
     @Override

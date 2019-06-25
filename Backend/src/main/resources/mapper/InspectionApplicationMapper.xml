@@ -16,6 +16,8 @@
         <result column="is_template" jdbcType="BIT" property="isTemplate"/>
         <result column="is_check" jdbcType="BIT" property="isCheck"/>
         <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+        <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug" column="non_drug_id"
+                     select="getNonDrug"/>
     </resultMap>
 
     <resultMap id="getPatientInformationAndInspection" type="cn.neuedu.his.model.Payment">
@@ -104,7 +106,7 @@
 
     <select id="hasMedicalRecordInspectionNotDone" resultType="Integer">
         select count(*)
-        from his.inspection_application
+        from inspection_application
         where item_id = #{itemId}
           and is_template = false
           and is_canceled = false

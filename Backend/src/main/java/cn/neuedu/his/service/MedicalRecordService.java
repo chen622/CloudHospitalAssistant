@@ -20,5 +20,4 @@ public interface MedicalRecordService extends Service<MedicalRecord> {
      @Transactional
      MedicalRecord getByRegistrationId(Integer registrationid);
 
-     MedicalRecord getDrugNonDrugAndResultByMedicalId(Integer id);
 }

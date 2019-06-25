@@ -285,16 +285,16 @@ public class MedicalRecordController {
         return doctorService.updateMR(registrationID, record, diagnosesIds);
     }
 
-    @GetMapping("/getDrugNonDrugAndResult/{id}")
-    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication){
-        /*
-        try{
-            PermissionCheck.getIdByPatient(authentication);
-        }catch (Exception e){
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }*/
-
-        MedicalRecord medicalRecord = medicalRecordService.getDrugNonDrugAndResultByMedicalId(id);
-        return CommonUtil.successJson(medicalRecord);
-    }
+//    @GetMapping("/getDrugNonDrugAndResult/{id}")
+//    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication){
+//        /*
+//        try{
+//            PermissionCheck.getIdByPatient(authentication);
+//        }catch (Exception e){
+//            return CommonUtil.errorJson(ErrorEnum.E_602);
+//        }*/
+//
+//        MedicalRecord medicalRecord = medicalRecordService.getDrugNonDrugAndResultByMedicalId(id);
+//        return CommonUtil.successJson(medicalRecord);
+//    }
 }

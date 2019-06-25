@@ -137,7 +137,7 @@ public class MedicalRecordTemplateController {
         return CommonUtil.successJson(doctorService.updateMedicalRecordTem(record, doctorID));
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public JSONObject deleteMedicalRecordTemp(@PathVariable("id") Integer id, Authentication authentication) {
         Integer doctorID = null;
         try {

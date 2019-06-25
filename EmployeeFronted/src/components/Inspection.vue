@@ -3,10 +3,10 @@
         <a-divider>项目内容</a-divider>
         <a-row type="flex" align="middle" justify="center">
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button type="primary" style="width: 80%">删除暂存</a-button>
+                <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
             </a-col>
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
+                <a-button style="width: 80%" @click="$emit('showTemplate',true,2)">模板</a-button>
             </a-col>
         </a-row>
         <a-table :dataSource="$store.state.inspections" rowKey="nonDrug.id" :columns="inspectionsColumns"
@@ -17,7 +17,6 @@
             <template slot="action" slot-scope="text,record,index">
                 <div class="action" v-if="$store.state.inspections.length && record.temp">
                     <a-popconfirm
-
                             title="确定开立？"
                             @confirm="() => saveInspection(record,index)">
                         <a>开立</a>

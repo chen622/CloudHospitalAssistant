@@ -42,7 +42,7 @@
                     </a-select>
                 </a-form-item>
                 <a-form-item>
-                    <a-button type="primary" @click="saveTemplate">
+                    <a-button :disabled="saving" type="primary" @click="saveTemplate">
                         保存
                     </a-button>
                 </a-form-item>
@@ -57,8 +57,9 @@
     export default {
         name: "EditDrawer",
         components: {Diagnose},
-        props: ['showDrawer', 'type', 'editMRT'],//type: 1 保存当前模板
+        props: ['showDrawer', 'type', 'editMRT'],//type: 1 保存当前模板 2 编辑
         data: () => ({
+            saving: false,
             levels: [],
             rules: {
                 name: [{required: true, message: '请输入模板名称', trigger: 'blur'}, {}],
@@ -75,6 +76,8 @@
                         data.name = this.templateForm.getFieldsValue().name;
                         data.levelId = this.templateForm.getFieldsValue().levelId;
                         data.firstDiagnose = this.$store.state.diagnose
+                        this.saving = true
+
                         this.$api.post("/MRT/saveMRT", data,
                             res => {
                                 if (res.code === '100') {
@@ -82,7 +85,10 @@
                                 } else {
                                     that.$message.error(res.msg)
                                 }
+                                that.saving = false
                             }, () => {
+                                that.saving = false
+
                             })
                     }
                 })
