@@ -1,28 +1,37 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Table(name = "non_drug")
-public class NonDrug implements Serializable {
+public class NonDrug extends BaseRowModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ExcelProperty(value = "id",index = 0)
     private Integer id;
 
     @Column(name = "name")
+    @ExcelProperty(value = "name",index = 1)
     private String name;
 
     @Column(name = "price")
+    @ExcelProperty(value = "price",index = 2)
     private BigDecimal price;
 
     @Column(name = "standard")
+    @ExcelProperty(value = "standard",index = 3)
     private String standard;
 
     @Column(name = "code")
+    @ExcelProperty(value = "code",index = 4)
     private String code;
 
     @Column(name = "executive_department")
+    @ExcelProperty(value = "executive_department",index = 5)
     private Integer executiveDepartment;
 
     @Column(name = "is_delete")

@@ -1,5 +1,6 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.DepartmentService;
@@ -8,11 +9,17 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -204,5 +211,39 @@ public class NonDrugController {
         List<PaymentType> paymentTypes = nonDrugService.getTypeAndNonDrug(name,code,auth);
 
         return CommonUtil.successJson(paymentTypes);
+    }
+
+    /**
+     * 下载xlsx
+     * @param response
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("/excelOut")
+    public JSONObject excelOut( HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/force-download");
+        response.setHeader("Content-Disposition", "attachment;fileName=" + "nondrug.xlsx");
+
+        ServletOutputStream out = response.getOutputStream();
+        try {
+            ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
+            //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
+            Sheet sheet1 = new Sheet(1, 0, NonDrug.class);
+
+            List<NonDrug> nonDrugs = nonDrugService.findAll();
+
+            writer.write(nonDrugs, sheet1);
+            writer.finish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return CommonUtil.successJson();
     }
 }

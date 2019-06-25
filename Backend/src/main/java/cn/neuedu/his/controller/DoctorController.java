@@ -124,10 +124,10 @@ public class DoctorController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
         List<Registration> list = registrationService.getAllWaitingRegistration(doctorID, Constants.WAITING_FOR_TREATMENT, time);
-        List<Registration> inside= registrationService.getAllWaitingRegistration(doctorID, Constants.INSIDE_DOCTOR, time);
+        List<Registration> inside = registrationService.getAllWaitingRegistration(doctorID, Constants.INSIDE_DOCTOR, time);
         if (list == null) {
             list = new ArrayList<>();
-            if(inside!=null){
+            if (inside != null) {
                 list.addAll(inside);
             }
         }
@@ -257,8 +257,32 @@ public class DoctorController {
 //        }
 //    }
 
-
-
+    //TODO cloud
+    /**
+     * 保存检查模板
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/saveInspectionTem")
+    public JSONObject saveInspectionTem(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
+        JSONObject k = checkTemplate("inspection", doctorId, template.getName(), template.getLevel());
+        if (k != null)
+            return k;
+        try {
+            return doctorService.saveInspectionAsTemplate(template, doctorId);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+    }
 
 
     /**
