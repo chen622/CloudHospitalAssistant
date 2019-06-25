@@ -41,6 +41,8 @@ public class InspectionApplication implements Serializable {
     private Boolean isCheck;
 
     private Payment payment;
+
+    private List<Payment> payments;
     private Department department;
     private NonDrug nonDrug;
 
@@ -244,5 +246,13 @@ public class InspectionApplication implements Serializable {
      */
     public void setIsCanceled(Boolean isCanceled) {
         this.isCanceled = isCanceled;
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<Payment> payments) {
+        this.payments = payments;
     }
 }

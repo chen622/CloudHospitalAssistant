@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "medical_record")
@@ -23,6 +24,11 @@ public class MedicalRecord implements Serializable {
 
     @Column(name = "history_symptom")
     private String historySymptom;
+
+    private List<Prescription> prescriptions = new ArrayList<>();
+    private List<InspectionApplication> inspectionApplications = new ArrayList<>();
+
+
 
     /**
      * 是否为西医诊断
@@ -253,5 +259,37 @@ public class MedicalRecord implements Serializable {
      */
     public void setPreviousTreatment(String previousTreatment) {
         this.previousTreatment = previousTreatment;
+    }
+
+    /**
+     *
+     * @return prescriptions
+     */
+    public List<Prescription> getPrescriptions() {
+        return prescriptions;
+    }
+
+    /**
+     *
+     * @param prescriptions
+     */
+    public void setPrescriptions(List<Prescription> prescriptions) {
+        this.prescriptions = prescriptions;
+    }
+
+    /**
+     *
+     * @return List<InspectionApplication>
+     */
+    public List<InspectionApplication> getInspectionApplications() {
+        return inspectionApplications;
+    }
+
+    /**
+     *
+     * @param inspectionApplications
+     */
+    public void setInspectionApplications(List<InspectionApplication> inspectionApplications) {
+        this.inspectionApplications = inspectionApplications;
     }
 }

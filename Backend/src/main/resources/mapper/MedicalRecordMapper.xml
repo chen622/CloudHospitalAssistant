@@ -110,5 +110,53 @@
         from medical_record
         where registration_id = #{registrationId}
     </select>
-    
+    <!--根据病历id来获取药物，非药物和处置结果-->
+    <resultMap id="DrugNonDrugAndResultByMedical" type="cn.neuedu.his.model.MedicalRecord">
+        <id column="mrId" javaType="INTEGER" property="id"/>
+        <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription">
+            <id column="prId" javaType="INTEGER" property="id"/>
+            <result column="amount" jdbcType="INTEGER" property="amount" />
+            <association property="drug" javaType="cn.neuedu.his.model.Drug">
+                <id column="drId" jdbcType="INTEGER" property="id" />
+                <result column="price" jdbcType="DECIMAL" property="price" />
+                <result column="dname" jdbcType="VARCHAR" property="name" />
+            </association>
+        </collection>
+        <collection property="inspectionApplications" ofType="cn.neuedu.his.model.InspectionApplication">
+            <id column="iaId" javaType="INTEGER" property="id"/>
+            <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+            <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
+                <id column="id" jdbcType="INTEGER" property="id" />
+                <result column="ndName" jdbcType="VARCHAR" property="name" />
+                <result column="price" jdbcType="DECIMAL" property="price" />
+            </association>
+            <collection property="payments" ofType="cn.neuedu.his.model.Payment">
+                <id column="id" jdbcType="INTEGER" property="id"/>
+                <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+                <result column="state" jdbcType="INTEGER" property="state"/>
+            </collection>
+            <collection property="results" ofType="cn.neuedu.his.model.InspectionResult">
+                <id column="irId" jdbcType="INTEGER" property="id" />
+                <result column="text" jdbcType="VARCHAR" property="text" />
+                <result column="picture" jdbcType="VARCHAR" property="picture" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="getDrugNonDrugAndResultByMedicalId" resultMap="DrugNonDrugAndResultByMedical">
+        SELECT *, mr.id as mrId, prescription.id as prId, drug.id as drId,drug.name as dname, ia.id as iaId, ir.id as irId
+        ,nd.name as ndName
+        FROM medical_record mr JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
+                               LEFT JOIN inspection_result ir ON ia.id = ir.inspection_application_id #将申请结果与申请相连
+                               JOIN non_drug nd ON ia.non_drug_id = nd.id #将非药物id与处置申请相连
+                               JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
+                               JOIN drug ON prescription.drug_id = drug.id #查询处方的药物
+                               JOIN payment ON ia.id = payment.item_id #将付款与申请相连
+        WHERE prescription.is_template = 0
+          AND ia.is_canceled = 0
+          AND payment.payment_type_id in (SELECT id FROM payment_type WHERE type = 1)
+          AND (payment.state = 1202 OR payment.state = 1203 OR payment.state= 1204 OR payment.state = 1205 OR payment.state = 1206 OR payment.state =1207)
+          AND mr.id = #{medicalId}
+        ORDER BY payment.state ASC
+    </select>
 </mapper>
