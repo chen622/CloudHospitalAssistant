@@ -47,6 +47,34 @@ public class InspectionTemplateController {
     }
 
 
+    //TODO cloud
+    /**
+     * 保存检查模板
+     *
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @PostMapping("/saveInspectionTem")
+    public JSONObject saveInspectionTem(@RequestBody JSONObject object, Authentication authentication) {
+        Integer doctorId;
+        try {
+            doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+        } catch (AuthenticationServiceException a) {
+            return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
+        }
+        InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
+//        JSONObject k = checkTemplate("inspection", doctorId, template.getName(), template.getLevel());
+//        if (k != null)
+//            return k;
+        try {
+            return doctorService.saveInspectionAsTemplate(template, doctorId);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }
+    }
+
+
 //    /**
 //     * 门诊医生查看全院检查模板
 //     *
