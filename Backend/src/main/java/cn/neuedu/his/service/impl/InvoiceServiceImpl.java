@@ -61,7 +61,6 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
         } catch (IllegalArgumentException e) {
             throw new IndexOutOfBoundsException("invoice");
         }
-        //todo:invoiceId设为规律码（可以直接在model类进行处理）
 
         invoice.setId(invoiceId);
         invoice.setPriceAmount(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity())));

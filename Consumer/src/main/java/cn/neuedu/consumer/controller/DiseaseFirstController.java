@@ -49,4 +49,9 @@ public class DiseaseFirstController {
     public JSONObject selectDiseaseFirst(@PathVariable("name") String name){
         return diseaseFirstRemote.selectDiseaseFirst(name);
     }
+
+    @GetMapping("/getType")
+    public JSONObject getAllDiseaseType(){
+        return diseaseFirstRemote.getAllDiseaseType();
+    }
 }
