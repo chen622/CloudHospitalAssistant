@@ -41,7 +41,7 @@ public class DrugTemplateController {
     @GetMapping("/deleteTem/{id}")
     public JSONObject deleteTem(@PathVariable("id") Integer id, Authentication authentication){
         try{
-            Integer doctorId= PermissionCheck.isOutpatientDoctor(authentication);
+            PermissionCheck.isOutpatientDoctor(authentication);
             return drugTemplateService.deleteTem(id);
         }catch (AuthenticationServiceException a){
             return CommonUtil.errorJson(ErrorEnum.E_502);
