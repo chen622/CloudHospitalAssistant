@@ -101,6 +101,10 @@
                 <result column="nonDrugName" jdbcType="VARCHAR" property="name"/>
             </association>
         </association>
+        <association property="registration" javaType="cn.neuedu.his.model.Registration">
+            <id column="registrationId" jdbcType="INTEGER" property="id"/>
+            <result column="registrationState" jdbcType="INTEGER" property="state"/>
+        </association>
         <association property="user" javaType="cn.neuedu.his.model.User">
             <id column="id" jdbcType="INTEGER" property="id"/>
             <result column="real_name" jdbcType="VARCHAR" property="realName"/>
@@ -120,7 +124,9 @@
         non_drug.name as nonDrugName,
         state.id as stateId,
         state.name as stateName,
-        user.real_name
+        user.real_name,
+        registration.id as registrationId,
+        registration.state as registrationState
         from payment
         join payment_type on payment.payment_type_id = payment_type.id
         left join prescription on payment.item_id = prescription.id
@@ -129,6 +135,7 @@
         left join non_drug on inspection_application.non_drug_id = non_drug.id
         left join constant_variable as state on payment.state = state.id
         left join user on payment.doctor_id = user.id
+        left join registration on payment.item_id = registration.id
         where payment.patient_id = #{patientId}
         <if test="start != null">
             and payment.create_time <![CDATA[  >=  ]]> #{start}
