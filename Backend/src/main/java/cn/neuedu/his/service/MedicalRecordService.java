@@ -14,6 +14,8 @@ public interface MedicalRecordService extends Service<MedicalRecord> {
      @Transactional
      List<MedicalRecord> getAllByPatientId(Integer patient_id);
      @Transactional
+     List<MedicalRecord> getAllByPatientIdTwo(Integer patient_id);
+     @Transactional
      MedicalRecord getMedicalRecordWithDiagnose(Integer id);
      @Transactional
      MedicalRecord getByRegistrationId(Integer registrationid);

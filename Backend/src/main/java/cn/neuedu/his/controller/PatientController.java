@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.Patient;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.PatientService;
+import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.StringUtils;
@@ -27,6 +28,8 @@ public class PatientController {
 
     @Autowired
     PatientService patientService;
+    @Autowired
+    RegistrationService registrationService;
 
     @PostMapping("/add")
     public JSONObject registerPatient(@RequestBody JSONObject jsonObject, Authentication authentication) {
@@ -235,7 +238,21 @@ public class PatientController {
         return CommonUtil.successJson(jsonArray);
     }
 
+    /**
+     * 获得患者所有挂号信息
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getRegistrations")
+    public JSONObject getRegistrations(Authentication authentication){
+       try {
+           Integer id=PermissionCheck.getIdByPatient(authentication);
+           return CommonUtil.successJson(registrationService.getRegistrations(id));
+       }catch (AuthenticationServiceException e){
+           return CommonUtil.errorJson(ErrorEnum.E_602);
+       }
 
+    }
 //    /**
 //     * 根据真实姓名获得病人信息
 //     *

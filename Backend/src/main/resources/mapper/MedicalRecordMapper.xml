@@ -39,14 +39,44 @@
     </resultMap>
 
     <select id="getAllByPatientId" resultMap="withDiagnose">
-        select *
-        from medical_record
-        where medical_record.registration_id in (
-            select registration_id
-            from registration
-            where registration.patient_id = #{patient_id}
-        );
+        select m.*
+        from medical_record m join registration r on r.id=m.registration_id
+        where r.patient_id=#{patient_id}
+        ORDER BY r.create_time DESC
     </select>
+
+    <resultMap id="withTotalMoney" type="cn.neuedu.his.model.MedicalRecord">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="self_description" jdbcType="VARCHAR" property="selfDescription"/>
+        <result column="is_pregnant" jdbcType="BIT" property="isPregnant"/>
+        <result column="current_symptom" jdbcType="VARCHAR" property="currentSymptom"/>
+        <result column="history_symptom" jdbcType="VARCHAR" property="historySymptom"/>
+        <result column="is_western_medicine" jdbcType="BIT" property="isWesternMedicine"/>
+        <result column="allergy_history" jdbcType="VARCHAR" property="allergyHistory"/>
+        <result column="body_examination" jdbcType="VARCHAR" property="bodyExamination"/>
+        <result column="registration_id" jdbcType="INTEGER" property="registrationId"/>
+        <result column="previous_treatment" jdbcType="LONGVARCHAR" property="previousTreatment"/>
+        <result column="check_advice" property="checkAdvice" jdbcType="LONGVARCHAR"/>
+        <result column="notification" property="notification" jdbcType="LONGVARCHAR"/>
+        <association property="totalMoney" javaType="BigDecimal" select="getTotalMoney" column="id"/>
+        <collection property="firstDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFirst"
+                    column="{MRID =id}"></collection>
+        <collection property="finalDiagnose" ofType="cn.neuedu.his.model.Diagnose" select="getFinal"
+                    column="{MRID =id}"></collection>
+    </resultMap>
+
+
+    <select id="getAllByPatientIdTwo" resultMap="withTotalMoney">
+        select m.*
+        from medical_record m join registration r on r.id=m.registration_id
+        where r.patient_id=#{patient_id}
+        ORDER BY r.create_time DESC
+    </select>
+
+    <select id="getTotalMoney" resultType="BigDecimal">
+        select sum(unit_price*quantity) from payment where item_id=#{id}
+    </select>
+
 
     <select id="getMedicalRecordWithDiagnose" resultMap="withDiagnose">
         select *

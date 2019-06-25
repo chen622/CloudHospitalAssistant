@@ -54,6 +54,39 @@ public class Registration {
     private Integer inspectionFee;
     @Transient
     private Integer theOtherFee;
+    //状态名字
+    @Transient
+    private String stateName;
+
+    //挂号时段
+    @Transient
+    private String period;
+    @Transient
+    private String doctorName;
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(String period) {
+        this.period = period;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
 
     private RegistrationType registrationType;
 

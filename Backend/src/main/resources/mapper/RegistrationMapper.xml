@@ -16,7 +16,27 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
         <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
+        <association property="stateName" javaType="String" select="getStateName" column="{id=state}"/>
+        <association property="period" javaType="String" select="getPeriod" column="{id=schedule_id}"/>
+        <association property="doctorName" javaType="String" select="getDoctorName" column="{id=schedule_id}"/>
     </resultMap>
+
+    <select id="getRegistrations" resultMap="BaseResultMap">
+        select  r.* from registration r
+         where  patient_id=#{id} ORDER BY r.create_time DESC
+    </select>
+
+    <select id="getStateName" resultType="String">
+        select name from constant_variable where id=#{id};
+    </select>
+
+    <select id="getPeriod" resultType="String">
+        select c.name from job_schedule j join constant_variable c on j.period=c.id where j.id=#{id};
+    </select>
+
+    <select id="getDoctorName" resultType="String">
+        select c.real_name from job_schedule j join user c on j.doctor_id=c.id where j.id=#{id};
+    </select>
 
     <resultMap id="registrationWithPatient" type="cn.neuedu.his.model.Registration">
         <id column="id" jdbcType="INTEGER" property="id"/>
@@ -173,4 +193,5 @@
             select  id from payment_type type where  type.type = #{inspectionTypeId})
     </select>
 
+    
 </mapper>
