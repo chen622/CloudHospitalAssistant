@@ -32,98 +32,98 @@ public class ConstantVariableController {
         return CommonUtil.successJson(constantVariableService.findAll());
     }
 
-    @PostMapping("/getName/{id}")
-    public JSONObject getNamebyId(@PathVariable("id") Integer id) {
-        return CommonUtil.successJson(constantVariableService.findById(id).getName());
-    }
+//    @PostMapping("/getName/{id}")
+//    public JSONObject getNamebyId(@PathVariable("id") Integer id) {
+//        return CommonUtil.successJson(constantVariableService.findById(id).getName());
+//    }
 
-    /**
-     * 增加常量小类(type 及以后)
-     *
-     * @param jsonObject
-     * @param authentication
-     * @return
-     */
-    @PostMapping("/insert/{type}")
-    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
-        try {
-            PermissionCheck.isHospitalAdmin(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
+//    /**
+//     * 增加常量小类(type 及以后)
+//     *
+//     * @param jsonObject
+//     * @param authentication
+//     * @return
+//     */
+//    @PostMapping("/insert/{type}")
+//    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+//        try {
+//            PermissionCheck.isHospitalAdmin(authentication);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_602);
+//        }
+//
+//        try {
+//            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
+//            constantVariableService.insertConstant(constantVariable, type);
+//        } catch (RuntimeException e) {
+//            if (e.getMessage().equals("629"))
+//                return CommonUtil.errorJson(ErrorEnum.E_629);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
+//        return CommonUtil.successJson();
+//    }
 
-        try {
-            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.insertConstant(constantVariable, type);
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("629"))
-                return CommonUtil.errorJson(ErrorEnum.E_629);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        return CommonUtil.successJson();
-    }
+//    @PostMapping("/delete/{type}/{id}")
+//    public JSONObject deleteConstant(@PathVariable("id") Integer id, @PathVariable("type") String type, Authentication authentication) {
+//        try {
+//            PermissionCheck.isHospitalAdmin(authentication);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_602);
+//        }
+//
+//        try {
+//            constantVariableService.deleteConstant(id, type);
+//        } catch (RuntimeException e) {
+//            if (e.getMessage().equals("629"))
+//                return CommonUtil.errorJson(ErrorEnum.E_629);
+//            else if (e.getMessage().equals("633"))
+//                return CommonUtil.errorJson(ErrorEnum.E_633);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
+//        return CommonUtil.successJson();
+//    }
 
-    @PostMapping("/delete/{type}/{id}")
-    public JSONObject deleteConstant(@PathVariable("id") Integer id, @PathVariable("type") String type, Authentication authentication) {
-        try {
-            PermissionCheck.isHospitalAdmin(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-        try {
-            constantVariableService.deleteConstant(id, type);
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("629"))
-                return CommonUtil.errorJson(ErrorEnum.E_629);
-            else if (e.getMessage().equals("633"))
-                return CommonUtil.errorJson(ErrorEnum.E_633);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        return CommonUtil.successJson();
-    }
-
-    @PostMapping("/modify/{type}")
-    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
-        try {
-            PermissionCheck.isHospitalAdmin(authentication);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
-        try {
-            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.modifyConstant(constantVariable, type);
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("629"))
-                return CommonUtil.errorJson(ErrorEnum.E_629);
-            else if (e.getMessage().equals("633"))
-                return CommonUtil.errorJson(ErrorEnum.E_633);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
-        return CommonUtil.successJson();
-    }
-
-    @GetMapping("/getSettlementType")
-    public JSONObject getSettlementType() {
-        try {
-            Map<String, Integer> map = redisService.getMapAll("settlementType");
-            JSONArray array = new JSONArray();
-            map.forEach((k, v) -> {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("id", v);
-                        jsonObject.put("name", k);
-                        array.add(jsonObject);
-                    }
-            );
-            return CommonUtil.successJson(array);
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_500);
-        }
-    }
+//    @PostMapping("/modify/{type}")
+//    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+//        try {
+//            PermissionCheck.isHospitalAdmin(authentication);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_602);
+//        }
+//
+//        try {
+//            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
+//            constantVariableService.modifyConstant(constantVariable, type);
+//        } catch (RuntimeException e) {
+//            if (e.getMessage().equals("629"))
+//                return CommonUtil.errorJson(ErrorEnum.E_629);
+//            else if (e.getMessage().equals("633"))
+//                return CommonUtil.errorJson(ErrorEnum.E_633);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_802);
+//        }
+//        return CommonUtil.successJson();
+//    }
+//
+//    @GetMapping("/getSettlementType")
+//    public JSONObject getSettlementType() {
+//        try {
+//            Map<String, Integer> map = redisService.getMapAll("settlementType");
+//            JSONArray array = new JSONArray();
+//            map.forEach((k, v) -> {
+//                        JSONObject jsonObject = new JSONObject();
+//                        jsonObject.put("id", v);
+//                        jsonObject.put("name", k);
+//                        array.add(jsonObject);
+//                    }
+//            );
+//            return CommonUtil.successJson(array);
+//        } catch (Exception e) {
+//            return CommonUtil.errorJson(ErrorEnum.E_500);
+//        }
+//    }
 
     @GetMapping("/getForm")
     public JSONObject getDrugForm() {
@@ -174,11 +174,11 @@ public class ConstantVariableController {
     }
 
 
-    @GetMapping("/getAll")
-    public JSONObject getAll() {
-
-        List<ConstantVariable> constantVariables = constantVariableService.findAll();
-        return CommonUtil.successJson(constantVariables);
-    }
+//    @GetMapping("/getAll")
+//    public JSONObject getAll() {
+//
+//        List<ConstantVariable> constantVariables = constantVariableService.findAll();
+//        return CommonUtil.successJson(constantVariables);
+//    }
 
 }

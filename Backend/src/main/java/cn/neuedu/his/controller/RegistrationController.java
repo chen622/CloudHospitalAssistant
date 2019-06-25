@@ -108,7 +108,7 @@ public class RegistrationController {
     @PostMapping("/confirmPre/{registrationId}")
     public JSONObject confirmPre(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         //获取挂号收费员id
-        Integer registrarId = null;
+        Integer registrarId;
         try {
             registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         } catch (AuthenticationServiceException e) {
@@ -120,7 +120,7 @@ public class RegistrationController {
         try {
             registrationService.confirmPre(registrarId, registrationId);
         }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson();
