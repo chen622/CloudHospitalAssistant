@@ -1,5 +1,8 @@
 package cn.neuedu.his.model;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,9 +10,10 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Drug implements Serializable {
+public class Drug extends BaseRowModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ExcelProperty(value = "id",index = 0)
     private Integer id;
 
     @Column(name = "formulation")

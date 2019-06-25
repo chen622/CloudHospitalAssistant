@@ -33,4 +33,14 @@ public class MedicalRecordServiceImpl extends AbstractService<MedicalRecord> imp
     public MedicalRecord getByRegistrationId(Integer registrationid) {
         return medicalRecordMapper.getByRegistrationId(registrationid);
     }
+
+    /**
+     * 根据病历获得药品非药品和结果
+     * @param id
+     * @return
+     */
+    @Override
+    public MedicalRecord getDrugNonDrugAndResultByMedicalId(Integer id) {
+        return medicalRecordMapper.getDrugNonDrugAndResultByMedicalId(id);
+    }
 }
