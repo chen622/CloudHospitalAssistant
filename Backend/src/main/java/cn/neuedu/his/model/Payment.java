@@ -64,11 +64,20 @@ public class Payment {
 
     private Prescription prescription;
     private InspectionApplication application;
+    private Registration registration;
     private Patient patient;
     private PaymentType paymentType;
     private User user;
     private ConstantVariable stateVariable;
 
+
+    public Registration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
 
     public ConstantVariable getStateVariable() {
         return stateVariable;
