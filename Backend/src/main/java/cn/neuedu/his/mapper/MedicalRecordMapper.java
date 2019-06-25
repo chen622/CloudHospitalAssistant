@@ -13,5 +13,8 @@ public interface MedicalRecordMapper extends MyMapper<MedicalRecord> {
      MedicalRecord getMedicalRecordWithDiagnose(Integer id);
      MedicalRecord getByRegistrationId(Integer registrationId);
      List<MedicalRecord> getAllByPatientIdTwo(Integer patient_id);
-     MedicalRecord getDrugNonDrugAndResultByMedicalId(Integer medicalId);
+     MedicalRecord getDrugPrescription(Integer medicalId);
+     MedicalRecord getApplicationAndResultByMedicalId(Integer medicalId);
+     MedicalRecord getApplicationAndNonDrugByMedicalId(Integer medicalId);
+     MedicalRecord getApplicationAndPayment(Integer medicalId);
 }

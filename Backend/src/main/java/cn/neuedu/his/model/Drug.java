@@ -10,10 +10,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Drug extends BaseRowModel implements Serializable {
+public class Drug implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @ExcelProperty(value = "id",index = 0)
     private Integer id;
 
     @Column(name = "formulation")
