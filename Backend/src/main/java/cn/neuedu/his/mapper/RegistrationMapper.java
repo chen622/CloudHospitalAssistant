@@ -24,5 +24,6 @@ public interface RegistrationMapper extends MyMapper<Registration> {
      Registration getRegistrationAndType(Integer id);
      ArrayList<Registration> getStatistics(String start,String end,Integer doctorId);
      ArrayList<Registration> getPatient(Integer doctorId,String start,String end,@Param("medicalTypeId") Integer medicalTypeId,Integer inspectionTypeId);
+     ArrayList<Registration> getRegistrations(Integer id);
      Registration getFee(Integer registrationId,@Param("medicalTypeId") Integer medicalTypeId,Integer inspectionTypeId);
 }

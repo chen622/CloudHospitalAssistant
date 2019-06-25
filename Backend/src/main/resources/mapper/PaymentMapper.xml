@@ -149,8 +149,8 @@
                inspection_application.*,
                non_drug.id       as nonDrugId,
                non_drug.name     as nonDrugName,
-               state.id as stateId,
-               state.name as stateName,
+               state.id          as stateId,
+               state.name        as stateName,
                user.real_name
         from payment
                  join payment_type on payment.payment_type_id = payment_type.id
@@ -166,7 +166,7 @@
     </select>
 
     <select id="getForStatistics" resultType="Map">
-        select payment.payment_type_id,count(*)
+        select payment.payment_type_id, count(*)
         from payment
                  join payment_type on payment.payment_type_id = payment_type.id
                  left join prescription on payment.item_id = prescription.id
@@ -182,20 +182,32 @@
     </select>
 
     <select id="getAllPayments" resultType="Integer">
-        select sum(quantity*unit_price)
+        select sum(quantity * unit_price)
         from payment
         where (project_operator_id = #{projectOperatorId} or doctor_id = #{projectOperatorId})
           and create_time <![CDATA[>=]]> #{startDate}
-          and create_time <![CDATA[<=]]> #{endDate} and  payment_type_id=#{id}
+          and create_time <![CDATA[<=]]> #{endDate}
+          and payment_type_id = #{id}
     </select>
 
     <select id="getStatistics" resultType="Integer">
         select count(*)
-        from  payment
-        where create_time <![CDATA[<=]]> #{end} and  create_time <![CDATA[>=]]> #{start}
-        and  patient_id =#{patientId} and payment_type_id in (
-        select  id from payment_type where  type = #{type}
+        from payment
+        where create_time <![CDATA[<=]]> #{end}
+          and create_time <![CDATA[>=]]> #{start}
+          and patient_id = #{patientId}
+          and payment_type_id in (
+            select id
+            from payment_type
+            where type = #{type}
         )
+    </select>
+
+    <select id="getOneByInvoice" resultMap="BaseResultMap">
+        select *
+        from payment
+        where invoice_id = #{invoiceId}
+        limit 1
     </select>
 
 

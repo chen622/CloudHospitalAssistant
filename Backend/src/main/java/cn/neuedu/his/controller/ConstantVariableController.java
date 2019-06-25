@@ -32,8 +32,8 @@ public class ConstantVariableController {
         return CommonUtil.successJson(constantVariableService.findAll());
     }
 
-    @PostMapping("/getName")
-    public JSONObject getNamebyId(Integer id) {
+    @PostMapping("/getName/{id}")
+    public JSONObject getNameById(@PathVariable("id") Integer id) {
         return CommonUtil.successJson(constantVariableService.findById(id).getName());
     }
 

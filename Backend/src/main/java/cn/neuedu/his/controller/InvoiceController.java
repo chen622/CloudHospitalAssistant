@@ -67,7 +67,7 @@ public class InvoiceController {
      * @param authentication
      * @return
      */
-    @PostMapping("/anewInvoice/{invoiceId")
+    @PostMapping("/anewInvoice/{invoiceId}")
     public JSONObject anewInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
         Integer admin;
         try {
@@ -82,6 +82,8 @@ public class InvoiceController {
             invoiceService.addAnewInvoice(invoiceId, admin);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_514);
         }
 
         return CommonUtil.successJson();
@@ -93,7 +95,7 @@ public class InvoiceController {
      * @param authentication
      * @return
      */
-    @PostMapping("/againInvoice/{invoiceId")
+    @PostMapping("/againInvoice/{invoiceId}")
     public JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId, Authentication authentication) {
         Integer admin;
         try {
@@ -108,6 +110,8 @@ public class InvoiceController {
             invoiceService.addAgainInvoice(invoiceId, admin);
         }catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
+        }catch (UnsupportedOperationException e2) {
+            return CommonUtil.errorJson(ErrorEnum.E_514);
         }
 
         return CommonUtil.successJson();

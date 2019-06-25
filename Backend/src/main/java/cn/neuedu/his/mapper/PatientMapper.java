@@ -20,7 +20,7 @@ public interface PatientMapper extends MyMapper<Patient> {
     Patient getPatientAndDrugByTypeAndState(@Param("patientId") Integer patientId, @Param("paymentTotalTypeId") Integer paymentTotalTypeId, @Param("state") Integer state, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     //通过身份证号模糊查询获得病人
-    List<Patient> selectPatientByIdentifyId(String id);
+    List<Patient> selectPatientByIdentifyId(String identifyId);
 
     //根据真实姓名模糊查询获得病人
     List<Patient> selectPatientByName(String name);

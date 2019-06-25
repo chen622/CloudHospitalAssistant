@@ -6,9 +6,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @Component
 public interface DailySettleMapper extends MyMapper<DailySettle> {
-    DailySettle selectLastTime(@Param("adminId") Integer adminId);
+    Date selectLastTime(@Param("adminId") Integer adminId);
     ArrayList<DailySettle> selectNotCheckByAdminId(@Param("adminId") Integer adminId);
 }

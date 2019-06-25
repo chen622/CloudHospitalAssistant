@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static cn.neuedu.his.util.constants.Constants.*;
-
 /**
  * Created by ccm on 2019/05/24.
  */
@@ -56,7 +54,47 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
      */
     @Transactional
     @Override
-    public Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException {
+    public Payment registerRegistrationInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook) {
+        return registerInfo(registrarId, patientId, scheduleId, needBook, Constants.WAITING_FOR_TREATMENT);
+    }
+
+    /**
+     * 预约挂号
+     * @param patientId
+     * @param scheduleId
+     */
+    @Override
+    @Transactional
+    public Payment preRegistration(Integer patientId, Integer scheduleId) {
+        return registerInfo(Constants.WEB_REGISTRAR_ID, patientId, scheduleId, false, Constants.RESERVATION);
+    }
+
+    /**
+     * 确认预约挂号到来
+     * @param registrarId
+     * @param registrationId
+     */
+    public void confirmPre(Integer registrarId, Integer registrationId) throws IllegalArgumentException{
+        Registration registration = findById(registrationId);
+        if (registration == null)
+            throw new IllegalArgumentException("registrationId");
+        registration.setState(Constants.WAITING_FOR_TREATMENT);
+        update(registration);
+    }
+
+    /**
+     * 挂号信息填写，生成payment
+     * @param registrarId
+     * @param patientId
+     * @param scheduleId
+     * @param needBook
+     * @param state
+     * @return
+     * @throws IllegalArgumentException
+     * @throws IndexOutOfBoundsException
+     * @throws UnsupportedOperationException
+     */
+    private Payment registerInfo(Integer registrarId, Integer patientId, Integer scheduleId, Boolean needBook, Integer state)  throws IllegalArgumentException, IndexOutOfBoundsException, UnsupportedOperationException{
         //获取挂号信息
         Registration registration = new Registration();
         registration.setRegistrarId(registrarId);
@@ -77,15 +115,14 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         registration.setScheduleId(schedule.getId());
         registration.setDoctorId(schedule.getDoctorId());
-        registration.setState(Constants.WAITING_FOR_TREATMENT);
+        registration.setState(state);
         registration.setNeedBook(needBook);
         //从redis中获取顺序号
         registration.setSequence(redisService.getRegistrationSequenceFromFront(schedule.getId()));
 
-        //todo:设置挂号码（serialNumber）
-        registration.setSerialNumber(1);
         save(registration);
-
+        registration.setSerialNumber();
+        update(registration);
         //若去完号码后队列为空，则更新代码
         if (redisService.isRegistrationEmpty(schedule.getId())) {
             schedule.setIsValid(false);
@@ -111,10 +148,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
         Integer state = registration.getState();
-        if (!state.equals(RESERVATION) && !state.equals(WAITING_FOR_TREATMENT))
+        if (!state.equals(Constants.RESERVATION) && !state.equals(Constants.WAITING_FOR_TREATMENT))
             throw new UnsupportedOperationException("503");
 
-        registration.setState(CANCEL);
+        registration.setState(Constants.CANCEL);
         update(registration);
         redisService.addRegistrationSequenceList(registration.getScheduleId(), registration.getSequence());
 
@@ -168,7 +205,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
     @Override
     public ArrayList<Registration> findAllRegistrationWaitingByPatientId(Integer patientId) {
-        return registrationMapper.getAllRegistrationWaitingByPatientId(patientId, RESERVATION, WAITING_FOR_TREATMENT);
+        return registrationMapper.getAllRegistrationWaitingByPatientId(patientId, Constants.RESERVATION, Constants.WAITING_FOR_TREATMENT);
     }
 
     @Override
@@ -189,5 +226,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Override
     public Registration findRegistrationAndType(Integer id) {
         return registrationMapper.getRegistrationAndType(id);
+    }
+
+    @Override
+    public ArrayList<Registration> getRegistrations(Integer id) {
+        return registrationMapper.getRegistrations(id);
     }
 }

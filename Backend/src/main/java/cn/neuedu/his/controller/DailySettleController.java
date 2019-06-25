@@ -155,27 +155,11 @@ public class DailySettleController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
-        JSONObject result = new JSONObject();
-        ArrayList<User> userList;
-        try {
-            userList = userService.findAllTollKeeper();
-        }catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
-        }
+        User user = userService.findById(maker);
+        if (user == null)
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("userId"));
 
-        Integer index = 0;
-        for (User user: userList) {
-            if (user.getId().equals(maker))
-                break;
-            index++;
-        }
-        if (index.equals(userList.size()))
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-
-        result.put("userList", userList);
-        result.put("self", index);
-
-        return CommonUtil.successJson(result);
+        return CommonUtil.successJson(user);
     }
 
 }

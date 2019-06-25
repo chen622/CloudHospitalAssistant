@@ -9,22 +9,16 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Properties;
 
 
 @EnableTransactionManagement
 @SpringBootApplication
-@EnableEurekaClient
-//@EnableScheduling
 @tk.mybatis.spring.annotation.MapperScan(basePackages = "cn.neuedu.his.mapper")
 public class CloudHospitalAssistantApplication {
     private static Logger logger = Logger.getLogger(CloudHospitalAssistantApplication.class);
@@ -36,7 +30,6 @@ public class CloudHospitalAssistantApplication {
 
 
     }
-
 
     /**
      * 使用@Bean注入fastJsonHttpMessageConvert

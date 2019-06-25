@@ -55,6 +55,7 @@ public class User {
     @Transient()
     private String title;
 
+    @Transient()
     private String selfDescription;
 
     public String getSelfDescription() {

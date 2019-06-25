@@ -117,6 +117,28 @@ public class MedicalRecordController {
         }
         return CommonUtil.successJson(list);
     }
+    /**
+     * 通过患者id获得该患者所有的病历
+     *
+     * @param authentication
+     * @return
+     * @throws AuthenticationServiceException
+     */
+    @GetMapping("/getAllRecordWithout")
+    public JSONObject getAllRecordWithout( Authentication authentication) {
+        try {
+            Integer id=PermissionCheck.getIdByPatient(authentication);
+            List<MedicalRecord> list = medicalRecordService.getAllByPatientIdTwo(id);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            return CommonUtil.successJson(list);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+
 
 
     /**
