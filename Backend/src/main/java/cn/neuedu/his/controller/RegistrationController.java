@@ -84,7 +84,7 @@ public class RegistrationController {
         }
 
         try {
-            registrationService.preRegistration(1, scheduleId);
+            registrationService.preRegistration(patientId, scheduleId);
         } catch (IllegalArgumentException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         } catch (IndexOutOfBoundsException e1) {
@@ -120,7 +120,7 @@ public class RegistrationController {
         try {
             registrationService.confirmPre(registrarId, registrationId);
         }catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e.getMessage()));
         }
 
         return CommonUtil.successJson();
