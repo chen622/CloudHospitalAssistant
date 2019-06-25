@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 public interface ConstantVariableRemote {
     @GetMapping("/constant_variable/get")
-    public JSONObject get();
+    JSONObject get();
 
     @GetMapping("/constant_variable/getForm")
     JSONObject getDrugForm();
