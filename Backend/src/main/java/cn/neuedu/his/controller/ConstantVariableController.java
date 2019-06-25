@@ -143,12 +143,12 @@ public class ConstantVariableController {
     }
 
     @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") Integer typeId, Authentication authentication) {
+    public JSONObject getConstantByType(@PathVariable("type") String typeId, Authentication authentication) {
 
 
         try {
             List<ConstantVariable> list = new ArrayList<>();
-            String type = null;
+            String type = "typeKind";
             Map<String, Integer> map = redisService.getMapAll("typeKind");
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (entry.getValue().equals(typeId)) {

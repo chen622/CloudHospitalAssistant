@@ -3,6 +3,7 @@ import cn.neuedu.his.model.DrugTemplate;
 import cn.neuedu.his.model.Prescription;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ import java.util.List;
  */
 public interface DrugTemplateService extends Service<DrugTemplate> {
     List<DrugTemplate> getPrescriptionsTemByName(String name);
+    @Transactional
+    JSONObject deleteTem(Integer id);
 }
