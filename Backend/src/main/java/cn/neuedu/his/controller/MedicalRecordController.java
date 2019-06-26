@@ -292,14 +292,12 @@ public class MedicalRecordController {
 
         JSONArray nonDrugArray = new JSONArray();//非药品清单
         JSONArray resultJsonArray = new JSONArray();//检查结果清单
-
-
+        /*
         try{
             PermissionCheck.getIdByPatient(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
-        }
-
+        }*/
 
         MedicalRecord medicalRecord = medicalRecordService.getApplicationAndNonDrugByMedicalId(id);
         if (medicalRecord != null) {
@@ -312,6 +310,7 @@ public class MedicalRecordController {
                 jsonObject.put("nonDrugName", nonDrug.getName());
                 jsonObject.put("nonDrugPrice", nonDrug.getPrice());
                 jsonObject.put("nonDrugQuantity", inspectionApplication.getQuantity());
+                jsonObject.put("inspectionApplicationId",inspectionApplication.getId());
                 nonDrugArray.add(jsonObject);
             });
         }
@@ -326,9 +325,19 @@ public class MedicalRecordController {
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("pic", inspectionResult.getPicture());
                     jsonObject.put("text", inspectionResult.getText());
+                    jsonObject.put("inspectionApplicationId",inspectionApplication.getId());
                     resultJsonArray.add(jsonObject);
                 });
             });
+        }
+
+        for (int i = 0; i < resultJsonArray.size(); i++) {
+            for (int j=0;j<nonDrugArray.size();j++){
+                if (((JSONObject)(resultJsonArray.get(i))).getInteger("inspectionApplicationId")
+                        .equals(((JSONObject)(nonDrugArray.get(j))).getInteger("inspectionApplicationId"))){
+                    ((JSONObject)(resultJsonArray.get(i))).putAll(((JSONObject)(nonDrugArray.get(i))));
+                }
+            }
         }
 
         //药物清单
@@ -369,7 +378,6 @@ public class MedicalRecordController {
         }
 
         JSONArray resultArray = new JSONArray();
-        resultArray.add(nonDrugArray);
         resultArray.add(resultJsonArray);
         resultArray.add(drugJsonArray);
 

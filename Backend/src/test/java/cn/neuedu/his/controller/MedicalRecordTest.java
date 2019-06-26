@@ -44,7 +44,7 @@ public class MedicalRecordTest {
     @Test
     public void deleteMedicalRecordTemp() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/medical_record/getDrugNonDrugAndResult/25")
+        mockMvc.perform(MockMvcRequestBuilders.get("/medical_record/getDrugNonDrugAndResult/22")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
