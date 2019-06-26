@@ -162,28 +162,28 @@
 
     <select id="getDrugPrescription" resultMap="getDrugPrescription">
         SELECT mr.id as mrId, prescription.id as prId,drug.id as drId,amount,price,drug.name as dname
-        FROM medical_record mr JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
-                               JOIN drug ON prescription.drug_id = drug.id #查询处方的药物
+        FROM medical_record mr LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
+                               LEFT JOIN drug ON prescription.drug_id = drug.id #查询处方的药物
         WHERE prescription.is_template = 0 AND mr.id = #{medicalId};
     </select>
     <select id="getApplicationAndResultByMedicalId" resultMap="ApplicationAndResult">
         SELECT mr.id as mrId,ia.id as iaId, ir.id as irId, text, picture
-        FROM medical_record mr JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
+        FROM medical_record mr LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
                                LEFT JOIN inspection_result ir ON ia.id = ir.inspection_application_id #将申请结果与申请相连
         WHERE ia.is_canceled = 0 AND mr.id = #{medicalId}
     </select>
 
     <select id="getApplicationAndNonDrugByMedicalId" resultMap="ApplicationAndNonDrug">
         SELECT mr.id as mrId,ia.id as iaId,quantity, nd.id as ndId, nd.name as ndName, price
-        FROM medical_record mr JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
-                               JOIN non_drug nd ON ia.non_drug_id = nd.id #将非药物id与处置申请相连
+        FROM medical_record mr LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
+                               LEFT JOIN non_drug nd ON ia.non_drug_id = nd.id #将非药物id与处置申请相连
         WHERE  ia.is_canceled = 0 AND mr.id = #{medicalId}
     </select>
 
     <select id="getPrescriptionAndPayment" resultMap="PrescriptionAndPayment">
         SELECT DISTINCT prescription.id as prId, mr.id as mrId,payment.item_id,sum(quantity) as quantity
-        FROM medical_record mr JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
-                               left JOIN payment ON prescription.id = payment.item_id #查询处方的药物
+        FROM medical_record mr LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
+                               LEFT JOIN payment ON prescription.id = payment.item_id #查询处方的药物
         WHERE prescription.is_template = 0 AND payment.payment_type_id in (SELECT id from payment_type WHERE type = 2)
           AND mr.id =22
         GROUP BY prId
