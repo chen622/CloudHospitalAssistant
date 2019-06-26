@@ -2,7 +2,7 @@ import axios from 'axios'
 import vue from '../main'
 
 
-// global.baseURL = 'http://his.ccm.ink:8078'
+// global.baseURL = 'https://his.ccm.ink:8878'
 global.baseURL = 'http://' + 'localhost:8078'
 // 返回在vue模板中的调用接口
 export default { // 自定义判断元素类型JS

@@ -6,9 +6,12 @@ eureka:
     hostname: localhost
   client:
     registerWithEureka: false
-    fetchRegistry: true
+    fetchRegistry: false
     serviceUrl:
       defaultZone: http://localhost:8001/eureka/
+ribbon:
+  eureka:
+    enabled: true
 
 spring:
   application:

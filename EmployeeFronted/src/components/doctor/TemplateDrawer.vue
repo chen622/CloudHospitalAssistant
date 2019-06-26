@@ -200,7 +200,7 @@
     }
 
     .ant-drawer-body {
-        max-height: 450px;
+        max-height: 430px;
         overflow-y: scroll;
     }
 </style>

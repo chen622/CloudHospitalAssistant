@@ -20,7 +20,7 @@ public interface JobScheduleMapper extends MyMapper<JobSchedule> {
 
     Integer getRegistrationInfo(Date time, Integer doctorId);
 
-    ArrayList<JobSchedule> getScheduleByPeriod(@Param("date") Date date, @Param("hour") Integer hour, @Param("departmentId") Integer departmentId);
+    ArrayList<JobSchedule> getScheduleByPeriod(@Param("date") Date date, @Param("hour") Integer hour, @Param("departmentId") Integer departmentId, @Param("secondDate") Date secondDate);
 
     ArrayList<JobSchedule> getScheduleByDoctorIdAndDate(Integer doctorId, Date date);
 
