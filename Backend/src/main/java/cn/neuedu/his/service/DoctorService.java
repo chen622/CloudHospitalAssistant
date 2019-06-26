@@ -31,23 +31,7 @@ public interface DoctorService extends Service<Doctor> {
     @Transactional
     JSONObject getRegistrationInof(Date time, Integer doctorId);
 
-    @Transactional
-    public JSONObject getHospitalCheckTemps(Integer doctorID, Integer level);
 
-    @Transactional
-    public JSONObject getDeptCheckTemps(Integer doctorID, Integer level);
-
-    @Transactional
-    public JSONObject getPersonalCheckTemps(Integer doctorID, Integer level);
-
-    @Transactional
-    public JSONObject getHospitalMR(Integer doctorID, Integer level);
-
-    @Transactional
-    public JSONObject getDeptMR(Integer doctorID, Integer level);
-
-    @Transactional
-    public JSONObject getPersonalMR(Integer doctorID, Integer level);
 
     @Transactional
     JSONObject getMeicalRecordTemByName(String name);

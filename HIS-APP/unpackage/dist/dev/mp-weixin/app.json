@@ -1,0 +1,57 @@
+{
+  "pages": [
+    "pages/his/login",
+    "pages/his/index",
+    "pages/his/reserve",
+    "pages/his/doctors",
+    "pages/his/record",
+    "pages/his/detail",
+    "pages/his/doctordetail",
+    "pages/his/registrationRecord",
+    "pages/his/inspectionResult"
+  ],
+  "subPackages": [],
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#007AFF",
+    "borderStyle": "black",
+    "backgroundColor": "#F8F8F8",
+    "list": [
+      {
+        "pagePath": "pages/his/index",
+        "iconPath": "static/component.png",
+        "selectedIconPath": "static/componentHL.png",
+        "text": "主页"
+      },
+      {
+        "pagePath": "pages/his/reserve",
+        "iconPath": "static/templateIndex.png",
+        "selectedIconPath": "static/templateHL.png",
+        "text": "挂号预约"
+      },
+      {
+        "pagePath": "pages/his/registrationRecord",
+        "iconPath": "static/api.png",
+        "selectedIconPath": "static/apiHL.png",
+        "text": "挂号记录"
+      },
+      {
+        "pagePath": "pages/his/record",
+        "iconPath": "static/extui.png",
+        "selectedIconPath": "static/extuiHL.png",
+        "text": "就诊记录"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "演示定位能力"
+    }
+  },
+  "usingComponents": {
+    "page-head": "/components/page-head",
+    "page-foot": "/components/page-foot",
+    "u-link": "/components/uLink"
+  },
+  "sitemapLocation": "sitemap55.json"
+}
