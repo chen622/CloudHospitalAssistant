@@ -38,7 +38,8 @@ public class ConstantVariableController {
      * @param authentication
      * @return
      */
-    @PostMapping("/insert/{type}")
+    //todo cloud
+    @PostMapping("/insert")
     public JSONObject insertConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isHospitalAdmin(authentication);
@@ -69,49 +70,31 @@ public class ConstantVariableController {
         }
         return CommonUtil.successJson();
     }
-//    @PostMapping("/getName/{id}")
-//    public JSONObject getNamebyId(@PathVariable("id") Integer id) {
-//        return CommonUtil.successJson(constantVariableService.findById(id).getName());
-//    }
 
-//    /**
-//     * 增加常量小类(type 及以后)
-//     *
-//     * @param jsonObject
-//     * @param authentication
-//     * @return
-//     */
-//    @PostMapping("/insert/{type}")
-//    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
-//        try {
-//            PermissionCheck.isHospitalAdmin(authentication);
-//        } catch (Exception e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_602);
-//        }
-//
-//        try {
-//            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-//            constantVariableService.insertConstant(constantVariable, type);
-//        } catch (RuntimeException e) {
-//            if (e.getMessage().equals("629"))
-//                return CommonUtil.errorJson(ErrorEnum.E_629);
-//        } catch (Exception e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_802);
-//        }
-//        return CommonUtil.successJson();
-//    }
-
-    @PostMapping("/modify/{type}")
-    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+    @PostMapping("/modify")
+    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
+        Map<String, Integer> map = null;
         try {
-            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.modifyConstant(constantVariable, type);
+            map = redisService.getMapAll("typeKind");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue().equals(jsonObject.get("type"))) {
+                    String type = entry.getKey();
+                    ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
+                    constantVariableService.modifyConstant(constantVariable, type);
+                    break;
+                }
+            }
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
