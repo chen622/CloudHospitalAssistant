@@ -107,23 +107,23 @@ public class ConstantVariableController {
 //        return CommonUtil.successJson();
 //    }
 //
-//    @GetMapping("/getSettlementType")
-//    public JSONObject getSettlementType() {
-//        try {
-//            Map<String, Integer> map = redisService.getMapAll("settlementType");
-//            JSONArray array = new JSONArray();
-//            map.forEach((k, v) -> {
-//                        JSONObject jsonObject = new JSONObject();
-//                        jsonObject.put("id", v);
-//                        jsonObject.put("name", k);
-//                        array.add(jsonObject);
-//                    }
-//            );
-//            return CommonUtil.successJson(array);
-//        } catch (Exception e) {
-//            return CommonUtil.errorJson(ErrorEnum.E_500);
-//        }
-//    }
+    @GetMapping("/getSettlementType")
+    public JSONObject getSettlementType() {
+        try {
+            Map<String, Integer> map = redisService.getMapAll("settlementType");
+            JSONArray array = new JSONArray();
+            map.forEach((k, v) -> {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("id", v);
+                        jsonObject.put("name", k);
+                        array.add(jsonObject);
+                    }
+            );
+            return CommonUtil.successJson(array);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
 
     @GetMapping("/getForm")
     public JSONObject getDrugForm() {

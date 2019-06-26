@@ -2,13 +2,13 @@
     <div>
         <a-row type="flex" align="middle" justify="center">
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button type="primary" style="width: 80%">删除暂存</a-button>
+                <a-button type="danger" style="width: 80%">删除暂存</a-button>
             </a-col>
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
                 <a-button type="primary" style="width: 80%" @click="showAddPrescription = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="prescriptions" rowKey="drug.id" :columns="prescriptionColumns" :pagination="false">
+        <a-table :dataSource="prescriptions" :rowKey="record=>{return record.drug.id}" :columns="prescriptionColumns" :pagination="false">
             <template slot="temp" slot-scope="text,record">
                 {{record.temp?'暂存':'开立'}}
             </template>

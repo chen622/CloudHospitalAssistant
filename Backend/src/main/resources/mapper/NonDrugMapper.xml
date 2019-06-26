@@ -1,88 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.NonDrugMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.NonDrug">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="price" jdbcType="DECIMAL" property="price" />
-    <result column="standard" jdbcType="VARCHAR" property="standard" />
-    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
-    <result column="code" jdbcType="VARCHAR" property="code"/>
-    <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.NonDrug">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="standard" jdbcType="VARCHAR" property="standard"/>
+        <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
 
-  <resultMap id="TypeAndNonDrug" type="cn.neuedu.his.model.PaymentType">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="code" jdbcType="VARCHAR" property="code" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-    <collection property="nonDrugs" ofType="cn.neuedu.his.model.NonDrug">
-      <id column="non_drug_id" jdbcType="INTEGER" property="id" />
-      <result column="non_drug_name" jdbcType="VARCHAR" property="name" />
-      <result column="price" jdbcType="DECIMAL" property="price" />
-      <result column="standard" jdbcType="VARCHAR" property="standard" />
-      <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId" />
-      <result column="non_drug_code" jdbcType="VARCHAR" property="code"/>
-      <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
-      <result column="non_drug_is_delete" jdbcType="BIT" property="isDelete"/>
-      <association property="department" javaType="cn.neuedu.his.model.Department">
-        <id column="department_id" jdbcType="INTEGER" property="id" />
-        <result column="department_name" jdbcType="VARCHAR" property="name" />
-        <result column="kind_id" jdbcType="INTEGER" property="kindId" />
-        <result column="department_code" jdbcType="VARCHAR" property="code" />
-        <result column="department_is_delete" jdbcType="BIT" property="isDelete"/>
-      </association>
-    </collection>
-  </resultMap>
+    <resultMap id="TypeAndNonDrug" type="cn.neuedu.his.model.PaymentType">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <collection property="nonDrugs" ofType="cn.neuedu.his.model.NonDrug">
+            <id column="non_drug_id" jdbcType="INTEGER" property="id"/>
+            <result column="non_drug_name" jdbcType="VARCHAR" property="name"/>
+            <result column="price" jdbcType="DECIMAL" property="price"/>
+            <result column="standard" jdbcType="VARCHAR" property="standard"/>
+            <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+            <result column="non_drug_code" jdbcType="VARCHAR" property="code"/>
+            <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+            <result column="non_drug_is_delete" jdbcType="BIT" property="isDelete"/>
+            <association property="department" javaType="cn.neuedu.his.model.Department">
+                <id column="department_id" jdbcType="INTEGER" property="id"/>
+                <result column="department_name" jdbcType="VARCHAR" property="name"/>
+                <result column="kind_id" jdbcType="INTEGER" property="kindId"/>
+                <result column="department_code" jdbcType="VARCHAR" property="code"/>
+                <result column="department_is_delete" jdbcType="BIT" property="isDelete"/>
+            </association>
+        </collection>
+    </resultMap>
 
-  <select id="getTypeAndNonDrug" resultMap="TypeAndNonDrug">
-    select *, non_drug.code as non_drug_code,non_drug.name as non_drug_name,non_drug.id as non_drug_id,non_drug.is_delete as non_drug_is_delete,
-           department.name as department_name, department.id as department_id, department.code as department_code,department.is_delete
-           as department_is_delete
-    from payment_type left join non_drug on payment_type.id = non_drug.fee_type_id left join department on non_drug.executive_department = department.id
-    <where>
-      <if test="auth == false">
-        non_drug.is_delete = 0
-      </if>
-      <if test="name != null">
-        and non_drug.name like concat('%',#{name},'%')
-      </if>
-      <if test="code != null">
-        and non_drug.code like concat('%',#{code},'%')
-      </if>
-    </where>
-  </select>
+    <select id="getTypeAndNonDrug" resultMap="TypeAndNonDrug">
+        select *, non_drug.code as non_drug_code,non_drug.name as non_drug_name,non_drug.id as
+        non_drug_id,non_drug.is_delete as non_drug_is_delete,
+        department.name as department_name, department.id as department_id, department.code as
+        department_code,department.is_delete
+        as department_is_delete
+        from payment_type left join non_drug on payment_type.id = non_drug.fee_type_id left join department on
+        non_drug.executive_department = department.id
+        <where>
+            <if test="auth == false">
+                non_drug.is_delete = 0
+            </if>
+            <if test="name != null">
+                and non_drug.name like concat('%',#{name},'%')
+            </if>
+            <if test="code != null">
+                and non_drug.code like concat('%',#{code},'%')
+            </if>
+        </where>
+    </select>
 
-  <select id="findByName" resultMap="BaseResultMap">
-    select * from non_drug where  name like CONCAT('%',#{name},'%') and  is_delete=false ;
-  </select>
+    <select id="findByName" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where name like CONCAT('%', #{name}, '%')
+          and is_delete = false;
+    </select>
 
-  <select id="getAll" resultMap="BaseResultMap">
-    select * from non_drug where  is_delete=false ;
-  </select>
+    <select id="getAll" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where is_delete = false;
+    </select>
 
-  <select id="selectNonDrugByName" resultMap="BaseResultMap">
-    select *
-    from non_drug
-    where name = #{name} and is_delete=false ;
-  </select>
+    <select id="selectNonDrugByName" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where name = #{name}
+          and is_delete = false;
+    </select>
 
-  <select id="selectNonDrugByCode" resultMap="BaseResultMap">
-    select *
-    from non_drug
-    where code = #{code} and is_delete=false ;
-  </select>
+    <select id="selectNonDrugByCode" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where code = #{code}
+          and is_delete = false;
+    </select>
 
-  <!--根据部门类型选取nondrug-->
-  <select id="getNonDrugByDepartmentId" resultMap="BaseResultMap">
-    select *    from non_drug where is_delete = 0 and executive_department = #{id}
-  </select>
+    <!--根据部门类型选取nondrug-->
+    <select id="getNonDrugByDepartmentId" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where is_delete = 0
+          and executive_department = #{id}
+    </select>
+
+    <resultMap id="NonDrugWithDepartment" type="cn.neuedu.his.model.NonDrug">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="standard" jdbcType="VARCHAR" property="standard"/>
+        <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        <association property="department" javaType="cn.neuedu.his.model.Department">
+            <id column="deptId" jdbcType="INTEGER" property="id"/>
+            <result column="deptName" jdbcType="VARCHAR" property="name"/>
+            <result column="kind_id" jdbcType="INTEGER" property="kindId"/>
+            <result column="code" jdbcType="VARCHAR" property="code"/>
+            <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        </association>
+    </resultMap>
 </mapper>

@@ -553,13 +553,13 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             for (InspectionApplication r : applicationList) {
 
                 NonDrug drug = nonDrugService.findById(r.getNonDrugId());
-                if (r.getNonDrugId() == null || drug == null || drug.getDelete() == true) {
+                if (r.getNonDrugId() == null || drug == null || drug.getDelete()) {
                     return CommonUtil.errorJson(ErrorEnum.E_701.addErrorParamName(r.getNonDrugId().toString()));
                 }
                 InspectionApplication application = new InspectionApplication(tempId, r.getNonDrugId(), new Date(), false, r.getEmerged(), r.getQuantity(), false, true, drug.getFeeTypeId());
                 inspectionApplicationService.save(application);
 
-                saveInspectionRelationship(tempId, r.getId(), 0);
+                saveInspectionRelationship(tempId, application.getId(), 0);
             }
         }
         //保存模板非药项目
