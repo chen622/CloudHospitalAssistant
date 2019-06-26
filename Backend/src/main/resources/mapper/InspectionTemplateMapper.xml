@@ -42,6 +42,7 @@
         from inspection_template_relationship r,
              prescription p
         where r.item_id = p.id
+          and r.item_type=1
           and p.is_template = true
           and r.template_id = #{id};
     </select>
@@ -51,6 +52,7 @@
         from inspection_template_relationship r,
              inspection_application a
         where r.item_id = a.id
+          and r.item_type=0
           and r.template_id = #{id}
           and a.is_template = true;
     </select>

@@ -113,6 +113,10 @@ public interface DoctorService extends Service<Doctor> {
     public JSONObject savePrescriptionsTemp(DrugTemplate template, Integer medicalRecordId, Integer doctorId) throws Exception;
 
     @Transactional
+    public JSONObject updatePrescriptionsTemp(DrugTemplate template, Integer doctorId) ;
+
+
+    @Transactional
     JSONObject getPrescriptionsTemByName(String name);
 
     JSONObject saveRecordAndDiagnoseAsTemp(MedicalRecord record, MedicalRecordTemplate template, Integer doctorID) throws RuntimeException;
