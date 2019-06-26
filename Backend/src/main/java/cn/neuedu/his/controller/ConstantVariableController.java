@@ -45,16 +45,28 @@ public class ConstantVariableController {
      * @return
      */
     @PostMapping("/insert/{type}")
-    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, @PathVariable("type") String type, Authentication authentication) {
+    public JSONObject insertConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
             PermissionCheck.isHospitalAdmin(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("typeKind");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
-            ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
-            constantVariableService.insertConstant(constantVariable, type);
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue().equals(jsonObject.get("type"))) {
+                    String type = entry.getKey();
+                    ConstantVariable constantVariable = JSONObject.toJavaObject(jsonObject, ConstantVariable.class);
+                    constantVariableService.insertConstant(constantVariable, type);
+                    break;
+                }
+            }
         } catch (RuntimeException e) {
             if (e.getMessage().equals("629"))
                 return CommonUtil.errorJson(ErrorEnum.E_629);
