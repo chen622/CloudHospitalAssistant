@@ -44,7 +44,20 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat formatter = new SimpleDateFormat("HH");
         Integer hour = Integer.parseInt(formatter.format(date));
-        return jobScheduleMapper.getScheduleByPeriod(date, hour, departmentId);
+        return jobScheduleMapper.getScheduleByPeriod(date, hour, departmentId, null);
+    }
+
+    /**
+     * 获取两天后排班信息
+     * @param departmentId
+     * @return
+     */
+    @Override
+    public ArrayList<JobSchedule> getSchedulePre(Integer departmentId) {
+        Date date = new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH");
+        Date secondDate = new Date(System.currentTimeMillis() + 2 * 24 * 60 * 60 * 1000);
+        return jobScheduleMapper.getScheduleByPeriod(date, 0, departmentId, secondDate);
     }
 
     @Override

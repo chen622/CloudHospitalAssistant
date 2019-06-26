@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: consumer
+
+
+eureka:
+  instance:
+    appname: ${spring.application.name}
+    instanceId: ${spring.application.name}
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    enabled: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8001/eureka
+server:
+  port: 8002

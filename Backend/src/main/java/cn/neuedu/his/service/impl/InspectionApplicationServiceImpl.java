@@ -6,6 +6,8 @@ import cn.neuedu.his.model.InspectionResult;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.InspectionApplicationService;
 import cn.neuedu.his.service.InspectionResultService;
+import cn.neuedu.his.service.PaymentService;
+import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,8 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     private InspectionApplicationMapper inspectionApplicationMapper;
     @Autowired
     private InspectionResultService inspectionResultService;
+    @Autowired
+    PaymentService paymentService;
 
     @Override
     public Boolean hasMedicalRecordInspectionNotDone(Integer medicalRecordId) {
@@ -69,6 +73,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public void cancelApplication(Integer id) throws RuntimeException {
         InspectionApplication inspectionApplication = this.findById(id);
+
         if (inspectionApplication.getDone()){
             throw new RuntimeException();
         }

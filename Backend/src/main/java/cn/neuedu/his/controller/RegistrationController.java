@@ -108,7 +108,7 @@ public class RegistrationController {
     @PostMapping("/confirmPre/{registrationId}")
     public JSONObject confirmPre(@PathVariable("registrationId") Integer registrationId, Authentication authentication) {
         //获取挂号收费员id
-        Integer registrarId = null;
+        Integer registrarId;
         try {
             registrarId = PermissionCheck.getIdByPaymentAdmin(authentication);
         } catch (AuthenticationServiceException e) {
