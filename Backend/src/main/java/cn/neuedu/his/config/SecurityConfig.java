@@ -39,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/general/**").permitAll()
                 .antMatchers("/wechat/login").permitAll()
-                .antMatchers("/non_drug/excelOut").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))

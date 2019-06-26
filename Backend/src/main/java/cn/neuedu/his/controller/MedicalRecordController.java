@@ -9,6 +9,8 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -285,16 +287,77 @@ public class MedicalRecordController {
         return doctorService.updateMR(registrationID, record, diagnosesIds);
     }
 
-//    @GetMapping("/getDrugNonDrugAndResult/{id}")
-//    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication){
-//        /*
-//        try{
-//            PermissionCheck.getIdByPatient(authentication);
-//        }catch (Exception e){
-//            return CommonUtil.errorJson(ErrorEnum.E_602);
-//        }*/
-//
-//        MedicalRecord medicalRecord = medicalRecordService.getDrugNonDrugAndResultByMedicalId(id);
-//        return CommonUtil.successJson(medicalRecord);
-//    }
-}
+    //todo cloud
+    @GetMapping("/getDrugNonDrugAndResult/{id}")
+    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication){
+        /*
+        try{
+            PermissionCheck.getIdByPatient(authentication);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }*/
+
+        MedicalRecord medicalRecord = medicalRecordService.getApplicationAndNonDrugByMedicalId(id);
+
+        List<InspectionApplication> inspectionApplications = medicalRecord.getInspectionApplications();
+
+        //非药品清单
+        JSONArray jsonArray = new JSONArray();
+        inspectionApplications.forEach(inspectionApplication->{
+            JSONObject jsonObject = new JSONObject();
+            NonDrug nonDrug = inspectionApplication.getNonDrug();
+            jsonObject.put("nonDrugName",nonDrug.getName());
+            jsonObject.put("nonDrugPrice",nonDrug.getPrice());
+            jsonObject.put("nonDrugQuantity",inspectionApplication.getQuantity());
+            jsonArray.add(jsonObject);
+        });
+
+        //结果清单
+        JSONArray resultJsonArray = new JSONArray();
+        medicalRecord = medicalRecordService.getApplicationAndResultByMedicalId(id);
+        inspectionApplications = medicalRecord.getInspectionApplications();
+        inspectionApplications.forEach(inspectionApplication->{
+            List<InspectionResult> inspectionResults = inspectionApplication.getResults();
+            inspectionResults.forEach(inspectionResult -> {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("pic",inspectionResult.getPicture());
+                jsonObject.put("text",inspectionResult.getText());
+                resultJsonArray.add(jsonObject);
+            });
+        });
+
+        //药物清单
+        JSONArray drugJsonArray = new JSONArray();
+        medicalRecord = medicalRecordService.getDrugPrescription(id);
+        List<Prescription> prescriptions = medicalRecord.getPrescriptions();
+
+        Integer returnNum = 0;
+        prescriptions.forEach(prescription -> {
+            Drug drug = prescription.getDrug();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("preId",prescription.getId());
+            jsonObject.put("drugName",drug.getName());
+            jsonObject.put("drugPrice",drug.getPrice());
+            jsonObject.put("drugQuantity",prescription.getAmount());
+            jsonObject.put("returnNum",returnNum);
+            drugJsonArray.add(jsonObject);
+            jsonObject.
+        });
+
+        //药物清单
+        medicalRecord = medicalRecordService.getPrescriptionAndPayment(id);
+        if (medicalRecord == null){
+            prescriptions = medicalRecord.getPrescriptions();
+            prescriptions.forEach(prescription -> {
+                Integer prId = prescription.getId();
+                drugJsonArray.forEach(drugobject->{
+                    if(((JSONObject)drugobject).get("preId").equals(prId)){
+                       returnNum = ((JSONObject)drugobject).getInteger("returnNum")- prescription.getPayment().getQuantity();
+
+                    }
+                });
+            });
+        }
+
+        return CommonUtil.successJson(drugJsonArray);
+    }
