@@ -293,13 +293,13 @@ public class MedicalRecordController {
         JSONArray nonDrugArray = new JSONArray();//非药品清单
         JSONArray resultJsonArray = new JSONArray();//检查结果清单
 
-        /*
+
         try{
             PermissionCheck.getIdByPatient(authentication);
         }catch (Exception e){
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
-         */
+
 
         MedicalRecord medicalRecord = medicalRecordService.getApplicationAndNonDrugByMedicalId(id);
         if (medicalRecord != null) {
