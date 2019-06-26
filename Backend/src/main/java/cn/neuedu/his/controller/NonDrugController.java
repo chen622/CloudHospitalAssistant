@@ -265,6 +265,7 @@ public class NonDrugController {
     public JSONObject excelIn(@RequestParam("excelFile") MultipartFile excelFile) throws IOException {
 
         Integer error = 0;//错误数量
+        Integer success = 0;//失败数量
 
 
         List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 2, NonDrug.class));
@@ -272,6 +273,7 @@ public class NonDrugController {
             NonDrug importEntity = (NonDrug) object;
             try {
                 nonDrugService.insertNonDrug(importEntity);
+                success++;
             } catch (Exception e) {
                 error++;
                 e.printStackTrace();

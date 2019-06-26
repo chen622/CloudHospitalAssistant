@@ -99,6 +99,9 @@ public class ConstantVariableServiceImpl extends AbstractService<ConstantVariabl
             throw new RuntimeException("630");
 
         constantVariable.setDelete(false);
+
+        ConstantVariable constantVariable2 = this.findById(constantVariable.getId());
+        redisService.deleteHash(type,this.findById(constantVariable.getId()).getName(),this.findById(constantVariable.getId()).getId().toString());
         this.update(constantVariable);
         redisService.setHash(type,constantVariable.getName(),constantVariable.getId().toString());
     }

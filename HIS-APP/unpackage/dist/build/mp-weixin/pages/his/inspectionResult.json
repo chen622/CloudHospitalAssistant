@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "检查结果",
+  "usingComponents": {
+    "uni-list": "/components/uni-list/uni-list",
+    "uni-list-item": "/components/uni-list-item/uni-list-item",
+    "uni-rate": "/components/uni-rate/uni-rate",
+    "uni-tag": "/components/uni-tag/uni-tag",
+    "uni-card": "/components/uni-card/uni-card"
+  }
+}

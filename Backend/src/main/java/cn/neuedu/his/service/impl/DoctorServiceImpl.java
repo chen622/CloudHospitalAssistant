@@ -86,114 +86,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         return CommonUtil.successJson(object);
     }
 
-    /**
-     * 获得全院检查模板
-     *
-     * @param doctorId
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getHospitalCheckTemps(Integer doctorId, Integer level) {
-        return getInspectionTemps(doctorId, level);
-    }
-
-    /**
-     * 获得科室检查模板
-     *
-     * @param doctorID
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getDeptCheckTemps(Integer doctorID, Integer level) {
-        return getInspectionTemps(doctorID, level);
-    }
-
-    /**
-     * 获得个人检查模板
-     *
-     * @param doctorID
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getPersonalCheckTemps(Integer doctorID, Integer level) {
-        return getInspectionTemps(doctorID, level);
-    }
-
-    public JSONObject getInspectionTemps(Integer doctorId, Integer level) {
-        List<InspectionTemplate> templates = inspectionTemplateService.getHospitalCheckTemps(doctorId, level);
-        if (templates == null)
-            templates = new ArrayList<>();
-        Iterator<InspectionTemplate> iterator = templates.iterator();
-        while (iterator.hasNext()) {
-            InspectionTemplate template = iterator.next();
-            if (template.getPrescriptions() != null && template.getPrescriptions().size() > 0) {
-                Iterator<Prescription> iterator1 = template.getPrescriptions().iterator();
-                while (iterator1.hasNext()) {
-                    Prescription p = iterator1.next();
-                    if (p.getDrug().getDelete() == true) {
-                        iterator1.remove();
-                    }
-                }
-            }
-            if (template.getApplications() != null && template.getApplications().size() > 0) {
-                Iterator<InspectionApplication> iterator1 = template.getApplications().iterator();
-                while (iterator1.hasNext()) {
-                    InspectionApplication p = iterator1.next();
-                    if (p.getNonDrug().getDelete() == true) {
-                        iterator1.remove();
-                    }
-                }
-            }
-        }
-        return CommonUtil.successJson(templates);
-    }
-
-
-    /**
-     * 获得全院病例模板
-     *
-     * @param doctorID
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getHospitalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
-    }
-
-    /**
-     * 获得科室病例模板
-     *
-     * @param doctorID
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getDeptMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
-    }
-
-    /**
-     * 获得个人病例模板
-     *
-     * @param doctorID
-     * @param level
-     * @return
-     */
-    @Override
-    @Transactional
-    public JSONObject getPersonalMR(Integer doctorID, Integer level) {
-        return getMRTemp(medicalRecordTemplateService.getHospitalMRByLevel(doctorID, level));
-    }
-
     private JSONObject getMRTemp(List<MedicalRecordTemplate> templates) {
         for (MedicalRecordTemplate record : templates) {
             Iterator<Diagnose> w = record.getFinalDiagnose().iterator();
@@ -366,6 +258,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (id == null || medicalRecordTemplateService.findById(id) == null)
             return CommonUtil.errorJson(ErrorEnum.E_707.addErrorParamName("medicalRecordTemplate"));
         medicalRecordTemplateService.update(record);
+        diagnoseService.deleteByMRT(record.getId());
+        this.saveDiagnoseTemp(record.getFirstDiagnose(), record.getId());
+        this.saveDiagnoseTemp(record.getFinalDiagnose(), record.getId());
         return CommonUtil.successJson();
     }
 
