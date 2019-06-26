@@ -10,6 +10,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -71,6 +72,7 @@ public class ConstantVariableController {
         return CommonUtil.successJson();
     }
 
+    //todo cloud
     @PostMapping("/modify")
     public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
@@ -102,6 +104,40 @@ public class ConstantVariableController {
                 return CommonUtil.errorJson(ErrorEnum.E_633);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_802);
+        }
+        return CommonUtil.successJson();
+    }
+
+    //todo clouds
+    @GetMapping("delete/{id}")
+    public JSONObject deleteConstant(@PathVariable("id") Integer id, Authentication authentication) {
+        try {
+            PermissionCheck.isHospitalAdmin(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_602);
+        }
+
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("typeKind");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            ConstantVariable constantVariable = constantVariableService.findById(id);
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue().equals(constantVariable.getType())) {
+                    String type = entry.getKey();
+                    constantVariableService.deleteConstant(id, type);
+                    break;
+                }
+            }
+        }catch (RuntimeException e){
+            if (e.getMessage().equals("633"))
+                return CommonUtil.errorJson(ErrorEnum.E_633);
+            else if (e.getMessage().equals("629"))
+                return CommonUtil.errorJson(ErrorEnum.E_629);
         }
         return CommonUtil.successJson();
     }
