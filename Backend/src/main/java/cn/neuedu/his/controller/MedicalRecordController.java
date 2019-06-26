@@ -9,7 +9,6 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by ccm on 2019/05/24.
@@ -73,7 +73,7 @@ public class MedicalRecordController {
     public JSONObject getTemporaryMR(@PathVariable("registrationId") Integer registrationId) {
         try {
             MedicalRecord record = redisService.getTemporaryMedicalRecord(registrationId);
-            if (record==null)
+            if (record == null)
                 return CommonUtil.errorJson(ErrorEnum.E_638);
             return CommonUtil.successJson(record);
         } catch (Exception e) {
@@ -119,6 +119,7 @@ public class MedicalRecordController {
         }
         return CommonUtil.successJson(list);
     }
+
     /**
      * 通过患者id获得该患者所有的病历
      *
@@ -127,9 +128,9 @@ public class MedicalRecordController {
      * @throws AuthenticationServiceException
      */
     @GetMapping("/getAllRecordWithout")
-    public JSONObject getAllRecordWithout( Authentication authentication) {
+    public JSONObject getAllRecordWithout(Authentication authentication) {
         try {
-            Integer id=PermissionCheck.getIdByPatient(authentication);
+            Integer id = PermissionCheck.getIdByPatient(authentication);
             List<MedicalRecord> list = medicalRecordService.getAllByPatientIdTwo(id);
             if (list == null) {
                 list = new ArrayList<>();
@@ -139,8 +140,6 @@ public class MedicalRecordController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
     }
-
-
 
 
     /**
@@ -289,7 +288,7 @@ public class MedicalRecordController {
 
     //todo cloud
     @GetMapping("/getDrugNonDrugAndResult/{id}")
-    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication) {
         /*
         try{
             PermissionCheck.getIdByPatient(authentication);
@@ -302,26 +301,26 @@ public class MedicalRecordController {
         List<InspectionApplication> inspectionApplications = medicalRecord.getInspectionApplications();
 
         //非药品清单
-        JSONArray jsonArray = new JSONArray();
-        inspectionApplications.forEach(inspectionApplication->{
+        JSONArray nonDrugArray = new JSONArray();
+        inspectionApplications.forEach(inspectionApplication -> {
             JSONObject jsonObject = new JSONObject();
             NonDrug nonDrug = inspectionApplication.getNonDrug();
-            jsonObject.put("nonDrugName",nonDrug.getName());
-            jsonObject.put("nonDrugPrice",nonDrug.getPrice());
-            jsonObject.put("nonDrugQuantity",inspectionApplication.getQuantity());
-            jsonArray.add(jsonObject);
+            jsonObject.put("nonDrugName", nonDrug.getName());
+            jsonObject.put("nonDrugPrice", nonDrug.getPrice());
+            jsonObject.put("nonDrugQuantity", inspectionApplication.getQuantity());
+            nonDrugArray.add(jsonObject);
         });
 
         //结果清单
         JSONArray resultJsonArray = new JSONArray();
         medicalRecord = medicalRecordService.getApplicationAndResultByMedicalId(id);
         inspectionApplications = medicalRecord.getInspectionApplications();
-        inspectionApplications.forEach(inspectionApplication->{
+        inspectionApplications.forEach(inspectionApplication -> {
             List<InspectionResult> inspectionResults = inspectionApplication.getResults();
             inspectionResults.forEach(inspectionResult -> {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("pic",inspectionResult.getPicture());
-                jsonObject.put("text",inspectionResult.getText());
+                jsonObject.put("pic", inspectionResult.getPicture());
+                jsonObject.put("text", inspectionResult.getText());
                 resultJsonArray.add(jsonObject);
             });
         });
@@ -331,33 +330,44 @@ public class MedicalRecordController {
         medicalRecord = medicalRecordService.getDrugPrescription(id);
         List<Prescription> prescriptions = medicalRecord.getPrescriptions();
 
-        Integer returnNum = 0;
         prescriptions.forEach(prescription -> {
             Drug drug = prescription.getDrug();
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("preId",prescription.getId());
-            jsonObject.put("drugName",drug.getName());
-            jsonObject.put("drugPrice",drug.getPrice());
-            jsonObject.put("drugQuantity",prescription.getAmount());
-            jsonObject.put("returnNum",returnNum);
+            jsonObject.put("preId", prescription.getId());
+            jsonObject.put("drugName", drug.getName());
+            jsonObject.put("drugPrice", drug.getPrice());
+            jsonObject.put("drugQuantity", prescription.getAmount());
             drugJsonArray.add(jsonObject);
-            jsonObject.
         });
 
         //药物清单
         medicalRecord = medicalRecordService.getPrescriptionAndPayment(id);
-        if (medicalRecord == null){
+        if (medicalRecord != null) {
             prescriptions = medicalRecord.getPrescriptions();
             prescriptions.forEach(prescription -> {
                 Integer prId = prescription.getId();
-                drugJsonArray.forEach(drugobject->{
-                    if(((JSONObject)drugobject).get("preId").equals(prId)){
-                       returnNum = ((JSONObject)drugobject).getInteger("returnNum")- prescription.getPayment().getQuantity();
-
+                drugJsonArray.forEach(drugObject -> {
+                    if (((JSONObject) drugObject).get("preId").equals(prId)) {
+                        Integer quantity = ((JSONObject) drugObject).getInteger("drugQuantity");
+                        quantity -= prescription.getPayment().getQuantity();
+                        ((JSONObject) drugObject).put("returnNum",quantity);
                     }
                 });
             });
         }
 
-        return CommonUtil.successJson(drugJsonArray);
+
+        drugJsonArray.forEach(drugObject -> {
+            if (!((JSONObject) drugObject).containsKey("returnNum")) {
+                ((JSONObject) drugObject).put("returnNum",0);
+            }
+        });
+
+        JSONArray resultArray = new JSONArray();
+        resultArray.add(nonDrugArray);
+        resultArray.add(resultJsonArray);
+        resultArray.add(drugJsonArray);
+
+        return CommonUtil.successJson(resultArray);
     }
+}

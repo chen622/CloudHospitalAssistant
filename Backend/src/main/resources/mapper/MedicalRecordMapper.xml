@@ -155,9 +155,7 @@
             <id column="prId" javaType="INTEGER" property="id"/>
             <result column="amount" jdbcType="INTEGER" property="amount" />
             <association property="payment" javaType="cn.neuedu.his.model.Payment">
-                <id column="payId" jdbcType="INTEGER" property="id" />
                 <result column="quantity" jdbcType="INTEGER" property="quantity"/>
-                <result column="state" jdbcType="INTEGER" property="state"/>
             </association>
         </collection>
     </resultMap>
@@ -183,10 +181,11 @@
     </select>
 
     <select id="getPrescriptionAndPayment" resultMap="PrescriptionAndPayment">
-        SELECT mr.id as mrId, prescription.id as prId, payment.id as payId,payment.item_id,quantity,state
+        SELECT DISTINCT prescription.id as prId, mr.id as mrId,payment.item_id,sum(quantity) as quantity
         FROM medical_record mr JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
-                               JOIN payment ON prescription.id = payment.item_id #查询处方的药物
+                               left JOIN payment ON prescription.id = payment.item_id #查询处方的药物
         WHERE prescription.is_template = 0 AND payment.payment_type_id in (SELECT id from payment_type WHERE type = 2)
-          AND mr.id = #{medicalId}
+          AND mr.id =22
+        GROUP BY prId
     </select>
 </mapper>
