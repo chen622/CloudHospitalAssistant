@@ -72,7 +72,7 @@ public class ConstantVariableControllerTest {
 
         String data = jsonObject.toString();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/3")
+        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/modify/3")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
