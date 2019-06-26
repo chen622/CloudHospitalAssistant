@@ -11,12 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -72,5 +77,14 @@ public class NoDrugControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    public void get() throws Exception {
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/non_drug/excelIn").
+                file(new MockMultipartFile("excelFile", "test", "xlsx", new FileInputStream(new File("C:\\Users\\apple\\Desktop\\CloudHospitalAssistant\\Backend\\nondrug.xlsx")))));
+        MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        String result = mvcResult.getResponse().getContentAsString();
+        System.out.println("==========结果为：==========\n" + result + "\n");
     }
 }

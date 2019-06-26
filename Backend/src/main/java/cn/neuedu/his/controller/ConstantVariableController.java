@@ -143,7 +143,7 @@ public class ConstantVariableController {
     }
 
     @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") String typeId, Authentication authentication) {
+    public JSONObject getConstantByType(@PathVariable("type") Integer typeId, Authentication authentication) {
 
 
         try {
