@@ -1,7 +1,8 @@
 package cn.neuedu.consumer.controller;
 
-import cn.neuedu.consumer.remoteInterface.ConstantVariableRemote;
+import cn.neuedu.consumer.remoteInterface.WeChatRemote;
 import cn.neuedu.consumer.util.FeignRequestInterceptor;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import feign.Client;
 import feign.Feign;
@@ -14,36 +15,35 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/constant_variable")
+@RequestMapping("/wechat")
 @Import(FeignClientsConfiguration.class)
-public class ConstantVariableController {
-    private ConstantVariableRemote constantVariableRemote;
+public class WeChatController {
+    private WeChatRemote weChatRemote;
 
     @Autowired
-    public ConstantVariableController(
+    public WeChatController(
             Decoder decoder, Encoder encoder, Client client) {
-        this.constantVariableRemote = Feign.builder().client(client)
+        this.weChatRemote = Feign.builder().client(client)
                 .encoder(encoder)
                 .decoder(decoder)
                 .contract(new SpringMvcContract())
                 .requestInterceptor(new FeignRequestInterceptor())
-                .target(ConstantVariableRemote.class, "http://eureka-producer");
+                .target(WeChatRemote.class, "http://eureka-producer");
     }
 
-    @GetMapping("/get")
-    public JSONObject get() {
-        return constantVariableRemote.get();
+    @PostMapping("/login")
+    public JSONObject login(@RequestBody JSONObject requestJson) {
+        return weChatRemote.login(requestJson);
     }
 
-    @GetMapping("/getForm")
-    public JSONObject getDrugForm() {
-        return constantVariableRemote.getDrugForm();
+    
+    @GetMapping("/getSchedule/{doctorId}")
+    public JSONObject getSchedule(@PathVariable("doctorId") Integer doctorId) {
+        return weChatRemote.getSchedule(doctorId);
     }
 
-    @GetMapping("/getType/{type}")
-    public JSONObject getConstantByType(@PathVariable("type") Integer typeId) {
-        return constantVariableRemote.getConstantByType(typeId);
+    @GetMapping("/getPatient")
+    public JSONObject  getPatient(){
+        return weChatRemote.getPatient();
     }
-
-
 }

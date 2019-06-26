@@ -1,10 +1,7 @@
 package cn.neuedu.his.controller;
 
 import cn.neuedu.his.model.*;
-import cn.neuedu.his.service.DoctorService;
-import cn.neuedu.his.service.InspectionApplicationService;
-import cn.neuedu.his.service.InspectionResultService;
-import cn.neuedu.his.service.UserService;
+import cn.neuedu.his.service.*;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
@@ -189,7 +186,6 @@ public class InspectionApplicationController {
 
         try {
             PermissionCheck.isTechnicalDoctor(authentication);
-            //todo 已交钱项目应退钱
             inspectionApplicationService.cancelApplication(id);
             return CommonUtil.successJson();
         } catch (RuntimeException e) {
