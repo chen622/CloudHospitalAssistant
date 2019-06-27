@@ -46,12 +46,3 @@ mybatis:
   type-aliases-package: cn.neuedu.his.model
   mapper-locations: classpath:mapper/*.xml
 
-fdfs_client:
-  connect_timeout: 2
-  network_timeout: 30
-  charset: UTF-8
-  http.tracker_http_port: 80
-  http.anti_steal_token: no
-  http.secret_key: FastDFS1234567890
-  tracker_server: 192.168.238.130:22122
-
