@@ -55,7 +55,7 @@ public class InspectionTemplateController {
      * @param authentication
      * @return
      */
-    @PostMapping("/saveInspectionTem")
+    @PostMapping("/saveIT")
     public JSONObject saveInspectionTem(@RequestBody JSONObject object, Authentication authentication) {
         Integer doctorId;
         try {
@@ -63,7 +63,7 @@ public class InspectionTemplateController {
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName("OutpatientDoctor"));
         }
-        InspectionTemplate template = JSONObject.parseObject(object.get("template").toString(), InspectionTemplate.class);
+        InspectionTemplate template = JSONObject.toJavaObject(object, InspectionTemplate.class);
 //        JSONObject k = checkTemplate("inspection", doctorId, template.getName(), template.getLevel());
 //        if (k != null)
 //            return k;
@@ -180,7 +180,7 @@ public class InspectionTemplateController {
         }
     }
 
-    @GetMapping("/deleteInspectionTemp/{id}")
+    @GetMapping("/deleteIT/{id}")
     public JSONObject deleteInspectionTemp(@PathVariable("id") Integer id, Authentication authentication) {
         Integer doctorID = null;
         try {

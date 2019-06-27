@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public interface WeChatRemote {
-    @PostMapping("/login")
+    @PostMapping("/wechat/login")
     JSONObject login(@RequestBody JSONObject requestJson);
 
-    @GetMapping("/getSchedule/{doctorId}")
+    @GetMapping("/wechat/getSchedule/{doctorId}")
     JSONObject getSchedule(@PathVariable("doctorId") Integer doctorId);
 
-    @GetMapping("/getPatient")
+    @GetMapping("/wechat/getPatient")
     JSONObject  getPatient();
 }

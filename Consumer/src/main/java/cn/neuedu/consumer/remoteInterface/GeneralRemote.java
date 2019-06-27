@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface GeneralRemote {
     @GetMapping("/general/getAllDepartmentKind")
     JSONObject getAllDepartmentKind();
+
+    @GetMapping("/general/ip")
+    JSONObject ip();
 }

@@ -37,7 +37,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Autowired
     RedisServiceImpl redisService;
 
-    public User getUserByUsername(String username){
+    public User getUserByUsername(String username) {
         return userMapper.getUserByUsername(username);
     }
 
@@ -52,12 +52,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         User user1 = this.getUserByUsername(user.getUsername());
-        if (user1 != null&&user1.getId()!=user.getId())
+        if (user1 != null && !user1.getId().equals(user.getId()))
             throw new RuntimeException("600");
-            //return CommonUtil.errorJson(ErrorEnum.E_600);
+        //return CommonUtil.errorJson(ErrorEnum.E_600);
 
-            //判断部门是否存在
-            Department department = departmentService.findById(user.getDepartmentId());
+        //判断部门是否存在
+        Department department = departmentService.findById(user.getDepartmentId());
         if (department == null) {
             throw new RuntimeException("501.2");
             //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门"));
@@ -65,17 +65,17 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
         Integer typeId = user.getTypeId();
 
-        Map<String ,Integer> map=redisService.getMapAll("userType");
+        Map<String, Integer> map = redisService.getMapAll("userType");
 
         //判断输入type_id是否正确
         if (!map.values().contains(typeId))
             throw new RuntimeException("501.3");
-            //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
+        //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
 
-            //储存user数据
-            this.save(user);
+        //储存user数据
+        this.save(user);
 
-        Map<String , Integer> map2=redisService.getMapAll("doctor");
+        Map<String, Integer> map2 = redisService.getMapAll("doctor");
 
         //类别属于医生
         if (map2.values().contains(typeId)) {
@@ -83,7 +83,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             Integer id = userMapper.getUserByUsername(user.getUsername()).getId();
 
             //判断医生职称类型是否正确
-            Map<String ,Integer> title=redisService.getMapAll("title");
+            Map<String, Integer> title = redisService.getMapAll("title");
             if (!title.values().contains(doctor.getTitleId())) {
                 throw new RuntimeException("501.4");
             }
@@ -96,6 +96,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     /**
      * 修改数据
+     *
      * @param user
      * @param doctor
      * @throws RuntimeException
@@ -105,29 +106,29 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     public void updateUser(User user, Doctor doctor) throws Exception {
         //判断用户名是否重复
         User user1 = this.getUserByUsername(user.getUsername());
-        if (user1 != null&&user1.getId()!=user.getId())
+        if (user1 != null && !user1.getId().equals(user.getId()))
             throw new RuntimeException("600");
-            //return CommonUtil.errorJson(ErrorEnum.E_600);
+        //return CommonUtil.errorJson(ErrorEnum.E_600);
 
-        Map<String ,Integer> map = null;
+        Map<String, Integer> map = null;
         try {
-            map=redisService.getMapAll("userType");
+            map = redisService.getMapAll("userType");
         } catch (Exception e) {
             throw new RuntimeException("802");
             //CommonUtil.errorJson(ErrorEnum.E_802);
         }
-        if(map==null)
+        if (map == null)
             throw new RuntimeException("802");
-            //return   CommonUtil.errorJson(ErrorEnum.E_802);
+        //return   CommonUtil.errorJson(ErrorEnum.E_802);
         //判断type_id是否正确
         if (!map.values().contains(user.getTypeId()))
             throw new RuntimeException("501.1");
-            //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
+        //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
 
         //判断user的身份证号是否正确
         if (user.getIdentifyId().length() != 18)
             throw new RuntimeException("501.2");
-            //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+        //return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
@@ -135,11 +136,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
         user = userMapper.getUserByUsername(user.getUsername());
 
-        Map<String ,Integer> map2=redisService.getMapAll("doctor");
+        Map<String, Integer> map2 = redisService.getMapAll("doctor");
 
         //修改医生信息
         if (map2.values().contains(user.getTypeId())) {
-            Map<String ,Integer> title=redisService.getMapAll("title");
+            Map<String, Integer> title = redisService.getMapAll("title");
             //判断医生职称是否正确
             if (!title.values().contains(doctor.getTitleId())) {
                 throw new RuntimeException("501.3");
@@ -147,16 +148,16 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
             }
             doctor.setId(user.getId());
             doctorService.update(doctor);
-        }else {
+        } else {
             Doctor doctor1 = doctorService.findById(user.getId());
-            if (doctor1!=null)
+            if (doctor1 != null)
                 doctor1.setDelete(true);
             doctorService.update(doctor1);
         }
     }
 
     @Override
-    public void deleteUser(Integer id) throws Exception{
+    public void deleteUser(Integer id) throws Exception {
 
         //获取user
         User user = this.findById(id);
@@ -165,7 +166,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         if (user == null)
             throw new RuntimeException("601");
 
-        Map<String ,Integer> map=redisService.getMapAll("doctor");
+        Map<String, Integer> map = redisService.getMapAll("doctor");
 
         //判断是否要先将doctor表中的数据删除
         if (map.values().contains(user.getTypeId()) == true) {
@@ -181,16 +182,17 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
     /**
      * 获取所有收费员
+     *
      * @return
      */
     @Override
-    public ArrayList<User> findAllTollKeeper() throws Exception{
+    public ArrayList<User> findAllTollKeeper() throws Exception {
         Map<String, Integer> map = redisService.getMapAll("userType");
         return userMapper.getAllTollKeeper(map.get("挂号收费员"));
     }
 
     @Override
-    public User getUserAllInformationByName(String username){
+    public User getUserAllInformationByName(String username) {
         return userMapper.getUserAllInformationByUsername(username);
     }
 
@@ -215,10 +217,10 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
 
     @Override
-    public List<User> getUserWithDocByDept(Integer typeId,Integer deptId){
-        List<User> users=userMapper.getUserWithDocByDept(typeId, deptId);
-        if(users==null){
-            users=new ArrayList<>();
+    public List<User> getUserWithDocByDept(Integer typeId, Integer deptId) {
+        List<User> users = userMapper.getUserWithDocByDept(typeId, deptId);
+        if (users == null) {
+            users = new ArrayList<>();
         }
         return users;
     }
