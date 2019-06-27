@@ -81,7 +81,7 @@ public class UserController {
 
 
     @GetMapping("/function")
-    public JSONObject login(Authentication authentication) throws Exception {
+    public JSONObject fuction(Authentication authentication) throws Exception {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
         JSONArray urls = new JSONArray();

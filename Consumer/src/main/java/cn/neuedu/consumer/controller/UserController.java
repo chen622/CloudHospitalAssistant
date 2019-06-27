@@ -30,6 +30,11 @@ public class UserController {
                 .target(UserRemote.class, "http://eureka-producer");
     }
 
+    @GetMapping("/login")
+    public JSONObject login(@RequestParam("username") String username, @RequestParam("password") String password) {
+        return userRemote.login(username,password);
+    }
+
     @GetMapping("/getDocByDept/{deptId}")
     public JSONObject getDocByDept(@PathVariable("deptId") Integer deptId) {
         return userRemote.getDocByDept(deptId);
@@ -37,7 +42,7 @@ public class UserController {
 
     @GetMapping("/function")
     public JSONObject login() {
-        return userRemote.login();
+        return userRemote.function();
     }
 
     @PostMapping("/register")

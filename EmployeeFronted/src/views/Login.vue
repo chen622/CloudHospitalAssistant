@@ -73,22 +73,19 @@
                             sessionStorage.removeItem("token")
                             that.$api.get('/user/login', this.form.getFieldsValue(),
                                 function (res) {
-                                    if (res.headers)
-                                        sessionStorage.setItem("token", res.headers.authorization)
-                                    that.$api.get("/user/function", null,
-                                        res => {
-                                            that.$store.commit("setUrls", res.data)
-                                        }, res => {
-                                            // eslint-disable-next-line
-                                            console.log('API error: ' + res)
-                                        })
-                                    that.$store.commit("setLogin", true)
-                                    if (res.headers)
-                                        that.$store.commit("setUserType", parseInt(res.headers.usertype))
-                                    that.$router.replace({path: "/"})
-                                    that.$message.destroy()
-                                    if (res.config && res.config.method === 'get')
+                                    if (res.config && res.config.method === 'get') {
+                                        sessionStorage.setItem("token", res.data.Authorization)
+                                        that.$store.commit("setUserType", parseInt(res.data.userType))
+                                        that.$store.commit("setLogin", true)
+                                        that.$router.replace({path: "/"})
+                                        that.$message.destroy()
                                         that.$message.success("登录成功！")
+                                        that.$api.get("/user/function", null,
+                                            res => {
+                                                that.$store.commit("setUrls", res.data)
+                                            }, () => {
+                                            })
+                                    }
                                 }, function (err) {
                                     if (err) {
                                         if (err.response && err.response.status === 403) {

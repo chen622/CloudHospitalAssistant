@@ -1,17 +1,17 @@
 package cn.neuedu.consumer.remoteInterface;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 public interface UserRemote {
+    @GetMapping("/user/login")
+    JSONObject login(@RequestParam("username") String username,@RequestParam("password") String password);
+
     @GetMapping("/getDocByDept/{deptId}")
     JSONObject getDocByDept(@PathVariable("deptId") Integer deptId);
 
     @GetMapping("/function")
-    JSONObject login();
+    JSONObject function();
 
     @PostMapping("/register")
     JSONObject register(@RequestBody JSONObject jsonObject);
