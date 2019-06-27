@@ -81,6 +81,11 @@ public class UserController {
         return userRemote.findUser(name);
     }
 
+    @GetMapping("/findAll")
+    public JSONObject findAll() {
+        return userRemote.findAll();
+    }
+
     @GetMapping("/getAllTollKeeper")
     public JSONObject getAllTollKeeper() {
         return userRemote.getAllTollKeeper();
