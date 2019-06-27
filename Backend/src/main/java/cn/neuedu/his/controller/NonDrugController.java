@@ -1,19 +1,15 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.NonDrugService;
 import cn.neuedu.his.util.CommonUtil;
-import cn.neuedu.his.util.ExcelListener;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 
 import com.alibaba.excel.EasyExcelFactory;
-import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
@@ -25,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-
-import static org.apache.tomcat.util.file.ConfigFileLoader.getInputStream;
 
 
 /**
