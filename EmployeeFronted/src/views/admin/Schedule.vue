@@ -16,7 +16,7 @@
                     <a-row>
                         <a-col span="14" offset="6">
                             <a-form-item :label-col="{ span: 4}"
-                                         :wrapper-col="{ span: 18 }" style="width: 100%">
+                                         :wrapper-col="{ span: 18 }">
                                 <span slot="label" style="font-size: 22px;font-weight: bold">科室</span>
                                 <a-cascader v-model="department"
                                             :fieldNames="{ label: 'name', value: 'id', children: 'children' }"

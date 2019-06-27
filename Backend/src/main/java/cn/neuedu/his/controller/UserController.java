@@ -12,6 +12,7 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.annotations.Param;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,6 +53,8 @@ public class UserController {
         }
     }
 
+    private Logger logger = Logger.getLogger(UserController.class);
+
     @Autowired
     UserService userService;
     @Autowired
@@ -64,15 +67,15 @@ public class UserController {
     RedisServiceImpl redisService;
 
     @GetMapping("/getDocByDept/{deptId}")
-    public JSONObject getDocByDept(@PathVariable("deptId") Integer deptId ){
-        Map<String,Integer> map2= null;
+    public JSONObject getDocByDept(@PathVariable("deptId") Integer deptId) {
+        Map<String, Integer> map2 = null;
         try {
             map2 = redisService.getMapAll("userType");
         } catch (Exception e) {
-            return   CommonUtil.errorJson(ErrorEnum.E_638);
+            return CommonUtil.errorJson(ErrorEnum.E_638);
         }
-        Integer typeId=map2.get("门诊医生");
-        List<User> users=userService.getUserWithDocByDept(typeId,deptId);
+        Integer typeId = map2.get("门诊医生");
+        List<User> users = userService.getUserWithDocByDept(typeId, deptId);
         return CommonUtil.successJson(users);
     }
 
@@ -128,16 +131,21 @@ public class UserController {
         try {
             userService.insertUser(user, doctor);
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("501.1"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
-            else if (e.getMessage().equals("600"))
-                return CommonUtil.errorJson(ErrorEnum.E_600);
-            else if (e.getMessage().equals("501.2"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门"));
-            else if (e.getMessage().equals("501.3"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
-            else if (e.getMessage().equals("501.4"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+            switch (e.getMessage()) {
+                case "501.1":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份证信息"));
+                case "600":
+                    return CommonUtil.errorJson(ErrorEnum.E_600);
+                case "501.2":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("部门"));
+                case "501.3":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类别"));
+                case "501.4":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+                default:
+                    logger.error(e);
+                    return CommonUtil.errorJson(ErrorEnum.E_500);
+            }
         }
         return CommonUtil.successJson();
     }
@@ -181,6 +189,8 @@ public class UserController {
 
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
+        Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
+
         //是否是个人账号
         try {
             PermissionCheck.isIndivual(authentication, user.getUsername());
@@ -188,21 +198,28 @@ public class UserController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
         user.setId(PermissionCheck.getIdByUser(authentication));
+        return updateUser(user, doctor);
+    }
 
-        Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
+    private JSONObject updateUser(User user, Doctor doctor) {
         try {
             userService.updateUser(user, doctor);
         } catch (Exception e) {
-            if (e.getMessage().equals("600"))
-                return CommonUtil.errorJson(ErrorEnum.E_600);
-            else if (e.getMessage().equals("802"))
-                return CommonUtil.errorJson(ErrorEnum.E_802);
-            else if (e.getMessage().equals("501.1"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
-            else if (e.getMessage().equals("501.2"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
-            else if (e.getMessage().equals("501.3"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+            switch (e.getMessage()) {
+                case "600":
+                    return CommonUtil.errorJson(ErrorEnum.E_600);
+                case "802":
+                    return CommonUtil.errorJson(ErrorEnum.E_802);
+                case "501.1":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
+                case "501.2":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
+                case "501.3":
+                    return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
+                default:
+                    logger.error(e);
+                    return CommonUtil.errorJson(ErrorEnum.E_500);
+            }
 
         }
 
@@ -227,22 +244,9 @@ public class UserController {
         }
 
         User user = JSONObject.toJavaObject(jsonObject, User.class);
-        Doctor doctor = jsonObject.toJavaObject(jsonObject, Doctor.class);
-        try {
-            userService.updateUser(user, doctor);
-        } catch (Exception e) {
-            if (e.getMessage().equals("600"))
-                return CommonUtil.errorJson(ErrorEnum.E_600);
-            else if (e.getMessage().equals("802"))
-                return CommonUtil.errorJson(ErrorEnum.E_802);
-            else if (e.getMessage().equals("501.1"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("用户类型"));
-            else if (e.getMessage().equals("501.2"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("身份信息"));
-            else if (e.getMessage().equals("501.3"))
-                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("医生职称"));
-        }
-        return CommonUtil.successJson();
+        Doctor doctor = JSONObject.toJavaObject(jsonObject, Doctor.class);
+
+        return updateUser(user, doctor);
     }
 
     /**
@@ -358,17 +362,17 @@ public class UserController {
     }
 
     @GetMapping("/getDoctorByDept")
-    public JSONObject getDoctorByDept(@Param("deptId") Integer deptId){
-        Map<String,Integer> map2= null;
+    public JSONObject getDoctorByDept(@Param("deptId") Integer deptId) {
+        Map<String, Integer> map2 = null;
         try {
             map2 = redisService.getMapAll("userType");
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_638);
         }
-        Integer typeId=map2.get("门诊医生");
-        List<User> list=userService.getUserWithDocByDept(typeId, deptId);
-        if(list==null){
-            list=new ArrayList<>();
+        Integer typeId = map2.get("门诊医生");
+        List<User> list = userService.getUserWithDocByDept(typeId, deptId);
+        if (list == null) {
+            list = new ArrayList<>();
         }
         return CommonUtil.successJson(list);
     }

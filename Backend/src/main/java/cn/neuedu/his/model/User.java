@@ -55,7 +55,7 @@ public class User {
     @Transient()
     private String title;
 
-    @Transient()
+    @Column(name = "self_description")
     private String selfDescription;
 
     public String getSelfDescription() {
