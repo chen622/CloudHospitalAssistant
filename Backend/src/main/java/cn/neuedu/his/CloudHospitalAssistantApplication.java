@@ -27,9 +27,6 @@ public class CloudHospitalAssistantApplication {
     public static void main(String[] args) {
         SpringApplication.run(CloudHospitalAssistantApplication.class, args);
         logger.info("服务器启动！");
-//        ConstantVariableController controller=new ConstantVariableController();
-
-
     }
 
     /**
@@ -71,5 +68,6 @@ public class CloudHospitalAssistantApplication {
         // Do any additional configuration here
         return builder.build();
     }
+
 }
 

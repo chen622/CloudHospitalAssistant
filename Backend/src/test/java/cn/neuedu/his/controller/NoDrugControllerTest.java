@@ -79,12 +79,27 @@ public class NoDrugControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+
     @Test
-    public void get() throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/non_drug/excelIn").
-                file(new MockMultipartFile("excelFile", "test", "xlsx", new FileInputStream(new File("C:\\Users\\apple\\Desktop\\CloudHospitalAssistant\\Backend\\nondrug.xlsx")))));
-        MvcResult mvcResult = resultActions.andDo(MockMvcResultHandlers.print()).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
-        String result = mvcResult.getResponse().getContentAsString();
-        System.out.println("==========结果为：==========\n" + result + "\n");
+    public void insert() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","3232323");
+        jsonObject.put("name","232323");
+        jsonObject.put("price",232.22);
+        jsonObject.put("feeTypeId",108);
+        jsonObject.put("executiveDepartmrntId",1);
+
+        String param = jsonObject.toString();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/non_drug/insert")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(param)
+                .header(Constants.TOKEN_HEADER, token)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+        )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
+                .andDo(MockMvcResultHandlers.print());
     }
+
 }
