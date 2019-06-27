@@ -6,7 +6,6 @@
       WARNING - @mbg.generated
     -->
     <id property="id" jdbcType="INTEGER" column="id"/>
-    <result column="amount" jdbcType="INTEGER" property="amount"/>
     <result column="template_id" jdbcType="INTEGER" property="templateId" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />
@@ -14,7 +13,6 @@
 
   <resultMap id="Item" type="cn.neuedu.his.model.InspectionTemplateRelationship">
     <id property="id" jdbcType="INTEGER" column="id"/>
-    <result column="amount" jdbcType="INTEGER" property="amount"/>
     <result column="template_id" jdbcType="INTEGER" property="templateId" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />

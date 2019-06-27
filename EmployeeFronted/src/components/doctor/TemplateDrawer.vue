@@ -42,25 +42,48 @@
                     </a-collapse-panel>
                 </a-collapse>
             </a-col>
-            <a-col span="22" v-if="type===2">
+            <a-col span="22" v-else-if=" type===3">
                 <p class="drawer-title">诊疗信息模板
                 </p>
                 <a-collapse :loading="loading">
                     <a-collapse-panel v-for="it in its" :key="it.id">
                         <span slot="header" class="title">
-                            {{it.name}}-{{it.level.name}}
-                            <a-button style="margin-left: 10px" @click="$emit('useTemplate',it)">使用</a-button>
+                            {{it.name}}-{{it.lev.name}}
+                            <a-button style="margin-left: 10px" @click="addInspection(it)">使用</a-button>
                         </span>
                         <a-row type="flex" align="top" justify="space-around">
                             <a-col span="10">
-                                <p><span class="drawer-label">患者自述病况：</span>{{it.selfDescription}}</p>
-                                <p><span class="drawer-label">现病史：</span>{{it.currentSymptom}}</p>
-                                <p><span class="drawer-label">现病治疗情况：</span>{{it.previousTreatment}}</p>
+                                <p>诊疗项目</p>
+                                <a-list
+                                        :grid="{ md: 2 }"
+                                        :dataSource="it.applications"
+                                >
+                                    <a-list-item slot="renderItem" slot-scope="item">
+                                        <a-card :title="item.nonDrug.name">
+                                            <p><b>价格: </b>
+                                                {{item.nonDrug.price}}</p>
+                                            <p><b>数量: </b>
+                                                {{item.quantity}}</p>
+                                        </a-card>
+                                    </a-list-item>
+                                </a-list>
                             </a-col>
+                            <a-divider type="vertical" style="min-height: 100px"></a-divider>
                             <a-col span="10">
-                                <p><span class="drawer-label">既往史：</span>{{it.historySymptom}}</p>
-                                <p><span class="drawer-label">过敏史：</span>{{it.allergyHistory}}</p>
-                                <p><span class="drawer-label">体格检查：</span>{{it.bodyExamination}}</p>
+                                <p>处方</p>
+                                <a-list
+                                        :grid="{ md: 2 }"
+                                        :dataSource="it.prescriptions"
+                                >
+                                    <a-list-item slot="renderItem" slot-scope="item">
+                                        <a-card :title="item.drug.name">
+                                            <p><b>价格: </b>
+                                                {{item.drug.price}}</p>
+                                            <p><b>数量: </b>
+                                                {{item.amount}}</p>
+                                        </a-card>
+                                    </a-list-item>
+                                </a-list>
                             </a-col>
                             <a-col span="3">
                                 <p>
@@ -93,13 +116,13 @@
         components: {
             'edit-drawer': EditDrawer
         },
-        props: ['showDrawer', 'type', 'MRT'],// tpye: 1病历主页，2保存模板，3组套
+        props: ['showDrawer', 'type', 'MRT'],// tpye: 1病历主页，2保存模板，3组套,4保存组套
         data: () => ({
             mrts: [
-                {id: -1, name: '', level: {name: ''}}
+                {id: -1, name: '加载中', level: {name: 'loading'}}
             ],
             its: [
-                {id: -1, name: '', level: {name: ''}}
+                {id: -1, name: '加载中', lev: {name: 'loading'}}
             ],
             editMRT: null,
             loading: true,
@@ -107,6 +130,22 @@
             secondDrawer: false
         }),
         methods: {
+            addInspection (it) {
+                it.applications.forEach(application => {
+                    application.temp = true
+                    application.id = null
+                    application.createTime = null
+                    application.department = application.nonDrug.department
+                    this.$store.commit('addInspections', application)
+                })
+                it.prescriptions.forEach(prescription => {
+                    prescription.temp = true
+                    prescription.id = null
+                    prescription.createTime = null
+                    this.$store.commit("addInspectionPrescriptions", prescription)
+                })
+                this.$message.success("模板应用成功")
+            },
             editMrt (mrt) {
                 let that = this
                 that.$store.commit('setLoading', true)
@@ -148,6 +187,7 @@
             getIT () {
                 let that = this
                 this.loading = true
+                that.$store.commit("setLoading", true)
                 this.$api.get("/IT/getIT", null,
                     res => {
                         if (res.code === '100') {
@@ -156,24 +196,31 @@
                             that.$message.error(res.msg)
                         }
                         that.loading = false
+                        that.$store.commit("setLoading", false)
                     },
                     () => {
                         that.loading = false
+                        that.$store.commit("setLoading", false)
                     })
             },
             getMRT () {
                 let that = this
                 this.loading = true
+                that.$store.commit("setLoading", true)
                 this.$api.get('/MRT/getMRT', null,
                     res => {
                         if (res.code === '100') {
                             that.mrts = res.data
-                            that.loading = false
                         } else {
                             that.$message.error(res.msg)
                         }
+                        that.loading = false
+                        that.$store.commit("setLoading", false)
+
                     },
                     () => {
+                        that.loading = false
+                        that.$store.commit("setLoading", false)
                     }
                 )
             },

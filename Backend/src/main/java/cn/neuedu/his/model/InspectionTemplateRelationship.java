@@ -9,9 +9,6 @@ public class InspectionTemplateRelationship {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "amount")
-    private Integer amount;
-
     @Column(name = "template_id")
     private Integer templateId;
 
@@ -20,7 +17,7 @@ public class InspectionTemplateRelationship {
 
     /**
      * 0是药品
-1是非药品
+     * 1是非药品
      */
     @Column(name = "item_type")
     private Integer itemType;
@@ -74,10 +71,10 @@ public class InspectionTemplateRelationship {
 
     /**
      * 获取0是药品
-1是非药品
+     * 1是非药品
      *
      * @return item_type - 0是药品
-1是非药品
+     * 1是非药品
      */
     public Integer getItemType() {
         return itemType;
@@ -85,10 +82,10 @@ public class InspectionTemplateRelationship {
 
     /**
      * 设置0是药品
-1是非药品
+     * 1是非药品
      *
      * @param itemType 0是药品
-1是非药品
+     *                 1是非药品
      */
     public void setItemType(Integer itemType) {
         this.itemType = itemType;
@@ -102,11 +99,4 @@ public class InspectionTemplateRelationship {
         this.id = id;
     }
 
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Integer amount) {
-        this.amount = amount;
-    }
 }

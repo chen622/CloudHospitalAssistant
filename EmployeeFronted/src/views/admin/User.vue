@@ -3,22 +3,7 @@
 
         <a-col span="20">
             <a-card hoverable title="用户管理" :headStyle="{fontSize: '30px'}" :bodyStyle="{padding: '5px 0'}">
-                <!--            <a-card hoverable class="info-card" title="医疗基本信息管理" :headStyle="{fontSize: '30px'}">-->
-                <!--                <a-collapse defaultActiveKey="1" :bordered="false">-->
-                <!--                    <a-collapse-panel key="1" :style="customStyle">-->
-                <!--                        <template slot="header">-->
-                <!--                            科室信息管理-->
-                <!--                            <a-icon type="question-circle-o"/>-->
-                <!--                        </template>-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                    <a-collapse-panel header="This is panel header 2" key="2" :style="customStyle">-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                    <a-collapse-panel header="This is panel header 3" key="3" :style="customStyle">-->
-                <!--                        <p>{{text}}</p>-->
-                <!--                    </a-collapse-panel>-->
-                <!--                </a-collapse>-->
+
                 <a-row type="flex" align="middle" justify="center" style="margin: 5px 0 10px 0">
                     <a-col span="5">
                         <a-input-search
@@ -75,6 +60,9 @@
                 </a-table>
             </a-card>
         </a-col>
+        <a-modal>
+
+        </a-modal>
     </a-row>
 </template>
 

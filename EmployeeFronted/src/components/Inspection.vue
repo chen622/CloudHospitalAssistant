@@ -1,15 +1,24 @@
 <template>
     <div>
+        <a-divider>组套管理</a-divider>
+        <a-row v-if="!justShow" type="flex" align="middle" justify="center">
+            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                <a-button style="width: 80%" @click="$emit('changeDrawer',true,4)">保存模板</a-button>
+            </a-col>
+            <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
+                <a-button style="width: 80%" @click="$emit('changeDrawer',true,3)">应用模板</a-button>
+            </a-col>
+        </a-row>
         <a-divider>项目内容</a-divider>
         <a-row type="flex" align="middle" justify="center">
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
+                <a-button type="danger" style="width: 80%">删除暂存</a-button>
             </a-col>
             <a-col :xl="4" :md="6" :sm="9" :xs="12" style="text-align: center">
-                <a-button style="width: 80%" @click="$emit('showTemplate',true,2)">模板</a-button>
+                <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="$store.state.inspections" rowKey="nonDrug.id" :columns="inspectionsColumns"
+        <a-table :dataSource="$store.state.inspections" :rowKey="record=>{return record.nonDrug.id}" :columns="inspectionsColumns"
                  :pagination="false">
             <template slot="temp" slot-scope="text,record">
                 {{record.temp?'暂存':'开立'}}
@@ -46,9 +55,10 @@
                 </a-modal>
             </template>
         </a-table>
-        <a-divider>项目用药内容</a-divider>
-        <prescription :registrationId="registrationId" :isInspection="true" @refresh="refreshMR"></prescription>
-        <a-modal v-if="showAddInspection" :visible="showAddInspection" @ok="addInspection"
+        <a-divider v-if="!justShow">项目用药内容</a-divider>
+        <prescription v-if="!justShow" :registrationId="registrationId" :isInspection="true"
+                      @refresh="refreshMR"></prescription>
+        <a-modal v-if="showAddInspection && !justShow" :visible="showAddInspection" @ok="addInspection"
                  @cancel="showAddInspection = false">
             <template slot="title">添加新检查</template>
             <a-form>
@@ -76,7 +86,7 @@
 
     export default {
         name: "Inspection",
-        props: ['registrationId'],
+        props: ['registrationId', 'justShow'],
         components: {prescription: Prescription},
         data: () => ({
             showAddInspection: false,

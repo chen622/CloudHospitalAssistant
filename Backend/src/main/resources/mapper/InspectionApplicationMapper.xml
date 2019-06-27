@@ -152,10 +152,11 @@
           and payment_type_id = #{type}
     </select>
 
-    <select id="getNonDrug" resultMap="cn.neuedu.his.mapper.NonDrugMapper.BaseResultMap">
-        select *
+    <select id="getNonDrug" resultMap="cn.neuedu.his.mapper.NonDrugMapper.NonDrugWithDepartment">
+        select *, department.id as deptId, department.name as deptName
         from non_drug
-        where id = #{non_drug_id}
+                 left join department on non_drug.executive_department = department.id
+        where non_drug.id = #{non_drug_id}
     </select>
 
     <!--通过病历和姓名的模糊查询获得患者信息-->
