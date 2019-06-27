@@ -255,13 +255,12 @@ public class NonDrugController {
      * @return
      */
     @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("excelFile") MultipartFile excelFile) throws IOException {
+    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile) throws IOException {
 
         Integer error = 0;//错误数量
         Integer success = 0;//失败数量
 
-
-        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 2, NonDrug.class));
+        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 0, NonDrug.class));
         for (Object object : objects) {
             NonDrug importEntity = (NonDrug) object;
             try {
@@ -269,11 +268,11 @@ public class NonDrugController {
                 success++;
             } catch (Exception e) {
                 error++;
-                e.printStackTrace();
-                continue;
             }
         }
-
-        return CommonUtil.successJson();
+        JSONObject returnJSON = new JSONObject();
+        returnJSON.put("success",success);
+        returnJSON.put("error",error);
+        return CommonUtil.successJson(returnJSON);
     }
 }
