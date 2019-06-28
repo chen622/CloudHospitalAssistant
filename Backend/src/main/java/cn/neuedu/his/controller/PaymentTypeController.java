@@ -15,7 +15,6 @@ import java.util.List;
 
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -30,20 +29,20 @@ public class PaymentTypeController {
     @PostMapping("/insertPaymentType")
     public JSONObject insertPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) throws Exception {
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
 
-        try{
-            PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
+        try {
+            PaymentType paymentType = JSONObject.toJavaObject(jsonObject, PaymentType.class);
             paymentTypeService.insertPaymentType(paymentType);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("501.1"))
                 return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("redis"));
             else if (e.getMessage().equals("501.2"))
@@ -56,22 +55,22 @@ public class PaymentTypeController {
     }
 
     @PostMapping("/deletePaymentType/{id}")
-    public JSONObject deletePaymentType(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject deletePaymentType(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
 
-        try{
+        try {
             paymentTypeService.deletePaymentType(id);
-        }catch (Exception e){
+        } catch (Exception e) {
             if (e.getMessage().equals("606"))
                 return CommonUtil.errorJson(ErrorEnum.E_606);
         }
@@ -80,14 +79,14 @@ public class PaymentTypeController {
 
 
     @PostMapping("/recoverPaymentType")
-    public JSONObject recoverPaymentType(@RequestBody JSONObject object, Authentication authentication){
+    public JSONObject recoverPaymentType(@RequestBody JSONObject object, Authentication authentication) {
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
@@ -108,23 +107,23 @@ public class PaymentTypeController {
     }
 
     @PostMapping("/modifyPaymentType")
-    public JSONObject modifyPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyPaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
 
-        try{
-            PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
+        try {
+            PaymentType paymentType = JSONObject.toJavaObject(jsonObject, PaymentType.class);
             paymentTypeService.modifyPaymentType(paymentType);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("606"))
                 return CommonUtil.errorJson(ErrorEnum.E_605);
         }
@@ -134,20 +133,20 @@ public class PaymentTypeController {
 
 
     @PostMapping("/updatePaymentType")
-    public JSONObject updatePaymentType(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject updatePaymentType(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
 
-        PaymentType paymentType = JSONObject.toJavaObject(jsonObject,PaymentType.class);
+        PaymentType paymentType = JSONObject.toJavaObject(jsonObject, PaymentType.class);
 
         PaymentType lastPaymentType = paymentTypeService.getPaymentTypeByName(paymentType.getName());
 
@@ -155,9 +154,9 @@ public class PaymentTypeController {
         if (lastPaymentType == null)
             return CommonUtil.errorJson(ErrorEnum.E_810);
 
-        try{
+        try {
             paymentTypeService.update(paymentType);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("信息不能为空");
         }
 
@@ -165,17 +164,16 @@ public class PaymentTypeController {
     }
 
 
-
     @GetMapping("/selectPaymentType/{paymentTypeName}")
-    public JSONObject selectPaymentType(@PathVariable("paymentTypeName") String  paymentTypeName, Authentication authentication){
+    public JSONObject selectPaymentType(@PathVariable("paymentTypeName") String paymentTypeName, Authentication authentication) {
 
         //检查权限
-        try{
+        try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 PermissionCheck.isFinancialOfficer(authentication);
-            }catch (Exception ew){
+            } catch (Exception ew) {
                 return CommonUtil.errorJson(ErrorEnum.E_602);
             }
         }
@@ -188,13 +186,19 @@ public class PaymentTypeController {
         return CommonUtil.successJson(paymentType);
     }
 
+    //todo cloud
+    @GetMapping("/getByTypeId/{typeId}")
+    public JSONObject getByType(@PathVariable("typeId") Integer typeId) {
+        return CommonUtil.successJson(paymentTypeService.getByTypeId(typeId));
+
+    }
+
     @GetMapping("/getAll")
-    public JSONObject getAll(){
+    public JSONObject getAll() {
         try {
-            List<PaymentType> list=paymentTypeService.findAll();
+            List<PaymentType> list = paymentTypeService.findAll();
             return CommonUtil.successJson(list);
         } catch (Exception e) {
-            e.printStackTrace();
             return CommonUtil.errorJson(ErrorEnum.E_802);
         }
     }

@@ -8,22 +8,26 @@
                 title="创建科室"
                 v-if="newDepartment.isCreating">
             <a-form :form="newDepartment.item">
-                <a-form-item label="科室名称">
+                <a-form-item :label-col="{ span: 6 }"
+                             :wrapper-col="{ span: 16 }" label="科室名称">
                     <a-input v-decorator="['name',{rules: rules.name}]"
                              placeholder="请输入对应名称"/>
                 </a-form-item>
-                <a-form-item label="科室编号">
+                <a-form-item :label-col="{ span: 6 }"
+                             :wrapper-col="{ span: 16 }" label="科室编号">
                     <a-input v-decorator="['code',{rules: rules.code}]"
                              placeholder="请输入科室对应编号"/>
                 </a-form-item>
-                <a-form-item label="科室分类">
+                <a-form-item :label-col="{ span: 6 }"
+                             :wrapper-col="{ span: 16 }" label="科室分类">
                     <a-select
                             v-decorator="['typeId',{initialValue: departmentKind.type[0].id,rules: rules.typeId}]"
                             @change="changeKind">
                         <a-select-option v-for="t in departmentKind.type" :key="t.id">{{t.name}}</a-select-option>
                     </a-select>
                 </a-form-item>
-                <a-form-item label="科室类别">
+                <a-form-item :label-col="{ span: 6 }"
+                             :wrapper-col="{ span: 16 }" label="科室类别">
                     <a-select
                             v-decorator="['kindId',{initialValue: departmentKinds[0].id,rules: rules.kindId}]"
                             style="width: 120px">
@@ -207,7 +211,7 @@
                         } else {
                             that.$message.error(res)
                         }
-                    }, res => {
+                    }, () => {
                     })
             },
             onSearch (value) {
