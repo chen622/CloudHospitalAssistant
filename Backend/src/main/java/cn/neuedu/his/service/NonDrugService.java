@@ -30,5 +30,7 @@ public interface NonDrugService extends Service<NonDrug> {
 
     List<PaymentType> getTypeAndNonDrug(String name, String code, Boolean auth);
 
+    List<PaymentType> getNonDrugByType(Boolean auth);
+
     List<NonDrug> getNonDrugByDepartmentId(Integer id);
 }

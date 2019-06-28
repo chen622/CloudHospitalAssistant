@@ -159,7 +159,7 @@
             },
             getNonDrug () {
                 let that = this
-                this.$api.get("/non_drug/getTypeAndNonDrug/", null,
+                this.$api.get("/non_drug/getNonDrugByType", null,
                     res => {
                         if (res.code === '100') {
                             that.nonDrugsTypes = res.data

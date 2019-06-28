@@ -17,7 +17,6 @@ import java.util.Map;
 
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @Service
@@ -37,32 +36,33 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
     public NonDrug selectNonDrugByCode(String code) {
         return nonDrugMapper.selectNonDrugByCode(code);
     }
+
     @Override
     public List<NonDrug> findByName(String name) {
-        List<NonDrug> list=nonDrugMapper.findByName(name);
-        if(list==null)
-            list=new ArrayList<>();
+        List<NonDrug> list = nonDrugMapper.findByName(name);
+        if (list == null)
+            list = new ArrayList<>();
         return list;
     }
 
     @Override
     public JSONObject getAll() {
-        List<NonDrug> list=nonDrugMapper.getAll();
-        if(list==null)
-            list=new ArrayList<>();
+        List<NonDrug> list = nonDrugMapper.getAll();
+        if (list == null)
+            list = new ArrayList<>();
         return CommonUtil.successJson(list);
     }
 
     @Override
     public void insertNonDrug(NonDrug nonDrug) throws Exception {
-        Map<String ,Integer> payment=redisService.getMapAll("paymentType");
+        Map<String, Integer> payment = redisService.getMapAll("paymentType");
         //检查费药品类型是否存在
         if (!payment.values().contains(nonDrug.getFeeTypeId()))
             throw new RuntimeException("608");
         //检查执行部门是否存在
         Integer excutiveDepartmentId = nonDrug.getExecutiveDepartment();
         if (excutiveDepartmentId != null) {
-            if (this.findById(excutiveDepartmentId) == null){
+            if (this.findById(excutiveDepartmentId) == null) {
                 throw new RuntimeException("609");
             }
         }
@@ -108,7 +108,7 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
 
         Integer executiveDepartmentId = nonDrug.getExecutiveDepartment();
         if (executiveDepartmentId != null) {
-            if (this.findById(executiveDepartmentId) == null){
+            if (this.findById(executiveDepartmentId) == null) {
                 throw new RuntimeException("609");
             }
         }
@@ -118,7 +118,12 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
 
     @Override
     public List<PaymentType> getTypeAndNonDrug(String name, String code, Boolean auth) {
-        return nonDrugMapper.getTypeAndNonDrug(name,code,auth);
+        return nonDrugMapper.getTypeAndNonDrug(name, code, auth);
+    }
+
+    @Override
+    public List<PaymentType> getNonDrugByType(Boolean auth) {
+        return nonDrugMapper.getNonDrugByType(auth);
     }
 
     @Override
