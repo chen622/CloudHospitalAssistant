@@ -337,6 +337,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
+            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        }
         if (!isDisposal)
             registration.setState(Constants.SUSPECT);
 
