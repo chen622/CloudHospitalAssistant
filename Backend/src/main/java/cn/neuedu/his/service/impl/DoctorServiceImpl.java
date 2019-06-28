@@ -555,7 +555,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             Payment payment = setPrescriptionPayment(p, registration.getPatientId(), doctorId);
         }
 //        registration.setState(Constants.FINISH_DIAGNOSIS);
-        registrationService.update(registration);
+//        registrationService.update(registration);
         return CommonUtil.successJson();
     }
 
