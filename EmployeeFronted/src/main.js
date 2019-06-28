@@ -8,6 +8,8 @@ import store from './store'
 import Print from './print'
 // import myCharts from './myCharts'
 
+// const url = "http://localhost:8020"
+// const url = "https://his.ccm.ink:8010"
 
 // Vue.use(myCharts)
 Vue.config.productionTip = false
@@ -15,6 +17,7 @@ Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.use(Print) // 注册
 Vue.prototype.$api = api
+Vue.prototype.$url = api.url
 
 
 Vue.prototype.dateToTimeStamp = function (date) {

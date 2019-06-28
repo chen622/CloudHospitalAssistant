@@ -15,32 +15,34 @@
         <result column="is_delete" jdbcType="BIT" property="isDelete"/>
     </resultMap>
 
-    <resultMap id="TypeAndNonDrug" type="cn.neuedu.his.model.PaymentType">
+    <resultMap id="TypeAndNonDrug" type="cn.neuedu.his.model.NonDrug">
         <!--
           WARNING - @mbg.generated
         -->
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="code" jdbcType="VARCHAR" property="code"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="type" jdbcType="INTEGER" property="type"/>
-        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-        <collection property="nonDrugs" ofType="cn.neuedu.his.model.NonDrug">
-            <id column="non_drug_id" jdbcType="INTEGER" property="id"/>
-            <result column="non_drug_name" jdbcType="VARCHAR" property="name"/>
-            <result column="price" jdbcType="DECIMAL" property="price"/>
-            <result column="standard" jdbcType="VARCHAR" property="standard"/>
-            <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-            <result column="non_drug_code" jdbcType="VARCHAR" property="code"/>
-            <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
-            <result column="non_drug_is_delete" jdbcType="BIT" property="isDelete"/>
-            <association property="department" javaType="cn.neuedu.his.model.Department">
-                <id column="department_id" jdbcType="INTEGER" property="id"/>
-                <result column="department_name" jdbcType="VARCHAR" property="name"/>
-                <result column="kind_id" jdbcType="INTEGER" property="kindId"/>
-                <result column="department_code" jdbcType="VARCHAR" property="code"/>
-                <result column="department_is_delete" jdbcType="BIT" property="isDelete"/>
-            </association>
-        </collection>
+        <id column="non_drug_id" jdbcType="INTEGER" property="id"/>
+        <result column="non_drug_name" jdbcType="VARCHAR" property="name"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="standard" jdbcType="VARCHAR" property="standard"/>
+        <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+        <result column="non_drug_code" jdbcType="VARCHAR" property="code"/>
+        <result column="executive_department" jdbcType="INTEGER" property="executiveDepartment"/>
+        <result column="non_drug_is_delete" jdbcType="BIT" property="isDelete"/>
+
+        <association property="paymentType" javaType="cn.neuedu.his.model.PaymentType">
+            <id column="id" jdbcType="INTEGER" property="id"/>
+            <result column="code" jdbcType="VARCHAR" property="code"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="type" jdbcType="INTEGER" property="type"/>
+            <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+        </association>
+
+        <association property="department" javaType="cn.neuedu.his.model.Department">
+            <id column="department_id" jdbcType="INTEGER" property="id"/>
+            <result column="department_name" jdbcType="VARCHAR" property="name"/>
+            <result column="kind_id" jdbcType="INTEGER" property="kindId"/>
+            <result column="department_code" jdbcType="VARCHAR" property="code"/>
+            <result column="department_is_delete" jdbcType="BIT" property="isDelete"/>
+        </association>
     </resultMap>
 
     <select id="getTypeAndNonDrug" resultMap="TypeAndNonDrug">
@@ -49,7 +51,7 @@
         department.name as department_name, department.id as department_id, department.code as
         department_code,department.is_delete
         as department_is_delete
-        from payment_type left join non_drug on payment_type.id = non_drug.fee_type_id left join department on
+        from non_drug left join payment_type on payment_type.id = non_drug.fee_type_id left join department on
         non_drug.executive_department = department.id
         <where>
             <if test="auth == false">
