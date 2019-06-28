@@ -332,14 +332,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (record.getFirstDiagnose() == null || record.getFirstDiagnose().size() == 0) {
             return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("firstDiagnose"));
         }
-        //是否是确诊处置
-        if (isDisposal) {
-            //是否 是 有检查项目且没有确诊的情况
-            if (inspectionApplicationService.hasMedicalRecordInspectionNotDone(medicalRecordId)) {
-                if (record.getFinalDiagnose() == null)
-                    return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("finalDiagnose"));
-            }
-        }
+
         //是否能找到 挂号
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
@@ -562,7 +555,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             Payment payment = setPrescriptionPayment(p, registration.getPatientId(), doctorId);
         }
 //        registration.setState(Constants.FINISH_DIAGNOSIS);
-        registrationService.update(registration);
+//        registrationService.update(registration);
         return CommonUtil.successJson();
     }
 
