@@ -47,7 +47,7 @@ public class InvoiceController {
     }
 
     
-    @PostMapping("/againInvoice/{invoiceId")
+    @PostMapping("/againInvoice/{invoiceId}")
     public JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId) {
         return invoiceRemote.againInvoice(invoiceId);
     }

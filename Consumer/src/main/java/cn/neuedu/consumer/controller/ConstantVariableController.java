@@ -45,5 +45,10 @@ public class ConstantVariableController {
         return constantVariableRemote.getConstantByType(typeId);
     }
 
+    @GetMapping("/getSettlementType")
+    public JSONObject getSettlementType() {
+        return constantVariableRemote.getSettlementType();
+    }
+
 
 }

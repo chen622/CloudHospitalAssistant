@@ -53,7 +53,7 @@ public class MedicalRecordTemplateController {
         return medicalRecordTemplateRemote.updateMedicalRecordTem(object);
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public JSONObject deleteMedicalRecordTemp(@PathVariable("id") Integer id) {
         return medicalRecordTemplateRemote.deleteMedicalRecordTemp(id);
     }
