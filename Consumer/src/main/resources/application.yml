@@ -5,8 +5,6 @@ spring:
 
 eureka:
   instance:
-    appname: ${spring.application.name}
-    instanceId: ${spring.application.name}
     hostname: his.ccm.ink
   client:
     fetchRegistry: true

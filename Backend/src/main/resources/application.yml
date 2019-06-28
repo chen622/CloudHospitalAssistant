@@ -21,15 +21,13 @@ spring:
 
 eureka:
   instance:
-    appname: ${spring.application.name}
-    instanceId: ${spring.application.name}
     hostname: his.ccm.ink
   client:
-      fetchRegistry: true
-      registerWithEureka: true
-      enabled: true
-      serviceUrl:
-        defaultZone: http://127.0.0.1:8000/eureka
+    fetchRegistry: true
+    registerWithEureka: true
+    enabled: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8000/eureka
 
 druid:
   url: jdbc:mysql://his.ccm.ink/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
@@ -47,12 +45,12 @@ mybatis:
   type-aliases-package: cn.neuedu.his.model
   mapper-locations: classpath:mapper/*.xml
 
-fdfs_client:
-  connect_timeout: 2
-  network_timeout: 30
+fdfs:
+  connect_timeout_in_seconds: 2
+  network_timeout_in_seconds: 30
   charset: UTF-8
-  http.tracker_http_port: 80
-  http.anti_steal_token: no
-  http.secret_key: FastDFS1234567890
-  tracker_server: 192.168.238.130:22122
+  http_tracker_http_port: 80
+  http_anti_steal_token: no
+  http_secret_key: FastDFS1234567890
+  tracker_servers: 192.168.238.130:22122
 

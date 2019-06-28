@@ -2,8 +2,8 @@ import axios from 'axios'
 import vue from '../main'
 
 
-// global.baseURL = 'https://his.ccm.ink:8010'
-global.baseURL = 'http://' + 'localhost:8020'
+global.baseURL = 'https://his.ccm.ink:8888'
+// global.baseURL = 'http://' + 'localhost:8020'
 // 返回在vue模板中的调用接口
 export default { // 自定义判断元素类型JS
     requestCache: {},
