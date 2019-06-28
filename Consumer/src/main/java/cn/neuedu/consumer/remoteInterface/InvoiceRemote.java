@@ -17,6 +17,6 @@ public interface InvoiceRemote {
     JSONObject anewInvoice(@PathVariable("invoiceId") Integer invoiceId);
 
 
-    @PostMapping("/invoice/againInvoice/{invoiceId")
+    @PostMapping("/invoice/againInvoice/{invoiceId}")
     JSONObject againInvoice(@PathVariable("invoiceId") Integer invoiceId);
 }

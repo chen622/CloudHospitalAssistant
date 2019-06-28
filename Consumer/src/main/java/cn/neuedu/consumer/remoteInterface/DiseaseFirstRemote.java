@@ -19,6 +19,6 @@ public interface DiseaseFirstRemote {
     @PostMapping("/disease_first/select/{name}")
     JSONObject selectDiseaseFirst(@PathVariable("name") String name);
 
-    @GetMapping("/getType")
+    @GetMapping("/disease_first/getType")
     JSONObject getAllDiseaseType();
 }

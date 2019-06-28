@@ -12,6 +12,8 @@ import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import javax.print.Doc;
  */
 @RestController
 @RequestMapping("/IT")
+@Import(FeignClientsConfiguration.class)
 public class InspectionTemplateController {
 
     @Autowired
