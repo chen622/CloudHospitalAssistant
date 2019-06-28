@@ -8,10 +8,13 @@ import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 @RestController
@@ -22,6 +25,20 @@ public class GeneralController {
     @Autowired
     DepartmentService departmentService;
 
+    @Autowired
+    Environment environment;
+
+    @GetMapping("/ip")
+    public JSONObject ip() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("ip", InetAddress.getLocalHost().getHostAddress());
+            jsonObject.put("port", environment.getProperty("local.server.port"));
+            return CommonUtil.successJson(jsonObject);
+        } catch (UnknownHostException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_500);
+        }
+    }
 
     @GetMapping("/getAllDepartmentKind")
     public JSONObject getAllDepartmentKind() {

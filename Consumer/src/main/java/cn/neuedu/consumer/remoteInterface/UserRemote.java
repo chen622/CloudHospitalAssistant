@@ -1,44 +1,47 @@
 package cn.neuedu.consumer.remoteInterface;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 public interface UserRemote {
-    @GetMapping("/getDocByDept/{deptId}")
+    @GetMapping("/user/login")
+    JSONObject login(@RequestParam("username") String username, @RequestParam("password") String password);
+
+    @GetMapping("/user/getDocByDept/{deptId}")
     JSONObject getDocByDept(@PathVariable("deptId") Integer deptId);
 
-    @GetMapping("/function")
-    JSONObject login();
+    @GetMapping("/user/function")
+    JSONObject function();
 
-    @PostMapping("/register")
+    @PostMapping("/user/register")
     JSONObject register(@RequestBody JSONObject jsonObject);
 
-    @PostMapping("/delete/{id}")
+    @PostMapping("/user/delete/{id}")
     JSONObject deleteUserInformation(@PathVariable("id") Integer id);
 
-    @PostMapping("/modify")
+    @PostMapping("/user/modify")
     JSONObject modifyUserInformation(@RequestBody JSONObject jsonObject);
 
-    @PostMapping("/adminModify")
+    @PostMapping("/user/adminModify")
     JSONObject adminModifyUserInformation(JSONObject jsonObject);
 
-    @GetMapping("/selectUser/{username}")
+    @GetMapping("/user/selectUser/{username}")
     JSONObject selectUserInformation(@PathVariable("username") String username);
 
 
-    @GetMapping("/adminSelectUser/{username}")
+    @GetMapping("/user/adminSelectUser/{username}")
     JSONObject adminSelectUserInformation(@PathVariable("username") String username);
 
 
-    @GetMapping("/findUser/{name}")
+    @GetMapping("/user/findUser/{name}")
     JSONObject findUser(@PathVariable("name") String name);
 
-    @GetMapping("/getAllTollKeeper")
+    @GetMapping("/user/getAllTollKeeper")
     JSONObject getAllTollKeeper();
 
-    @GetMapping("/getDoctorByDept")
+    @GetMapping("/user/getDoctorByDept")
     JSONObject getDoctorByDept(@PathVariable("deptId") Integer deptId);
+
+    @GetMapping("/user/findAll")
+    JSONObject findAll();
 }

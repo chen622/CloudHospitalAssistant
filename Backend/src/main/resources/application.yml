@@ -1,5 +1,5 @@
 server:
-  port: 8078
+  port: 8020
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   redis:
     database: 1
-    host-name: 129.211.61.153
+    host-name: his.ccm.ink
     password: neuedu
     port: 6220
     timeout: 3000
@@ -21,17 +21,16 @@ spring:
 
 eureka:
   instance:
-    appname: ${spring.application.name}
-    instanceId: ${spring.application.name}
+    hostname: his.ccm.ink
   client:
-      fetchRegistry: true
-      registerWithEureka: true
-      enabled: true
-      serviceUrl:
-        defaultZone: http://127.0.0.1:8001/eureka
+    fetchRegistry: true
+    registerWithEureka: true
+    enabled: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8000/eureka
 
 druid:
-  url: jdbc:mysql://129.211.61.153/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+  url: jdbc:mysql://his.ccm.ink/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
   driver-class-name: com.mysql.cj.jdbc.Driver
   username: root
   password: NEUedu1118!@
@@ -45,4 +44,13 @@ mapper:
 mybatis:
   type-aliases-package: cn.neuedu.his.model
   mapper-locations: classpath:mapper/*.xml
+
+fdfs:
+  connect_timeout_in_seconds: 2
+  network_timeout_in_seconds: 30
+  charset: UTF-8
+  http_tracker_http_port: 80
+  http_anti_steal_token: no
+  http_secret_key: FastDFS1234567890
+  tracker_servers: 192.168.238.130:22122
 

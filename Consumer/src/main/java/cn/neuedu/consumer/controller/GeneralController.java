@@ -13,6 +13,11 @@ public class GeneralController {
     @Autowired
     GeneralRemote generalRemote;
 
+    @GetMapping("/ip")
+    public JSONObject ip() {
+        return generalRemote.ip();
+    }
+
     @GetMapping("/getAllDepartmentKind")
     JSONObject getAllDepartmentKind() {
         return generalRemote.getAllDepartmentKind();

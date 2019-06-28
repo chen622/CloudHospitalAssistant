@@ -1,8 +1,10 @@
 package cn.neuedu.his.config.Authentication;
 
 import cn.neuedu.his.util.constants.Constants;
+import com.alibaba.fastjson.JSONObject;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +27,8 @@ import java.util.stream.Collectors;
  * Jwt进行授权的拦截器
  */
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+    private Logger logger = Logger.getLogger(JwtAuthenticationFilter.class);
 
     private final AuthenticationManager authenticationManager;
 
@@ -80,6 +86,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .claim("typeId", user.getTypeId())
                 .compact();
 
+        try {
+            PrintWriter writer = response.getWriter();
+            response.setContentType("application/json;charset=UTF-8");
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(Constants.TOKEN_HEADER, Constants.TOKEN_PREFIX + token);
+            jsonObject.put("userType", user.getTypeId());
+            writer.print(jsonObject.toJSONString());
+            writer.close();
+        } catch (IOException e) {
+            logger.error(e);
+        }
         response.addHeader(Constants.TOKEN_HEADER, Constants.TOKEN_PREFIX + token);
         response.addHeader("usertype", user.getTypeId().toString());
         response.setHeader("Access-Control-Expose-Headers", Constants.TOKEN_HEADER + "," + "usertype");

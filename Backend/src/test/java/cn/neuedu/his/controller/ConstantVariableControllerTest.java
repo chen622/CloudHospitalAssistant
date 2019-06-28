@@ -66,13 +66,13 @@ public class ConstantVariableControllerTest {
     @Test
     public void   getType() throws Exception {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id",1447);
-        jsonObject.put("name","上2888下");
+        jsonObject.put("id",1446);
+        jsonObject.put("name","上下");
         jsonObject.put("type",11);
 
         String data = jsonObject.toString();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/delete/1447")
+        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/delete/1446")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(data)
                 .header(Constants.TOKEN_HEADER, token)

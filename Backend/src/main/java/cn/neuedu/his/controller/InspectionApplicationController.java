@@ -1,5 +1,7 @@
 package cn.neuedu.his.controller;
 
+import cn.neuedu.his.config.FastDFS.FastDFSFile;
+import cn.neuedu.his.config.FastDFS.FileManager;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
@@ -7,11 +9,16 @@ import cn.neuedu.his.util.CommonUtil;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONObject;
+import org.csource.common.NameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -212,5 +219,25 @@ public class InspectionApplicationController {
 
         inspectionApplicationService.entryApplicationResult(inspectionResult);
         return CommonUtil.successJson();
+    }
+
+    @PostMapping("/upload")
+    public JSONObject upload(@RequestParam("pic") MultipartFile pic) throws IOException {
+        // 获取文件后缀名
+        String ext = "jpg";
+        InputStream fileReader = pic.getInputStream();
+        byte[] bytes = new byte[10000000];//10M
+        int length = fileReader.read(bytes);
+        FastDFSFile file = new FastDFSFile(bytes,ext);
+        NameValuePair[] meta_list = new NameValuePair[4];
+        //设置文件相关属性
+        meta_list[0] = new NameValuePair("fileName", pic.getName());
+        meta_list[1] = new NameValuePair("fileLength", String.valueOf(length));
+        meta_list[2] = new NameValuePair("fileExt", ext);
+        meta_list[3] = new NameValuePair("fileAuthor", "WangLiang");
+        String filePath = FileManager.upload(file,meta_list);
+        //System.out.println(filePath);
+
+        return CommonUtil.successJson(filePath);
     }
 }

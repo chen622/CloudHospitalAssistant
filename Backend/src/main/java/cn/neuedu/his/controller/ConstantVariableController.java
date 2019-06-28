@@ -109,7 +109,7 @@ public class ConstantVariableController {
     }
 
     //todo clouds
-    @GetMapping("delete/{id}")
+    @GetMapping("/delete/{id}")
     public JSONObject deleteConstant(@PathVariable("id") Integer id, Authentication authentication) {
         try {
             PermissionCheck.isHospitalAdmin(authentication);

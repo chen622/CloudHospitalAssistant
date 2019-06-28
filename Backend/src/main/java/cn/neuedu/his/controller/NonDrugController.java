@@ -1,19 +1,15 @@
 package cn.neuedu.his.controller;
 
-import cn.neuedu.his.model.Drug;
 import cn.neuedu.his.model.NonDrug;
 import cn.neuedu.his.model.PaymentType;
 import cn.neuedu.his.service.DepartmentService;
 import cn.neuedu.his.service.NonDrugService;
 import cn.neuedu.his.util.CommonUtil;
-import cn.neuedu.his.util.ExcelListener;
 import cn.neuedu.his.util.PermissionCheck;
 import cn.neuedu.his.util.constants.ErrorEnum;
 
 import com.alibaba.excel.EasyExcelFactory;
-import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.ExcelWriter;
-import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSONObject;
@@ -25,10 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-
-import static org.apache.tomcat.util.file.ConfigFileLoader.getInputStream;
 
 
 /**
@@ -262,13 +255,12 @@ public class NonDrugController {
      * @return
      */
     @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("excelFile") MultipartFile excelFile) throws IOException {
+    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile) throws IOException {
 
         Integer error = 0;//错误数量
         Integer success = 0;//失败数量
 
-
-        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 2, NonDrug.class));
+        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 0, NonDrug.class));
         for (Object object : objects) {
             NonDrug importEntity = (NonDrug) object;
             try {
@@ -276,11 +268,11 @@ public class NonDrugController {
                 success++;
             } catch (Exception e) {
                 error++;
-                e.printStackTrace();
-                continue;
             }
         }
-
-        return CommonUtil.successJson();
+        JSONObject returnJSON = new JSONObject();
+        returnJSON.put("success",success);
+        returnJSON.put("error",error);
+        return CommonUtil.successJson(returnJSON);
     }
 }

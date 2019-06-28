@@ -40,27 +40,27 @@ public class DepartmentKindController {
 
     @PostMapping("/modify")
     public JSONObject modifyDepartmentKinds(@RequestBody JSONObject jsonObject){
-        return modifyDepartmentKinds(jsonObject);
+        return departmentKindRemote.modifyDepartmentKinds(jsonObject);
     }
 
     @PostMapping("/delete/{id}")
     public JSONObject deleteDepartmentKinds(@PathVariable("id") Integer id){
-        return deleteDepartmentKinds(id);
+        return departmentKindRemote.deleteDepartmentKinds(id);
     }
 
     @GetMapping("/getAll")
     public JSONObject getDepartmentKindList(){
-        return getDepartmentKindList();
+        return departmentKindRemote.getDepartmentKindList();
     }
 
     @GetMapping("/getDepartmentKindAndDepartment")
     public JSONObject getDepartmentKindAndDepartment(){
-        return getDepartmentKindAndDepartment();
+        return departmentKindRemote.getDepartmentKindAndDepartment();
     }
 
     @GetMapping("/getClinical")
     public JSONObject getClinical(){
-        return getClinical();
+        return departmentKindRemote.getClinical();
     }
 
 }
