@@ -183,7 +183,7 @@ public class ConstantVariableController {
 
         try {
             List<ConstantVariable> list = new ArrayList<>();
-            String type = "typeKind";
+            String type = null;
             Map<String, Integer> map = redisService.getMapAll("typeKind");
             for (Map.Entry<String, Integer> entry : map.entrySet()) {
                 if (entry.getValue().equals(typeId)) {
@@ -191,6 +191,8 @@ public class ConstantVariableController {
                     break;
                 }
             }
+            if (type.equals(null))
+                return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("类型"));
 
             map = redisService.getMapAll(type);
             ConstantVariable constantVariable;

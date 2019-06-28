@@ -53,7 +53,7 @@ public class ConstantVariableControllerTest {
     }
     @Test
     public void get() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/5")
+        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/4")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -72,7 +72,7 @@ public class ConstantVariableControllerTest {
 
         String data = jsonObject.toString();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/delete/1447")
+        mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(data)
                 .header(Constants.TOKEN_HEADER, token)
