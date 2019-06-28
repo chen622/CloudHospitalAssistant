@@ -533,6 +533,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer registrationId, Integer doctorId) throws Exception {
 
         Registration registration = registrationService.findById(registrationId);
+
         MedicalRecord record = medicalRecordService.getByRegistrationId(registrationId);
         if (record == null) {
             return CommonUtil.errorJson(ErrorEnum.E_805);
@@ -541,6 +542,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         if (!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
             return CommonUtil.errorJson(ErrorEnum.E_703);
+        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
+            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        }
         String check;
         for (Prescription p : prescriptions) {
             p.setCreateTime(new Date(System.currentTimeMillis()));
