@@ -32,8 +32,8 @@ public class GeneralController {
     public JSONObject ip() {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("port", InetAddress.getLocalHost().getHostAddress());
-            jsonObject.put("ip", environment.getProperty("local.server.port"));
+            jsonObject.put("ip", InetAddress.getLocalHost().getHostAddress());
+            jsonObject.put("port", environment.getProperty("local.server.port"));
             return CommonUtil.successJson(jsonObject);
         } catch (UnknownHostException e) {
             return CommonUtil.errorJson(ErrorEnum.E_500);

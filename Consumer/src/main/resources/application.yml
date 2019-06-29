@@ -1,17 +1,16 @@
 spring:
   application:
-    name: consumer
+    name: eureka-consumer
 
 
 eureka:
   instance:
-    appname: ${spring.application.name}
-    instanceId: ${spring.application.name}
+    hostname: his.ccm.ink
   client:
     fetchRegistry: true
     registerWithEureka: true
     enabled: true
     serviceUrl:
-      defaultZone: http://127.0.0.1:8001/eureka
+      defaultZone: http://127.0.0.1:8000/eureka
 server:
-  port: 8002
+  port: 8010

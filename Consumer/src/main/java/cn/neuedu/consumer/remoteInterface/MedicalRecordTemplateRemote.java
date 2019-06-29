@@ -22,6 +22,6 @@ public interface MedicalRecordTemplateRemote {
     @PostMapping("/MRT/updateMRT")
     JSONObject updateMedicalRecordTem(@RequestBody JSONObject object);
 
-    @GetMapping("/MRT/delete/{id}")
+    @PostMapping("/MRT/delete/{id}")
     JSONObject deleteMedicalRecordTemp(@PathVariable("id") Integer id);
 }

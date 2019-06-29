@@ -15,7 +15,7 @@
                     <a-collapse-panel v-for="mrt in mrts" :key="mrt.id">
                         <span slot="header" class="title">
                             {{mrt.name}}-{{mrt.level.name}}
-                            <a-button style="margin-left: 10px" @click="$emit('useTemplate',mrt)">使用</a-button>
+                            <a-button style="margin-left: 10px" @click="$emit('useTemplate',mrt);closeDrawer()">使用</a-button>
                         </span>
                         <a-row type="flex" align="top" justify="space-around">
                             <a-col span="10">
@@ -152,7 +152,6 @@
                 this.$api.post("/MRT/delete/" + mrt.id, null,
                     res => {
                         if (res.code === '100') {
-                            that.$store.commit('setLoading', false)
                             this.$emit("changeDrawer", false, null)
 
                             that.$message.info("修改完成后点击保存即可")
@@ -160,7 +159,11 @@
                         } else {
                             that.$message.error(res.msg)
                         }
+                        that.$store.commit('setLoading', false)
+
                     }, () => {
+                        that.$store.commit('setLoading', false)
+
                     })
 
             },

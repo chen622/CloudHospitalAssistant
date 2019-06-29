@@ -332,18 +332,14 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         if (record.getFirstDiagnose() == null || record.getFirstDiagnose().size() == 0) {
             return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("firstDiagnose"));
         }
-        //是否是确诊处置
-        if (isDisposal) {
-            //是否 是 有检查项目且没有确诊的情况
-            if (inspectionApplicationService.hasMedicalRecordInspectionNotDone(medicalRecordId)) {
-                if (record.getFinalDiagnose() == null)
-                    return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("finalDiagnose"));
-            }
-        }
+
         //是否能找到 挂号
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
+        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
+            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        }
         if (!isDisposal)
             registration.setState(Constants.SUSPECT);
 
@@ -537,6 +533,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject savePrescriptions(List<Prescription> prescriptions, Integer registrationId, Integer doctorId) throws Exception {
 
         Registration registration = registrationService.findById(registrationId);
+
         MedicalRecord record = medicalRecordService.getByRegistrationId(registrationId);
         if (record == null) {
             return CommonUtil.errorJson(ErrorEnum.E_805);
@@ -545,6 +542,9 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         if (!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
             return CommonUtil.errorJson(ErrorEnum.E_703);
+        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
+            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        }
         String check;
         for (Prescription p : prescriptions) {
             p.setCreateTime(new Date(System.currentTimeMillis()));
@@ -562,7 +562,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             Payment payment = setPrescriptionPayment(p, registration.getPatientId(), doctorId);
         }
 //        registration.setState(Constants.FINISH_DIAGNOSIS);
-        registrationService.update(registration);
+//        registrationService.update(registration);
         return CommonUtil.successJson();
     }
 

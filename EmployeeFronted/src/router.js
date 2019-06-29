@@ -100,6 +100,10 @@ export default new Router({
             path:'/constant',
             name:'constant',
             component:() => import('./views/admin/Constant')
-        },
+        },{
+            path:'/nondrug',
+            name:'nondrug',
+            component:() => import('./views/NonDrug')
+        }
     ]
 })

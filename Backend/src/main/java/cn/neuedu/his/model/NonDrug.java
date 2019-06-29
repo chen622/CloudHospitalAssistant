@@ -39,6 +39,16 @@ public class NonDrug extends BaseRowModel implements Serializable {
 
     private Department department;
 
+    private PaymentType paymentType;
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
     public Boolean getDelete() {
         return isDelete;
     }
@@ -75,6 +85,7 @@ public class NonDrug extends BaseRowModel implements Serializable {
      * 非药物费用类别
      */
     @Column(name = "fee_type_id")
+    @ExcelProperty(value = "feeTypeId",index = 6)
     private Integer feeTypeId;
 
     /**

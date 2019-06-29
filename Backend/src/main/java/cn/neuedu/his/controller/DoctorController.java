@@ -130,6 +130,8 @@ public class DoctorController {
             if (inside != null) {
                 list.addAll(inside);
             }
+        }else{
+            list.addAll(inside);
         }
         List<Registration> list2 = registrationService.getAllWaitingRegistration(doctorID, Constants.FIRST_DIAGNOSIS, time);
         if (list2 == null)

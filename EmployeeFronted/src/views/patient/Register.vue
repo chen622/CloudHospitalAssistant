@@ -178,6 +178,8 @@
                     if (!err) {
                         this.$confirm({
                             title: '是否需要病历本?',
+                            okText: '需要',
+                            cancelText: '不需要',
                             onOk () {
                                 that.sendRegister(true)
                             },

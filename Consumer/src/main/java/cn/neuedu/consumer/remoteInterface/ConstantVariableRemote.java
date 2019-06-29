@@ -12,4 +12,7 @@ public interface ConstantVariableRemote {
 
     @GetMapping("/constant_variable/getType/{type}")
     JSONObject getConstantByType(@PathVariable("type") Integer typeId);
+
+    @GetMapping("/constant_variable/getSettlementType")
+    JSONObject getSettlementType();
 }

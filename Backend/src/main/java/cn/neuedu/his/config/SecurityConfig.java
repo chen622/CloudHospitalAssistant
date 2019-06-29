@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/user/register").permitAll()
                 .antMatchers("/general/**").permitAll()
+                .antMatchers("/druid/**").permitAll()
                 .antMatchers("/wechat/login").permitAll()
                 .antMatchers("/non_drug/excelOut").permitAll()
                 .antMatchers("/actuator/info").permitAll()

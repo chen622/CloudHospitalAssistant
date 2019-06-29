@@ -1,5 +1,5 @@
 server:
-  port: 8078
+  port: 8020
 
 spring:
   application:
@@ -8,7 +8,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   redis:
     database: 1
-    host-name: 129.211.61.153
+    host-name: his.ccm.ink
     password: neuedu
     port: 6220
     timeout: 3000
@@ -18,31 +18,51 @@ spring:
         max-wait: 300
         max-idle: 8
         min-idle: 0
+  datasource:
+    username: root
+    password: NEUedu1118!@
+    url: jdbc:mysql://his.ccm.ink/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 下面为连接池的补充设置，应用到上面所有数据源中
+    # 初始化大小，最小，最大
+    initial-size: 5
+    min-idle: 5
+    max-active: 20
+    # 配置获取连接等待超时的时间
+    max-wait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    time-between-eviction-runs-millis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    min-evictable-idle-time-millis: 300000
+    validation-query: SELECT 1 FROM USER
+    test-while-idle: true
+    test-on-borrow: false
+    test-on-return: false
+    # 打开PSCache，并且指定每个连接上PSCache的大小
+    pool-prepared-statements: true
+    #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+    max-pool-prepared-statement-per-connection-size: 20
+    filters: stat,wall
+    use-global-data-source-stat: true
+    # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+    connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
 
 eureka:
   instance:
-    appname: ${spring.application.name}
-    instanceId: ${spring.application.name}
+    hostname: his.ccm.ink
   client:
-      fetchRegistry: true
-      registerWithEureka: true
-      enabled: true
-      serviceUrl:
-        defaultZone: http://127.0.0.1:8001/eureka
+    fetchRegistry: true
+    registerWithEureka: true
+    enabled: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8000/eureka
 
-druid:
-  url: jdbc:mysql://129.211.61.153/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
-  driver-class-name: com.mysql.cj.jdbc.Driver
-  username: root
-  password: NEUedu1118!@
-  initial-size: 1
-  min-idle: 1
-  max-active: 30
-  test-on-borrow: true
+
 mapper:
   not-empty: false
   identity: MYSQL
 mybatis:
   type-aliases-package: cn.neuedu.his.model
   mapper-locations: classpath:mapper/*.xml
-

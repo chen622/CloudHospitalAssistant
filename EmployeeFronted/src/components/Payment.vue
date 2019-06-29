@@ -8,7 +8,7 @@
             <template slot="name" slot-scope="text,record">
                 <span v-if="record.paymentType.type===1">{{record.application.nonDrug.name}}</span>
                 <span v-else-if="record.paymentType.type===2">{{record.prescription.drug.name}}</span>
-                <span v-else-if="record.paymentType.type===3">{{record.user.realName}} 医生</span>
+                <span v-else-if="record.paymentType.type===3">挂号医生：{{record.user.realName}}</span>
                 <span v-else>{{record.paymentType.name}}</span>
             </template>
             <template slot="time" slot-scope="text">

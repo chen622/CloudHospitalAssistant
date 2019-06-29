@@ -48,9 +48,9 @@ public class DoctorControllerTest {
                 .setHeaderParam("typ", Constants.TOKEN_TYPE)
                 .setIssuer(Constants.TOKEN_ISSUER)
                 .setAudience(Constants.TOKEN_AUDIENCE)
-                .setSubject("ccmccm")
+                .setSubject("ccm2")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
-                .claim("id", 1)
+                .claim("id", 12)
                 .claim("typeId", 602)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
@@ -256,7 +256,7 @@ public class DoctorControllerTest {
     public void getAllWaitingRegistration() throws  Exception{
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         ParsePosition pos = new ParsePosition(0);
-        Date time=formatter.parse("2019-05-31 10:10:47", pos);
+        Date time=formatter.parse("2019-06-28 10:10:47", pos);
         mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getAllRegistration")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
@@ -594,10 +594,10 @@ public class DoctorControllerTest {
         JSONObject object=new JSONObject();
         object.put("template",template);
         object.put("isDisposal", true);
-        object.put("registrationId", 1);
+        object.put("registrationId", 67);
         String  requestJson=object.toJSONString();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveInspection")
+        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/saveInspection")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)

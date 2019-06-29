@@ -1,14 +1,14 @@
 server:
-  port: 8001
+  port: 8000
 
 eureka:
   instance:
-    hostname: localhost
+    hostname: his.ccm.ink
   client:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
-      defaultZone: http://localhost:8001/eureka/
+      defaultZone: http://127.0.0.1:8000/eureka/
 ribbon:
   eureka:
     enabled: true

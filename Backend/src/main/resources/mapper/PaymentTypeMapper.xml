@@ -23,4 +23,8 @@
   <select id="getSmallPaymentType" resultMap="BaseResultMap">
     select * from payment_type where id>99;
   </select>
+
+  <select id="getByTypeId" resultMap="BaseResultMap">
+    select * from payment_type where type = #{typeId}
+  </select>
 </mapper>
