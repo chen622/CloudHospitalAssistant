@@ -221,6 +221,8 @@ public class InspectionApplicationController {
         return CommonUtil.successJson();
     }
 
+
+    //cloud
     @PostMapping("/upload")
     public JSONObject upload(@RequestParam("pic") MultipartFile pic) throws IOException {
         // 获取文件后缀名

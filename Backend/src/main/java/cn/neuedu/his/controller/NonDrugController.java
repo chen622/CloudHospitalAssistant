@@ -25,7 +25,6 @@ import java.util.List;
 
 
 /**
- *
  * Created by ccm on 2019/05/24.
  */
 @RestController
@@ -39,21 +38,21 @@ public class NonDrugController {
     DepartmentService departmentService;
 
     @PostMapping("/insert")
-    public JSONObject insertNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject insertNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
-        NonDrug nonDrug = JSONObject.toJavaObject(jsonObject,NonDrug.class);
+        NonDrug nonDrug = JSONObject.toJavaObject(jsonObject, NonDrug.class);
 
-        try{
+        try {
             nonDrugService.insertNonDrug(nonDrug);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("608"))
                 return CommonUtil.errorJson(ErrorEnum.E_608);
             else if (e.getMessage().equals("609"))
@@ -99,12 +98,12 @@ public class NonDrugController {
      */
 
     @GetMapping("/selectByName/{name}")
-    public JSONObject selectNonDrugByName(@PathVariable("name") String name, Authentication authentication){
+    public JSONObject selectNonDrugByName(@PathVariable("name") String name, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -113,7 +112,7 @@ public class NonDrugController {
             NonDrug nonDrug = nonDrugService.selectNonDrugUsingName(name);
             return CommonUtil.successJson(nonDrug);
 
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("608"))
                 return CommonUtil.errorJson(ErrorEnum.E_608);
             else
@@ -122,19 +121,19 @@ public class NonDrugController {
     }
 
     @GetMapping("/selectByCode/{code}")
-    public JSONObject selectNonDrugByCode(@PathVariable("code") String code, Authentication authentication){
+    public JSONObject selectNonDrugByCode(@PathVariable("code") String code, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         try {
             NonDrug nonDrug = nonDrugService.selectNonDrugUsingCode(code);
             return CommonUtil.successJson(nonDrug);
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("608"))
                 return CommonUtil.errorJson(ErrorEnum.E_608);
             else
@@ -143,19 +142,19 @@ public class NonDrugController {
     }
 
     @PostMapping("/delete/{id}")
-    public JSONObject deleteNonDrug(@PathVariable("id") Integer id, Authentication authentication){
+    public JSONObject deleteNonDrug(@PathVariable("id") Integer id, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
         try {
             nonDrugService.deleteNonDrug(id);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("608"))
                 return CommonUtil.errorJson(ErrorEnum.E_608);
             else
@@ -164,12 +163,12 @@ public class NonDrugController {
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication){
+    public JSONObject modifyNonDrug(@RequestBody JSONObject jsonObject, Authentication authentication) {
 
         //检查权限
         try {
             PermissionCheck.isHospitalAdmin(authentication);
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
 
@@ -177,7 +176,7 @@ public class NonDrugController {
             NonDrug nonDrug = JSONObject.toJavaObject(jsonObject, NonDrug.class);
             nonDrugService.modifyNonDrug(nonDrug);
             return CommonUtil.successJson();
-        }catch (RuntimeException e){
+        } catch (RuntimeException e) {
             if (e.getMessage().equals("609"))
                 return CommonUtil.errorJson(ErrorEnum.E_609);
             else
@@ -189,16 +188,17 @@ public class NonDrugController {
      * 根据非药品名称来模糊查询
      * 根据非药品编码来模糊查询
      * 获取所有type和非药品目录
+     *
      * @param name
      * @param code
      * @param authentication
      * @return
      */
-    @GetMapping({"/getTypeAndNonDrug/name/{name}","/getTypeAndNonDrug/code/{code}",
-            "/getTypeAndNonDrug/nameAndCode/{name}/{code}","/getTypeAndNonDrug/"})
-    JSONObject getTypeAndNonDrug(@PathVariable(value = "name",required = false) String name, @PathVariable(value = "code",required = false) String code, Authentication authentication){
+    @GetMapping({"/getTypeAndNonDrug/name/{name}", "/getTypeAndNonDrug/code/{code}",
+            "/getTypeAndNonDrug/nameAndCode/{name}/{code}", "/getTypeAndNonDrug/"})
+    JSONObject getTypeAndNonDrug(@PathVariable(value = "name", required = false) String name, @PathVariable(value = "code", required = false) String code, Authentication authentication) {
 
-        Boolean auth;
+        boolean auth;
         Integer departmentId = null;
         //判断权限
         try {
@@ -207,21 +207,37 @@ public class NonDrugController {
         } catch (Exception e) {
             auth = false;
         }
+        List<PaymentType> paymentTypes = nonDrugService.getTypeAndNonDrug(name, code, auth);
+
+        return CommonUtil.successJson(paymentTypes);
+    }
 
 
-        List<PaymentType> paymentTypes = nonDrugService.getTypeAndNonDrug(name,code,auth);
+    @GetMapping("/getNonDrugByType")
+    JSONObject getNonDrugByType(Authentication authentication) {
+        boolean auth;
+        Integer departmentId = null;
+        //判断权限
+        try {
+            PermissionCheck.isHosptialAdimReturnUserId(authentication);
+            auth = true;
+        } catch (Exception e) {
+            auth = false;
+        }
+        List<PaymentType> paymentTypes = nonDrugService.getNonDrugByType(auth);
 
         return CommonUtil.successJson(paymentTypes);
     }
 
     /**
      * 下载xlsx
+     *
      * @param response
      * @return
      * @throws IOException
      */
     @GetMapping("/excelOut")
-    public JSONObject excelOut( HttpServletResponse response) throws IOException {
+    public JSONObject excelOut(HttpServletResponse response) throws IOException {
 
         response.setContentType("application/force-download");
         response.setHeader("Content-Disposition", "attachment;fileName=" + "nondrug.xlsx");
@@ -251,6 +267,7 @@ public class NonDrugController {
 
     /**
      * 读取excel
+     *
      * @param excelFile
      * @return
      */
@@ -260,7 +277,7 @@ public class NonDrugController {
         Integer error = 0;//错误数量
         Integer success = 0;//失败数量
 
-        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(),new Sheet(1, 0, NonDrug.class));
+        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(), new Sheet(1, 0, NonDrug.class));
         for (Object object : objects) {
             NonDrug importEntity = (NonDrug) object;
             try {
@@ -271,8 +288,8 @@ public class NonDrugController {
             }
         }
         JSONObject returnJSON = new JSONObject();
-        returnJSON.put("success",success);
-        returnJSON.put("error",error);
+        returnJSON.put("success", success);
+        returnJSON.put("error", error);
         return CommonUtil.successJson(returnJSON);
     }
 }

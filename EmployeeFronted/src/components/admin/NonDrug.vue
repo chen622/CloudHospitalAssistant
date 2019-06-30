@@ -66,17 +66,17 @@
                 </a-button>
             </a-row>
 
-            <a-modal v-if="portNonDrug" :visible="portNonDrug" :footer="false">
-                <a-upload v-if="portNonDrug == 1" name="file" :multiple="true"
-                          action="http://localhost:8078/non_drug/excelIn" :headers="{
+            <a-modal v-if="portNonDrug" :visible="portNonDrug" :footer="false" @cancel="portNonDrug = false">
+                <a-upload name="file" :multiple="true"
+                          :action="$url+'/non_drug/excelIn'" :headers="{
                     authorization: sessionStorage.getItem('token')}" @change="handleChange"
-                :beforeUpload="beforeUpload"
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          :beforeUpload="beforeUpload"
+                          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 >
-                <a-button>
-                    <a-icon type="upload"/>
-                    Click to Upload
-                </a-button>
+                    <a-button>
+                        <a-icon type="upload"/>
+                        Click to Upload
+                    </a-button>
                 </a-upload>
             </a-modal>
 
