@@ -33,8 +33,9 @@
                     <template slot="check" slot-scope="text,record">{{record.application.done?'已完成':(text?'已缴费':'未缴费')}}
                     </template>
                     <span slot="action" slot-scope="text, record">
-                       <a-upload v-if="!record.application.done" name="smfile" :multiple="true" accept="image/*"
-                                 action="/api/upload"
+                       <a-upload v-if="!record.application.done" name="pic" :multiple="true" accept="image/*"
+                                 :action="$url+'/inspection_application/upload'"
+                                 :headers="header"
                                  @change="uploading($event,record)">
                            <a>结果录入</a>
                        </a-upload>
@@ -66,11 +67,12 @@
 
     export default {
         name: 'inspection',
-        data () {
+        data() {
             return {
                 form: this.$form.createForm(this),
                 visible: false,
                 id: null,
+                header: {authorization: sessionStorage.getItem('token')},
                 columns: [
                     {
                         title: '病历号',
@@ -116,15 +118,15 @@
             this.getPatient()
         },
         methods: {
-            showResultMethod (results) {
+            showResultMethod(results) {
                 this.showResult = true
                 this.results = results
             },
-            changeState (record) {
+            changeState(record) {
                 this.visible = true
                 this.currentPatient = record
             },
-            handleOk () {
+            handleOk() {
                 this.visible = false
                 let that = this
                 that.$api.post("/inspection_application/confirmApplication/" + this.currentPatient.application.id, null,
@@ -139,7 +141,7 @@
                     }, () => {
                     })
             },
-            handleCancel () {
+            handleCancel() {
                 this.visible = false
                 let that = this
                 that.$api.post("/inspection_application/cancelApplication/" + this.currentPatient.application.id, null,
@@ -153,7 +155,7 @@
                     }, () => {
                     })
             },
-            uploading (event, record) {
+            uploading(event, record) {
                 if (event.file.status === 'done') {
                     let data = {
                         picture: event.file.response.data.url,
@@ -164,7 +166,7 @@
                 }
 
             },
-            submitRecord (data) {
+            submitRecord(data) {
                 let that = this
                 this.$api.post("/inspection_application/entryApplicationResult", data,
                     res => {
@@ -178,7 +180,7 @@
                         that.$message.error("网络错误")
                     })
             },
-            onSearch (value) {
+            onSearch(value) {
                 let that = this
                 if (value === null || value === '') {
                     this.$api.get("/inspection_application/selectPatientInformationByNameOrId/", null,
@@ -203,7 +205,7 @@
                         })
                 }
             },
-            getPatient () {
+            getPatient() {
                 let that = this
                 this.$api.get("/inspection_application/selectPatientInformationByNameOrId", null,
                     res => {

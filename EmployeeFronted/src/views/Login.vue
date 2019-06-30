@@ -73,15 +73,16 @@
                 let that = this
                 this.form.validateFields((err) => {
                         if (!err) {
-                            // eslint-disable-next-line
-                            let captcha1 = new TencentCaptcha('2073984460', function (res) {
-                                if (res.ret === 0) {
-                                    // console.log(res)
-                                    that.login()
-
-                                }
-                            })
-                            captcha1.show()
+                            // // eslint-disable-next-line
+                            // let captcha1 = new TencentCaptcha('2073984460', function (res) {
+                            //     if (res.ret === 0) {
+                            //         // console.log(res)
+                            //         that.login()
+                            //
+                            //     }
+                            // })
+                            // captcha1.show()
+                            that.login()
                         }
                     },
                 );
