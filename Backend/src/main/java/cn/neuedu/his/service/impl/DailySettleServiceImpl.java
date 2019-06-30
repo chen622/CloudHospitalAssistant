@@ -7,6 +7,8 @@ import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.service.*;
 import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.inter.AbstractService;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -139,6 +141,44 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
             throw new IndexOutOfBoundsException();
 
         return endDate;
+    }
+
+    /**
+     * 日结历史记录
+     * @param dailySettleId
+     * @return
+     */
+    @Override
+    public JSONArray getDailyHistory(Integer dailySettleId) {
+        ArrayList<Invoice> invoiceList = invoiceService.findInvoiceInfoByDailySettle(dailySettleId);
+        if (invoiceList.isEmpty())
+            return null;
+        JSONArray result = new JSONArray();
+        for(Invoice invoice: invoiceList) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("invoice", invoice);
+            jsonObject.put("number", 1);
+            jsonObject.put("shouldNumber", 1);
+            if (invoice.getPayment().getState().equals(Constants.HAVE_RETREAT))
+                jsonObject.put("state", "red");
+            else
+                jsonObject.put("state", "valid");
+            result.add(jsonObject);
+            if (!invoice.getAnewAmount().equals(0)) {
+                JSONObject object = new JSONObject();
+                object.put("invoice", invoice);
+                object.put("number", invoice.getAnewAmount());
+                object.put("state", "anew");
+                object.put("shouldNumber", invoice.getAnewAmount() * 2);
+                result.add(object);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ArrayList<DailySettle> findByAdminId(Integer adminId) {
+        return dailySettleMapper.getByAdminId(adminId);
     }
 
 

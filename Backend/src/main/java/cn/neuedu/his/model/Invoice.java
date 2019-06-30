@@ -34,6 +34,8 @@ public class Invoice {
 
     private ArrayList<Payment> paymentList;
 
+    private Payment payment;
+
     /**
      * @return id
      */
@@ -114,5 +116,13 @@ public class Invoice {
 
     public void setOperatorId(Integer operatorId) {
         this.operatorId = operatorId;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 }

@@ -12,4 +12,5 @@ import java.util.Date;
 public interface DailySettleMapper extends MyMapper<DailySettle> {
     Date selectLastTime(@Param("adminId") Integer adminId);
     ArrayList<DailySettle> selectNotCheckByAdminId(@Param("adminId") Integer adminId);
+    ArrayList<DailySettle> getByAdminId(@Param("adminId") Integer adminId);
 }

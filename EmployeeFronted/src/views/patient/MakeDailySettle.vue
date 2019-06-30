@@ -68,11 +68,38 @@
                                     </a-row>
                                 </a-card>
                             </div>
-
-
                         </a-tab-pane>
 
                         <a-tab-pane tab="日结历史查询" key="2" class="tab">
+                            <a-row>
+                                <a-col span="4" style="margin-right: 20px">
+                                    <a-menu
+                                            mode="vertical"
+                                            v-for="(i, index) in allSettle" :key="i.id"
+                                            @click="handleClick(i)"
+                                    >
+                                        <a-menu-item :key="index" >
+                                            {{i.endDate | formatTime}}
+                                        </a-menu-item>
+                                    </a-menu>
+                                </a-col>
+                                <a-col span="19" style="margin-left: 10px">
+                                    <a-table :columns="historyColumns" :dataSource="historyData" :loading="load.tableLoad">
+                                        <a slot="name" slot-scope="text" href="javascript:;">{{text}}</a>
+                                        <template slot="state" slot-scope="text">
+                                            <a-tag color="red" style="font-size:15px"
+                                                   v-if="text=='red'">红冲
+                                            </a-tag>
+                                            <a-tag color="blue" style="font-size:15px"
+                                                   v-if="text=='valid'">有效
+                                            </a-tag>
+                                            <a-tag color="orange" style="font-size:15px"
+                                                   v-if="text=='anew'">重打
+                                            </a-tag>
+                                        </template>
+                                    </a-table>
+                                </a-col>
+                            </a-row>
                         </a-tab-pane>
                     </a-tabs>
                 </a-card>
@@ -85,20 +112,68 @@
 
     import moment from 'moment'
     import ARow from "ant-design-vue/es/grid/Row";
+    import ACol from "ant-design-vue/es/grid/Col";
 
     export default {
-        components: {ARow},
+        components: {ACol, ARow},
         data: () => ({
             time: {
                 timeFormat: 'YYYY-MM-DD hh:mm:ss'
             },
             load: {
-                cardLoad: false
+                cardLoad: false,
+                tableLoad: false
             },
             startTime: null,
             endTime: new moment(),
             currentAdmin: null,
             settle: null,
+            allSettle: [],
+            currentSettle: null,
+            historyData: [],
+            historyColumns: [{
+                title: '发票号',
+                dataIndex: 'invoice.id',
+                key: 'invoice.id',
+                scopedSlots: {customRender: 'invoice.id'}
+            },
+                {
+                    title: '发票张数',
+                    dataIndex: 'number',
+                    key: 'number',
+                    scopedSlots: {customRender: 'number'}
+                },
+                {
+                    title: '应收张数',
+                    dataIndex: 'shouldNumber',
+                    key: 'shouldNumber',
+                    scopedSlots: {customRender: 'shouldNumber'}
+                },
+                {
+                    title: '患者姓名',
+                    dataIndex: 'invoice.payment.patient.realName',
+                    key: 'invoice.payment.patient.realName',
+                    scopedSlots: {customRender: 'invoice.payment.patient.realName'}
+                },
+                {
+                    title: '发票总额',
+                    dataIndex: 'invoice.priceAmount',
+                    key: 'invoice.priceAmount',
+                    scopedSlots: {customRender: 'invoice.priceAmount'}
+                },
+                {
+                    title: '结算类别',
+                    dataIndex: 'invoice.payment.stateVariable.name',
+                    key: 'invoice.payment.stateVariable.name',
+                    scopedSlots: {customRender: 'invoice.payment.stateVariable.name'}
+                },
+                {
+                    title: '状态',
+                    dataIndex: 'state',
+                    key: 'state',
+                    scopedSlots: {customRender: 'state'}
+                },
+            ]
         }),
         filters: {
             formatTime: function (value) {
@@ -123,6 +198,18 @@
                 this.$api.get("/daily_settle/initialize", null, res => {
                     if (res.code === '100') {
                         that.currentAdmin = res.data
+                    } else if (res.code === '502') {
+                        that.$message.error(res.message)
+                    }
+                }, () => {
+                    that.$message.error("网络异常")
+                })
+            },
+            initializeChoice() {
+                let that = this
+                this.$api.get("/daily_settle/getAll", null, res => {
+                    if (res.code === '100') {
+                        that.allSettle = res.data;
                     } else if (res.code === '502') {
                         that.$message.error(res.message)
                     }
@@ -170,10 +257,30 @@
                     that.$message.error("网络异常")
                     that.load.cardLoad = false
                 })
-            }
+            },
+            searchHistory() {
+                let that = this
+                this.load.tableLoad = true
+                this.$api.get("/daily_settle/dailyHistory/" + this.currentSettle.id, null, res => {
+                    if (res.code === '100') {
+                        that.historyData = res.data
+                    } else if (res.code === '502') {
+                        that.$message.error(res.message)
+                    }
+                    that.load.tableLoad = false
+                }, () => {
+                    that.$message.error("网络异常")
+                    that.load.tableLoad = false
+                })
+            },
+            handleClick(s) {
+                this.currentSettle = s
+                this.searchHistory()
+            },
         },
         mounted() {
             this.initialize()
+            this.initializeChoice()
         }
     }
 </script>

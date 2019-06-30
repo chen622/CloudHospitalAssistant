@@ -3,6 +3,7 @@ import cn.neuedu.his.model.Invoice;
 import cn.neuedu.his.model.Payment;
 import cn.neuedu.his.util.inter.Service;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,4 +30,5 @@ public interface InvoiceService extends Service<Invoice> {
     Integer getNormalInvoiceNumber(Date start, Date end);
     Integer getAnewInvoiceNumber(Date start, Date end);
     ArrayList<Invoice> findInvoiceAndPaymentByUser(Integer userId, Date start, Date end);
+    ArrayList<Invoice> findInvoiceInfoByDailySettle(@Param("dailySettleId") Integer dailySettleId);
 }

@@ -20,4 +20,5 @@ public interface InvoiceMapper extends MyMapper<Invoice> {
     Integer getNormalInvoiceNumber(@Param("start") Date start, @Param("end")Date end);
     Integer getAnewInvoiceNumber(@Param("start") Date start, @Param("end")Date end);
     ArrayList<Invoice> getInvoiceAndPaymentByUser(@Param("userId") Integer userId, @Param("start") Date start, @Param("end")Date end);
+    ArrayList<Invoice> getInvoiceInfoByDailySettle(@Param("dailySettleId") Integer dailySettleId);
 }

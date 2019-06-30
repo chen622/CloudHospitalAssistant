@@ -68,6 +68,10 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
 
         inspectionApplication.setDone(true);
         this.update(inspectionApplication);
+
+        Payment payment = paymentService.findAllByItemAndPaymentType(inspectionApplication.getId(), inspectionApplication.getFeeTypeId()).get(0);
+        payment.setState(Constants.HAVE_COMPLETED_PAID);
+        paymentService.update(payment);
     }
 
     @Override
