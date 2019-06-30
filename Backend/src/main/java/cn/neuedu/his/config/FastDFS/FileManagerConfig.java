@@ -14,5 +14,5 @@ public interface FileManagerConfig extends Serializable {
 
     public static final String TRACKER_NGNIX_PORT = "";
 
-    public static final String CLIENT_CONFIG_FILE = "fdfs_client.conf";
+    public static final String CLIENT_CONFIG_FILE = "fs_client.conf";
 }

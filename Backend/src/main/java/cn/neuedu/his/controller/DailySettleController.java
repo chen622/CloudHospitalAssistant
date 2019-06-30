@@ -64,6 +64,7 @@ public class DailySettleController {
 
     /**
      * 保存日结单，并冻结payment
+     *
      * @param jsonObject
      * @param authentication
      * @return
@@ -83,6 +84,7 @@ public class DailySettleController {
 
     /**
      * 财务管理员获得存储的日结单信息
+     *
      * @param adminId
      * @param authentication
      * @return
@@ -116,6 +118,7 @@ public class DailySettleController {
 
     /**
      * 核对日结信息
+     *
      * @param settleId
      * @param authentication
      * @return
@@ -140,9 +143,9 @@ public class DailySettleController {
         return CommonUtil.successJson();
     }
 
-
     /**
-     * 获取前次日结截止时间及所有收费员（初始化页面）
+     * 获取收费员（初始化页面）
+     *
      * @param authentication
      * @return
      */
@@ -162,4 +165,41 @@ public class DailySettleController {
         return CommonUtil.successJson(user);
     }
 
+    /**
+     * 获取日结历史信息
+     * @param dailySettleId
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/dailyHistory/{dailySettleId}")
+    public JSONObject searchDailyHistory(@PathVariable("dailySettleId") Integer dailySettleId, Authentication authentication) {
+        try {
+            PermissionCheck.getIdByPaymentAdmin(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        return CommonUtil.successJson(dailySettleService.getDailyHistory(dailySettleId));
+    }
+
+    /**
+     * 获取收费员所有日结信息
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getAll")
+    public JSONObject getAllByAdmin(Authentication authentication) {
+        Integer admin;
+        try {
+            admin = PermissionCheck.getIdByPaymentAdmin(authentication);
+        } catch (Exception e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+
+        ArrayList<DailySettle> settleList = dailySettleService.findByAdminId(admin);
+        if (settleList.isEmpty())
+            settleList = null;
+
+        return CommonUtil.successJson(settleList);
+    }
 }

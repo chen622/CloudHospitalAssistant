@@ -2,6 +2,8 @@ package cn.neuedu.his.service;
 
 import cn.neuedu.his.model.DailySettle;
 import cn.neuedu.his.util.inter.Service;
+import com.alibaba.fastjson.JSONArray;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,4 +17,6 @@ public interface DailySettleService extends Service<DailySettle> {
     void makeSettleTable(DailySettle dailySettle);
     ArrayList<DailySettle> getSettleInfo(Integer admin);
     void checkSettleTable(Integer checkId, Integer settleId) throws IllegalArgumentException;
+    JSONArray getDailyHistory(Integer dailySettleId);
+    ArrayList<DailySettle> findByAdminId(@Param("adminId") Integer adminId);
 }

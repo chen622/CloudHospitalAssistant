@@ -305,4 +305,9 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     public ArrayList<Invoice> findInvoiceAndPaymentByUser(Integer userId, Date start, Date end) {
         return invoiceMapper.getInvoiceAndPaymentByUser(userId, start, end);
     }
+
+    @Override
+    public ArrayList<Invoice> findInvoiceInfoByDailySettle(Integer dailySettleId) {
+        return invoiceMapper.getInvoiceInfoByDailySettle(dailySettleId);
+    }
 }

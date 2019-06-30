@@ -100,5 +100,53 @@
           and created_date &lt; #{end}
     </select>
 
+    <resultMap id="invoiceAndPatientAndPayment" type="cn.neuedu.his.model.Invoice">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price_amount" jdbcType="DECIMAL" property="priceAmount"/>
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="anew_amount" jdbcType="INTEGER" property="anewAmount"/>
+        <result column="again_amount" jdbcType="INTEGER" property="againAmount"/>
+        <result column="daily_settle_id" jdbcType="INTEGER" property="dailySettleId"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <association property="payment" javaType="cn.neuedu.his.model.Payment" column="id"
+                     select="getPaymentBySettle"/>
+    </resultMap>
+
+    <resultMap id="paymentBySettle" type="cn.neuedu.his.model.Payment">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="unit_price" jdbcType="DECIMAL" property="unitPrice"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="operator_id" jdbcType="INTEGER" property="operatorId"/>
+        <result column="patient_id" jdbcType="INTEGER" property="patientId"/>
+        <result column="settlement_type_id" jdbcType="INTEGER" property="settlementTypeId"/>
+        <result column="payment_type_id" jdbcType="INTEGER" property="paymentTypeId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="invoice_id" jdbcType="INTEGER" property="invoiceId"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="project_operator_id" jdbcType="INTEGER" property="projectOperatorId"/>
+        <result column="is_frozen" jdbcType="BIT" property="isFrozen"/>
+        <result column="doctor_id" jdbcType="INTEGER" property="doctorId"/>
+        <association property="stateVariable"
+                     resultMap="cn.neuedu.his.mapper.ConstantVariableMapper.BaseResultMap"/>
+        <association property="patient" resultMap="cn.neuedu.his.mapper.PatientMapper.BaseResultMap"/>
+    </resultMap>
+
+    <select id="getInvoiceInfoByDailySettle" resultMap="invoiceAndPatientAndPayment">
+        select *
+        from invoice
+        where daily_settle_id = #{dailySettleId}
+        order by created_date desc
+    </select>
+
+    <select id="getPaymentBySettle" resultMap="paymentBySettle">
+        select p.*, p2.*, c.*
+        from payment p
+                 join patient p2 on p.patient_id = p2.id
+                 join constant_variable c on p.settlement_type_id = c.id
+        where p.invoice_id = #{id}
+        limit 1
+    </select>
+
 
 </mapper>
