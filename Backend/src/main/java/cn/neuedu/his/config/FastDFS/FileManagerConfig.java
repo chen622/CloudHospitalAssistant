@@ -10,7 +10,7 @@ public interface FileManagerConfig extends Serializable {
 
     public static final String SEPARATOR = "/";
 
-    public static final String TRACKER_NGNIX_ADDR = "192.168.43.43";
+    public static final String TRACKER_NGNIX_ADDR = "118.24.148.12";
 
     public static final String TRACKER_NGNIX_PORT = "";
 
