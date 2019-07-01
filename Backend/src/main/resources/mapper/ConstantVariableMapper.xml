@@ -1,46 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.ConstantVariableMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.ConstantVariable">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.ConstantVariable">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
 
 
-  <!-- 获得大类（type 0） -->
-  <select id="getPrimaryType" resultMap="BaseResultMap">
-    select *
-    from constant_variable
-    where type = 0
-  </select>
+    <!-- 获得大类（type 0） -->
+    <select id="getPrimaryType" resultMap="BaseResultMap">
+        select *
+        from constant_variable
+        where type = 0
+    </select>
 
-  <select id="justifyPrimaryType" resultMap="BaseResultMap">
-    select *
-    from constant_variable
-    where type = 0 and id = #{id}
-  </select>
+    <select id="justifyPrimaryType" resultMap="BaseResultMap">
+        select *
+        from constant_variable
+        where type = 0
+          and id = #{id}
+    </select>
 
-  <!-- 获得部门类型-->
-  <select id="getDepartmentType" resultMap="BaseResultMap">
-    select *
-    from constant_variable
-    where type = 1
-  </select>
+    <!-- 获得部门类型-->
+    <select id="getDepartmentType" resultMap="BaseResultMap">
+        select *
+        from constant_variable
+        where type = 1
+    </select>
 
-  <select id="getConstantByName" resultMap="BaseResultMap">
-    select *
-    from constant_variable
-    where name = #{name} and  type = #{type}
-  </select>
+    <select id="getConstantByName" resultMap="BaseResultMap">
+        select *
+        from constant_variable
+        where name = #{name}
+          and type = #{type}
+    </select>
 
-  <select id="getConstantByType" resultMap="BaseResultMap">
-    select *
-    from constant_variable
-    where type = #{type}
-  </select>
-  
+    <select id="getConstantByType" resultMap="BaseResultMap">
+        select *
+        from constant_variable
+        where type = #{type}
+    </select>
+
 </mapper>

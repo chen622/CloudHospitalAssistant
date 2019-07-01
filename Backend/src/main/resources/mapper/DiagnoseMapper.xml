@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DiagnoseMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Diagnose">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="disease_id" jdbcType="INTEGER" property="diseaseId" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="is_major" jdbcType="BIT" property="isMajor" />
-    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
-    <association property="diseaseSecond" javaType="cn.neuedu.his.model.DiseaseSecond" column="disease_id" select="getD"/>
-  </resultMap>
-  <select id="getD" resultMap="cn.neuedu.his.mapper.DiseaseSecondMapper.BaseResultMap">
-    select * from disease_second where id=#{disease_id}
-  </select>
-  <delete id="deleteByMRT">
-    delete  from diagnose where is_template=true  and item_id=#{id}
-  </delete>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Diagnose">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="disease_id" jdbcType="INTEGER" property="diseaseId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_major" jdbcType="BIT" property="isMajor"/>
+        <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+        <association property="diseaseSecond" javaType="cn.neuedu.his.model.DiseaseSecond" column="disease_id"
+                     select="getD"/>
+    </resultMap>
+    <select id="getD" resultMap="cn.neuedu.his.mapper.DiseaseSecondMapper.BaseResultMap">
+        select *
+        from disease_second
+        where id = #{disease_id}
+    </select>
+    <delete id="deleteByMRT">
+        delete
+        from diagnose
+        where is_template = true
+          and item_id = #{id}
+    </delete>
 </mapper>

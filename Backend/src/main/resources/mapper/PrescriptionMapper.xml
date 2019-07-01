@@ -1,78 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.PrescriptionMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Prescription">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="usage_id" jdbcType="INTEGER" property="usageId" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="frequency" jdbcType="VARCHAR" property="frequency" />
-    <result column="drug_id" jdbcType="INTEGER" property="drugId" />
-    <result column="amount" jdbcType="INTEGER" property="amount" />
-    <result column="days" jdbcType="INTEGER" property="days" />
-    <result column="use_amount" jdbcType="VARCHAR" property="useAmount" />
-    <result column="note" jdbcType="VARCHAR" property="note" />
-    <result column="need_skin_test" jdbcType="BIT" property="needSkinTest" />
-    <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
-    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Prescription">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="usage_id" jdbcType="INTEGER" property="usageId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="frequency" jdbcType="VARCHAR" property="frequency"/>
+        <result column="drug_id" jdbcType="INTEGER" property="drugId"/>
+        <result column="amount" jdbcType="INTEGER" property="amount"/>
+        <result column="days" jdbcType="INTEGER" property="days"/>
+        <result column="use_amount" jdbcType="VARCHAR" property="useAmount"/>
+        <result column="note" jdbcType="VARCHAR" property="note"/>
+        <result column="need_skin_test" jdbcType="BIT" property="needSkinTest"/>
+        <result column="skin_test_result" jdbcType="BIT" property="skinTestResult"/>
+        <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
 
-    <association property="drug" javaType="cn.neuedu.his.model.Drug" select="getDrug" column="drug_id"/>
-    <association property="payment" javaType="cn.neuedu.his.model.Payment" select="getPayment" column="{id=id,type=fee_type_id}"/>
-  </resultMap>
+        <association property="drug" javaType="cn.neuedu.his.model.Drug" select="getDrug" column="drug_id"/>
+        <association property="payment" javaType="cn.neuedu.his.model.Payment" select="getPayment"
+                     column="{id=id,type=fee_type_id}"/>
+    </resultMap>
 
-  <delete id="deleteByTemplateId">
-    delete  from prescription where  item_id=#{templateId} and  is_template=true ;
-  </delete>
+    <delete id="deleteByTemplateId">
+        delete
+        from prescription
+        where item_id = #{templateId}
+          and is_template = true;
+    </delete>
 
-  <select id="getByMedicalRecordId" resultMap="BaseResultMap">
-        select * from prescription where is_template=false  and  item_id=#{id} ;
-  </select>
+    <select id="getByMedicalRecordId" resultMap="BaseResultMap">
+        select *
+        from prescription
+        where is_template = false
+          and item_id = #{id};
+    </select>
 
-  <select id="getDrug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap">
-    select * from  drug where  id=#{drug_id}  ;
-  </select>
+    <select id="getDrug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap">
+        select *
+        from drug
+        where id = #{drug_id};
+    </select>
 
-  <select id="getPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
-     select * from  payment where  item_id=#{id}  and  payment_type_id=#{type};
-  </select>
+    <select id="getPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
+        select *
+        from payment
+        where item_id = #{id}
+          and payment_type_id = #{type};
+    </select>
 
 
-  <resultMap id="prescriptionAndDrug" type="cn.neuedu.his.model.Prescription">
-    <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
-  </resultMap>
+    <resultMap id="prescriptionAndDrug" type="cn.neuedu.his.model.Prescription">
+        <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
+    </resultMap>
 
-  <select id="getPrescriptionAndDrug" resultMap="prescriptionAndDrug">
-    select p.*, d.* from prescription p join drug d on p.drug_id = d.id where p.id = #{id}
-  </select>
+    <select id="getPrescriptionAndDrug" resultMap="prescriptionAndDrug">
+        select p.*, d.*
+        from prescription p
+                 join drug d on p.drug_id = d.id
+        where p.id = #{id}
+    </select>
 
-  <select id="getAllPrescription" resultMap="BaseResultMap">
-    select *
-    from prescription
-  </select>
+    <select id="getAllPrescription" resultMap="BaseResultMap">
+        select *
+        from prescription
+    </select>
 
-  <resultMap id="prescriptionAndDrugByMedical" type="cn.neuedu.his.model.Prescription">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="usage_id" jdbcType="INTEGER" property="usageId" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="frequency" jdbcType="VARCHAR" property="frequency" />
-    <result column="drug_id" jdbcType="INTEGER" property="drugId" />
-    <result column="amount" jdbcType="INTEGER" property="amount" />
-    <result column="days" jdbcType="INTEGER" property="days" />
-    <result column="use_amount" jdbcType="VARCHAR" property="useAmount" />
-    <result column="note" jdbcType="VARCHAR" property="note" />
-    <result column="need_skin_test" jdbcType="BIT" property="needSkinTest" />
-    <result column="skin_test_result" jdbcType="BIT" property="skinTestResult" />
-    <result column="is_template" jdbcType="BIT" property="isTemplate"/>
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
-    <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
-  </resultMap>
+    <resultMap id="prescriptionAndDrugByMedical" type="cn.neuedu.his.model.Prescription">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="usage_id" jdbcType="INTEGER" property="usageId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="frequency" jdbcType="VARCHAR" property="frequency"/>
+        <result column="drug_id" jdbcType="INTEGER" property="drugId"/>
+        <result column="amount" jdbcType="INTEGER" property="amount"/>
+        <result column="days" jdbcType="INTEGER" property="days"/>
+        <result column="use_amount" jdbcType="VARCHAR" property="useAmount"/>
+        <result column="note" jdbcType="VARCHAR" property="note"/>
+        <result column="need_skin_test" jdbcType="BIT" property="needSkinTest"/>
+        <result column="skin_test_result" jdbcType="BIT" property="skinTestResult"/>
+        <result column="is_template" jdbcType="BIT" property="isTemplate"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="fee_type_id" jdbcType="INTEGER" property="feeTypeId"/>
+        <association property="drug" resultMap="cn.neuedu.his.mapper.DrugMapper.BaseResultMap"/>
+    </resultMap>
 
-  <select id="getPrescriptionAndDrugByMedical" resultMap="prescriptionAndDrugByMedical">
-    select p.*, d.* from prescription p join drug d on p.drug_id = d.id where p.item_id = #{medicalId} and is_template = false
-  </select>
+    <select id="getPrescriptionAndDrugByMedical" resultMap="prescriptionAndDrugByMedical">
+        select p.*, d.*
+        from prescription p
+                 join drug d on p.drug_id = d.id
+        where p.item_id = #{medicalId}
+          and is_template = false
+    </select>
 </mapper>

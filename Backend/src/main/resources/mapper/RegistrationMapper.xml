@@ -22,20 +22,30 @@
     </resultMap>
 
     <select id="getRegistrations" resultMap="BaseResultMap">
-        select  r.* from registration r
-         where  patient_id=#{id} ORDER BY r.create_time DESC
+        select r.*
+        from registration r
+        where patient_id = #{id}
+        ORDER BY r.create_time DESC
     </select>
 
     <select id="getStateName" resultType="String">
-        select name from constant_variable where id=#{id};
+        select name
+        from constant_variable
+        where id = #{id};
     </select>
 
     <select id="getPeriod" resultType="String">
-        select c.name from job_schedule j join constant_variable c on j.period=c.id where j.id=#{id};
+        select c.name
+        from job_schedule j
+                 join constant_variable c on j.period = c.id
+        where j.id = #{id};
     </select>
 
     <select id="getDoctorName" resultType="String">
-        select c.real_name from job_schedule j join user c on j.doctor_id=c.id where j.id=#{id};
+        select c.real_name
+        from job_schedule j
+                 join user c on j.doctor_id = c.id
+        where j.id = #{id};
     </select>
 
     <resultMap id="registrationWithPatient" type="cn.neuedu.his.model.Registration">
@@ -141,57 +151,79 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <id column="patient_id" jdbcType="INTEGER" property="patientId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <association property="medicalFee" javaType="INTEGER" select="medicalFee" column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
-        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee" column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
+        <association property="medicalFee" javaType="INTEGER" select="medicalFee"
+                     column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
+        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee"
+                     column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
     </resultMap>
 
     <select id="getPatient" resultMap="simpleOne">
-        select r.id,r.patient_id,r.create_time, #{medicalTypeId}  as  medicalTypeId,#{inspectionTypeId} as inspectionTypeId
+        select r.id,
+               r.patient_id,
+               r.create_time,
+               #{medicalTypeId}    as medicalTypeId,
+               #{inspectionTypeId} as inspectionTypeId
         from registration r
-        where (r.state=803 or r.state=804 or r.state=805 or r.state=806)
-        and r.doctor_id=#{doctorId}
-        and r.create_time  <![CDATA[>=]]> #{start}
-        and  r.create_time <![CDATA[<=]]> #{end}
+        where (r.state = 803 or r.state = 804 or r.state = 805 or r.state = 806)
+          and r.doctor_id = #{doctorId}
+          and r.create_time  <![CDATA[>=]]> #{start}
+          and r.create_time <![CDATA[<=]]> #{end}
         order by patient_id
     </select>
 
     <select id="getP" resultMap="cn.neuedu.his.mapper.PatientMapper.simpleOne">
-        select   p.id,p.sex,p.identity_id,p.real_name
-        from  patient p where p.id=#{id}
+        select p.id, p.sex, p.identity_id, p.real_name
+        from patient p
+        where p.id = #{id}
     </select>
 
 
     <resultMap id="getFee" type="cn.neuedu.his.model.Registration">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <association property="medicalFee" javaType="INTEGER" select="medicalFee" column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
-        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee" column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
+        <association property="medicalFee" javaType="INTEGER" select="medicalFee"
+                     column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
+        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee"
+                     column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
     </resultMap>
 
     <select id="getFee" resultMap="getFee">
-        select id,create_time ,#{medicalTypeId}  as  medicalTypeId,#{inspectionTypeId} as inspectionTypeId
-        from  registration
-        where  id=#{registrationId}
+        select id, create_time, #{medicalTypeId} as medicalTypeId, #{inspectionTypeId} as inspectionTypeId
+        from registration
+        where id = #{registrationId}
     </select>
 
     <select id="medicalFee" resultType="Integer">
-        select sum(quantity*unit_price) from payment where  item_id in (
-        select  id from prescription where
-        prescription.item_id in (select  m.id from medical_record m where  m.registration_id= #{registrationId} )
-        and  prescription.is_template=false
-        ) and payment_type_id in (
-            select  id from payment_type type where  type.type = #{medicalTypeId})
+        select sum(quantity * unit_price)
+        from payment
+        where item_id in (
+            select id
+            from prescription
+            where prescription.item_id in
+                  (select m.id from medical_record m where m.registration_id = #{registrationId})
+              and prescription.is_template = false
+        )
+          and payment_type_id in (
+            select id
+            from payment_type type
+            where type.type = #{medicalTypeId})
     </select>
 
 
     <select id="inspectionFee" resultType="Integer">
-        select sum(quantity*unit_price) from payment where  item_id in (
-        select  id from inspection_application i where
-        i.item_id in (select  m.id from medical_record m where  m.registration_id= #{registrationId} )
-        and  i.is_template=false
-        ) and payment_type_id in (
-            select  id from payment_type type where  type.type = #{inspectionTypeId})
+        select sum(quantity * unit_price)
+        from payment
+        where item_id in (
+            select id
+            from inspection_application i
+            where i.item_id in (select m.id from medical_record m where m.registration_id = #{registrationId})
+              and i.is_template = false
+        )
+          and payment_type_id in (
+            select id
+            from payment_type type
+            where type.type = #{inspectionTypeId})
     </select>
 
-    
+
 </mapper>
