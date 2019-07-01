@@ -34,4 +34,7 @@ public interface PatientRemote {
 
     @PostMapping("/patient/searchByMulti")
     JSONObject selectPatientByIdentifyId(@RequestBody JSONObject json);
+
+    @GetMapping("/patient/getRegistrations")
+    JSONObject getRegistrations();
 }

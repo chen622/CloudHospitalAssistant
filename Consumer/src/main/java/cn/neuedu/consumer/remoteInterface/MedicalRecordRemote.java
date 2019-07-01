@@ -41,4 +41,10 @@ public interface MedicalRecordRemote {
 
     @PostMapping("/medical_record/updateMR")
     JSONObject updateMR(@RequestBody JSONObject object);
+
+    @GetMapping("/medical_record/getAllRecordWithout")
+    JSONObject getAllRecordWithout();
+
+    @GetMapping("/medical_record/getDrugNonDrugAndResult/{id}")
+    JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id);
 }

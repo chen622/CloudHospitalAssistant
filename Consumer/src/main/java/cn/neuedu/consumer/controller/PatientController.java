@@ -73,4 +73,9 @@ public class PatientController {
     public JSONObject selectPatientByIdentifyId(@RequestBody JSONObject json) {
         return patientRemote.selectPatientByIdentifyId(json);
     }
+
+    @GetMapping("/getRegistrations")
+    public JSONObject getRegistrations() {
+        return patientRemote.getRegistrations();
+    }
 }
