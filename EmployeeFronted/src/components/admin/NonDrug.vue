@@ -66,7 +66,7 @@
                 </a-button>
             </a-row>
 
-            <a-modal v-if="portNonDrug" :visible="portNonDrug" :footer="false" @cancel="portNonDrug = false">
+            <a-modal v-if="portNonDrug=1" :visible="portNonDrug" :footer="false" @cancel="portNonDrug = false">
                 <a-upload name="file" :multiple="true"
                           :action="$url+'/non_drug/excelIn'" :headers="{
                     authorization: sessionStorage.getItem('token')}" @change="handleChange"
@@ -79,6 +79,10 @@
                     </a-button>
                 </a-upload>
             </a-modal>
+
+            <a-model v-if="portNonDrug=2" :visible="portNonDrug" :footer="false" @cancel="portNonDrug=false">
+                <a href="$url+'/non_drug/excelOut'" download="">下载</a>
+            </a-model>
 
             <a-table :columns="nonDrugColumns" :dataSource="nonDrugs" :pagination="{defaultPageSize: 10}"
                      rowKey="id"
@@ -338,6 +342,29 @@
                     delete target.editable
                     this.nonDrugs = newData
                 }
+            },
+            handleChange(info) {
+                if (info.file.status !== 'uploading') {
+                    console.log(info.file, info.fileList);
+                }
+                if (info.file.status === 'done') {
+                    this.$message.success(`${info.file.name} file uploaded successfully`);
+                } else if (info.file.status === 'error') {
+                    this.$message.error(`${info.file.name} file upload failed.`);
+                }
+            },
+            beforeUpload(file){
+                let that = this
+                return new Promise((resolve,reject) =>{
+                    const is2M = file.size / 1024 / 1024 < 2
+                    if (!is2M){
+                        that.$message.error("上传文件大小不能超过2M")
+                        return reject(false)
+                    }
+                    else {
+                        return resolve(true)
+                    }
+                })
             },
         }
         ,

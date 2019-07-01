@@ -22,11 +22,14 @@
                             </a-row>
 
                             <a-row style="padding: 2% 3% 0 3%; ">
-                                <template>
-                                    <a-table :columns="departmentColumns" :dataSource="departmentDataSource" :scroll="{ x: departmentScrollX, y:300}"
-                                             :rowKey="departmentDataSource => departmentDataSource.department.id" :loading="loading"/>
-                                </template>
+                                <a-table :columns="departmentColumns" :dataSource="departmentDataSource"
+                                         :scroll="{ x: departmentScrollX, y:300}"
+                                         :rowKey="departmentDataSource => departmentDataSource.department.id"
+                                         :loading="loading"/>
                             </a-row>
+                            <div v-if="showDepartment" style="height: 300px;width:100%">
+                                <v-chart :options="departmentBar"></v-chart>
+                            </div>
                         </a-tab-pane>
 
                         <a-tab-pane tab="门诊医生工作量统计" key="2">
@@ -44,12 +47,14 @@
                             </a-row>
 
                             <a-row style="padding: 2% 3% 0 3%; ">
-                                <template>
-                                    <a-table :columns="doctorColumns" :dataSource="doctorDataSource" :scroll="{ x: doctorScrollX, y:300}"
-                                             :rowKey="doctorDataSource => doctorDataSource.doctor.id" :loading="load"/>
-                                </template>
+                                <a-table :columns="doctorColumns" :dataSource="doctorDataSource"
+                                         :scroll="{ x: doctorScrollX, y:300}"
+                                         :rowKey="doctorDataSource => doctorDataSource.doctor.id" :loading="load"/>
                             </a-row>
 
+                            <div v-if="showDoctor" style="height: 300px;width:100%">
+                                <v-chart :options="doctorBar"></v-chart>
+                            </div>
                         </a-tab-pane>
                     </a-tabs>
                 </a-card>
@@ -60,14 +65,95 @@
 </template>
 
 <script>
+    import ECharts from 'vue-echarts'
+    import 'echarts/lib/chart/bar'
+    import 'echarts/lib/component/dataZoom'
+
     export default {
+        components: {
+            'v-chart': ECharts
+        },
         data: () => ({
+            departmentBar: {
+                title: {
+                    text: '工作量统计'
+                },
+                dataset: {
+                    // Provide data.
+                    source: []
+                },
+                // Declare X axis, which is a category axis, mapping
+                // to the first column by default.
+                xAxis: {
+                    name: '科室名称',
+                    type: 'category',
+                    axisLabel: {
+                        interval: 0
+                    }
+                },
+                // Declare Y axis, which is a value axis.
+                yAxis: {
+                    name: '金额',
+                    type: 'value'
+                },
+                dataZoom: [
+                    {
+                        type: 'slider',
+                        show: true,
+                        start: 0,
+                        end: 20,
+                        filterMode: 'filter'
+                    },
+                ],
+                // Declare several series, each of them mapped to a
+                // column of the dataset by default.
+                series: [{type: 'bar'}]
+            },
+            doctorBar: {
+                title: {
+                    text: '工作量统计'
+                },
+                dataset: {
+                    // Provide data.
+                    source: []
+                },
+                // Declare X axis, which is a category axis, mapping
+                // to the first column by default.
+                xAxis: {
+                    name: '医生名称',
+                    type: 'category',
+                    axisLabel: {
+                        interval: 0
+                    }
+                },
+                // Declare Y axis, which is a value axis.
+                yAxis: {
+                    name: '金额',
+                    type: 'value'
+                },
+                dataZoom: [
+                    {
+                        type: 'slider',
+                        show: true,
+                        start: 0,
+                        end: 20,
+                        filterMode: 'filter'
+                    },
+                ],
+                // Declare several series, each of them mapped to a
+                // column of the dataset by default.
+                series: [{type: 'bar'}]
+            },
             departmentColumns: [],
             doctorColumns: [],
             departmentDataSource: [],
+            showDepartment: false,
+            showDoctor: false,
             doctorDataSource: [],
-            departmentScrollX: null,
-            doctorScrollX: null,
+            departmentScrollX:
+                null,
+            doctorScrollX:
+                null,
             pickTime: [],
             pickTimeDoctor: [],
             value: null,
@@ -76,7 +162,7 @@
             timeFormat: 'YYYY-MM-DD hh:mm:ss',
         }),
         methods: {
-            getClinicDepartmentWorkLoad() {
+            getClinicDepartmentWorkLoad () {
                 if (this.pickTime[0] == null) {
                     this.$message.error("请选择时间")
                     return
@@ -87,24 +173,38 @@
                 }
                 let that = this
                 this.loading = true
+                that.$store.commit("setLoading", true)
                 this.$api.post("/department/departmentClinicWorkload", request, res => {
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
-                        that.departmentColumns.forEach(column=>{
+                        that.departmentColumns.forEach(column => {
                             if (column.dataIndex === 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.departmentScrollX = (that.departmentColumns.length + 1) * 100
                         that.departmentDataSource = res.data.data
-                    } else if (res.code === '502')
+                        let dataset = []
+                        res.data.data.forEach(work => {
+                            dataset.push([work.department.name, work.total])
+                        })
+                        that.departmentBar.dataset.source = dataset
+
+                        that.showDepartment = true
+
+                    } else {
                         that.$message.error(res.message)
+                    }
                     that.loading = false
+                    that.$store.commit("setLoading", false)
+
                 }, () => {
+                    that.$store.commit("setLoading", false)
                     that.loading = false
                 })
-            },
+            }
+            ,
 
-            getTechniqueDepartmentWorkLoad() {
+            getTechniqueDepartmentWorkLoad () {
                 if (this.pickTime[0] == null) {
                     this.$message.error("请选择时间")
                     return
@@ -115,31 +215,39 @@
                 }
                 this.loading = true
                 let that = this
+                that.$store.commit("setLoading",true)
+
                 this.$api.post("/department/departmentTechniqueWorkload", request, res => {
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
                         that.departmentDataSource = res.data.data
-                        that.departmentColumns.forEach(column=>{
+                        that.departmentColumns.forEach(column => {
                             if (column.dataIndex == 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.departmentScrollX = (that.departmentColumns.length + 1) * 100
-                    } else if (res.code === '502')
+                        let dataset = []
+                        res.data.data.forEach(work => {
+                            dataset.push([work.department.name, work.total])
+                        })
+                        that.departmentBar.dataset.source = dataset
+                        that.showDepartment = true
+                    } else
                         that.$message.error(res.message)
                     that.loading = false
+                    that.$store.commit("setLoading",false)
                 }, () => {
                     that.loading = false
+                    that.$store.commit("setLoading",false)
                 })
             },
-
-            onChange() {
+            onChange () {
                 if (this.value === "a")
                     this.getClinicDepartmentWorkLoad()
                 else if (this.value === "b")
                     this.getTechniqueDepartmentWorkLoad()
             },
-
-            getDoctor() {
+            getDoctor () {
                 if (this.pickTimeDoctor[0] == null) {
                     this.$message.error("请选择时间")
                     return
@@ -150,23 +258,33 @@
                 }
                 this.load = true
                 let that = this
+                that.$store.commit("setLoading",true)
                 this.$api.post("/doctor/getDoctorWorkload", request, res => {
                     if (res.code === '100') {
                         that.doctorColumns = res.data.columns
-                        that.doctorColumns.forEach(column=>{
+                        that.doctorColumns.forEach(column => {
                             if (column.dataIndex === 'total')
                                 column.sorter = (a, b) => a.total - b.total
                         })
                         that.doctorScrollX = (that.doctorColumns.length + 1) * 100
                         that.doctorDataSource = res.data.data
-                    } else if (res.code === '502')
+                        let dataset = []
+                        res.data.data.forEach(work => {
+                            dataset.push([work.doctor.realName, work.total])
+                        })
+                        that.doctorBar.dataset.source = dataset
+                        that.showDoctor = true
+                    } else
                         that.$message.error(res.message)
                     that.load = false;
+                    that.$store.commit("setLoading",false)
                 }, () => {
                     that.load = false;
+                    that.$store.commit("setLoading",false)
                 })
             }
-        },
+        }
+        ,
     }
 </script>
 
@@ -181,4 +299,8 @@
         text-align: center;
     }
 
+    .echarts {
+        width: 100%;
+        height: 100%;
+    }
 </style>

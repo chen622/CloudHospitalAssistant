@@ -233,10 +233,10 @@ public class InspectionApplicationController {
         FastDFSFile file = new FastDFSFile(bytes,ext);
         NameValuePair[] meta_list = new NameValuePair[4];
         //设置文件相关属性
-        meta_list[0] = new NameValuePair("fileName", pic.getName());
+        meta_list[0] = new NameValuePair("fileName", pic.getOriginalFilename());
         meta_list[1] = new NameValuePair("fileLength", String.valueOf(length));
         meta_list[2] = new NameValuePair("fileExt", ext);
-        meta_list[3] = new NameValuePair("fileAuthor", "WangLiang");
+        meta_list[3] = new NameValuePair("fileAuthor", "CCM");
         String filePath = FileManager.upload(file,meta_list);
         //System.out.println(filePath);
 
