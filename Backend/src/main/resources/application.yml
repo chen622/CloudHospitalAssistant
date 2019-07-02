@@ -57,7 +57,7 @@ eureka:
     registerWithEureka: true
     enabled: true
     serviceUrl:
-      defaultZone: http://127.0.0.1:8000/eureka
+      defaultZone: http://129.211.61.153:8000/eureka
 
 
 mapper:

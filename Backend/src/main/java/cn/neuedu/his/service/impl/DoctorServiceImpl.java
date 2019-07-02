@@ -31,8 +31,6 @@ import java.util.*;
 public class DoctorServiceImpl extends AbstractService<Doctor> implements DoctorService {
 
     @Autowired
-    private DoctorService doctorService;
-    @Autowired
     private DoctorMapper doctorMapper;
     @Autowired
     RegistrationService registrationService;
@@ -184,7 +182,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         medicalRecord.setId(null);
         medicalRecordService.save(medicalRecord);
-        doctorService.saveDiagnose(diagnoses, medicalRecord.getId(), false, false);
+        this.saveDiagnose(diagnoses, medicalRecord.getId(), false, false);
         scheduleService.update(schedule);
         return CommonUtil.successJson();
     }
@@ -220,7 +218,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
                     for (Diagnose d : dd) {
                         diagnoseService.deleteById(d.getId());
                     }
-                    doctorService.saveDiagnose(diagnoses, original.getId(), false, false);
+                    this.saveDiagnose(diagnoses, original.getId(), false, false);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -303,7 +301,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         }
         registration.setState(Constants.FINAL_DIAGNOSIS);
         registrationService.update(registration);
-        doctorService.saveDiagnose(diagnoses, medicalRecord.getId(), true, false);
+        this.saveDiagnose(diagnoses, medicalRecord.getId(), true, false);
         return CommonUtil.successJson();
     }
 
@@ -337,8 +335,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         Registration registration = registrationService.findById(registrationId);
         if (registration == null)
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("registrationId"));
-        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
-            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        if (registration.getState().equals(Constants.FINISH_DIAGNOSIS)) {
+            return CommonUtil.errorJson(ErrorEnum.E_809);
         }
         if (!isDisposal)
             registration.setState(Constants.SUSPECT);
@@ -434,7 +432,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         List<Prescription> prescriptionList = template.getPrescriptions();
 
         template.setCreatedById(doctorId);
-        template.setDepartmentId(doctorService.getDeptNo(doctorId));
+        template.setDepartmentId(this.getDeptNo(doctorId));
         if (template.getDepartmentId() == null)
             return CommonUtil.errorJson(ErrorEnum.E_610);
         inspectionTemplateService.save(template);
@@ -473,7 +471,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     }
 
     @Transactional
-    public void saveInspectionRelationship(Integer tId,Integer itemId,Integer type){
+    public void saveInspectionRelationship(Integer tId, Integer itemId, Integer type) {
         InspectionTemplateRelationship relationship = new InspectionTemplateRelationship();
         relationship.setTemplateId(tId);
         relationship.setItemType(type);
@@ -542,8 +540,8 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         if (!registration.getState().equals(Constants.FINAL_DIAGNOSIS))
             return CommonUtil.errorJson(ErrorEnum.E_703);
-        if(registration.getState().equals(Constants.FINISH_DIAGNOSIS)){
-            return  CommonUtil.errorJson(ErrorEnum.E_809);
+        if (registration.getState().equals(Constants.FINISH_DIAGNOSIS)) {
+            return CommonUtil.errorJson(ErrorEnum.E_809);
         }
         String check;
         for (Prescription p : prescriptions) {
@@ -572,7 +570,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         MedicalRecord medicalRecord = medicalRecordService.findById(medicalRecordId);
         template.setHerbal(!medicalRecord.getWesternMedicine());
         template.setCreatedById(doctorId);
-        template.setDepartmentId(doctorService.getDeptNo(doctorId));
+        template.setDepartmentId(this.getDeptNo(doctorId));
         drugTemplateService.save(template);
 
         for (Prescription p : template.getPrescriptions()) {
@@ -918,7 +916,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             detail.put("doctor", user);
             detail.put("invoiceNumber", invoiceService.getInvoiceNumberByAllDoctor(user.getId(), startDate, endDate));
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            detail.put("visitNumber", doctorService.registrationNum(user.getId(), format.format(startDate), format.format(endDate)));
+            detail.put("visitNumber", this.registrationNum(user.getId(), format.format(startDate), format.format(endDate)));
             BigDecimal totalFee = new BigDecimal(0);
             for (Integer key : feeMap.keySet()) {
                 totalFee = totalFee.add(feeMap.get(key));
@@ -1016,7 +1014,7 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
     public JSONObject getDoctorStatistics(Integer doctorId, String start, String end) {
 
         User user = userService.findById(doctorId);
-        Doctor doctor = doctorService.findById(doctorId);
+        Doctor doctor = this.findById(doctorId);
         if (doctor == null) {
             return CommonUtil.errorJson(ErrorEnum.E_617);
         }
