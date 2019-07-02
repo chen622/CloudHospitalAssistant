@@ -75,10 +75,8 @@
                                 <a-col span="4" style="margin-right: 20px">
                                     <a-menu
                                             mode="vertical"
-                                            v-for="(i, index) in allSettle" :key="i.id"
-                                            @click="handleClick(i)"
                                     >
-                                        <a-menu-item :key="index" >
+                                        <a-menu-item  v-for="i in allSettle" :key="i.id" @click="handleClick(i)">
                                             {{i.endDate | formatTime}}
                                         </a-menu-item>
                                     </a-menu>

@@ -84,4 +84,14 @@ public class MedicalRecordController {
     public JSONObject updateMR(@RequestBody JSONObject object) {
         return medicalRecordRemote.updateMR(object);
     }
+
+    @GetMapping("/getAllRecordWithout")
+    public JSONObject getAllRecordWithout() {
+        return medicalRecordRemote.getAllRecordWithout();
+    }
+
+    @GetMapping("/getDrugNonDrugAndResult/{id}")
+    public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id) {
+        return medicalRecordRemote.getDrugNonDrugAndResultByMedicalId(id);
+    }
 }

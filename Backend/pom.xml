@@ -93,7 +93,7 @@
             <version>4.1.6</version>
         </dependency>
 
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/net.oschina.zcx7878/fastdfs-client-java &ndash;&gt;-->
+        <!-- https://mvnrepository.com/artifact/net.oschina.zcx7878/fastdfs-client-java -->
         <dependency>
             <groupId>net.oschina.zcx7878</groupId>
             <artifactId>fastdfs-client-java</artifactId>
