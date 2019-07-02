@@ -55,12 +55,12 @@ public class FileManager implements FileManagerConfig {
      * @return fileAbsolutePath
      * @author Wang Liang
      */
-    public static String upload(FastDFSFile file,NameValuePair[] valuePairs) {
+    public static String upload(FastDFSFile file,NameValuePair[] valuePairs) throws RuntimeException {
         String[] uploadResults = null;
         try {
             uploadResults = storageClient.upload_file(file.getContent(),file.getExt(), valuePairs);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException();
         }
         String groupName = uploadResults[0];
         String remoteFileName = uploadResults[1];
