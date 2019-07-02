@@ -15,83 +15,42 @@
                 {{new Date(text).toLocaleString()}}
             </template>
             <template slot="action" slot-scope="text,record">
-                <div v-if="record.paymentType.type!==3">
-                    <!--形成订单-->
-                    <div v-if="record.state===1201" class="action">
-                        <a @click="selectedRowKeys = [record.id];showPay=true">缴费</a>
-                    </div>
+
+                <span v-if="record.paymentType.type!==3&&record.state===1201">
+                                        <a-divider type="vertical"></a-divider>
+                    <a @click="selectedRowKeys = [record.id];showPay=true">缴费</a>
+                </span>
+
+                <span v-if="showAgain(record)">
+                    <a-divider type="vertical"></a-divider>
+                    <a-popconfirm title='确定补打吗?' @confirm="againInvoice(record.invoiceId)">
+                        <a>补打发票</a>
+                    </a-popconfirm>
+                </span>
+
+                <span v-if="showAgain(record)">
+                    <a-divider type="vertical"></a-divider>
+
+                    <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
+                        <a>重打发票</a>
+                    </a-popconfirm>
+                </span>
+
+                <span v-if="showRetreat(record)">
+                    <a-divider type="vertical"></a-divider>
+
+                    <a-popconfirm title='确定退费吗?' @confirm="retreatWithoutTake(record)">
+                        <a>退费</a>
+                    </a-popconfirm>
+                </span>
+                <template v-if="record.paymentType === 3">
                     <!--订单已缴费-->
-                    <div v-else-if="record.state===1202" class="action">
-                        <a-popconfirm title='确定补打吗?' @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定退费吗?' @confirm="showRetreat=true;retreatPayment =record">
-                            <a>退费</a>
-                        </a-popconfirm>
-                    </div>
-                    <div v-else-if="record.state===1204" class="action">
-                        <a-popconfirm title='确定退费吗?' @confirm="retreatWithTake(record)">
-                            <a>退费</a>
-                        </a-popconfirm>
-                    </div>
-                    <div v-else-if="record.state===1205">
-                        <a-popconfirm title='确定补打吗?' @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                    </div>
-                    <div v-else-if="record.state===1207">
-                        <a-popconfirm title='确定补打吗?' @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                    </div>
-                </div>
-                <div v-else>
-                    <!--订单已缴费-->
-                    <div v-if="record.state===1202&& record.registration.state===802" class="action">
-                        <a-popconfirm title='确定补打吗?'
-                                      @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
+                    <span v-if="record.state===1202&& record.registration.state===802">
                         <a-popconfirm title='确定退号吗?' @confirm="retreatRegistration(record.itemId)">
                             <a style="color: red;">退号</a>
                         </a-popconfirm>
-                    </div>
-                    <div v-if="record.state===1202&& record.registration.state===801" class="action">
-                        <a-popconfirm title='确定补打吗?'
-                                      @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-
+                    </span>
+                    <span v-if="record.state===1202&& record.registration.state===801">
                         <a-popconfirm title='确定患者已到吗?' @confirm="arrive(record)">
                             <a style="color: red;">已到</a>
                         </a-popconfirm>
@@ -100,18 +59,8 @@
                         <a-popconfirm title='确定退号吗?' @confirm="retreatRegistration(record.itemId)">
                             <a style="color: red;">退号</a>
                         </a-popconfirm>
-
-                    </div>
-                    <div v-else-if="record.state===1205">
-                        <a-popconfirm title='确定补打吗?' @confirm="againInvoice(record.invoiceId)">
-                            <a>补打发票</a>
-                        </a-popconfirm>
-                        <a-divider type="vertical"></a-divider>
-                        <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
-                            <a>重打发票</a>
-                        </a-popconfirm>
-                    </div>
-                </div>
+                    </span>
+                </template>
             </template>
         </a-table>
         <a-modal :confirmLoading="loading" v-if="showPay" :visible="showPay" title="缴费" @ok="pay"
@@ -122,15 +71,6 @@
                         <a-select-option v-for="settlement in settlementTypes" :key="settlement.id">{{settlement.name}}
                         </a-select-option>
                     </a-select>
-                </a-form-item>
-            </a-form>
-        </a-modal>
-        <a-modal :confirmLoading="loading" v-if="showRetreat" :visible="showRetreat" title="退费" @ok="retreatWithoutTake"
-                 @cancel="showRetreat =false">
-            <a-form layout="inline" style="text-align: center">
-                <a-form-item label="数量">
-                    <a-input-number v-model="retreatQuantity" :min="1" :max="retreatPayment.quantity">
-                    </a-input-number>
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -200,7 +140,6 @@
             showPay: false,
             showInvoice: false,
             invoiceId: null,
-            showRetreat: false,
             retreatPayment: null,
             retreatQuantity: 1
         }),
@@ -281,16 +220,15 @@
                     }
                 )
             },
-            retreatWithoutTake () {
+            retreatWithoutTake (record) {
                 let that = this
                 this.loading = true
                 this.$api.post("/payment/produceRetreatPayment",
-                    {paymentId: this.retreatPayment.id, quantity: this.retreatQuantity},
+                    {paymentId: record.id},
                     res => {
                         that.loading = false
                         if (res.code === '100') {
                             that.invoiceId = res.data.id
-                            that.showRetreat = false
                             that.showInvoice = true
                             that.$message.success("退费成功")
                             that.selectedRowKeys = []
@@ -376,6 +314,12 @@
                     }, () => {
                     })
             },
+            showAgain (record) {
+                return (record.state === 1202 || record.state === 1203 || record.state === 1205 || record.state === 1207);
+            },
+            showRetreat (record) {
+                return record.paymentType !== 3 && (record.state === 1202 || record.state === 1204 || record.state === 1206);
+            }
         },
         mounted () {
             this.getSettlementType()

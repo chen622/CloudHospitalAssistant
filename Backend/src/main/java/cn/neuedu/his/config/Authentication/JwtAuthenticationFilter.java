@@ -76,12 +76,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
         String token = Jwts.builder()
-                .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)
-                .setHeaderParam("typ", Constants.TOKEN_TYPE)
+                .signWith(SignatureAlgorithm.HS512, Constants.JWT_SECRET)//密钥
+                .setHeaderParam("typ", Constants.TOKEN_TYPE)//类别
                 .setIssuer(Constants.TOKEN_ISSUER)
                 .setAudience(Constants.TOKEN_AUDIENCE)
-                .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
+                .setSubject(user.getUsername())//标识
+                .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))//过期时间
                 .claim("id", user.getId())
                 .claim("typeId", user.getTypeId())
                 .compact();

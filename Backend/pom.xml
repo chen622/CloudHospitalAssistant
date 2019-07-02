@@ -92,14 +92,11 @@
             <artifactId>pagehelper</artifactId>
             <version>4.1.6</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/net.oschina.zcx7878/fastdfs-client-java -->
         <dependency>
             <groupId>net.oschina.zcx7878</groupId>
             <artifactId>fastdfs-client-java</artifactId>
             <version>1.27.0.0</version>
         </dependency>
-
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.cloud</groupId>-->
 <!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
@@ -131,12 +128,12 @@
         </plugins>
     </build>
 
-    <!--    <repositories>-->
-    <!--        <repository>-->
-    <!--            <id>alimaven</id>-->
-    <!--            <name>aliyun maven</name>-->
-    <!--            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
-    <!--        </repository>-->
-    <!--    </repositories>-->
+        <repositories>
+            <repository>
+                <id>alimaven</id>
+                <name>aliyun maven</name>
+                <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            </repository>
+        </repositories>
 
 </project>

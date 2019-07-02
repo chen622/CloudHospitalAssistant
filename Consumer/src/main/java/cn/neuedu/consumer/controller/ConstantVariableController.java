@@ -50,5 +50,18 @@ public class ConstantVariableController {
         return constantVariableRemote.getSettlementType();
     }
 
+    @PostMapping("/insert")
+    public JSONObject insertConstant(@RequestBody JSONObject jsonObject) {
+        return constantVariableRemote.insertConstant(jsonObject);
+    }
 
+    @PostMapping("/modify")
+    public JSONObject modifyConstant(@RequestBody JSONObject jsonObject) {
+        return constantVariableRemote.modifyConstant(jsonObject);
+    }
+
+    @GetMapping("/delete/{id}")
+    public JSONObject deleteConstant(@PathVariable("id") Integer id) {
+        return constantVariableRemote.deleteConstant(id);
+    }
 }

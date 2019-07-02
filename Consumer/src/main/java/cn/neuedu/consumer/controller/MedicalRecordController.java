@@ -94,4 +94,5 @@ public class MedicalRecordController {
     public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id) {
         return medicalRecordRemote.getDrugNonDrugAndResultByMedicalId(id);
     }
+
 }

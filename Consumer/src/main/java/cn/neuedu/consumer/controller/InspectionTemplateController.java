@@ -53,4 +53,5 @@ public class InspectionTemplateController {
     public JSONObject deleteInspectionTemp(@PathVariable("id") Integer id) {
         return inspectionTemplateRemote.deleteInspectionTemp(id);
     }
+
 }

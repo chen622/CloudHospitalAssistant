@@ -237,13 +237,12 @@ public class NonDrugController {
      * @throws IOException
      */
     @GetMapping("/excelOut")
-    public JSONObject excelOut(HttpServletResponse response) throws IOException {
+    public JSONObject excelOut(HttpServletResponse response) {
 
         response.setContentType("application/force-download");
         response.setHeader("Content-Disposition", "attachment;fileName=" + "nondrug.xlsx");
 
-        ServletOutputStream out = response.getOutputStream();
-        try {
+        try (ServletOutputStream out = response.getOutputStream()) {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 0, NonDrug.class);
@@ -252,14 +251,8 @@ public class NonDrugController {
 
             writer.write(nonDrugs, sheet1);
             writer.finish();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501);
         }
         return CommonUtil.successJson();
     }
@@ -272,24 +265,30 @@ public class NonDrugController {
      * @return
      */
     @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile) throws IOException {
+    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile) {
 
         Integer error = 0;//错误数量
         Integer success = 0;//失败数量
 
-        List<Object> objects = EasyExcelFactory.read(excelFile.getInputStream(), new Sheet(1, 0, NonDrug.class));
-        for (Object object : objects) {
-            NonDrug importEntity = (NonDrug) object;
-            try {
-                nonDrugService.insertNonDrug(importEntity);
-                success++;
-            } catch (Exception e) {
-                error++;
+        List<Object> objects = null;
+        try {
+            objects = EasyExcelFactory.read(excelFile.getInputStream(), new Sheet(1, 0, NonDrug.class));
+            for (Object object : objects) {
+                NonDrug importEntity = (NonDrug) object;
+                try {
+                    nonDrugService.insertNonDrug(importEntity);
+                    success++;
+                } catch (Exception e) {
+                    error++;
+                }
             }
+            JSONObject returnJSON = new JSONObject();
+            returnJSON.put("success", success);
+            returnJSON.put("error", error);
+            return CommonUtil.successJson(returnJSON);
+        } catch (IOException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_501);
         }
-        JSONObject returnJSON = new JSONObject();
-        returnJSON.put("success", success);
-        returnJSON.put("error", error);
-        return CommonUtil.successJson(returnJSON);
+
     }
 }

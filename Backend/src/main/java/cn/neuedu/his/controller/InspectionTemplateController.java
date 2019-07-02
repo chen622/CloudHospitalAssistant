@@ -50,7 +50,6 @@ public class InspectionTemplateController {
     }
 
 
-    //TODO cloud
     /**
      * 保存检查模板
      *

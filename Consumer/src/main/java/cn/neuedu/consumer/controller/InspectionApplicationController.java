@@ -12,6 +12,7 @@ import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/inspection_application")
@@ -68,5 +69,10 @@ public class InspectionApplicationController {
     @PostMapping("/entryApplicationResult")
     public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject) {
         return inspectionApplicationRemote.entryApplicationResult(jsonObject);
+    }
+
+    @PostMapping("/upload")
+    public JSONObject upload(@RequestParam("pic") MultipartFile pic){
+        return inspectionApplicationRemote.upload(pic);
     }
 }

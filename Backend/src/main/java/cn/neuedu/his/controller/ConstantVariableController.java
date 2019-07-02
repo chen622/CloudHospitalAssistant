@@ -39,7 +39,6 @@ public class ConstantVariableController {
      * @param authentication
      * @return
      */
-    //todo cloud
     @PostMapping("/insert")
     public JSONObject insertConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
@@ -72,7 +71,6 @@ public class ConstantVariableController {
         return CommonUtil.successJson();
     }
 
-    //todo cloud
     @PostMapping("/modify")
     public JSONObject modifyConstant(@RequestBody JSONObject jsonObject, Authentication authentication) {
         try {
@@ -108,7 +106,6 @@ public class ConstantVariableController {
         return CommonUtil.successJson();
     }
 
-    //todo clouds
     @GetMapping("/delete/{id}")
     public JSONObject deleteConstant(@PathVariable("id") Integer id, Authentication authentication) {
         try {

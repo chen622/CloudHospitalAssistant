@@ -1,10 +1,8 @@
 package cn.neuedu.consumer.remoteInterface;
 
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface InspectionApplicationRemote {
     @PostMapping("/inspection_application/saveTemporaryInspection")
@@ -30,4 +28,7 @@ public interface InspectionApplicationRemote {
 
     @PostMapping("/inspection_application/entryApplicationResult")
     JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject);
+
+    @PostMapping("/upload")
+    JSONObject upload(@RequestParam("pic") MultipartFile pic);
 }

@@ -47,7 +47,7 @@
             },
             selectPatient (record) {
                 this.patient = record
-
+                this.search()
             },
             search () {
                 let data = null

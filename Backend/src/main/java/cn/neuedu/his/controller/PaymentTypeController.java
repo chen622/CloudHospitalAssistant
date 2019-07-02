@@ -186,7 +186,6 @@ public class PaymentTypeController {
         return CommonUtil.successJson(paymentType);
     }
 
-    //todo cloud
     @GetMapping("/getByTypeId/{typeId}")
     public JSONObject getByType(@PathVariable("typeId") Integer typeId) {
         return CommonUtil.successJson(paymentTypeService.getByTypeId(typeId));

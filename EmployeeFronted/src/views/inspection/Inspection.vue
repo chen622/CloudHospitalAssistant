@@ -156,9 +156,10 @@
                     })
             },
             uploading(event, record) {
-                if (event.file.status === 'done') {
+                console.log(event)
+                if (event.file.response && event.file.response.code === '100') {
                     let data = {
-                        picture: event.file.response.data.url,
+                        picture: event.file.response.data,
                         text: '',
                         inspectionApplicationId: record.application.id
                     }
