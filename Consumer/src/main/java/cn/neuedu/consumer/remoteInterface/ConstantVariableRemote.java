@@ -15,4 +15,13 @@ public interface ConstantVariableRemote {
 
     @GetMapping("/constant_variable/getSettlementType")
     JSONObject getSettlementType();
+
+    @PostMapping("/constant_variable/insert")
+    JSONObject insertConstant(@RequestBody JSONObject jsonObject);
+
+    @PostMapping("/constant_variable/modify")
+    JSONObject modifyConstant(@RequestBody JSONObject jsonObject);
+
+    @GetMapping("/delete/{id}")
+    JSONObject deleteConstant(@PathVariable("id") Integer id);
 }

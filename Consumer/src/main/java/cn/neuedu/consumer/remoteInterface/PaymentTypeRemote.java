@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface PaymentTypeRemote {
     @PostMapping("/payment_type/insertPaymentType")
-    JSONObject insertPaymentType(@RequestBody JSONObject jsonObject) throws Exception ;
+    JSONObject insertPaymentType(@RequestBody JSONObject jsonObject) throws Exception;
 
     @PostMapping("/payment_type/deletePaymentType/{id}")
     JSONObject deletePaymentType(@PathVariable("id") Integer id);
@@ -25,10 +25,12 @@ public interface PaymentTypeRemote {
     JSONObject updatePaymentType(@RequestBody JSONObject jsonObject);
 
 
-
     @GetMapping("/payment_type/selectPaymentType/{paymentTypeName}")
-    JSONObject selectPaymentType(@PathVariable("paymentTypeName") String  paymentTypeName);
+    JSONObject selectPaymentType(@PathVariable("paymentTypeName") String paymentTypeName);
 
     @GetMapping("/payment_type/getAll")
     JSONObject getAll();
+
+    @GetMapping("/getByTypeId/{typeId}")
+    JSONObject getByType(@PathVariable("typeId") Integer typeId);
 }

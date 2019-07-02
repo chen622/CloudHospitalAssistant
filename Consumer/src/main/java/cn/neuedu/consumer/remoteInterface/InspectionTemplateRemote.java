@@ -22,4 +22,5 @@ public interface InspectionTemplateRemote {
 
     @GetMapping("/IT/deleteIT/{id}")
     JSONObject deleteInspectionTemp(@PathVariable("id") Integer id);
+
 }

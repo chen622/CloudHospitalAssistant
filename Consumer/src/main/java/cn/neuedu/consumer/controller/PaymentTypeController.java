@@ -66,4 +66,10 @@ public class PaymentTypeController {
     public JSONObject getAll(){
         return paymentTypeRemote.getAll();
     }
+
+    @GetMapping("/getByTypeId/{typeId}")
+    public JSONObject getByType(@PathVariable("typeId") Integer typeId){
+        return paymentTypeRemote.getByType(typeId);
+    }
 }
+

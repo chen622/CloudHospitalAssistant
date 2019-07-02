@@ -5,6 +5,7 @@ import vue from '../main'
 // 返回在vue模板中的调用接口
 export default { // 自定义判断元素类型JS
     url: "http://localhost:8020",
+    // url: "https://his.ccm.ink:8888",
     toType: function (obj) {
         return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
     }, // 参数过滤函数

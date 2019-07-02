@@ -12,7 +12,9 @@ import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -33,34 +35,44 @@ public class NonDrugController {
     }
 
     @PostMapping("/insert")
-    public JSONObject insertNonDrug(@RequestBody JSONObject jsonObject){
+    public JSONObject insertNonDrug(@RequestBody JSONObject jsonObject) {
         return nonDrugRemote.insertNonDrug(jsonObject);
     }
 
-   
+
     @GetMapping("/selectByName/{name}")
-    public JSONObject selectNonDrugByName(@PathVariable("name") String name){
+    public JSONObject selectNonDrugByName(@PathVariable("name") String name) {
         return nonDrugRemote.selectNonDrugByName(name);
     }
 
     @GetMapping("/selectByCode/{code}")
-    public JSONObject selectNonDrugByCode(@PathVariable("code") String code){
+    public JSONObject selectNonDrugByCode(@PathVariable("code") String code) {
         return nonDrugRemote.selectNonDrugByCode(code);
     }
 
     @PostMapping("/delete/{id}")
-    public JSONObject deleteNonDrug(@PathVariable("id") Integer id){
+    public JSONObject deleteNonDrug(@PathVariable("id") Integer id) {
         return nonDrugRemote.deleteNonDrug(id);
     }
 
     @PostMapping("/modify")
-    public JSONObject modifyNonDrug(@RequestBody JSONObject jsonObject){
+    public JSONObject modifyNonDrug(@RequestBody JSONObject jsonObject) {
         return nonDrugRemote.modifyNonDrug(jsonObject);
     }
 
- 
+
     @GetMapping("/getTypeAndNonDrug/")
-    JSONObject getTypeAndNonDrug(){
+    JSONObject getTypeAndNonDrug() {
         return nonDrugRemote.getTypeAndNonDrug();
+    }
+
+    @GetMapping("/excelOut")
+    public JSONObject excelOut(HttpServletResponse response){
+        return nonDrugRemote.excelOut(response);
+    }
+
+    @PostMapping("/excelIn")
+    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile){
+        return nonDrugRemote.excelIn(excelFile);
     }
 }

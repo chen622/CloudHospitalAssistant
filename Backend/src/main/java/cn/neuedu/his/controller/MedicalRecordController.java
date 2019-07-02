@@ -286,7 +286,6 @@ public class MedicalRecordController {
         return doctorService.updateMR(registrationID, record, diagnosesIds);
     }
 
-    //todo cloud
     @GetMapping("/getDrugNonDrugAndResult/{id}")
     public JSONObject getDrugNonDrugAndResultByMedicalId(@PathVariable("id") Integer id, Authentication authentication) {
 
