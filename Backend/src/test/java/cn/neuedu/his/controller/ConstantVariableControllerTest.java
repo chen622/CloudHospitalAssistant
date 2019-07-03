@@ -27,7 +27,7 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class ConstantVariableControllerTest {
 
@@ -51,6 +51,7 @@ public class ConstantVariableControllerTest {
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
+
     @Test
     public void get() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/constant_variable/getType/5")
@@ -64,11 +65,11 @@ public class ConstantVariableControllerTest {
     }
 
     @Test
-    public void   getType() throws Exception {
+    public void getType() throws Exception {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id",1447);
-        jsonObject.put("name","上2888下");
-        jsonObject.put("type",11);
+        jsonObject.put("id", 1447);
+        jsonObject.put("name", "上2888下");
+        jsonObject.put("type", 11);
 
         String data = jsonObject.toString();
 

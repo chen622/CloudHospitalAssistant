@@ -71,8 +71,29 @@ public class InspectionApplicationController {
         return inspectionApplicationRemote.entryApplicationResult(jsonObject);
     }
 
+    @GetMapping("/selectPatientInformationByNameOrId/name/{name}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name") String name) {
+        return inspectionApplicationRemote.selectPatientInformationByNameOrId(name);
+    }
+
+    @GetMapping("/selectPatientInformationByNameOrId/id/{id}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "id") Integer id) {
+        return inspectionApplicationRemote.selectPatientInformationByNameOrId(id);
+    }
+
+    @GetMapping("/selectPatientInformationByNameOrId/nameAndId/{name}/{id}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name") String name, @PathVariable(value = "id") Integer id) {
+        return inspectionApplicationRemote.selectPatientInformationByNameOrId(name, id);
+    }
+
+    @GetMapping("/selectPatientInformationByNameOrId")
+    JSONObject selectPatientInformationByNameOrId() {
+        return inspectionApplicationRemote.selectPatientInformationByNameOrId();
+    }
+
+
     @PostMapping("/upload")
-    public JSONObject upload(@RequestParam("pic") MultipartFile pic){
+    public JSONObject upload(@RequestParam("pic") MultipartFile pic) {
         return inspectionApplicationRemote.upload(pic);
     }
 }

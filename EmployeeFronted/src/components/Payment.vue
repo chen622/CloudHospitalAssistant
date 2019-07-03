@@ -36,10 +36,15 @@
                     </a-popconfirm>
                 </span>
 
-                <span v-if="showRetreat(record)">
+                <span v-if="showRetreatWithout(record)">
                     <a-divider type="vertical"></a-divider>
-
                     <a-popconfirm title='确定退费吗?' @confirm="retreatWithoutTake(record)">
+                        <a>退费</a>
+                    </a-popconfirm>
+                </span>
+                <span v-if="showRetreatWith(record)">
+                    <a-divider type="vertical"></a-divider>
+                    <a-popconfirm title='确定退费吗?' @confirm="retreatWithTake(record)">
                         <a>退费</a>
                     </a-popconfirm>
                 </span>
@@ -317,8 +322,11 @@
             showAgain (record) {
                 return (record.state === 1202 || record.state === 1203 || record.state === 1205 || record.state === 1207);
             },
-            showRetreat (record) {
-                return record.paymentType !== 3 && (record.state === 1202 || record.state === 1204 || record.state === 1206);
+            showRetreatWithout (record) {
+                return record.paymentType !== 3 && record.state === 1202;
+            },
+            showRetreatWith (record) {
+                return record.paymentType !== 3 && record.state === 1204;
             }
         },
         mounted () {
