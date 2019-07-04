@@ -21,7 +21,7 @@ spring:
   datasource:
     username: root
     password: NEUedu1118!@
-    url: jdbc:mysql://his.ccm.ink/his3?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://his.ccm.ink/his?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     # 下面为连接池的补充设置，应用到上面所有数据源中
@@ -67,3 +67,9 @@ mapper:
 mybatis:
   type-aliases-package: cn.neuedu.his.model
   mapper-locations: classpath:mapper/*.xml
+logging:
+    level:
+      cn:
+        neuedu:
+          his:
+            mapper: debug

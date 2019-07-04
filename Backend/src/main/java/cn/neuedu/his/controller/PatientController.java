@@ -225,7 +225,7 @@ public class PatientController {
         String phone = json.getString("phone");
         identifyId = identifyId == null ? "" : identifyId;
         name = name == null ? "" : name;
-        phone = phone == null ? "" : name;
+        phone = phone == null ? "" : phone;
         List<Patient> patients = patientService.selectPatientByIdentifyIdAndNameAndPhone(identifyId, name, phone);
 
         JSONArray jsonArray = null;

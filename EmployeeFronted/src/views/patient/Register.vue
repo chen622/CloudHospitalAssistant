@@ -220,12 +220,12 @@
                                 if (res.code === "100") {
                                     if (res.data.schedule.length > 0) {
                                         that.showDoctor = true
-                                        that.doctor = res.data.schedule
                                     } else {
                                         that.$message.info("该科室暂无值班医生")
+                                        that.showDoctor = false
                                     }
+                                    that.doctor = res.data.schedule
                                     that.load.loadDoctor = false
-
                                 } else {
                                     that.$message.error(res.msg)
                                 }
