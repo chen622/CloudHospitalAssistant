@@ -80,7 +80,7 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
         JobSchedule jobSchedule = new JobSchedule();
         jobSchedule.setDoctorId(scheduleRule.getDoctorId());
         jobSchedule.setRegistrationTypeId(scheduleRule.getRegistrationTypeId());
-        jobSchedule.setIsValid(true);
+        jobSchedule.setIsValid(false);
         jobSchedule.setLimitRegistrationAmount(scheduleRule.getRegistrationQuantity());
         jobSchedule.setPeriod(scheduleRule.getPeriod());
         jobSchedule.setDate(date);

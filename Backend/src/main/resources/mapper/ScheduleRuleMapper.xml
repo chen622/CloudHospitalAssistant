@@ -89,6 +89,6 @@
         where department_id = #{departmentId}
           and day = #{day}
           and not user.is_delete
-          and not doctor.is_delete;
+          and not doctor.is_delete
     </select>
 </mapper>
