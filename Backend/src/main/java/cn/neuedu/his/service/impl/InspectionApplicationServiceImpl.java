@@ -83,7 +83,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     }
 
     @Override
-    public void entryApplicationResult(InspectionResult inspectionResult) throws RuntimeException{
+    public void entryApplicationResult(InspectionResult inspectionResult, Integer adminId) throws RuntimeException{
         InspectionApplication inspectionApplication = inspectionApplicationMapper.getDepartmentId(inspectionResult.getInspectionApplicationId());
         if (inspectionApplication.getCanceled() == true)
             throw new RuntimeException("641");
@@ -91,6 +91,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
         inspectionResultService.save(inspectionResult);
         Payment payment = paymentService.findAllByItemAndPaymentType(inspectionApplication.getId(), inspectionApplication.getFeeTypeId()).get(0);
         payment.setState(Constants.HAVE_COMPLETED_PAID);
+        payment.setProjectOperatorId(adminId);
         paymentService.update(payment);
     }
 

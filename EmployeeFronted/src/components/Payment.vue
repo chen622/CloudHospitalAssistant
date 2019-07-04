@@ -47,7 +47,7 @@
                         <a>退费</a>
                     </a-popconfirm>
                 </span>
-                <template v-if="record.paymentType === 3">
+                <template v-if="record.paymentType.type === 3">
                     <!--订单已缴费-->
                     <span v-if="record.state===1202&& (record.registration.state === 801 ||record.registration.state===802)">
                         <a-divider type="vertical"></a-divider>
@@ -323,10 +323,10 @@
                 return (record.state === 1202 || record.state === 1203 || record.state === 1204 || record.state === 1205 || record === 1206 || record.state === 1207);
             },
             showRetreatWithout (record) {
-                return record.paymentType !== 3 && record.state === 1202;
+                return record.paymentType.type !== 3 && record.state === 1202;
             },
             showRetreatWith (record) {
-                return record.paymentType !== 3 && record.state === 1204;
+                return record.paymentType.type !== 3 && record.state === 1204;
             }
         },
         mounted () {

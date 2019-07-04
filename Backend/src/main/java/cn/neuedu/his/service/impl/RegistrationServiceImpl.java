@@ -151,7 +151,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
         Integer state = registration.getState();
-        if (!state.equals(Constants.RESERVATION) && !(state.equals(Constants.WAITING_FOR_TREATMENT) || state.equals(Constants.RESERVATION)))
+        if (!state.equals(Constants.RESERVATION) && !(state.equals(Constants.WAITING_FOR_TREATMENT)))
             throw new UnsupportedOperationException("503");
 
         registration.setState(Constants.CANCEL);

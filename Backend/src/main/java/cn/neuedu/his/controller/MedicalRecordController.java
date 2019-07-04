@@ -3,6 +3,7 @@ package cn.neuedu.his.controller;
 import cn.neuedu.his.model.*;
 import cn.neuedu.his.service.DoctorService;
 import cn.neuedu.his.service.MedicalRecordService;
+import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.service.RegistrationService;
 import cn.neuedu.his.service.impl.RedisServiceImpl;
 import cn.neuedu.his.util.CommonUtil;
@@ -36,6 +37,8 @@ public class MedicalRecordController {
     DoctorService doctorService;
     @Autowired
     RegistrationService registrationService;
+    @Autowired
+    PaymentService paymentService;
 
     /**
      * 暂存病历
@@ -171,6 +174,8 @@ public class MedicalRecordController {
         if(registration !=null && (registration.getState().equals(Constants.RESERVATION) || registration.getState().equals(Constants.INSIDE_DOCTOR) || registration.getState().equals(Constants.WAITING_FOR_TREATMENT))){
             registration.setState(Constants.INSIDE_DOCTOR);
             registrationService.update(registration);
+
+
 
             return CommonUtil.successJson();
         }else {
