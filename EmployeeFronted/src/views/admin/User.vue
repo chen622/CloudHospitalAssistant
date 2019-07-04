@@ -222,6 +222,7 @@
                             res => {
                                 if (res.code === '100') {
                                     that.$message.success("创建成功")
+                                    that.showCreateUser = false
                                     that.getUser()
                                 } else {
                                     that.$message.error(res.msg)

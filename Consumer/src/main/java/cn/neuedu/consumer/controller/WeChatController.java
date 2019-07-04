@@ -36,14 +36,19 @@ public class WeChatController {
         return weChatRemote.login(requestJson);
     }
 
-    
+
     @GetMapping("/getSchedule/{doctorId}")
     public JSONObject getSchedule(@PathVariable("doctorId") Integer doctorId) {
         return weChatRemote.getSchedule(doctorId);
     }
 
     @GetMapping("/getPatient")
-    public JSONObject  getPatient(){
+    public JSONObject getPatient() {
         return weChatRemote.getPatient();
+    }
+
+    @PostMapping("/updatePatient")
+    public JSONObject updatePatient(@RequestBody JSONObject requestJson) {
+        return weChatRemote.updatePatient(requestJson);
     }
 }

@@ -14,5 +14,8 @@ public interface WeChatRemote {
     JSONObject getSchedule(@PathVariable("doctorId") Integer doctorId);
 
     @GetMapping("/wechat/getPatient")
-    JSONObject  getPatient();
+    JSONObject getPatient();
+
+    @PostMapping("/wechat/updatePatient")
+    JSONObject updatePatient(@RequestBody JSONObject requestJson);
 }
