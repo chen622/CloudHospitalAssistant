@@ -17,7 +17,7 @@
             <template slot="action" slot-scope="text,record">
 
                 <span v-if="record.paymentType.type!==3&&record.state===1201">
-                                        <a-divider type="vertical"></a-divider>
+                    <a-divider type="vertical"></a-divider>
                     <a @click="selectedRowKeys = [record.id];showPay=true">缴费</a>
                 </span>
 
@@ -30,7 +30,6 @@
 
                 <span v-if="showAgain(record)">
                     <a-divider type="vertical"></a-divider>
-
                     <a-popconfirm title='确定重打吗?' @confirm="anewInvoice(record.invoiceId)">
                         <a>重打发票</a>
                     </a-popconfirm>
@@ -50,17 +49,18 @@
                 </span>
                 <template v-if="record.paymentType === 3">
                     <!--订单已缴费-->
-                    <span v-if="record.state===1202&& record.registration.state===802">
+                    <span v-if="record.state===1202&& (record.registration.state === 801 ||record.registration.state===802)">
+                        <a-divider type="vertical"></a-divider>
                         <a-popconfirm title='确定退号吗?' @confirm="retreatRegistration(record.itemId)">
                             <a style="color: red;">退号</a>
                         </a-popconfirm>
                     </span>
                     <span v-if="record.state===1202&& record.registration.state===801">
+                        <a-divider type="vertical"></a-divider>
                         <a-popconfirm title='确定患者已到吗?' @confirm="arrive(record)">
                             <a style="color: red;">已到</a>
                         </a-popconfirm>
                         <a-divider type="vertical"></a-divider>
-
                         <a-popconfirm title='确定退号吗?' @confirm="retreatRegistration(record.itemId)">
                             <a style="color: red;">退号</a>
                         </a-popconfirm>
@@ -320,7 +320,7 @@
                     })
             },
             showAgain (record) {
-                return (record.state === 1202 || record.state === 1203 || record.state === 1205 || record.state === 1207);
+                return (record.state === 1202 || record.state === 1203 || record.state === 1204 || record.state === 1205 || record === 1206 || record.state === 1207);
             },
             showRetreatWithout (record) {
                 return record.paymentType !== 3 && record.state === 1202;
