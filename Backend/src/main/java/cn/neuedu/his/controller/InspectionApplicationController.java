@@ -219,7 +219,11 @@ public class InspectionApplicationController {
         InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject, InspectionResult.class);
         inspectionResult.setOperatorId(id);
 
-        inspectionApplicationService.entryApplicationResult(inspectionResult);
+        try {
+            inspectionApplicationService.entryApplicationResult(inspectionResult);
+        }catch (RuntimeException e){
+            return CommonUtil.errorJson(ErrorEnum.E_641);
+        }
 
         return CommonUtil.successJson();
     }
