@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.Cipher;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -167,12 +168,12 @@ public class MedicalRecordController {
     @PostMapping("/comein/{registrationId}")
     public JSONObject comein(@PathVariable("registrationId") Integer registrationId) {
         Registration registration = registrationService.findById(registrationId);
-        if (registration == null || !registration.getState().equals(Constants.WAITING_FOR_TREATMENT)) {
-            return CommonUtil.errorJson(ErrorEnum.E_710);
-        } else {
+        if(registration !=null && (registration.getState().equals(Constants.RESERVATION) || registration.getState().equals(Constants.INSIDE_DOCTOR) || registration.getState().equals(Constants.WAITING_FOR_TREATMENT))){
             registration.setState(Constants.INSIDE_DOCTOR);
             registrationService.update(registration);
             return CommonUtil.successJson();
+        }else {
+            return CommonUtil.errorJson(ErrorEnum.E_710);
         }
     }
 

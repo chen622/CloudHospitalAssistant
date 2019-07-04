@@ -125,14 +125,14 @@ public class DoctorController {
         }
         List<Registration> list = registrationService.getAllWaitingRegistration(doctorID, Constants.WAITING_FOR_TREATMENT, time);
         List<Registration> inside = registrationService.getAllWaitingRegistration(doctorID, Constants.INSIDE_DOCTOR, time);
+        List<Registration> re = registrationService.getAllWaitingRegistration(doctorID, Constants.RESERVATION, time);
         if (list == null) {
             list = new ArrayList<>();
-            if (inside != null) {
-                list.addAll(inside);
-            }
-        }else{
-            list.addAll(inside);
         }
+        if(inside!=null)
+            list.addAll(inside);
+        if(re!=null)
+            list.addAll(re);
         List<Registration> list2 = registrationService.getAllWaitingRegistration(doctorID, Constants.FIRST_DIAGNOSIS, time);
         if (list2 == null)
             list2 = new ArrayList<>();
