@@ -223,7 +223,7 @@ public class InspectionApplicationController {
 
 
     @PostMapping("/upload")
-    public JSONObject upload(@RequestParam("pic") MultipartFile pic) {
+    public JSONObject upload(@RequestPart("pic") MultipartFile pic) {
         // 获取文件后缀名
         String ext = "jpg";
         try (InputStream fileReader = pic.getInputStream()) {

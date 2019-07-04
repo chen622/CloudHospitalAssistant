@@ -66,10 +66,9 @@
                 </a-button>
             </a-row>
 
-            <a-modal v-if="portNonDrug=1" :visible="portNonDrug" :footer="false" @cancel="portNonDrug = false">
+            <a-modal v-if="portNonDrug===1" :visible="portNonDrug===1" :footer="false" @cancel="portNonDrug = false">
                 <a-upload name="file" :multiple="true"
-                          :action="$url+'/non_drug/excelIn'" :headers="{
-                    authorization: sessionStorage.getItem('token')}" @change="handleChange"
+                          :action="$url+'/non_drug/excelIn'" :headers="header" @change="handleChange"
                           :beforeUpload="beforeUpload"
                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 >
@@ -80,9 +79,9 @@
                 </a-upload>
             </a-modal>
 
-            <a-model v-if="portNonDrug=2" :visible="portNonDrug" :footer="false" @cancel="portNonDrug=false">
-                <a href="$url+'/non_drug/excelOut'" download="">下载</a>
-            </a-model>
+            <a-modal v-else-if="portNonDrug===2" :visible="portNonDrug===2" :footer="false" @cancel="portNonDrug=false">
+                <a :href="$url+'/non_drug/excelOut'" download="">下载</a>
+            </a-modal>
 
             <a-table :columns="nonDrugColumns" :dataSource="nonDrugs" :pagination="{defaultPageSize: 10}"
                      rowKey="id"
@@ -122,6 +121,9 @@
     export default {
         name: "NonDrug",
         data: () => ({
+            header: {
+                authorization: sessionStorage.getItem('token')
+            },
             paymentTypes: [],
             departmentKinds: [],
             cacheData: null,
@@ -343,7 +345,7 @@
                     this.nonDrugs = newData
                 }
             },
-            handleChange(info) {
+            handleChange (info) {
                 if (info.file.status !== 'uploading') {
                     console.log(info.file, info.fileList);
                 }
@@ -353,15 +355,14 @@
                     this.$message.error(`${info.file.name} file upload failed.`);
                 }
             },
-            beforeUpload(file){
+            beforeUpload (file) {
                 let that = this
-                return new Promise((resolve,reject) =>{
+                return new Promise((resolve, reject) => {
                     const is2M = file.size / 1024 / 1024 < 2
-                    if (!is2M){
+                    if (!is2M) {
                         that.$message.error("上传文件大小不能超过2M")
                         return reject(false)
-                    }
-                    else {
+                    } else {
                         return resolve(true)
                     }
                 })

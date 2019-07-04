@@ -29,6 +29,19 @@ public interface InspectionApplicationRemote {
     @PostMapping("/inspection_application/entryApplicationResult")
     JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject);
 
-    @PostMapping("/upload")
-    JSONObject upload(@RequestParam("pic") MultipartFile pic);
+
+    @GetMapping("/inspection_application/selectPatientInformationByNameOrId/name/{name}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name") String name);
+
+    @GetMapping("/inspection_application/selectPatientInformationByNameOrId/id/{id}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "id") Integer id);
+
+    @GetMapping("/inspection_application/selectPatientInformationByNameOrId/nameAndId/{name}/{id}")
+    JSONObject selectPatientInformationByNameOrId(@PathVariable(value = "name") String name, @PathVariable(value = "id") Integer id);
+
+    @GetMapping("/inspection_application/selectPatientInformationByNameOrId")
+    JSONObject selectPatientInformationByNameOrId();
+
+    @PostMapping("/inspection_application/upload")
+    JSONObject upload(@RequestPart("pic") MultipartFile pic);
 }

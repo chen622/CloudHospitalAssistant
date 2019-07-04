@@ -31,6 +31,6 @@ public interface PaymentTypeRemote {
     @GetMapping("/payment_type/getAll")
     JSONObject getAll();
 
-    @GetMapping("/getByTypeId/{typeId}")
+    @GetMapping("/payment_type/getByTypeId/{typeId}")
     JSONObject getByType(@PathVariable("typeId") Integer typeId);
 }
