@@ -33,14 +33,14 @@
                     <template slot="check" slot-scope="text,record">
                         {{record.application.done?'已完成':(text?(record.application.canceled?'已退费':'已缴费'):'未缴费')}}
                     </template>
-                    <span slot="action" slot-scope="text, record">
+                    <span slot="action" slot-scope="text, record" class="action">
                         <p v-if="!record.application.done && record.application.check && !record.application.canceled">
                             <a-divider type="vertical"></a-divider>
                             <a-upload name="pic"
-                                 :multiple="true" :beforeUpload="beforeUpload"
-                                 :action="$url+'/inspection_application/upload'"
-                                 :headers="header"
-                                 @change="uploading($event,record)">
+                                      :multiple="true" :beforeUpload="beforeUpload"
+                                      :action="$url+'/inspection_application/upload'"
+                                      :headers="header"
+                                      @change="uploading($event,record)">
                                 <a>结果录入</a>
                             </a-upload>
                         </p>
@@ -54,7 +54,7 @@
                         </p>
                     </span>
                 </a-table>
-                <a-modal title="结果" v-if="showResult" v-model="showResult">
+                <a-modal title="结果" v-if="showResult" v-model="showResult" :footer="null" @cancel="showResult = false">
                     <div v-for="(result,index) in results" :key="index">
                         <a-divider>{{index+1}}</a-divider>
                         <img :src="result.picture" style="width: 100%"/>
@@ -254,5 +254,9 @@
     .Inspection {
         margin-top: 40px;
         margin-bottom: 20px;
+    }
+
+    .action p {
+        margin: 0;
     }
 </style>
