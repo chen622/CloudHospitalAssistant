@@ -22,6 +22,8 @@
 
 <script>
 	import store from '../../store/index.js'
+	import http from '../../store/http.js'
+	
     export default {
         data() {
             return {
@@ -58,53 +60,52 @@
                     title: '登录中...'
                 });
              
-               // 1.wx获取登录用户code
-                uni.login({
-                    provider: 'weixin',
-                    success: function(loginRes) {
-                        let code = loginRes.code;
-						console.log('************')
-                        if (!_this.isCanUse) {
-                            //非第一次授权获取用户信息
-                            uni.getUserInfo({
-                                provider: 'weixin',
-                                success: function(infoRes) {
- 　　　　　　　　　　　　　　　　　　　　　　//获取用户信息后向调用信息更新方法
-                                    let name = infoRes.userInfo.name; //昵称
-                                    let avatarUrl = infoRes.userInfo.avatarUrl; //头像
-									_this.name=name
-									_this.avatarUrl=avatarUrl
-                                    _this.updateUserInfo(code);//调用更新信息方法
-                                }
-                            });
-                        }
-            
-                        //2.将用户登录code传递到后台置换用户SessionKey、OpenId等信息
-                        uni.request({
-                            url: 'http://localhost:8078/wechat/login',
-                            data: {
-                                code: code,
-								name:_this.name,
-								avatarUrl:_this.avatarUrl
-                            },
-                            method: 'POST',
-                            header: {
-                                'content-type': 'application/json'
-                            },
-                            success: (res) => {
-                                //openId、或SessionKdy存储//隐藏loading
-                                uni.hideLoading();
-								uni.setStorageSync('token',res.data.data.token)
-								store.state.hasLogin=true
-								console.log(uni.getStorageSync('token'))
-								uni.switchTab({
-									url:'index'
-								})
-                            }
-                        });
-                    },
-                });
-            },
+// 1.wx获取登录用户code
+uni.login({
+	provider: 'weixin',
+	success: function(loginRes) {
+		let code = loginRes.code;
+		if (!_this.isCanUse) {
+			//非第一次授权获取用户信息
+			uni.getUserInfo({
+				provider: 'weixin',
+				success: function(infoRes) {
+　　　　　　　　　　　　　　　　　　　　　　//获取用户信息后向调用信息更新方法
+					let name = infoRes.userInfo.name; //昵称
+					let avatarUrl = infoRes.userInfo.avatarUrl; //头像
+					_this.name=name
+					_this.avatarUrl=avatarUrl
+					_this.updateUserInfo(code);//调用更新信息方法
+				}
+			});
+		}
+
+		//2.将用户登录code传递到后台置换用户SessionKey、OpenId等信息
+		uni.request({
+			url: http.baseUrl+'/wechat/login',
+			data: {
+				code: code,
+				name:_this.name,
+				avatarUrl:_this.avatarUrl
+			},
+			method: 'POST',
+			header: {
+				'content-type': 'application/json'
+			},
+			success: (res) => {
+				//openId、或SessionKdy存储//隐藏loading
+				uni.hideLoading();
+				uni.setStorageSync('token',res.data.data.token)//uni store
+				store.state.hasLogin=true
+				console.log(uni.getStorageSync('token'))
+				uni.switchTab({
+					url:'index'
+				})
+			}
+		});
+	},
+});
+},
 
         }
     }

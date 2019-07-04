@@ -165,7 +165,7 @@
 	.uni-list-item__content-note {
 		color: #999;
 		font-size: 28upx;
-		white-space: normal;
+		white-space: pre-wrap;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;

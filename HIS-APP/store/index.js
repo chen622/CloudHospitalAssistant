@@ -7,7 +7,8 @@ const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
 		loginProvider: "",
-		openid: null
+		openid: null,
+		token : uni.getStorageSync('token')
 	},
 	mutations: {
 		login(state, provider) {

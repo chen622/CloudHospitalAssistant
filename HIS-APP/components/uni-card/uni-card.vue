@@ -81,7 +81,8 @@
 		display: flex;
 		flex-direction: row;
 		padding: 16upx;
-		align-items: center
+		align-items: center;
+		white-space:pre-wrap;
 	}
 
 	.uni-card__header:after {
