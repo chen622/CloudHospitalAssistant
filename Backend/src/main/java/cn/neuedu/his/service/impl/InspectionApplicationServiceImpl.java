@@ -8,6 +8,7 @@ import cn.neuedu.his.service.InspectionApplicationService;
 import cn.neuedu.his.service.InspectionResultService;
 import cn.neuedu.his.service.PaymentService;
 import cn.neuedu.his.util.constants.Constants;
+import cn.neuedu.his.util.constants.ErrorEnum;
 import cn.neuedu.his.util.inter.AbstractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,8 +83,10 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     }
 
     @Override
-    public void entryApplicationResult(InspectionResult inspectionResult) {
+    public void entryApplicationResult(InspectionResult inspectionResult) throws RuntimeException{
         InspectionApplication inspectionApplication = inspectionApplicationMapper.getDepartmentId(inspectionResult.getInspectionApplicationId());
+        if (inspectionApplication.getCanceled() == true)
+            throw new RuntimeException("641");
         inspectionResult.setDepartmentId(inspectionApplication.getNonDrug().getExecutiveDepartment());
         inspectionResultService.save(inspectionResult);
         Payment payment = paymentService.findAllByItemAndPaymentType(inspectionApplication.getId(), inspectionApplication.getFeeTypeId()).get(0);

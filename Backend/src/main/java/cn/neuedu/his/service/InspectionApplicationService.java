@@ -20,6 +20,6 @@ public interface InspectionApplicationService extends Service<InspectionApplicat
     ArrayList<InspectionApplication> findAllByMedical(Integer medicalId);
     void confirmApplication(Integer id) throws RuntimeException;
     void cancelApplication(Integer id) throws RuntimeException;
-    void entryApplicationResult(InspectionResult inspectionResult);
+    void entryApplicationResult(InspectionResult inspectionResult) throws RuntimeException;
     ArrayList<InspectionApplication> getApplicationDepartmentId(Integer id);
 }
