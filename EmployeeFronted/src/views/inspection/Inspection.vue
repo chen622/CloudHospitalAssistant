@@ -30,21 +30,31 @@
                 <a-table :columns="columns" :dataSource="data" rowKey="id">
                     <template slot="application.createTime" slot-scope="text">{{new Date(text).toLocaleDateString()}}
                     </template>
-                    <template slot="check" slot-scope="text,record">{{record.application.done?'已完成':(text?'已缴费':'未缴费')}}
+                    <template slot="check" slot-scope="text,record">
+                        {{record.application.done?'已完成':(text?(record.application.canceled?'已退费':'已缴费'):'未缴费')}}
                     </template>
-                    <span slot="action" slot-scope="text, record">
-                       <a-upload v-if="!record.application.done" name="pic" :multiple="true" :beforeUpload="beforeUpload"
-                                 :action="$url+'/inspection_application/upload'"
-                                 :headers="header"
-                                 @change="uploading($event,record)">
-                           <a>结果录入</a>
-                       </a-upload>
-                        <a v-if="!record.application.done" @click="changeState(record)">更改状态</a><br/>
-                        <a v-if="record.application.results&&record.application.results.length> 0"
-                           @click="showResultMethod(record.application.results)">查看结果</a>
+                    <span slot="action" slot-scope="text, record" class="action">
+                        <p v-if="!record.application.done && record.application.check && !record.application.canceled">
+                            <a-divider type="vertical"></a-divider>
+                            <a-upload name="pic"
+                                      :multiple="true" :beforeUpload="beforeUpload"
+                                      :action="$url+'/inspection_application/upload'"
+                                      :headers="header"
+                                      @change="uploading($event,record)">
+                                <a>结果录入</a>
+                            </a-upload>
+                        </p>
+                        <p v-if="record.application.results&&record.application.results.length > 0">
+                            <a-divider type="vertical"></a-divider>
+                            <a @click="showResultMethod(record.application.results)">查看结果</a>
+                        </p>
+                        <p v-if="!record.application.done">
+                            <a-divider type="vertical"></a-divider>
+                            <a @click="changeState(record)" style="color: red">更改状态</a>
+                        </p>
                     </span>
                 </a-table>
-                <a-modal title="结果" v-if="showResult" v-model="showResult">
+                <a-modal title="结果" v-if="showResult" v-model="showResult" :footer="null" @cancel="showResult = false">
                     <div v-for="(result,index) in results" :key="index">
                         <a-divider>{{index+1}}</a-divider>
                         <img :src="result.picture" style="width: 100%"/>
@@ -67,7 +77,7 @@
 
     export default {
         name: 'inspection',
-        data() {
+        data () {
             return {
                 form: this.$form.createForm(this),
                 visible: false,
@@ -118,15 +128,15 @@
             this.getPatient()
         },
         methods: {
-            showResultMethod(results) {
+            showResultMethod (results) {
                 this.showResult = true
                 this.results = results
             },
-            changeState(record) {
+            changeState (record) {
                 this.visible = true
                 this.currentPatient = record
             },
-            handleOk() {
+            handleOk () {
                 this.visible = false
                 let that = this
                 that.$api.post("/inspection_application/confirmApplication/" + this.currentPatient.application.id, null,
@@ -141,7 +151,7 @@
                     }, () => {
                     })
             },
-            handleCancel() {
+            handleCancel () {
                 this.visible = false
                 let that = this
                 that.$api.post("/inspection_application/cancelApplication/" + this.currentPatient.application.id, null,
@@ -155,7 +165,7 @@
                     }, () => {
                     })
             },
-            beforeUpload(file) {
+            beforeUpload (file) {
                 let that = this
                 return new Promise((resolve, reject) => {
                     const type = file.type
@@ -167,18 +177,24 @@
                     }
                 })
             },
-            uploading(event, record) {
-                if (event.file.response && event.file.response.code === '100') {
-                    let data = {
-                        picture: event.file.response.data,
-                        text: '',
-                        inspectionApplicationId: record.application.id
+            uploading (event, record) {
+                console.log(event)
+                if (event.file.response) {
+                    if (event.file.response.code === '100') {
+                        let data = {
+                            picture: event.file.response.data,
+                            text: '',
+                            inspectionApplicationId: record.application.id
+                        }
+                        this.$message.success("上传成功")
+                        this.submitRecord(data)
+                    } else {
+                        this.$message.error("上传失败")
                     }
-                    this.submitRecord(data)
                 }
 
             },
-            submitRecord(data) {
+            submitRecord (data) {
                 let that = this
                 this.$api.post("/inspection_application/entryApplicationResult", data,
                     res => {
@@ -192,7 +208,7 @@
                         that.$message.error("网络错误")
                     })
             },
-            onSearch(value) {
+            onSearch (value) {
                 let that = this
                 if (value === null || value === '') {
                     this.$api.get("/inspection_application/selectPatientInformationByNameOrId/", null,
@@ -217,7 +233,7 @@
                         })
                 }
             },
-            getPatient() {
+            getPatient () {
                 let that = this
                 this.$api.get("/inspection_application/selectPatientInformationByNameOrId", null,
                     res => {
@@ -238,5 +254,9 @@
     .Inspection {
         margin-top: 40px;
         margin-bottom: 20px;
+    }
+
+    .action p {
+        margin: 0;
     }
 </style>

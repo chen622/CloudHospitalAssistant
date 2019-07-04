@@ -18,7 +18,8 @@
                 <a-button type="primary" style="width: 80%" @click="showAddInspection = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="$store.state.inspections" :rowKey="record=>{return record.nonDrug.id}" :columns="inspectionsColumns"
+        <a-table :dataSource="$store.state.inspections" :rowKey="record=>{return record.nonDrug.id}"
+                 :columns="inspectionsColumns"
                  :pagination="false">
             <template slot="temp" slot-scope="text,record">
                 {{record.temp?'暂存':'开立'}}
@@ -46,7 +47,7 @@
                         <span v-else>无结果</span>
                     </div>
                 </div>
-                <a-modal title="结果" v-if="showResult" v-model="showResult">
+                <a-modal title="结果" v-if="showResult" v-model="showResult" :footer="null" @cancel="showResult = false">
                     <div v-for="(result,index) in results" :key="index">
                         <a-divider>{{index+1}}</a-divider>
                         <img :src="result.picture" style="width: 100%"/>
