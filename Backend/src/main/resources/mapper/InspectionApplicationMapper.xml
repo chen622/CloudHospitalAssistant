@@ -188,7 +188,7 @@
         Join non_drug on inspection_application.non_drug_id = non_drug.id
         Join department on non_drug.executive_department = department.id
         WHERE payment.payment_type_id in(SELECT id FROM payment_type WHERE payment_type.type = 1 AND is_delete =
-        0)
+        0) And is_canceled = false
         <if test="name != null">
             and patient.real_name like concat('%',#{name},'%')
         </if>

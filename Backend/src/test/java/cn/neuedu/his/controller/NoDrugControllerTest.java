@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class NoDrugControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
