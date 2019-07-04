@@ -46,6 +46,7 @@
 <script>
 
     import '../tencentCheck'
+    import '../assets/VCG4178853233.jpg'
 
     export default {
         name: 'Login',
