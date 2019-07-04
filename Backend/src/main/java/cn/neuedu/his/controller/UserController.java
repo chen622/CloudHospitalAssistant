@@ -92,6 +92,7 @@ public class UserController {
             urls.add(new url("医疗信息管理", "/admin/other", "other"));
         } else if (typeId.equals(map.get("门诊医生"))) {//602
             urls.add(new url("看诊", "/doctor/index", "doctor"));
+            urls.add(new url("个人工作量","/doctor/statistics","statistics"));
         } else if (typeId.equals(map.get("挂号收费员"))) {//601
             urls.add(new url("挂号", "/patient/register", "register"));
             urls.add(new url("缴费", "/patient/charge", "charge"));
