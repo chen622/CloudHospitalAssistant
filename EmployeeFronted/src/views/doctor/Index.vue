@@ -237,12 +237,12 @@
                 this.$store.commit('changeDiagnoseType', template.isWesternMedicine)
                 template.firstDiagnose.forEach(item => {
                     item.temp = true
-                    this.$store.commit('addDisease', {isFinial: false, disease: item})
+                    this.$store.commit('addDisease', {isFinial: false, disease: item.diseaseSecond})
                 })
-                template.finalDiagnose.forEach(item => {
-                    item.temp = true
-                    this.$store.commit('addDisease', {isFinial: true, disease: item})
-                })
+                // template.finalDiagnose.forEach(item => {
+                //     item.temp = true
+                //     this.$store.commit('addDisease', {isFinial: true, disease: item.diseaseSecond})
+                // })
 
             },
             changeDrawer (boo, type) {

@@ -15,7 +15,8 @@
                     <a-collapse-panel v-for="mrt in mrts" :key="mrt.id">
                         <span slot="header" class="title">
                             {{mrt.name}}-{{mrt.level.name}}
-                            <a-button style="margin-left: 10px" @click="$emit('useTemplate',mrt);closeDrawer()">使用</a-button>
+                            <a-button style="margin-left: 10px"
+                                      @click="$emit('useTemplate',mrt);closeDrawer()">使用</a-button>
                         </span>
                         <a-row type="flex" align="top" justify="space-around">
                             <a-col span="10">
@@ -37,6 +38,12 @@
                                     <a-button type="danger" @click="deleteMrt(mrt)">删除
                                     </a-button>
                                 </p>
+                            </a-col>
+                            <a-col span="10">
+                                <span class="drawer-label">诊断信息：</span>
+                                <a-tag v-for="diagnose in mrt.firstDiagnose" :key="diagnose.id" color="orange">
+                                    {{diagnose.diseaseSecond.name}}
+                                </a-tag>
                             </a-col>
                         </a-row>
                     </a-collapse-panel>
