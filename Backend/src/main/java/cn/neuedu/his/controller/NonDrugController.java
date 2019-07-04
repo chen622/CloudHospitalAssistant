@@ -244,7 +244,6 @@ public class NonDrugController {
 
         try (ServletOutputStream out = response.getOutputStream()) {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
-            //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系
             Sheet sheet1 = new Sheet(1, 0, NonDrug.class);
 
             List<NonDrug> nonDrugs = nonDrugService.findAll();

@@ -213,7 +213,7 @@ public class InspectionApplicationController {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
-        //判断权限
+
         Integer id = (Integer) data.get("id");
 
         InspectionResult inspectionResult = JSONObject.toJavaObject(jsonObject, InspectionResult.class);
