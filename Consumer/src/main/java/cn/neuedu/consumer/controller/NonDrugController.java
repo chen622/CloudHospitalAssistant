@@ -5,16 +5,24 @@ import cn.neuedu.consumer.util.FeignRequestInterceptor;
 import com.alibaba.fastjson.JSONObject;
 import feign.Client;
 import feign.Feign;
+import feign.Response;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -22,6 +30,11 @@ import java.util.List;
 @Import(FeignClientsConfiguration.class)
 public class NonDrugController {
     private NonDrugRemote nonDrugRemote;
+
+    private NonDrugRemote fileTransferRemote;
+
+    @Autowired
+    private ObjectFactory<HttpMessageConverters> messageConverters;
 
     @Autowired
     public NonDrugController(
@@ -32,6 +45,13 @@ public class NonDrugController {
                 .contract(new SpringMvcContract())
                 .requestInterceptor(new FeignRequestInterceptor())
                 .target(NonDrugRemote.class, "http://eureka-producer");
+        this.fileTransferRemote = Feign.builder().client(client)
+                .encoder(new SpringFormEncoder(new SpringEncoder(messageConverters)))
+                .decoder(decoder)
+                .contract(new SpringMvcContract())
+                .requestInterceptor(new FeignRequestInterceptor())
+                .target(NonDrugRemote.class, "http://eureka-producer");
+
     }
 
     @PostMapping("/insert")
@@ -67,12 +87,24 @@ public class NonDrugController {
     }
 
     @GetMapping("/excelOut")
-    public JSONObject excelOut(HttpServletResponse response){
-        return nonDrugRemote.excelOut(response);
+    public String excelOut(HttpServletResponse response) {
+        Response getResponse = nonDrugRemote.excelOut();
+        Response.Body body = getResponse.body();
+        try (InputStream inputStream = body.asInputStream();
+             ServletOutputStream out = response.getOutputStream()) {
+            byte[] b = new byte[inputStream.available()];
+            inputStream.read(b);
+            response.setContentType("application/force-download");
+            response.setHeader("Content-Disposition", "attachment;fileName=" + "nondrug.xlsx");
+            out.write(b);
+            return "success!";
+        } catch (IOException e) {
+            return "error!";
+        }
     }
 
     @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile){
-        return nonDrugRemote.excelIn(excelFile);
+    public JSONObject excelIn(@RequestPart("file") MultipartFile excelFile) {
+        return fileTransferRemote.excelIn(excelFile);
     }
 }

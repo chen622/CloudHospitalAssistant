@@ -265,7 +265,7 @@ public class NonDrugController {
      * @return
      */
     @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile) {
+    public JSONObject excelIn(@RequestPart("file") MultipartFile excelFile) {
 
         Integer error = 0;//错误数量
         Integer success = 0;//失败数量

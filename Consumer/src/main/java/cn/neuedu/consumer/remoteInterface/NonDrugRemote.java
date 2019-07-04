@@ -1,6 +1,7 @@
 package cn.neuedu.consumer.remoteInterface;
 
 import com.alibaba.fastjson.JSONObject;
+import feign.Response;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,9 +28,9 @@ public interface NonDrugRemote {
     @GetMapping("/non_drug/getTypeAndNonDrug/")
     JSONObject getTypeAndNonDrug();
 
-    @GetMapping("/excelOut")
-    public JSONObject excelOut(HttpServletResponse response);
+    @GetMapping("/non_drug/excelOut")
+    Response excelOut();
 
-    @PostMapping("/excelIn")
-    public JSONObject excelIn(@RequestParam("file") MultipartFile excelFile);
+    @PostMapping("/non_drug/excelIn")
+    public JSONObject excelIn(@RequestPart("file") MultipartFile excelFile);
 }

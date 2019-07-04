@@ -5,12 +5,14 @@ spring:
 
 eureka:
   instance:
-    hostname: his.ccm.ink
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 5
   client:
     fetchRegistry: true
     registerWithEureka: true
     enabled: true
     serviceUrl:
-      defaultZone: http://129.211.61.153:8000/eureka
+      defaultZone: http://127.0.0.1:8000/eureka
+
 server:
   port: 8010

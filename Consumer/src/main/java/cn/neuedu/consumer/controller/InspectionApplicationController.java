@@ -7,8 +7,12 @@ import feign.Client;
 import feign.Feign;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
+import org.springframework.cloud.openfeign.support.SpringEncoder;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Import(FeignClientsConfiguration.class)
 public class InspectionApplicationController {
     private InspectionApplicationRemote inspectionApplicationRemote;
+    private InspectionApplicationRemote fileUploadRemote;
+
+    @Autowired
+    private ObjectFactory<HttpMessageConverters> messageConverters;
 
     @Autowired
     public InspectionApplicationController(
@@ -29,7 +37,15 @@ public class InspectionApplicationController {
                 .contract(new SpringMvcContract())
                 .requestInterceptor(new FeignRequestInterceptor())
                 .target(InspectionApplicationRemote.class, "http://eureka-producer");
+        this.fileUploadRemote = Feign.builder().client(client)
+                .encoder(new SpringFormEncoder(new SpringEncoder(messageConverters)))
+                .decoder(decoder)
+                .contract(new SpringMvcContract())
+                .requestInterceptor(new FeignRequestInterceptor())
+                .target(InspectionApplicationRemote.class, "http://eureka-producer");
+
     }
+
 
     @PostMapping("/saveTemporaryInspection")
     public JSONObject saveTemporaryInspection(@RequestBody JSONObject object) {
@@ -93,7 +109,7 @@ public class InspectionApplicationController {
 
 
     @PostMapping("/upload")
-    public JSONObject upload(@RequestParam("pic") MultipartFile pic) {
-        return inspectionApplicationRemote.upload(pic);
+    public JSONObject upload(@RequestPart("pic") MultipartFile pic) {
+        return fileUploadRemote.upload(pic);
     }
 }
