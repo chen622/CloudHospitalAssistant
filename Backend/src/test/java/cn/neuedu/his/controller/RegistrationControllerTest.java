@@ -55,7 +55,7 @@ public class RegistrationControllerTest {
                 .setSubject("Alex")
                 .setExpiration(new Date(System.currentTimeMillis() + Constants.EXPIRY_TIME))
                 .claim("id", 8)
-                .claim("typeId", 601)
+                .claim("typeId", 602)
                 .compact();
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
@@ -64,9 +64,9 @@ public class RegistrationControllerTest {
     @Test
     public void registration() throws Exception {
         JSONObject param = new JSONObject();
-        param.put("scheduleId", 2);
+        param.put("scheduleId", 3);
         param.put("needBook", 1);
-        param.put("patientId", 2);
+        param.put("patientId", 7);
 
         String requestJson = param.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/registration/registration")

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.FrequentlyUsedMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.FrequentlyUsed">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <result column="user_id" jdbcType="INTEGER" property="userId" />
-    <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.FrequentlyUsed">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="item_id" jdbcType="INTEGER" property="itemId"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+    </resultMap>
 </mapper>

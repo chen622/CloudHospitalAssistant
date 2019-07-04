@@ -93,6 +93,10 @@
 
     <select id="getByAdminId" resultMap="BaseResultMap">
         select * from daily_settle where admin_id = #{adminId}
+        <if test="start != null">
+            and end_date <![CDATA[>=]]> #{start}
+            and end_date <![CDATA[<=]]> #{end}
+        </if>
     </select>
 
 </mapper>

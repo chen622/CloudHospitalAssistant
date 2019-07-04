@@ -40,8 +40,9 @@
 
     <select id="getAllByPatientId" resultMap="withDiagnose">
         select m.*
-        from medical_record m join registration r on r.id=m.registration_id
-        where r.patient_id=#{patient_id}
+        from medical_record m
+                 join registration r on r.id = m.registration_id
+        where r.patient_id = #{patient_id}
         ORDER BY r.create_time DESC
     </select>
 
@@ -68,19 +69,29 @@
 
     <select id="getAllByPatientIdTwo" resultMap="withTotalMoney">
         select m.*
-        from medical_record m join registration r on r.id=m.registration_id
-        where r.patient_id=#{patient_id}
+        from medical_record m
+                 join registration r on r.id = m.registration_id
+        where r.patient_id = #{patient_id}
         ORDER BY r.create_time DESC
     </select>
 
     <select id="getTotalMoney" resultType="BigDecimal">
-        select sum(unit_price*quantity)
+        select sum(unit_price * quantity)
         from payment
-        where  item_id in (select prescription.id  from prescription where prescription.item_id=#{id} and prescription.is_template=false )
-                and payment_type_id IN (select p.fee_type_id from prescription p  where p.item_id=#{id} and p.is_template=false ) or
-             (item_id in (select inspection_application.id  from inspection_application where inspection_application.item_id=#{id} and inspection_application.is_template=false )
-                and payment_type_id IN  (select  inspection_application.fee_type_id  from inspection_application where inspection_application.item_id=#{id} and inspection_application.is_template=false))or
-            (item_id=#{id} and payment_type_id=301) and payment.state!=1201
+        where item_id in (select prescription.id
+                          from prescription
+                          where prescription.item_id = #{id} and prescription.is_template = false)
+            and payment_type_id IN
+                (select p.fee_type_id from prescription p where p.item_id = #{id} and p.is_template = false)
+           or (item_id in (select inspection_application.id
+                           from inspection_application
+                           where inspection_application.item_id = #{id}
+                             and inspection_application.is_template = false)
+            and payment_type_id IN (select inspection_application.fee_type_id
+                                    from inspection_application
+                                    where inspection_application.item_id = #{id}
+                                      and inspection_application.is_template = false))
+           or (item_id = #{id} and payment_type_id = 301) and payment.state != 1201
     </select>
 
 
@@ -94,14 +105,16 @@
         select *
         from diagnose
         where item_id = #{MRID}
-          and is_template = false and  is_major=false
+          and is_template = false
+          and is_major = false
     </select>
 
     <select id="getFinal" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
         select *
         from diagnose
         where item_id = #{MRID}
-          and is_template = false and is_major=true
+          and is_template = false
+          and is_major = true
     </select>
 
 
@@ -115,11 +128,11 @@
         <id column="mrId" javaType="INTEGER" property="id"/>
         <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription">
             <id column="prId" javaType="INTEGER" property="id"/>
-            <result column="amount" jdbcType="INTEGER" property="amount" />
+            <result column="amount" jdbcType="INTEGER" property="amount"/>
             <association property="drug" javaType="cn.neuedu.his.model.Drug">
-                <id column="drId" jdbcType="INTEGER" property="id" />
-                <result column="price" jdbcType="DECIMAL" property="price" />
-                <result column="dname" jdbcType="VARCHAR" property="name" />
+                <id column="drId" jdbcType="INTEGER" property="id"/>
+                <result column="price" jdbcType="DECIMAL" property="price"/>
+                <result column="dname" jdbcType="VARCHAR" property="name"/>
             </association>
         </collection>
     </resultMap>
@@ -129,9 +142,9 @@
         <collection property="inspectionApplications" ofType="cn.neuedu.his.model.InspectionApplication">
             <id column="iaId" javaType="INTEGER" property="id"/>
             <collection property="results" ofType="cn.neuedu.his.model.InspectionResult">
-                <id column="irId" jdbcType="INTEGER" property="id" />
-                <result column="text" jdbcType="VARCHAR" property="text" />
-                <result column="picture" jdbcType="VARCHAR" property="picture" />
+                <id column="irId" jdbcType="INTEGER" property="id"/>
+                <result column="text" jdbcType="VARCHAR" property="text"/>
+                <result column="picture" jdbcType="VARCHAR" property="picture"/>
             </collection>
         </collection>
     </resultMap>
@@ -142,9 +155,9 @@
             <id column="iaId" javaType="INTEGER" property="id"/>
             <result column="quantity" jdbcType="INTEGER" property="quantity"/>
             <association property="nonDrug" javaType="cn.neuedu.his.model.NonDrug">
-                <id column="ndId" jdbcType="INTEGER" property="id" />
-                <result column="ndName" jdbcType="VARCHAR" property="name" />
-                <result column="price" jdbcType="DECIMAL" property="price" />
+                <id column="ndId" jdbcType="INTEGER" property="id"/>
+                <result column="ndName" jdbcType="VARCHAR" property="name"/>
+                <result column="price" jdbcType="DECIMAL" property="price"/>
             </association>
         </collection>
     </resultMap>
@@ -153,7 +166,7 @@
         <id column="mrId" javaType="INTEGER" property="id"/>
         <collection property="prescriptions" ofType="cn.neuedu.his.model.Prescription">
             <id column="prId" javaType="INTEGER" property="id"/>
-            <result column="amount" jdbcType="INTEGER" property="amount" />
+            <result column="amount" jdbcType="INTEGER" property="amount"/>
             <association property="payment" javaType="cn.neuedu.his.model.Payment">
                 <result column="quantity" jdbcType="INTEGER" property="quantity"/>
             </association>
@@ -161,31 +174,39 @@
     </resultMap>
 
     <select id="getDrugPrescription" resultMap="getDrugPrescription">
-        SELECT mr.id as mrId, prescription.id as prId,drug.id as drId,amount,price,drug.name as dname
-        FROM medical_record mr LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
-                               LEFT JOIN drug ON prescription.drug_id = drug.id #查询处方的药物
-        WHERE prescription.is_template = 0 AND mr.id = #{medicalId};
+        SELECT mr.id as mrId, prescription.id as prId, drug.id as drId, amount, price, drug.name as dname
+        FROM medical_record mr
+                 LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
+                 LEFT JOIN drug ON prescription.drug_id = drug.id #查询处方的药物
+        WHERE prescription.is_template = 0
+          AND mr.id = #{medicalId};
     </select>
     <select id="getApplicationAndResultByMedicalId" resultMap="ApplicationAndResult">
-        SELECT mr.id as mrId,ia.id as iaId, ir.id as irId, text, picture
-        FROM medical_record mr LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
-                               LEFT JOIN inspection_result ir ON ia.id = ir.inspection_application_id #将申请结果与申请相连
-        WHERE ia.is_canceled = 0 AND mr.id = #{medicalId}
+        SELECT mr.id as mrId, ia.id as iaId, ir.id as irId, text, picture
+        FROM medical_record mr
+                 LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
+                 LEFT JOIN inspection_result ir ON ia.id = ir.inspection_application_id #将申请结果与申请相连
+        WHERE ia.is_canceled = 0
+          AND mr.id = #{medicalId}
     </select>
 
     <select id="getApplicationAndNonDrugByMedicalId" resultMap="ApplicationAndNonDrug">
-        SELECT mr.id as mrId,ia.id as iaId,quantity, nd.id as ndId, nd.name as ndName, price
-        FROM medical_record mr LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
-                               LEFT JOIN non_drug nd ON ia.non_drug_id = nd.id #将非药物id与处置申请相连
-        WHERE  ia.is_canceled = 0 AND mr.id = #{medicalId}
+        SELECT mr.id as mrId, ia.id as iaId, quantity, nd.id as ndId, nd.name as ndName, price
+        FROM medical_record mr
+                 LEFT JOIN inspection_application ia ON mr.id = ia.item_id #申请和病历相连
+                 LEFT JOIN non_drug nd ON ia.non_drug_id = nd.id #将非药物id与处置申请相连
+        WHERE ia.is_canceled = 0
+          AND mr.id = #{medicalId}
     </select>
 
     <select id="getPrescriptionAndPayment" resultMap="PrescriptionAndPayment">
-        SELECT DISTINCT prescription.id as prId, mr.id as mrId,payment.item_id,sum(quantity) as quantity
-        FROM medical_record mr LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
-                               LEFT JOIN payment ON prescription.id = payment.item_id #查询处方的药物
-        WHERE prescription.is_template = 0 AND payment.payment_type_id in (SELECT id from payment_type WHERE type = 2)
-          AND mr.id =22
+        SELECT DISTINCT prescription.id as prId, mr.id as mrId, payment.item_id, sum(quantity) as quantity
+        FROM medical_record mr
+                 LEFT JOIN prescription ON mr.id = prescription.item_id #将处方与病历相连
+                 LEFT JOIN payment ON prescription.id = payment.item_id #查询处方的药物
+        WHERE prescription.is_template = 0
+          AND payment.payment_type_id in (SELECT id from payment_type WHERE type = 2)
+          AND mr.id = 22
         GROUP BY prId
     </select>
 </mapper>

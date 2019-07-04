@@ -177,8 +177,8 @@ public class DailySettleServiceImpl extends AbstractService<DailySettle> impleme
     }
 
     @Override
-    public ArrayList<DailySettle> findByAdminId(Integer adminId) {
-        return dailySettleMapper.getByAdminId(adminId);
+    public ArrayList<DailySettle> findByAdminId(Integer adminId, Date start, Date end) {
+        return dailySettleMapper.getByAdminId(adminId, start, end);
     }
 
 

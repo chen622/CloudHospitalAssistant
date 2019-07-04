@@ -32,64 +32,6 @@ public class PaymentController {
     @Autowired
     PatientService patientService;
 
-    @PostMapping("/getAll")
-    public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
-        try {
-            Integer doctorId = PermissionCheck.getIdByPaymentAdmin(authentication);
-            Integer patientId = jsonObject.getInteger("patientId");
-            if (doctorId == null || patientId == null)
-                return CommonUtil.errorJson(ErrorEnum.E_501);
-            List<Payment> paymentList = paymentService.getAll(patientId, jsonObject.getDate("start"), jsonObject.getDate("end"));
-            return CommonUtil.successJson(paymentList);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-    }
-
-    @GetMapping("/getByDoctor/{patientId}")
-    public JSONObject getByDoctor(@PathVariable("patientId") Integer patientId, Authentication authentication) {
-        try {
-            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-            if (doctorId == null || patientId == null)
-                return CommonUtil.errorJson(ErrorEnum.E_501);
-            List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
-            return CommonUtil.successJson(paymentList);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-    }
-
-
-    /**
-     * 添加获得病人某时间在某个医生下开的所有payment
-     * @param object
-     * @param authentication
-     * @return
-     */
-    @GetMapping("/getForStatistics")
-    public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
-        try {
-            Integer patientId= (Integer) object.get("patientId");
-            String start=object.get("start").toString();
-            String end=object.get("end").toString();
-
-            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
-            if (doctorId == null || patientId == null)
-                return CommonUtil.errorJson(ErrorEnum.E_501);
-            Patient patient = patientService.findById(patientId);
-            patient.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
-
-            Map<Integer ,Integer> result = paymentService.getForStatistics(patientId, doctorId,start,end);
-            JSONObject o=new JSONObject();
-            o.put("patient", patient);
-            o.put("result", result);
-            return CommonUtil.successJson(o);
-        } catch (AuthenticationServiceException e) {
-            return CommonUtil.errorJson(ErrorEnum.E_502);
-        }
-    }
-
-
     /**
      * 挂号缴费
      *
@@ -167,7 +109,7 @@ public class PaymentController {
 
         Invoice invoice;
         try {
-            invoice =paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper, jsonObject.getInteger("quantity"));
+            invoice =paymentService.retreatPayment(jsonObject.getInteger("paymentId"), tollKeeper);
         } catch (IllegalArgumentException e1) {
             return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName(e1.getMessage()));
         } catch (UnsupportedOperationException e2) {
@@ -213,5 +155,62 @@ public class PaymentController {
         }
 
         return CommonUtil.successJson(invoice);
+    }
+
+    @PostMapping("/getAll")
+    public JSONObject getAll(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        try {
+            Integer doctorId = PermissionCheck.getIdByPaymentAdmin(authentication);
+            Integer patientId = jsonObject.getInteger("patientId");
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            List<Payment> paymentList = paymentService.getAll(patientId, jsonObject.getDate("start"), jsonObject.getDate("end"));
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+    @GetMapping("/getByDoctor/{patientId}")
+    public JSONObject getByDoctor(@PathVariable("patientId") Integer patientId, Authentication authentication) {
+        try {
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            List<Payment> paymentList = paymentService.getByDoctor(patientId, doctorId);
+            return CommonUtil.successJson(paymentList);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
+    }
+
+
+    /**
+     * 添加获得病人某时间在某个医生下开的所有payment
+     * @param object
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getForStatistics")
+    public JSONObject getForStatistics(@RequestBody JSONObject object, Authentication authentication) {
+        try {
+            Integer patientId= (Integer) object.get("patientId");
+            String start=object.get("start").toString();
+            String end=object.get("end").toString();
+
+            Integer doctorId = PermissionCheck.isOutpatientDoctor(authentication);
+            if (doctorId == null || patientId == null)
+                return CommonUtil.errorJson(ErrorEnum.E_501);
+            Patient patient = patientService.findById(patientId);
+            patient.setAge(StringUtils.identityIdTransferToAge(patient.getIdentityId()));
+
+            Map<Integer ,Integer> result = paymentService.getForStatistics(patientId, doctorId,start,end);
+            JSONObject o=new JSONObject();
+            o.put("patient", patient);
+            o.put("result", result);
+            return CommonUtil.successJson(o);
+        } catch (AuthenticationServiceException e) {
+            return CommonUtil.errorJson(ErrorEnum.E_502);
+        }
     }
 }

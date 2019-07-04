@@ -1,55 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DiseaseSecondMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DiseaseSecond">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="icd_id" jdbcType="VARCHAR" property="icdId" />
-    <result column="disease_coding" jdbcType="VARCHAR" property="diseaseCoding" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="disease_first_id" jdbcType="INTEGER" property="diseaseFirstId" />
-    <result column="is_delete" jdbcType="BIT" property="isDelete" />
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.DiseaseSecond">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="icd_id" jdbcType="VARCHAR" property="icdId"/>
+        <result column="disease_coding" jdbcType="VARCHAR" property="diseaseCoding"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="disease_first_id" jdbcType="INTEGER" property="diseaseFirstId"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
 
-  <!--name查询-->
-  <select id="findByName" resultMap="BaseResultMap">
-    select * from disease_second where  is_delete= false and name like CONCAT('%',#{name},'%') and is_delete=false ;
-  </select>
+    <!--name查询-->
+    <select id="findByName" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where is_delete = false
+          and name like CONCAT('%', #{name}, '%')
+          and is_delete = false;
+    </select>
 
-  <select id="selectByName" resultMap="BaseResultMap">
-    select * from disease_second where  is_delete= false and name = #{name} ;
-  </select>
-  <select id="getAll" resultMap="BaseResultMap">
-    select * from disease_second where  is_delete =false ;
-  </select>
-  <!--icd查询-->
-  <select id="findByIcdId" resultMap="BaseResultMap">
-    select *
-    from disease_second
-    where icd_id =#{icdId} and is_delete=false ;
-  </select>
-  <select id="selectDiseaseByIcd" resultMap="BaseResultMap">
-    select *
-    from disease_second
-where icd_id like concat('%',#{icdId},'%')
-  </select>
-  <select id="findByDiseaseCoding" resultMap="BaseResultMap">
-    select *
-    from disease_second
-    where disease_coding = #{diseaseCoding} and is_delete=false ;
-  </select>
-  <!--查询某种类别的所有疾病-->
-  <select id="findByDiseaseFirstid" resultMap="BaseResultMap">
-    select * from disease_second
-    <where>
-      <if test="type !=null">
-      disease_second.disease_first_id= #{type}
-      </if>
-      <if test="authenication != true">
-        and disease_second.is_delete = 0
-      </if>
-    </where>
-  </select>
+    <select id="selectByName" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where is_delete = false
+          and name = #{name};
+    </select>
+    <select id="getAll" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where is_delete = false;
+    </select>
+    <!--icd查询-->
+    <select id="findByIcdId" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where icd_id = #{icdId}
+          and is_delete = false;
+    </select>
+    <select id="selectDiseaseByIcd" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where icd_id like concat('%', #{icdId}, '%')
+    </select>
+    <select id="findByDiseaseCoding" resultMap="BaseResultMap">
+        select *
+        from disease_second
+        where disease_coding = #{diseaseCoding}
+          and is_delete = false;
+    </select>
+    <!--查询某种类别的所有疾病-->
+    <select id="findByDiseaseFirstid" resultMap="BaseResultMap">
+        select * from disease_second
+        <where>
+            <if test="type !=null">
+                disease_second.disease_first_id= #{type}
+            </if>
+            <if test="authenication != true">
+                and disease_second.is_delete = 0
+            </if>
+        </where>
+    </select>
 </mapper>

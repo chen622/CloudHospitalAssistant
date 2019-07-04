@@ -1,89 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.neuedu.his.mapper.DrugMapper">
-  <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Drug">
-    <!--modifyDrug
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="formulation" jdbcType="INTEGER" property="formulation" />
-    <result column="factory" jdbcType="VARCHAR" property="factory" />
-    <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
-    <result column="spell" jdbcType="VARCHAR" property="spell" />
-    <result column="standard" jdbcType="VARCHAR" property="standard" />
-    <result column="price" jdbcType="DECIMAL" property="price" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="code" jdbcType="VARCHAR" property="code" />
-    <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
-    <result column="drug_type" javaType="INTEGER" property="drugType"/>
-    <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
-    <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-  </resultMap>
+    <resultMap id="BaseResultMap" type="cn.neuedu.his.model.Drug">
+        <!--modifyDrug
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="formulation" jdbcType="INTEGER" property="formulation"/>
+        <result column="factory" jdbcType="VARCHAR" property="factory"/>
+        <result column="package_company" jdbcType="VARCHAR" property="packageCompany"/>
+        <result column="spell" jdbcType="VARCHAR" property="spell"/>
+        <result column="standard" jdbcType="VARCHAR" property="standard"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
+        <result column="drug_type" javaType="INTEGER" property="drugType"/>
+        <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
+        <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+    </resultMap>
 
-  <!--药物信息和type-->
-  <resultMap id="drugAndType" type="cn.neuedu.his.model.ConstantVariable">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="type" jdbcType="INTEGER" property="type" />
-    <collection property="drugs" ofType="cn.neuedu.his.model.Drug">
-      <id column="drugId" jdbcType="INTEGER" property="id" />
-      <result column="formulation" jdbcType="INTEGER" property="formulation" />
-      <result column="factory" jdbcType="VARCHAR" property="factory" />
-      <result column="package_company" jdbcType="VARCHAR" property="packageCompany" />
-      <result column="spell" jdbcType="VARCHAR" property="spell" />
-      <result column="standard" jdbcType="VARCHAR" property="standard" />
-      <result column="price" jdbcType="DECIMAL" property="price" />
-      <result column="drugs_name" jdbcType="VARCHAR" property="name" />
-      <result column="code" jdbcType="VARCHAR" property="code" />
-      <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
-      <result column="drug_type" javaType="INTEGER" property="drugType"/>
-      <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
-      <result column="is_delete" jdbcType="BIT" property="isDelete"/>
-      <association property="feeType" javaType="cn.neuedu.his.model.ConstantVariable">
-        <id column="fee_type_id" jdbcType="INTEGER" property="id" />
-        <result column="fee_type_name" jdbcType="VARCHAR" property="name" />
-        <result column="fee_type_type" jdbcType="INTEGER" property="type" />
-        <result column="fee_type_is_delete" jdbcType="BIT" property="isDelete"/>
-      </association>
-      <association property="formul" javaType="cn.neuedu.his.model.ConstantVariable">
-        <id column="formulation_id" jdbcType="INTEGER" property="id" />
-        <result column="formulation_name" jdbcType="VARCHAR" property="name" />
-        <result column="formulation_type" jdbcType="INTEGER" property="type" />
-        <result column="formulation_is_delete" jdbcType="BIT" property="isDelete"/>
-      </association>
-    </collection>
-  </resultMap>
+    <!--药物信息和type-->
+    <resultMap id="drugAndType" type="cn.neuedu.his.model.ConstantVariable">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <collection property="drugs" ofType="cn.neuedu.his.model.Drug">
+            <id column="drugId" jdbcType="INTEGER" property="id"/>
+            <result column="formulation" jdbcType="INTEGER" property="formulation"/>
+            <result column="factory" jdbcType="VARCHAR" property="factory"/>
+            <result column="package_company" jdbcType="VARCHAR" property="packageCompany"/>
+            <result column="spell" jdbcType="VARCHAR" property="spell"/>
+            <result column="standard" jdbcType="VARCHAR" property="standard"/>
+            <result column="price" jdbcType="DECIMAL" property="price"/>
+            <result column="drugs_name" jdbcType="VARCHAR" property="name"/>
+            <result column="code" jdbcType="VARCHAR" property="code"/>
+            <result column="stock_amount" javaType="INTEGER" property="stockAmount"/>
+            <result column="drug_type" javaType="INTEGER" property="drugType"/>
+            <result column="fee_type_id" javaType="INTEGER" property="feeTypeId"/>
+            <result column="is_delete" jdbcType="BIT" property="isDelete"/>
+            <association property="feeType" javaType="cn.neuedu.his.model.ConstantVariable">
+                <id column="fee_type_id" jdbcType="INTEGER" property="id"/>
+                <result column="fee_type_name" jdbcType="VARCHAR" property="name"/>
+                <result column="fee_type_type" jdbcType="INTEGER" property="type"/>
+                <result column="fee_type_is_delete" jdbcType="BIT" property="isDelete"/>
+            </association>
+            <association property="formul" javaType="cn.neuedu.his.model.ConstantVariable">
+                <id column="formulation_id" jdbcType="INTEGER" property="id"/>
+                <result column="formulation_name" jdbcType="VARCHAR" property="name"/>
+                <result column="formulation_type" jdbcType="INTEGER" property="type"/>
+                <result column="formulation_is_delete" jdbcType="BIT" property="isDelete"/>
+            </association>
+        </collection>
+    </resultMap>
 
-  <select id="getDrugByName" resultMap="BaseResultMap">
-    select *
-    from drug
-    where name like #{name}
-  </select>
+    <select id="getDrugByName" resultMap="BaseResultMap">
+        select *
+        from drug
+        where name like #{name}
+    </select>
 
-  <select id="getDrugByPartName" resultMap="BaseResultMap">
-    select *
-    from drug
-    where name like concat('%',#{name},'%')
-  </select>
+    <select id="getDrugByPartName" resultMap="BaseResultMap">
+        select *
+        from drug
+        where name like concat('%', #{name}, '%')
+    </select>
 
-  <select id="getAllDrug" resultMap="BaseResultMap">
-    select * from drug where  is_delete=false limit 0,100;
-  </select>
+    <select id="getAllDrug" resultMap="BaseResultMap">
+        select *
+        from drug
+        where is_delete = false
+        limit 0,100;
+    </select>
 
-  <select id="getTypeAndDrugs" resultMap="drugAndType">
-    SELECT *,fee_type.id as  fee_type_id,fee_type.name as fee_type_name, fee_type.is_delete as fee_type_is_delete,fee_type.type as fee_type_type,
-           formulation.id as formulation_id, formulation.name as formulation_name, formulation.type as formulation_type, formulation.is_delete as formulation_is_delete,
-           drug.name as drugs_name, drug.id as drugId
-    FROM constant_variable JOIN drug ON constant_variable.id = drug.drug_type
-    JOIN constant_variable fee_type ON fee_type.id = drug.fee_type_id
-    JOIN constant_variable formulation on formulation.id = drug.formulation
-    <where>
-      <if test="auth == false">
-        drug.is_delete = 0
-      </if>
-    </where>
-  </select>
+    <select id="getTypeAndDrugs" resultMap="drugAndType">
+        SELECT *,fee_type.id as fee_type_id,fee_type.name as fee_type_name, fee_type.is_delete as
+        fee_type_is_delete,fee_type.type as fee_type_type,
+        formulation.id as formulation_id, formulation.name as formulation_name, formulation.type as formulation_type,
+        formulation.is_delete as formulation_is_delete,
+        drug.name as drugs_name, drug.id as drugId
+        FROM constant_variable JOIN drug ON constant_variable.id = drug.drug_type
+        JOIN constant_variable fee_type ON fee_type.id = drug.fee_type_id
+        JOIN constant_variable formulation on formulation.id = drug.formulation
+        <where>
+            <if test="auth == false">
+                drug.is_delete = 0
+            </if>
+        </where>
+    </select>
 </mapper>

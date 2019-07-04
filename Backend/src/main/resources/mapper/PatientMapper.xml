@@ -47,7 +47,8 @@
     <select id="getPatientAndAllPayment" resultMap="patientAndAllPayment">
         select *, #{startDate} as start, #{endDate} as end
         from patient
-        where patient.id = #{id} and patient.is_confirm
+        where patient.id = #{id}
+          and patient.is_confirm
     </select>
 
     <select id="getAllPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -82,7 +83,8 @@
     <select id="getPatientAndPaymentByState" resultMap="patientAndNotPaidPayment">
         select *, #{state} as paymentState
         from patient
-        where id = #{patientId} and patient.is_confirm
+        where id = #{patientId}
+          and patient.is_confirm
     </select>
 
     <select id="getNotPaidPayment" resultMap="cn.neuedu.his.mapper.PaymentMapper.BaseResultMap">
@@ -223,25 +225,29 @@
     <select id="selectPatientByIdentifyId" resultMap="BaseResultMap">
         select *
         from patient
-        where patient.is_confirm and identity_id like concat('%', #{identifyId}, '%')
+        where patient.is_confirm
+          and identity_id like concat('%', #{identifyId}, '%')
     </select>
     <!--根据姓名来模糊查询获得病人姓名-->
     <select id="selectPatientByName" resultMap="BaseResultMap">
         select *
         from patient
-        where patient.is_confirm and real_name like concat('%', #{name}, '%')
+        where patient.is_confirm
+          and real_name like concat('%', #{name}, '%')
     </select>
 
     <select id="selectPatientByPhone" resultMap="BaseResultMap">
         select *
         from patient
-        where patient.is_confirm and phone_number like concat('%', #{phoneNumber}, '%')
+        where patient.is_confirm
+          and phone_number like concat('%', #{phoneNumber}, '%')
     </select>
 
     <select id="selectPatientByIdentifyIdAndNameAndPhone" resultMap="BaseResultMap">
         select *
         from patient
-        where patient.is_confirm and identity_id like concat('%', #{identifyId}, '%')
+        where patient.is_confirm
+          and identity_id like concat('%', #{identifyId}, '%')
           and real_name like concat('%', #{name}, '%')
           and phone_number like concat('%', #{phone}, '%')
     </select>
