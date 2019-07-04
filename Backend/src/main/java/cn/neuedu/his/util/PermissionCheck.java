@@ -326,14 +326,19 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static Integer isFinancialOfficer(Authentication authentication) throws Exception {
+    public static Integer isFinancialOfficer(Authentication authentication) throws AuthenticationServiceException {
         Map<String, Object> data = (Map<String, Object>) authentication.getCredentials();
         Integer typeId = (Integer) data.get("typeId");
-        Map<String, Integer> map = redisService.getMapAll("userType");
-        if (typeId.equals(map.get("财务管理员"))) {
-            return (Integer) data.get("id");
-        } else {
-            throw new AuthenticationServiceException("");
+        Map<String, Integer> map = null;
+        try {
+            map = redisService.getMapAll("userType");
+            if (typeId.equals(map.get("财务管理员"))) {
+                return (Integer) data.get("id");
+            } else {
+                throw new AuthenticationServiceException("");
+            }
+        } catch (Exception e) {
+            throw new AuthenticationServiceException("redis");
         }
     }
 

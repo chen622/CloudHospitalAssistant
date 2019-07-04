@@ -200,19 +200,25 @@ public class DepartmentServiceImpl extends AbstractService<Department> implement
             Integer invoiceNumber = 0; //每个科室发票总数
             Integer doctorVisitNumber = 0; //每个科室医生看诊人数总数
             BigDecimal totalFee = new BigDecimal(0); //科室总计金额
+
+            ArrayList<Integer> doctorIdList = new ArrayList<>();
             for (User user : userService.findUserByDepartmentId(department.getId())) { //获取科室中的医生
-                for (Payment payment : paymentService.findAllByDoctor(user.getId(), startDate, endDate)) {
+                doctorIdList.add(user.getId());
+            }
+
+            if (!doctorIdList.isEmpty()) {
+                ArrayList<Payment> paymentList = paymentService.findAllByDoctor(doctorIdList, startDate, endDate);
+                for (Payment payment : paymentList) {
                     //更新某缴费项目类型的金额数据
                     BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null ? new BigDecimal(0) : feeMap.get(payment.getPaymentTypeId());
                     feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
                 }
 
                 //计算发票总数
-                invoiceNumber = invoiceNumber + invoiceService.getInvoiceNumberByAllDoctor(user.getId(), startDate, endDate);
+                invoiceNumber = invoiceService.getInvoiceNumberByDepartment(doctorIdList, startDate, endDate);
 
                 //计算医生看诊人数
-                DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                doctorVisitNumber = doctorVisitNumber + doctorService.registrationNum(user.getId(), format.format(startDate), format.format(endDate));
+                doctorVisitNumber = doctorService.findDepartmentRegistrationAmount(doctorIdList, startDate, endDate);
             }
 
             //将获得数据记录进JSONObject

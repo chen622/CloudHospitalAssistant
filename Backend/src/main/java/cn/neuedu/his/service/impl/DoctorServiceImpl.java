@@ -886,7 +886,6 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         ArrayList<User> doctorList = doctorMapper.getAllClinicNotDelete();
 
         //取出所有paymentType的id和名字
-        //取出所有paymentType的id和名字
         Map<Integer, String> paymentTypeMap = new HashMap<>();
         Map<String, Integer> redisMap;
         try {
@@ -898,26 +897,43 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             paymentTypeMap.put(redisMap.get(key), key);
         }
 
+        //参数：医生id <缴费类型id, 总金额>
+        Map<Integer, Map<Integer, BigDecimal>> resultMap = new HashMap<>();
+        //获取医生所有id
+        ArrayList<Integer> doctorIdList = new ArrayList<>();
         for (User user : doctorList) {
             //使用map记录每个医生的每个paymentType对应的总额
+            //初始化
             Map<Integer, BigDecimal> feeMap = new HashMap<>();
             for (Integer id : paymentTypeMap.keySet()) {
                 feeMap.put(id, new BigDecimal(0));
             }
+            resultMap.put(user.getId(), feeMap);
+            doctorIdList.add(user.getId());
+        }
 
-            ArrayList<Payment> paymentList = paymentService.findAllByDoctor(user.getId(), startDate, endDate);
+        if(!doctorIdList.isEmpty()) {
+            //获取所有缴费单
+            ArrayList<Payment> paymentList = paymentService.findAllByDoctor(doctorIdList, startDate, endDate);
             for (Payment payment : paymentList) {
                 //更新某缴费项目类型的金额数据
-                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId()) == null ? new BigDecimal(0) : feeMap.get(payment.getPaymentTypeId());
+                Integer doctorId = payment.getDoctorId();
+                Map<Integer, BigDecimal> feeMap = resultMap.get(doctorId);
+                BigDecimal originalFee = feeMap.get(payment.getPaymentTypeId());
+                originalFee = originalFee == null? new BigDecimal(0) : originalFee;
                 feeMap.put(payment.getPaymentTypeId(), originalFee.add(payment.getUnitPrice().multiply(new BigDecimal(payment.getQuantity()))));
+                resultMap.put(doctorId, feeMap);
             }
+        }
 
+        for(User user: doctorList) {
             JSONObject detail = new JSONObject();
             detail.put("doctor", user);
             detail.put("invoiceNumber", invoiceService.getInvoiceNumberByAllDoctor(user.getId(), startDate, endDate));
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             detail.put("visitNumber", this.registrationNum(user.getId(), format.format(startDate), format.format(endDate)));
             BigDecimal totalFee = new BigDecimal(0);
+            Map<Integer, BigDecimal> feeMap = resultMap.get(user.getId());
             for (Integer key : feeMap.keySet()) {
                 totalFee = totalFee.add(feeMap.get(key));
                 detail.put(key.toString(), feeMap.get(key));
@@ -1082,6 +1098,16 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
             a.add(patient);
         }
         return CommonUtil.successJson(a);
+    }
+
+    @Override
+    public Integer findDepartmentRegistrationAmount(ArrayList<Integer> doctorIdList, Date startDate, Date endDate) {
+        Integer result = 0;
+        result = result + doctorMapper.getDepartmentRegistrationAmountByState(doctorIdList, startDate, endDate, Constants.FIRST_DIAGNOSIS);
+        result = result + doctorMapper.getDepartmentRegistrationAmountByState(doctorIdList, startDate, endDate, Constants.SUSPECT);
+        result = result + doctorMapper.getDepartmentRegistrationAmountByState(doctorIdList, startDate, endDate, Constants.FINAL_DIAGNOSIS);
+        result = result + doctorMapper.getDepartmentRegistrationAmountByState(doctorIdList, startDate, endDate, Constants.FINISH_DIAGNOSIS);
+        return result;
     }
 
     private BigDecimal addPrescriptionTotal(BigDecimal prescriptionTotal, List<Prescription> prescriptions) {

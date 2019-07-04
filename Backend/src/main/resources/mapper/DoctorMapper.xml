@@ -50,4 +50,17 @@
           and user.department_id = #{departmentId}
     </select>
 
+    <select id="getDepartmentRegistrationAmountByState" resultType="java.lang.Integer">
+        select count(distinct (r.id))
+        from registration r
+        join job_schedule j on r.schedule_id = j.id
+        where state = #{state}
+        and r.create_time <![CDATA[>=]]> #{startDate}
+        and r.create_time <![CDATA[<=]]> #{endDate}
+        and j.doctor_id in
+        <foreach item="item" collection="doctorIdList" separator="," open="(" close=")" index="">
+            #{item, jdbcType=INTEGER}
+        </foreach>
+    </select>
+
 </mapper>

@@ -94,4 +94,9 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
         Date date = new Date(System.currentTimeMillis() + 2 * 24 * 60 * 60 * 1000);
         return jobScheduleMapper.getByDate(date);
     }
+
+    @Override
+    public ArrayList<JobSchedule> findByDate(Date date) {
+        return jobScheduleMapper.getByDate(date);
+    }
 }

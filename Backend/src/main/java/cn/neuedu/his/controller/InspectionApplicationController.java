@@ -40,6 +40,8 @@ public class InspectionApplicationController {
     DoctorService doctorService;
     @Autowired
     InspectionResultService inspectionResultService;
+    @Autowired
+    PaymentService paymentService;
 
     /**
      * 暂存检查/处置
@@ -218,6 +220,7 @@ public class InspectionApplicationController {
         inspectionResult.setOperatorId(id);
 
         inspectionApplicationService.entryApplicationResult(inspectionResult);
+
         return CommonUtil.successJson();
     }
 

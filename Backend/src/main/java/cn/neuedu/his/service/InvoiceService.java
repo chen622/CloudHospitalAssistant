@@ -25,10 +25,11 @@ public interface InvoiceService extends Service<Invoice> {
     Invoice getInvoiceAndPaymentByInvoiceId(Integer invoiceId);
     ArrayList<Integer> getInvoiceNormalIdList(Integer settleId);
     ArrayList<Integer> getInvoiceAnewIdList(Integer settleId);
-    Integer getInvoiceNumberByAllDoctor(Integer doctorId, Date start, Date end);
+    Integer getInvoiceNumberByAllDoctor(Integer projectOperatorId, Date start, Date end);
+    Integer getInvoiceNumberByDepartment(ArrayList<Integer> doctorIdList, Date start, Date end);
     BigDecimal getTotalFeeByType(Integer type, Date start, Date end);
     Integer getNormalInvoiceNumber(Date start, Date end);
     Integer getAnewInvoiceNumber(Date start, Date end);
     ArrayList<Invoice> findInvoiceAndPaymentByUser(Integer userId, Date start, Date end);
-    ArrayList<Invoice> findInvoiceInfoByDailySettle(@Param("dailySettleId") Integer dailySettleId);
+    ArrayList<Invoice> findInvoiceInfoByDailySettle(Integer dailySettleId);
 }

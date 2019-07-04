@@ -285,6 +285,11 @@ public class InvoiceServiceImpl extends AbstractService<Invoice> implements Invo
     }
 
     @Override
+    public Integer getInvoiceNumberByDepartment(ArrayList<Integer> doctorIdList, Date start, Date end) {
+        return invoiceMapper.getInvoiceNumberByDepartment(doctorIdList, start, end);
+    }
+
+    @Override
     public BigDecimal getTotalFeeByType(Integer type, Date start, Date end) {
         BigDecimal result = invoiceMapper.getTotalFeeByType(type, start, end);
         return result == null? new BigDecimal(0): result;

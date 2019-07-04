@@ -122,5 +122,7 @@ public interface DoctorService extends Service<Doctor> {
     JSONObject getDoctorStatistics(Integer doctorId, String start, String end);
 
     JSONObject getRegistrationStatistics(Integer doctorId, String start, String end);
+
+    Integer findDepartmentRegistrationAmount(ArrayList<Integer> doctorIdList, Date startDate, Date endDate);
 }
 

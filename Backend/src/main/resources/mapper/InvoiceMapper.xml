@@ -63,6 +63,23 @@
           and payment.create_time <![CDATA[<=]]> #{endDate}
     </select>
 
+    <select id="getInvoiceNumberByDepartment" resultType="java.lang.Integer">
+        select count(distinct invoice.id)
+        from invoice,
+        payment
+        where invoice_id = invoice.id
+        and (project_operator_id in
+        <foreach item="item" collection="doctorIdList" separator="," open="(" close=")" index="">
+            #{item, jdbcType=INTEGER}
+        </foreach>
+        or doctor_id in
+        <foreach item="item" collection="doctorIdList" separator="," open="(" close=")" index="">
+            #{item, jdbcType=INTEGER}
+        </foreach>)
+        and payment.create_time <![CDATA[>=]]> #{startDate}
+        and payment.create_time <![CDATA[<=]]> #{endDate}
+    </select>
+
     <!--    统计各类费用-->
     <select id="getTotalFeeByType" resultType="java.math.BigDecimal">
         select sum(p.unit_price * p.quantity)

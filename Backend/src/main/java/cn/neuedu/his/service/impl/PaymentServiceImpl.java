@@ -167,6 +167,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
 
         //判断退费数量是否合法(药物）并改变原payment状态
         originalPayment.setState(Constants.HAPPEN_RETREAT_ALL);
+        update(originalPayment);
 
         //填入新的信息
         Integer newPaymentId = addPayment(originalPayment, originalPayment.getQuantity(), adminId, Constants.HAVE_RETREAT);
@@ -174,7 +175,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
         //若为检查项目，改变其“可检查”字段
         if(totalTypeId.equals(Constants.NON_DRUG_PAYMENT_TYPE)) {
             InspectionApplication inspectionApplication = inspectionApplicationService.findById(originalPayment.getItemId());
-            inspectionApplication.setCheck(false);
+            inspectionApplication.setIsCanceled(true);
             inspectionApplicationService.update(inspectionApplication);
         }
 
@@ -377,8 +378,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
     }
 
     @Override
-    public ArrayList<Payment> findAllByDoctor(Integer doctorId, Date start, Date end) {
-        ArrayList<Payment> list=paymentMapper.getAllByDoctor(doctorId, start, end);
+    public ArrayList<Payment> findAllByDoctor(ArrayList<Integer> doctorIdList, Date start, Date end) {
+        ArrayList<Payment> list=paymentMapper.getAllByDoctor(doctorIdList, start, end);
         if(list==null){
             list=new ArrayList<>();
         }

@@ -175,6 +175,16 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     }
 
     /**
+     * 生成今日顺序号
+     */
+    public void setRegistrationSequenceToday() {
+        ArrayList<JobSchedule> jobScheduleList = jobScheduleService.findByDate(new Date(System.currentTimeMillis()));
+        for (JobSchedule jobSchedule : jobScheduleList) {
+            redisService.setRegistrationSequenceList(jobSchedule.getId(), jobSchedule.getLimitRegistrationAmount());
+        }
+    }
+
+    /**
      * 查找所有带诊患者
      * @param doctorID
      * @param state

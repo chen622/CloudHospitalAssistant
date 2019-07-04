@@ -30,4 +30,6 @@ public interface JobScheduleService extends Service<JobSchedule> {
     JobSchedule generateByRule(ScheduleRule scheduleRule,Date date);
 
     ArrayList<JobSchedule> getScheduleByDoctorIdAndDate(Integer doctorId, Date date);
+
+    ArrayList<JobSchedule> findByDate(Date date);
 }
