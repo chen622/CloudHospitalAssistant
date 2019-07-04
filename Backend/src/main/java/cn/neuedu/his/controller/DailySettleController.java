@@ -187,8 +187,8 @@ public class DailySettleController {
      * @param authentication
      * @return
      */
-    @GetMapping("/getAll")
-    public JSONObject getAllByAdmin(Authentication authentication) {
+    @PostMapping("/getAll")
+    public JSONObject getAllByAdmin(@RequestBody JSONObject jsonObject, Authentication authentication) {
         Integer admin;
         try {
             admin = PermissionCheck.getIdByPaymentAdmin(authentication);
@@ -196,7 +196,7 @@ public class DailySettleController {
             return CommonUtil.errorJson(ErrorEnum.E_502);
         }
 
-        ArrayList<DailySettle> settleList = dailySettleService.findByAdminId(admin);
+        ArrayList<DailySettle> settleList = dailySettleService.findByAdminId(admin, jsonObject.getDate("start"), jsonObject.getDate("end"));
         if (settleList.isEmpty())
             settleList = null;
 

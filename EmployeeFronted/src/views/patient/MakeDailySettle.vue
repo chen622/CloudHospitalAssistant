@@ -71,7 +71,19 @@
                         </a-tab-pane>
 
                         <a-tab-pane tab="日结历史查询" key="2" class="tab">
-                            <a-row>
+                            <a-row type="flex" align="middle" justify="center" class="search-card">
+                                <a-col span="10" type="flex" align="top" justify="start">
+                                    <a-range-picker showTime
+                                                    :format="timeFormat"
+                                                    v-model="pickTime">
+                                    </a-range-picker>
+                                </a-col>
+
+                                <a-col span="8" type="flex" align="top" justify="start">
+                                    <a-button type="primary" @click="initializeChoice()">查询</a-button>
+                                </a-col>
+                            </a-row>
+                            <a-row style="padding-top: 3%">
                                 <a-col span="4" style="margin-right: 20px">
                                     <a-menu
                                             mode="vertical"
@@ -129,6 +141,8 @@
             allSettle: [],
             currentSettle: null,
             historyData: [],
+            pickTime: [],
+            timeFormat: 'YYYY-MM-DD hh:mm:ss',
             historyColumns: [{
                 title: '发票号',
                 dataIndex: 'invoice.id',
@@ -204,8 +218,12 @@
                 })
             },
             initializeChoice() {
+                let request = {
+                    start: this.pickTime[0] ? this.pickTime[0].utc().valueOf() : this.pickTime[0],
+                    end: this.pickTime[1] ? this.pickTime[1].utc().valueOf() : this.pickTime[1]
+                }
                 let that = this
-                this.$api.get("/daily_settle/getAll", null, res => {
+                this.$api.post("/daily_settle/getAll", request, res => {
                     if (res.code === '100') {
                         that.allSettle = res.data;
                     } else if (res.code === '502') {

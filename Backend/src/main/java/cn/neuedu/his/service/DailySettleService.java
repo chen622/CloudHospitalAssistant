@@ -18,5 +18,5 @@ public interface DailySettleService extends Service<DailySettle> {
     ArrayList<DailySettle> getSettleInfo(Integer admin);
     void checkSettleTable(Integer checkId, Integer settleId) throws IllegalArgumentException;
     JSONArray getDailyHistory(Integer dailySettleId);
-    ArrayList<DailySettle> findByAdminId(@Param("adminId") Integer adminId);
+    ArrayList<DailySettle> findByAdminId(Integer adminId, Date start, Date end);
 }

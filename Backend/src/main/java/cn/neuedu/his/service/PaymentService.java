@@ -21,7 +21,7 @@ public interface PaymentService extends Service<Payment> {
     Payment createRegistrationPayment(Integer registrationId) throws IllegalArgumentException, IndexOutOfBoundsException;
     Invoice payRegistrationPayment(Integer paymentId, Integer settlementTypeId) throws IllegalArgumentException, IndexOutOfBoundsException;
     JSONObject payPayment(ArrayList<Integer> paymentIdList, Integer settlementTypeId, Integer tollKeeperId) throws RuntimeException;
-    Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
+    Invoice retreatPayment(Integer paymentId, Integer adminId) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     void produceRetreatDrugPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException;
     Invoice retreatDrugFee(Integer paymentId, Integer paymentAdminId);
 

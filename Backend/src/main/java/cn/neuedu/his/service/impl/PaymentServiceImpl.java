@@ -154,7 +154,7 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      * @return
      */
     @Override
-    public Invoice retreatPayment(Integer paymentId, Integer adminId, Integer retreatQuantity) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
+    public Invoice retreatPayment(Integer paymentId, Integer adminId) throws IllegalArgumentException, UnsupportedOperationException, IndexOutOfBoundsException {
         //查找原缴费单
         Payment originalPayment = findById(paymentId);
         if (originalPayment == null)
@@ -166,11 +166,10 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
             throw new UnsupportedOperationException("payment");
 
         //判断退费数量是否合法(药物）并改变原payment状态
-        if (!isValidQuantity(originalPayment, retreatQuantity, totalTypeId))
-            throw new IndexOutOfBoundsException();
+        originalPayment.setState(Constants.HAPPEN_RETREAT_ALL);
 
         //填入新的信息
-        Integer newPaymentId = addPayment(originalPayment, retreatQuantity, adminId, Constants.HAVE_RETREAT);
+        Integer newPaymentId = addPayment(originalPayment, originalPayment.getQuantity(), adminId, Constants.HAVE_RETREAT);
 
         //若为检查项目，改变其“可检查”字段
         if(totalTypeId.equals(Constants.NON_DRUG_PAYMENT_TYPE)) {
@@ -252,7 +251,8 @@ public class PaymentServiceImpl extends AbstractService<Payment> implements Paym
      */
     private boolean isAbleToRetreatState(Integer itemId, Integer totalTypeId, Integer state) {
         if (totalTypeId.equals(Constants.REGISTRATION_PAYMENT_TYPE)) {
-            if (registrationService.getRegistrationState(itemId).equals(Constants.WAITING_FOR_TREATMENT))
+            Integer registrationState = registrationService.getRegistrationState(itemId);
+            if (registrationState.equals(Constants.WAITING_FOR_TREATMENT) || registrationState.equals(Constants.RESERVATION))
                 return true;
         } else {
             if (state.equals(Constants.HAVE_PAID))

@@ -148,7 +148,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         if (registration == null)
             throw new IllegalArgumentException("registrationId");
         Integer state = registration.getState();
-        if (!state.equals(Constants.RESERVATION) && !state.equals(Constants.WAITING_FOR_TREATMENT))
+        if (!state.equals(Constants.RESERVATION) && !(state.equals(Constants.WAITING_FOR_TREATMENT) || state.equals(Constants.RESERVATION)))
             throw new UnsupportedOperationException("503");
 
         registration.setState(Constants.CANCEL);
@@ -166,7 +166,7 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
 
         //形成冲红缴费单及发票
         Integer paymentId = paymentService.findByRegistrationId(registrationId).getId();
-        Invoice invoice = paymentService.retreatPayment(paymentId, registrarId, 1);
+        Invoice invoice = paymentService.retreatPayment(paymentId, registrarId);
 
         return invoice;
     }
