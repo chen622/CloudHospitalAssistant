@@ -49,11 +49,16 @@ public class Registration {
     private Patient patient;
 
     @Transient
-    private Integer medicalFee;
+    private Float medicalFee;
     @Transient
-    private Integer inspectionFee;
+    private Float inspectionFee;
     @Transient
-    private Integer theOtherFee;
+    private Float theOtherFee;
+    @Transient
+    private Float registrationFee;
+    @Transient
+    private Float diagnosisFee;
+
     //状态名字
     @Transient
     private String stateName;
@@ -98,28 +103,44 @@ public class Registration {
         this.patient = patient;
     }
 
-    public Integer getMedicalFee() {
+    public Float getMedicalFee() {
         return medicalFee;
     }
 
-    public void setMedicalFee(Integer medicalFee) {
+    public void setMedicalFee(Float medicalFee) {
         this.medicalFee = medicalFee;
     }
 
-    public Integer getInspectionFee() {
+    public Float getInspectionFee() {
         return inspectionFee;
     }
 
-    public void setInspectionFee(Integer inspectionFee) {
+    public void setInspectionFee(Float inspectionFee) {
         this.inspectionFee = inspectionFee;
     }
 
-    public Integer getTheOtherFee() {
+    public Float getTheOtherFee() {
         return theOtherFee;
     }
 
-    public void setTheOtherFee(Integer theOtherFee) {
+    public void setTheOtherFee(Float theOtherFee) {
         this.theOtherFee = theOtherFee;
+    }
+
+    public Float getRegistrationFee() {
+        return registrationFee;
+    }
+
+    public void setRegistrationFee(Float registrationFee) {
+        this.registrationFee = registrationFee;
+    }
+
+    public Float getDiagnosisFee() {
+        return diagnosisFee;
+    }
+
+    public void setDiagnosisFee(Float diagnosisFee) {
+        this.diagnosisFee = diagnosisFee;
     }
 
     /**

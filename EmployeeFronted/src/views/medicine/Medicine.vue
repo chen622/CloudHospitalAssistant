@@ -1069,7 +1069,7 @@
                 await that.onSearchByPid(this.patient.id)
 
                 if (value === 1) {
-                    alert('发药成功')
+                    that.$message.success('发药成功')
                 }
             }, async sendDrug (record) {
                 let that = this
@@ -1078,7 +1078,7 @@
                         if (res.code === "100") {
                             that.getPatient(1)
                         } else if (res.code === "512") {
-                            alert('请稍后！')
+                            that.$message.success('请稍后！')
                         } else {
                             that.$message.error(res)
                         }
@@ -1118,7 +1118,7 @@
                         })
 
                 } else {
-                    alert('请输入合法数字！')
+                    this.$message.error('请输入合法数字！')
                 }
             }, onSearchByPid (value) {
                 new Promise(() => {
@@ -1206,7 +1206,7 @@
                             this.retreatAll(temp[0])
                         }
                     } else {
-                        alert('没有编号为：' + rowKeys[i] + '的支付数据！')
+                        this.$message.error('没有编号为：' + rowKeys[i] + '的支付数据！')
                     }
                 }
             }, retreatAll (temp) {
