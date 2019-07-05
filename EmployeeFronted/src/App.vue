@@ -105,7 +105,7 @@
         computed: {
             loading: function () {
                 return this.$store.state.loading
-                // return true
+                //return true
             }
         }
     }
