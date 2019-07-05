@@ -37,7 +37,8 @@ public class LockUtil {
             if(oldExpireTime < System.currentTimeMillis()) {
                 //超时
                 long newExpireTime = System.currentTimeMillis() + expire;
-                long currentExpireTime = Long.parseLong(redisService.getSet(key, String.valueOf(newExpireTime)));
+                long currentExpireTime = Long.parseLong(redisService.getSet(key,
+                        String.valueOf(newExpireTime)));
                 if(currentExpireTime == oldExpireTime) {
                     return true;
                 }

@@ -14,11 +14,20 @@ export default new Vuex.Store({
         inspectionPrescriptions: [],
         diagnoseType: true,
         payments: [],
-        loading: false
+        loading: false,
+        loadingType: 0
     },
     mutations: {
         setLoading (state, loading) {
+            if (loading) {
+                state.loadingType = 0
+            }
             state.loading = loading
+        },
+        setOtherLoading (state, load) {
+            state.loadingType = load.type
+            state.loading = load.loading
+            console.log(state.loadingType)
         },
         setPayment (state, payments) {
             state.payments = payments

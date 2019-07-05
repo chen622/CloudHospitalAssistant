@@ -41,26 +41,26 @@
                                            style="margin: 5px 0 10px 0;"></a-row>
                                     <a-row type="flex" align="middle" justify="start" class="search-card">
                                         <a-col span="6">有效发票共计
-                                            <a-tag style="width: 40px;">{{settle.normalInvoiceAmount}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.normalInvoiceAmount}}</a-tag>
                                             张
                                         </a-col>
                                         <a-col span="6">重打发票共计
-                                            <a-tag style="width: 40px;">{{settle.anewInvoiceAmount}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.anewInvoiceAmount}}</a-tag>
                                             张
                                         </a-col>
                                     </a-row>
                                     <a-row type="flex" align="middle" justify="start" class="search-card">
                                         <a-col span="6">医药费
-                                            <a-tag style="width: 40px;">{{settle.drugFee}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.drugFee}}</a-tag>
                                         </a-col>
                                         <a-col span="6">挂号费
-                                            <a-tag style="width: 40px;">{{settle.registrationFee}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.registrationFee}}</a-tag>
                                         </a-col>
                                         <a-col span="6">检查费
-                                            <a-tag style="width: 40px;">{{settle.inspectionFee}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.inspectionFee}}</a-tag>
                                         </a-col>
                                         <a-col span="6">处置费
-                                            <a-tag style="width: 40px;">{{settle.dealFee}}</a-tag>
+                                            <a-tag style="width: 60px;">{{settle.dealFee}}</a-tag>
                                         </a-col>
                                     </a-row>
                                     <a-row type="flex" align="middle" justify="end" class="search-card">

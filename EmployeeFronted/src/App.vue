@@ -39,8 +39,17 @@
                         :maskClosable="false"
                         :bodyStyle="{textAlign: 'center'}"
                 >
-                    <a-spin tip="正在加载..." size="large">
-                    </a-spin>
+                    <div v-if="loadingType === 0">
+                        <lottie-0 :options="loadOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <div v-else-if="loadingType === 1">
+                        <lottie-1 :options="submitOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <div v-else-if="loadingType === 2">
+                        <lottie-2 :options="presentationOptions" :height="200" :width="200"
+                                v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <p style="margin: 5px;font-size: 30px">加载中...</p>
                 </a-modal>
                 <router-view></router-view>
             </a-layout-content>
@@ -64,6 +73,11 @@
 
 <script>
     import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
+    import Lottie from './lottie.vue';
+    import * as submit from './assets/annotation/submit.json';
+    import * as clock from './assets/annotation/clock.json';
+    import * as presentation from './assets/annotation/presentation.json';
+
 
     export default {
         data: () => ({
@@ -71,7 +85,15 @@
             current: ['index'],
             departmentKind: [],
             departments: [],
+            submitOptions: {animationData: submit},
+            presentationOptions: {animationData: presentation},
+            loadOptions: {animationData: clock},
         }),
+        components: {
+            'lottie-0': Lottie,
+            'lottie-1': Lottie,
+            'lottie-2': Lottie,
+        },
         methods: {
             toRouter: function (router) {
                 this.$router.push({path: router})
@@ -83,7 +105,10 @@
                     that.$store.commit("setUrls", res.data)
                 }, () => {
                 })
-            }
+            },
+            handleAnimation: function (anim) {
+                this.anim = anim;
+            },
         },
         mounted () {
             if (sessionStorage.getItem("token") != null) {
@@ -93,6 +118,10 @@
         computed: {
             loading: function () {
                 return this.$store.state.loading
+                // return true
+            },
+            loadingType: function () {
+                return this.$store.state.loadingType
             }
         }
     }

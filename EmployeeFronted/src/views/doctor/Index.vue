@@ -9,7 +9,7 @@
                     <a-button @click="getPatient" type="primary" shape="circle" icon="reload"
                               style="float: right;"></a-button>
                 </span>
-                <a-collapse defaultActiveKey="2" :bordered="false">
+                <a-collapse :loading="load.patient" defaultActiveKey="2" :bordered="false">
                     <a-collapse-panel :header="'待诊患者('+patient.waitPatient.length+')'" key="1">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.waitPatient"
                                 style="overflow: auto;max-height: 400px">
@@ -40,10 +40,10 @@
                             </a-list-item>
                         </a-list>
                     </a-collapse-panel>
-                    <a-collapse-panel header="诊毕患者" key="3">
+                    <a-collapse-panel :header="'诊毕患者('+patient.outPatient.length+')'" key="3">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.outPatient"
-                                style="overflow: auto;height: 400px">
-                            <a-list-item slot="renderItem" slot-scope="item">
+                                style="overflow: auto;max-height: 400px">
+                            <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(1,item)">
                                 <a-list-item-meta>
                                 <span slot="title"
                                       style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
@@ -67,8 +67,11 @@
                     <span style="font-size: 22px">{{currentPatient.patient.realName}}</span>
                     <span style="margin: 0 10px">年龄: {{currentPatient.age}}岁</span>
                     <span>性别: {{currentPatient.patient.sex?'男':'女'}}</span>
-                    <a-button @click="refreshMR" type="primary" shape="circle" icon="reload"
-                              style="float: right;"></a-button>
+                    <a-button @click="refreshMR" type="primary"
+                              style="float: right;">刷新
+                    </a-button>
+                    <a-button @click="finishRecord" type="danger" style="float: right;margin: 0 20px;">诊毕</a-button>
+
                 </div>
                 <span slot="title" style="font-size: 22px" v-else>当前患者</span>
                 <a-tabs defaultActiveKey="1" tabPosition="top" :style="{padding: '0 10px 20px 10px'}"
@@ -202,12 +205,12 @@
             load: {
                 patient: true
             },
-            patient: {
+            patient: {//registration
                 waitPatient: [],//仍在排号
                 inPatient: [],//在诊
                 outPatient: [],
             },
-            currentPatient: null,
+            currentPatient: null,//registration
             rules: {
                 selfDescription: [{required: true, message: '请输入患者自述', trigger: 'blur'}],
                 bodyExamination: [{required: true, message: '请输入', trigger: 'blur'}],
@@ -224,6 +227,25 @@
             tempMRT: null
         }),
         methods: {
+            finishRecord () {
+                let that = this
+                this.$store.commit('setLoading', true)
+                this.$api.get('/doctor/finishDiagnose/' + this.currentPatient.id, null,
+                    res => {
+                        if (res.code === '100') {
+                            that.$message.success(that.currentPatient.patient.realName + ' 已诊断结束')
+                            that.getPatient()
+                            that.currentPatient = null
+                            that.showList = true
+                        } else {
+                            that.$message.error(res.msg)
+                        }
+                        that.$store.commit('setLoading', false)
+                    },
+                    () => {
+                        that.$store.commit('setLoading', false)
+                    })
+            },
             useTemplate (template) {
                 this.record.setFieldsValue({
                         'selfDescription': template.selfDescription,
@@ -340,14 +362,20 @@
                     url = '/medical_record/updateMR'
                     data.medicalRecord.id = this.currentPatient.MRId
                 }
+                that.$store.commit('setLoading', true)
                 this.$api.post(url, data,
                     res => {
                         if (res.code === "100") {
                             that.$message.success("提交成功")
+                            that.getPatient()
                         } else {
                             that.$message.error(res.msg)
                         }
+                        that.$store.commit('setLoading', false)
+
                     }, () => {
+                        that.$store.commit('setLoading', false)
+
                     })
             },
             selectPatient (type, patient) {
@@ -419,6 +447,7 @@
             },
             getPatient () {
                 let that = this
+                this.load.patient = true
                 this.$api.get("/doctor/getAllRegistration", null,
                     res => {
                         if (res.code === "100") {

@@ -207,8 +207,9 @@ public class InspectionApplicationController {
 
     @PostMapping("/entryApplicationResult")
     public JSONObject entryApplicationResult(@RequestBody JSONObject jsonObject, Authentication authentication) {
+        Integer adminId;
         try {
-            PermissionCheck.isTechnicalDoctor(authentication);
+            adminId = PermissionCheck.isTechnicalDoctor(authentication);
         } catch (Exception e) {
             return CommonUtil.errorJson(ErrorEnum.E_602);
         }
@@ -220,7 +221,7 @@ public class InspectionApplicationController {
         inspectionResult.setOperatorId(id);
 
         try {
-            inspectionApplicationService.entryApplicationResult(inspectionResult);
+            inspectionApplicationService.entryApplicationResult(inspectionResult, adminId);
         }catch (RuntimeException e){
             return CommonUtil.errorJson(ErrorEnum.E_641);
         }

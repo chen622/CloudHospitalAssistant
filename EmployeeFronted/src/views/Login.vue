@@ -46,6 +46,7 @@
 <script>
 
     import '../tencentCheck'
+    import '../assets/VCG4178853233.jpg'
 
     export default {
         name: 'Login',
@@ -90,9 +91,12 @@
             login () {
                 let that = this
                 that.logining = true
+                that.$store.commit("setOtherLoading", {loading: true, type: 1})
                 sessionStorage.removeItem("token")
                 that.$api.get('/user/login', this.form.getFieldsValue(),
                     function (res) {
+                        that.$store.commit('setLoading', false)
+                        that.logining = false
                         if (res.config && res.config.method === 'get') {
                             sessionStorage.setItem("token", res.data.Authorization)
                             that.$store.commit("setUserType", parseInt(res.data.userType))
@@ -106,8 +110,9 @@
                                 }, () => {
                                 })
                         }
-                        that.logining = false
                     }, function (err) {
+                        that.$store.commit('setLoading', false)
+                        that.logining = false
                         if (err) {
                             if (err.response && err.response.status === 403) {
                                 sessionStorage.removeItem("token")
@@ -118,7 +123,6 @@
                             // eslint-disable-next-line
                             console.log('API error: ' + err)
                         }
-                        that.logining = false
                     }
                 )
             }
