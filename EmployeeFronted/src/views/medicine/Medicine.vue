@@ -1129,7 +1129,7 @@
                     that.value = []
                     if (this.time == null || this.time.length == 0) {
                         start = moment().format('YYYY-MM-DD')
-                        end = moment().utc().format('YYYY-MM-DD')
+                        end = moment().format('YYYY-MM-DD')
                         that.value.push(moment())
                         that.value.push(moment())
                     } else {
