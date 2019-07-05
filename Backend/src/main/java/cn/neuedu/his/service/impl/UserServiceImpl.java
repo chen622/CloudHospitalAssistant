@@ -33,7 +33,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     @Autowired
     private DepartmentService departmentService;
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Autowired
     RedisServiceImpl redisService;
 

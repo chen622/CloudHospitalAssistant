@@ -229,7 +229,7 @@
         methods: {
             finishRecord () {
                 let that = this
-                this.$store.commit('setLoading', true)
+                this.$store.commit('setOtherLoading', {type: 1, loading: true})
                 this.$api.get('/doctor/finishDiagnose/' + this.currentPatient.id, null,
                     res => {
                         if (res.code === '100') {

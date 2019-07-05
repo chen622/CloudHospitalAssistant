@@ -666,7 +666,6 @@
                 reload: false,
             }
         },
-
         computed: {
             formItemLayout () {
                 const {formLayout} = this;
@@ -757,6 +756,7 @@
             }, getAllDrug () {
                 let that = this
                 new Promise(() => {
+                    this.$store.commit('setLoading', true)
                     this.$api.get("/drug/getAll", null,
                         res => {
                             if (res.code === "100") {
@@ -769,7 +769,9 @@
                                     that.data[i].paymentType = that.paymentTypeMap.get(that.data[i].feeTypeId)
                                 }
                             }
+                            that.$store.commit('setLoading', false)
                         }, () => {
+                            that.$store.commit('setLoading', false)
                         })
                 })
 
