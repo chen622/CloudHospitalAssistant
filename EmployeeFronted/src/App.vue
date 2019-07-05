@@ -39,8 +39,10 @@
                         :maskClosable="false"
                         :bodyStyle="{textAlign: 'center'}"
                 >
-                    <a-spin tip="正在加载..." size="large">
-                    </a-spin>
+                    <div>
+                        <lottie :options="defaultOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <p style="margin: 5px;font-size: 30px">加载中...</p>
                 </a-modal>
                 <router-view></router-view>
             </a-layout-content>
@@ -64,6 +66,9 @@
 
 <script>
     import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
+    import Lottie from './lottie.vue';
+    import * as animationData from './assets/pinjump.json';
+
 
     export default {
         data: () => ({
@@ -71,7 +76,11 @@
             current: ['index'],
             departmentKind: [],
             departments: [],
+            defaultOptions: {animationData: animationData},
         }),
+        components: {
+            'lottie': Lottie
+        },
         methods: {
             toRouter: function (router) {
                 this.$router.push({path: router})
@@ -83,7 +92,10 @@
                     that.$store.commit("setUrls", res.data)
                 }, () => {
                 })
-            }
+            },
+            handleAnimation: function (anim) {
+                this.anim = anim;
+            },
         },
         mounted () {
             if (sessionStorage.getItem("token") != null) {
@@ -93,6 +105,7 @@
         computed: {
             loading: function () {
                 return this.$store.state.loading
+                // return true
             }
         }
     }
