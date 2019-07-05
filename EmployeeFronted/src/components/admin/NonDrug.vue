@@ -68,7 +68,7 @@
 
             <a-modal v-if="portNonDrug===1" :visible="portNonDrug===1" :footer="false" @cancel="portNonDrug = false">
                 <a-upload name="file" :multiple="true"
-                          :action="$url+'/non_drug/excelIn'" :headers="header" @change="handleChange"
+                          :action="$url+'/non_drug/excelIn'" :headers="header" @change="submit"
                           :beforeUpload="beforeUpload"
                           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 >
@@ -345,7 +345,7 @@
                     this.nonDrugs = newData
                 }
             },
-            handleChange (info) {
+            submit (info) {
                 if (info.file.status !== 'uploading') {
                     console.log(info.file, info.fileList);
                 }

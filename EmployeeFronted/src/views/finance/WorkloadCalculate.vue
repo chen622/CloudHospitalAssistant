@@ -173,7 +173,8 @@
                 }
                 let that = this
                 this.loading = true
-                that.$store.commit("setLoading", true)
+
+                that.$store.commit("setOtherLoading", {loading: true, type: 2})
                 this.$api.post("/department/departmentClinicWorkload", request, res => {
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
@@ -215,8 +216,7 @@
                 }
                 this.loading = true
                 let that = this
-                that.$store.commit("setLoading",true)
-
+                that.$store.commit("setOtherLoading", {loading: true, type: 2})
                 this.$api.post("/department/departmentTechniqueWorkload", request, res => {
                     if (res.code === '100') {
                         that.departmentColumns = res.data.columns
@@ -235,10 +235,10 @@
                     } else
                         that.$message.error(res.message)
                     that.loading = false
-                    that.$store.commit("setLoading",false)
+                    that.$store.commit("setLoading", false)
                 }, () => {
                     that.loading = false
-                    that.$store.commit("setLoading",false)
+                    that.$store.commit("setLoading", false)
                 })
             },
             onChange () {
@@ -258,7 +258,7 @@
                 }
                 this.load = true
                 let that = this
-                that.$store.commit("setLoading",true)
+                that.$store.commit("setOtherLoading", {loading: true, type: 2})
                 this.$api.post("/doctor/getDoctorWorkload", request, res => {
                     if (res.code === '100') {
                         that.doctorColumns = res.data.columns
@@ -277,10 +277,10 @@
                     } else
                         that.$message.error(res.message)
                     that.load = false;
-                    that.$store.commit("setLoading",false)
+                    that.$store.commit("setLoading", false)
                 }, () => {
                     that.load = false;
-                    that.$store.commit("setLoading",false)
+                    that.$store.commit("setLoading", false)
                 })
             }
         }
