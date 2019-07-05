@@ -44,15 +44,19 @@
     </select>
 
     <select id="getAllByDoctor" resultMap="BaseResultMap">
-        select *
+        select distinct *
         from payment
-        where doctor_id in
+        where (project_operator_id in
         <foreach item="item" collection="doctorIdList" separator="," open="(" close=")" index="">
             #{item, jdbcType=INTEGER}
         </foreach>
+        or doctor_id in
+        <foreach item="item" collection="doctorIdList" separator="," open="(" close=")" index="">
+            #{item, jdbcType=INTEGER}
+        </foreach>)
         and create_time <![CDATA[>=]]> #{startDate}
-          and create_time <![CDATA[<=]]> #{endDate}
-          and invoice_id is not null
+        and create_time <![CDATA[<=]]> #{endDate}
+        and invoice_id is not null
     </select>
 
     <select id="getAllByItemIdAndPaymentTypeIdAndState" resultMap="BaseResultMap">
