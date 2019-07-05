@@ -346,17 +346,14 @@
                 }
             },
             submit (info) {
-                console.log(info)
-                if (info.file.status !== 'uploading') {
-                    console.log(info.file, info.fileList);
-                }
+                // if (info.file.status !== 'uploading') {
+                // }
                 if (info.file.status === 'done') {
-                    var state = false;
-                    if (info.file.response.data.success !== 0){
-                        this.$message.success(`${info.file.response.data.success} file uploaded successfully` )
+                    if (info.file.response.data.success !== 0) {
+                        this.$message.success(`${info.file.response.data.success} file uploaded successfully`)
                         this.state = true;
                     }
-                    if (info.file.response.data.error !== 0){
+                    if (info.file.response.data.error !== 0) {
                         this.$message.error(`${info.file.response.data.error} 错误`)
                     }
                     if (this.state) {

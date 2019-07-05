@@ -191,7 +191,7 @@
             ],
             userLoading: true,
             cacheData: null,
-            showCreateUser: true,
+            showCreateUser: false,
             userType: 601,
             option: {
                 userTypes: [],
@@ -206,7 +206,8 @@
                 password: [{required: true, message: '请输入密码'}],
                 identifyId: [{required: true, message: '请输入身份证号'}],
                 selfDescription: [{required: true, message: '请输入自述'}],
-                titleId: [{required: true, message: '请选择职称'}]
+                titleId: [{required: true, message: '请选择职称'}],
+                department: [{required: true, message: '请选择科室'}]
             }
         }),
         methods: {
