@@ -24,4 +24,7 @@ public interface DepartmentKindRemote {
 
     @GetMapping("/department_kind/getClinical")
     JSONObject getClinical();
+
+    @GetMapping("/department_kind/getDepartmentKindListNotDelete")
+    JSONObject getDepartmentKindListNotDelete();
 }

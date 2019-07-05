@@ -320,7 +320,7 @@
                     })
             },
             showAgain (record) {
-                return (record.state === 1202 || record.state === 1203 || record.state === 1204 || record.state === 1205 || record === 1206 || record.state === 1207);
+                return (record.state === 1202 || record.state === 1203 || record.state === 1204 || record.state === 1205 || record.state === 1206 || record.state === 1207);
             },
             showRetreatWithout (record) {
                 return record.paymentType.type !== 3 && record.state === 1202;

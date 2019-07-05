@@ -117,8 +117,8 @@
         },
         computed: {
             loading: function () {
-                // return this.$store.state.loading
-                return true
+                return this.$store.state.loading
+                // return true
             },
             loadingType: function () {
                 return this.$store.state.loadingType
