@@ -113,6 +113,12 @@
           and is_delete = false;
     </select>
 
+    <select id="findByNameAccurately" resultMap="BaseResultMap">
+        select *
+        from non_drug
+        where name = #{name};
+    </select>
+
     <select id="getAll" resultMap="BaseResultMap">
         select *
         from non_drug

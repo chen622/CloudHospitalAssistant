@@ -24,4 +24,6 @@ public interface NonDrugMapper extends MyMapper<NonDrug> {
     List<PaymentType> getNonDrugByType(@Param("auth") Boolean auth);
 
     List<NonDrug> getNonDrugByDepartmentId(Integer id);
+
+    NonDrug findByNameAccurately(String name);
 }
