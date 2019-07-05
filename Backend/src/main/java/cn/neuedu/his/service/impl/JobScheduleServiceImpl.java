@@ -49,6 +49,7 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
 
     /**
      * 获取两天后排班信息
+     *
      * @param departmentId
      * @return
      */
@@ -71,8 +72,8 @@ public class JobScheduleServiceImpl extends AbstractService<JobSchedule> impleme
     }
 
     @Override
-    public void removeByDate(Date date) {
-        jobScheduleMapper.removeByDate(date);
+    public void removeByDate(Integer departmentId, Date date) {
+        jobScheduleMapper.removeByDate(departmentId, date);
     }
 
     @Override
