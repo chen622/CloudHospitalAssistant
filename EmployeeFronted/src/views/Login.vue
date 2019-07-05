@@ -1,5 +1,5 @@
 <template>
-    <div style="background-image: url('../assets/VCG4178853233.jpg')">
+    <div>
         <a-row type="flex" align="middle" justify="center">
             <a-col span="8">
                 <img style="width: 100%" src="../assets/logo/logo-grey-white.png">
@@ -46,7 +46,6 @@
 <script>
 
     import '../tencentCheck'
-    import '../assets/VCG4178853233.jpg'
 
     export default {
         name: 'Login',

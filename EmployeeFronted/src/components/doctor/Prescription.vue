@@ -30,7 +30,7 @@
         </a-table>
         <a-modal v-if="showAddPrescription" :visible="showAddPrescription" @ok="addPrescription"
                  @cancel="showAddPrescription = false">
-            <template slot="title">添加新检查</template>
+            <template slot="title">添加新处方</template>
             <a-form>
                 <a-form-item label="类别" :labelCol="{span: 5}" :wrapperCol="{span: 18}">
                     <a-select @change="selectDrugsType" :defaultValue="drugsTypes[0].name">
@@ -220,13 +220,16 @@
             },
             getAllDrug () {
                 let that = this
+                this.$store.commit('setLoading', true)
                 this.$api.get("/drug/getAllDrug", null,
                     res => {
                         if (res.code === "100") {
                             that.drugsTypes = res.data
                             that.drugs = res.data[0].drugs
                         }
+                        that.$store.commit('setLoading', false)
                     }, () => {
+                        that.$store.commit('setLoading', false)
                     }
                 )
             },
