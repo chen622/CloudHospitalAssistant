@@ -145,7 +145,7 @@ public class DepartmentKindController {
     }
 
     /**
-     * 获得类型及其分类信息
+     * 获得未删除的类型及其分类信息
      * @param authentication
      * @return
      */

@@ -63,4 +63,9 @@ public class DepartmentKindController {
         return departmentKindRemote.getClinical();
     }
 
+    @GetMapping("/getDepartmentKindListNotDelete")
+    JSONObject getDepartmentKindListNotDelete(){
+        return departmentKindRemote.getDepartmentKindListNotDelete();
+    };
+
 }
