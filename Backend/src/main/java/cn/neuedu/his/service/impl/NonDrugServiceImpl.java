@@ -59,6 +59,9 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
         //检查费药品类型是否存在
         if (!payment.values().contains(nonDrug.getFeeTypeId()))
             throw new RuntimeException("608");
+
+        if (nonDrugMapper.findByNameAccurately(nonDrug.getName()) != null)
+            throw new RuntimeException();
         //检查执行部门是否存在
         Integer excutiveDepartmentId = nonDrug.getExecutiveDepartment();
         if (excutiveDepartmentId != null) {
