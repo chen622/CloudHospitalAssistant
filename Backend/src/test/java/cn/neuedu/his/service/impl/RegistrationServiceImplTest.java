@@ -18,6 +18,7 @@ public class RegistrationServiceImplTest {
     @Test
     public void setRegistrationSequence() {
         registrationService.setRegistrationSequence();
+
     }
 
     @Test

@@ -37,6 +37,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         ArrayList<JobSchedule> jobScheduleList = jobScheduleService.getAfterThreeDays();
         for (JobSchedule jobSchedule : jobScheduleList) {
             redisService.setRegistrationSequenceList(jobSchedule.getId(), jobSchedule.getLimitRegistrationAmount());
+            jobSchedule.setIsValid(true);
+            jobScheduleService.update(jobSchedule);
         }
     }
 
@@ -181,6 +183,8 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
         ArrayList<JobSchedule> jobScheduleList = jobScheduleService.findByDate(new Date(System.currentTimeMillis()));
         for (JobSchedule jobSchedule : jobScheduleList) {
             redisService.setRegistrationSequenceList(jobSchedule.getId(), jobSchedule.getLimitRegistrationAmount());
+            jobSchedule.setIsValid(true);
+            jobScheduleService.update(jobSchedule);
         }
     }
 
