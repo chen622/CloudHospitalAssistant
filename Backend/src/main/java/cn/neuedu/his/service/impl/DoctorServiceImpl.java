@@ -1075,11 +1075,15 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
         JSONArray a = new JSONArray();
         for (Registration registration : list) {
             if (registration.getMedicalFee() == null) {
-                registration.setMedicalFee(0);
+                registration.setMedicalFee((float) 0);
             }
             if (registration.getInspectionFee() == null) {
-                registration.setInspectionFee(0);
+                registration.setInspectionFee((float) 0);
             }
+            if (registration.getRegistrationFee() == null) {
+                registration.setRegistrationFee((float) 0);
+            }
+
             if (patientId == null || !patientId.equals(registration.getPatientId())) {
                 if (patient != null) {
                     a.add(patient);

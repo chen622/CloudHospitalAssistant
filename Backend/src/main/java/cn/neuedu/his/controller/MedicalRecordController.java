@@ -171,6 +171,7 @@ public class MedicalRecordController {
         if(registration !=null && (registration.getState().equals(Constants.RESERVATION) || registration.getState().equals(Constants.INSIDE_DOCTOR) || registration.getState().equals(Constants.WAITING_FOR_TREATMENT))){
             registration.setState(Constants.INSIDE_DOCTOR);
             registrationService.update(registration);
+
             return CommonUtil.successJson();
         }else {
             return CommonUtil.errorJson(ErrorEnum.E_710);

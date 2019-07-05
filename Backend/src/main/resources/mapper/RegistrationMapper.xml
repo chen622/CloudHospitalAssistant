@@ -151,10 +151,14 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <id column="patient_id" jdbcType="INTEGER" property="patientId"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <association property="medicalFee" javaType="INTEGER" select="medicalFee"
+        <association property="medicalFee" javaType="Float" select="medicalFee"
                      column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
-        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee"
+        <association property="inspectionFee" javaType="Float" select="inspectionFee"
                      column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
+
+        <association property="registrationFee" javaType="Float" select="registrationFee"
+                     column="{registrationId=id}"/>
+
     </resultMap>
 
     <select id="getPatient" resultMap="simpleOne">
@@ -181,9 +185,9 @@
     <resultMap id="getFee" type="cn.neuedu.his.model.Registration">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <association property="medicalFee" javaType="INTEGER" select="medicalFee"
+        <association property="medicalFee" javaType="FLOAT" select="medicalFee"
                      column="{registrationId=id,medicalTypeId=medicalTypeId}"/>
-        <association property="inspectionFee" javaType="INTEGER" select="inspectionFee"
+        <association property="inspectionFee" javaType="FLOAT" select="inspectionFee"
                      column="{registrationId=id,inspectionTypeId=inspectionTypeId}"/>
     </resultMap>
 
@@ -193,7 +197,7 @@
         where id = #{registrationId}
     </select>
 
-    <select id="medicalFee" resultType="Integer">
+    <select id="medicalFee" resultType="Float">
         select sum(quantity * unit_price)
         from payment
         where item_id in (
@@ -210,7 +214,7 @@
     </select>
 
 
-    <select id="inspectionFee" resultType="Integer">
+    <select id="inspectionFee" resultType="Float">
         select sum(quantity * unit_price)
         from payment
         where item_id in (
@@ -225,5 +229,10 @@
             where type.type = #{inspectionTypeId})
     </select>
 
+    <select id="registrationFee" resultType="Float">
+        select sum(quantity * unit_price)
+        from payment
+        where item_id=#{registrationId} and payment_type_id=301
+    </select>
 
 </mapper>

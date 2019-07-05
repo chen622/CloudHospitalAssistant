@@ -69,7 +69,7 @@ public class InspectionApplicationController {
 
     @PostMapping("/saveInspection")
     public JSONObject saveInspection(@RequestBody JSONObject object) {
-        return inspectionApplicationRemote.saveTemporaryInspectionDrug(object);
+        return inspectionApplicationRemote.saveInspection(object);
     }
 
     @PostMapping("/confirmApplication/{id}")

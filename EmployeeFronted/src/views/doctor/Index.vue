@@ -236,7 +236,7 @@
                 )
                 this.$store.commit('changeDiagnoseType', template.isWesternMedicine)
                 template.firstDiagnose.forEach(item => {
-                    item.temp = true
+                    item.diseaseSecond.temp = true
                     this.$store.commit('addDisease', {isFinial: false, disease: item.diseaseSecond})
                 })
                 // template.finalDiagnose.forEach(item => {

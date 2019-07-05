@@ -178,7 +178,7 @@
                 <a-divider style="margin-top:20px;font-size:20px;">费用统计</a-divider>
                 
                 <a-table :columns="rColumns" :dataSource="rData">
-                    <template slot="time" slot-scope="text">
+                    <template slot="createTime" slot-scope="text">
                         <span name>{{text| timeStampToDate}}</span>
                     </template>
                 </a-table>       
@@ -233,34 +233,39 @@
                     title: '挂号ID',
                     key: 'id',
                     dataIndex: 'id',
-                    width: '25%',
+                    width: '16%',
                     align: 'center',
                     scopedSlots: {customRender: 'id'}
                 }, {
                     title: '药费',
-                    key: 'medicine',
-                    dataIndex: 'medicine',
-                    width: '20%',
+                    key: 'medicalFee',
+                    dataIndex: 'medicalFee',
+                    width: '16%',
                     align: 'center',
-                    scopedSlots: {customRender: 'medicine'}
+                    scopedSlots: {customRender: 'medicalFee'}
                 }, {
                     title: '检查项目费',
-                    key: 'inspection',
-                    dataIndex: 'inspection',
-                    width: '20%',
+                    key: 'inspectionFee',
+                    dataIndex: 'inspectionFee',
+                    width: '16%',
                     align: 'center',
-                    scopedSlots: {customRender: 'inspection'}
+                    scopedSlots: {customRender: 'inspectionFee'}
+                },{
+                    title: '挂号费',
+                    key: 'registrationFee',
+                    dataIndex: 'registrationFee',
+                    width: '16%',
+                    align: 'center',
+                    scopedSlots: {customRender: 'registrationFee'}
                 }, {
                     title: '挂号时间',
-                    key: 'time',
-                    dataIndex: 'time',
-                    width: '30%',
+                    key: 'createTime',
+                    dataIndex: 'createTime',
+                    width: '20%',
                     align: 'center',
-                    scopedSlots: {customRender: 'time'}
+                    scopedSlots: {customRender: 'createTime'}
                 },],
                 rData: [],
-
-
             }
         }, computed: {
             formItemLayout () {
@@ -344,9 +349,10 @@
                             element.registrations.forEach(element => {
                                 this.rData.push({
                                     id: element.id,
-                                    medicine: element.medicalFee,
-                                    inspection: element.inspectionFee,
-                                    time: element.createTime,
+                                    medicalFee: element.medicalFee,
+                                    inspectionFee: element.inspectionFee,
+                                    createTime: element.createTime,
+                                    registrationFee:element.registrationFee,
                                     key: element.id
                                 })
                             });
@@ -360,20 +366,7 @@
             }, getPatient () {
 
             }, selectPatient (item) {
-                this.rData = []
-                this.patient = item
-                this.patients = []
-                this.patients.push(item)
-                item.registrations.forEach(element => {
-                    this.rData.push({
-                        id: element.id,
-                        medicine: element.medicalFee,
-                        inspection: element.inspectionFee,
-                        time: element.createTime,
-                        key: element.id
-                    })
-                });
-
+                this.onSearchByPid(item.id)
             }, getPaymentType () {
                 let that = this
                 this.$api.get("/payment_type/getAll", null,

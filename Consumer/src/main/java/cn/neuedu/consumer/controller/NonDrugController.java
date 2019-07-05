@@ -107,4 +107,9 @@ public class NonDrugController {
     public JSONObject excelIn(@RequestPart("file") MultipartFile excelFile) {
         return fileTransferRemote.excelIn(excelFile);
     }
+
+    @GetMapping("/getNonDrugByType")
+    JSONObject getNonDrugByType(){
+        return nonDrugRemote.getNonDrugByType();
+    }
 }
