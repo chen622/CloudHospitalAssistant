@@ -39,10 +39,15 @@
                         :maskClosable="false"
                         :bodyStyle="{textAlign: 'center'}"
                 >
-                    <div>
-                        <lottie v-if="loadingType === 0" :options="loadOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
-                        <lottie v-else-if="loadingType === 1" :options="submitOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
-                        <lottie v-else-if="loadingType === 2" :options="presentationOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    <div v-if="loadingType === 0">
+                        <lottie-0 :options="loadOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <div v-else-if="loadingType === 1">
+                        <lottie-1 :options="submitOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                    </div>
+                    <div v-else-if="loadingType === 2">
+                        <lottie-2 :options="presentationOptions" :height="200" :width="200"
+                                v-on:animCreated="handleAnimation"/>
                     </div>
                     <p style="margin: 5px;font-size: 30px">加载中...</p>
                 </a-modal>
@@ -85,7 +90,9 @@
             loadOptions: {animationData: clock},
         }),
         components: {
-            'lottie': Lottie
+            'lottie-0': Lottie,
+            'lottie-1': Lottie,
+            'lottie-2': Lottie,
         },
         methods: {
             toRouter: function (router) {
@@ -110,8 +117,8 @@
         },
         computed: {
             loading: function () {
-                return this.$store.state.loading
-                // return true
+                // return this.$store.state.loading
+                return true
             },
             loadingType: function () {
                 return this.$store.state.loadingType
