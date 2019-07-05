@@ -346,13 +346,19 @@
                 }
             },
             submit (info) {
+                console.log(info)
                 if (info.file.status !== 'uploading') {
                     console.log(info.file, info.fileList);
                 }
                 if (info.file.status === 'done') {
                     this.$message.success(`${info.file.name} file uploaded successfully`);
+                    this.$message.success(`${info.file.response.data.success} file uploaded successfully` )
+                    this.getNonDrug()
+                    this.portNonDrug = 0
                 } else if (info.file.status === 'error') {
                     this.$message.error(`${info.file.name} file upload failed.`);
+                    this.$message.error(`${info.file.response.data.error} file upload failed`)
+                    this.getNonDrug()
                 }
             },
             beforeUpload (file) {
