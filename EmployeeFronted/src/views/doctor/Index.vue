@@ -43,7 +43,7 @@
                     <a-collapse-panel :header="'诊毕患者('+patient.outPatient.length+')'" key="3">
                         <a-list :loading="load.patient" itemLayout="horizontal" :dataSource="patient.outPatient"
                                 style="overflow: auto;max-height: 400px">
-                            <a-list-item slot="renderItem" slot-scope="item">
+                            <a-list-item slot="renderItem" slot-scope="item" @click="selectPatient(1,item)">
                                 <a-list-item-meta>
                                 <span slot="title"
                                       style="font-size: 20px;line-height: 25px">{{item.patient.realName}}</span>
