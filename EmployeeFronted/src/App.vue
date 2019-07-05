@@ -40,7 +40,9 @@
                         :bodyStyle="{textAlign: 'center'}"
                 >
                     <div>
-                        <lottie :options="defaultOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                        <lottie v-if="loadingType === 0" :options="loadOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                        <lottie v-else-if="loadingType === 1" :options="submitOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
+                        <lottie v-else-if="loadingType === 2" :options="presentationOptions" :height="200" :width="200" v-on:animCreated="handleAnimation"/>
                     </div>
                     <p style="margin: 5px;font-size: 30px">加载中...</p>
                 </a-modal>
@@ -67,7 +69,9 @@
 <script>
     import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN';
     import Lottie from './lottie.vue';
-    import * as animationData from './assets/pinjump.json';
+    import * as submit from './assets/annotation/submit.json';
+    import * as clock from './assets/annotation/clock.json';
+    import * as presentation from './assets/annotation/presentation.json';
 
 
     export default {
@@ -76,7 +80,9 @@
             current: ['index'],
             departmentKind: [],
             departments: [],
-            defaultOptions: {animationData: animationData},
+            submitOptions: {animationData: submit},
+            presentationOptions: {animationData: presentation},
+            loadOptions: {animationData: clock},
         }),
         components: {
             'lottie': Lottie
@@ -106,6 +112,9 @@
             loading: function () {
                 return this.$store.state.loading
                 // return true
+            },
+            loadingType: function () {
+                return this.$store.state.loadingType
             }
         }
     }
