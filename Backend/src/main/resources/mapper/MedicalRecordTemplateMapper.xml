@@ -67,14 +67,14 @@
         select *
         from diagnose
         where item_id = #{MRID}
-          and is_template = false
+          and is_template = false and is_major=false
     </select>
 
     <select id="getFinal" resultMap="cn.neuedu.his.mapper.DiagnoseMapper.BaseResultMap">
         select *
         from diagnose
         where item_id = #{MRID}
-          and is_template = true
+          and is_template = true and is_major=true
     </select>
 
     <select id="getMeicalRecordTemByName" resultMap="BaseResultMap">
