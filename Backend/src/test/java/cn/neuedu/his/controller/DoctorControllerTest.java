@@ -56,24 +56,7 @@ public class DoctorControllerTest {
         this.token = Constants.TOKEN_PREFIX + token;
 //        mockMvc = MockMvcBuilders.webAppContextSetup(wac).addFilter(new JwtCheckAuthorizationFilter()).build();
     }
-
-
-    @Autowired
-    RedisServiceImpl redisService;
-
-    @Test
-    public void get() throws Exception {
-
-        Map<String, Integer> map=redisService.getMapAll("userType");
-        Set<String> set=map.keySet();
-        for (String  key:set){
-            System.out.println(key+" "+map.get(key));
-        }
-    }
-
-
-
-    /**
+   /**
      * 暂存病历
      * @throws Exception
      */
@@ -87,7 +70,7 @@ public class DoctorControllerTest {
         record.setPreviousTreatment("测试redis");
         JSONObject object=new JSONObject();
         object.put("registrationId", registrationId);
-        object.put("record", record);
+        object.put("medicalRecord", record);
 
         String  requestJson=object.toJSONString();
         mockMvc.perform(MockMvcRequestBuilders.post("/medical_record/saveTemporaryMR")
@@ -100,7 +83,6 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
-
     /**
      * 获得暂存病历
      * @throws Exception
@@ -116,14 +98,13 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.code").value("100"))
                 .andDo(MockMvcResultHandlers.print());
     }
-
     /**
-     * 获得暂存病历
+     * 删除暂存病历
      * @throws Exception
      */
     @Test
     public void deleteTemporaryMR() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getPrescriptionAndInspection/35")
+        mockMvc.perform(MockMvcRequestBuilders.get("/medical_record/deleteTemporaryMR/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -174,7 +155,7 @@ public class DoctorControllerTest {
 
         String  requestJson=object.toJSONString();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctor/saveTemporaryInspection")
+        mockMvc.perform(MockMvcRequestBuilders.post("/inspection_application/saveTemporaryInspection")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
                 .header(Constants.TOKEN_HEADER, token)
@@ -185,14 +166,13 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
     /**
      * 获得暂存的检查/处置
      * @throws Exception
      */
     @Test
     public void getTemporaryInspection() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/getTemporaryInspection/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/inspection_application/getTemporaryInspection/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -202,14 +182,22 @@ public class DoctorControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    public void get() throws Exception {
 
+        Map<String, Integer> map=redisService.getMapAll("userType");
+        Set<String> set=map.keySet();
+        for (String  key:set){
+            System.out.println(key+" "+map.get(key));
+        }
+    }
     /**
-     * 获得暂存的检查/处置
+     * 删除暂存的检查/处置
      * @throws Exception
      */
     @Test
     public void deleteTemporaryInspection() throws Exception{
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctor/deleteTemporaryInspection/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/inspection_application/deleteTemporaryInspection/1")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .header(Constants.TOKEN_HEADER, token)
                 .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -222,6 +210,8 @@ public class DoctorControllerTest {
 
 
 
+    @Autowired
+    RedisServiceImpl redisService;
 
 
 

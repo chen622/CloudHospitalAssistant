@@ -66,7 +66,10 @@ public class RegistrationServiceImpl extends AbstractService<Registration> imple
     @Override
     @Transactional
     public Payment preRegistration(Integer patientId, Integer scheduleId) {
-        return registerInfo(Constants.WEB_REGISTRAR_ID, patientId, scheduleId, false, Constants.RESERVATION);
+        Payment p = registerInfo(Constants.WEB_REGISTRAR_ID, patientId, scheduleId, false, Constants.RESERVATION);
+        p.setState(Constants.HAVE_COMPLETED_PAID);
+        paymentService.update(p);
+        return  p;
     }
 
     /**
