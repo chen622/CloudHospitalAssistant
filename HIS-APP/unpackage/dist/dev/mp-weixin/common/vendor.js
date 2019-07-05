@@ -1,5 +1,331 @@
 (global["webpackJsonp"] = global["webpackJsonp"] || []).push([["common/vendor"],{
 
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js":
+/*!**************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createApp) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/App.vue"));
+
+
+
+
+var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/store/index.js"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var pageHead = function pageHead() {return __webpack_require__.e(/*! import() | components/page-head */ "components/page-head").then(__webpack_require__.bind(null, /*! ./components/page-head.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/components/page-head.vue"));};var pageFoot = function pageFoot() {return __webpack_require__.e(/*! import() | components/page-foot */ "components/page-foot").then(__webpack_require__.bind(null, /*! ./components/page-foot.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/components/page-foot.vue"));};var uLink = function uLink() {return __webpack_require__.e(/*! import() | components/uLink */ "components/uLink").then(__webpack_require__.bind(null, /*! @/components/uLink.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/components/uLink.vue"));};
+
+_vue.default.config.productionTip = false;
+
+_vue.default.prototype.$store = _store.default;
+_vue.default.prototype.$backgroundAudioData = {
+  playing: false,
+  playTime: 0,
+  formatedPlayTime: '00:00:00' };
+
+
+_vue.default.component('page-head', pageHead);
+_vue.default.component('page-foot', pageFoot);
+_vue.default.component('uLink', uLink);
+
+_App.default.mpType = 'app';
+
+var app = new _vue.default(_objectSpread({
+  store: _store.default },
+_App.default));
+
+createApp(app).$mount();
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createApp"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Fdetail\"}":
+/*!**********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdetail"} ***!
+  \**********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _detail = _interopRequireDefault(__webpack_require__(/*! ./pages/his/detail.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/detail.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_detail.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Fdoctordetail\"}":
+/*!****************************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdoctordetail"} ***!
+  \****************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _doctordetail = _interopRequireDefault(__webpack_require__(/*! ./pages/his/doctordetail.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/doctordetail.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_doctordetail.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Fdoctors\"}":
+/*!***********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdoctors"} ***!
+  \***********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _doctors = _interopRequireDefault(__webpack_require__(/*! ./pages/his/doctors.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/doctors.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_doctors.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Findex\"}":
+/*!*********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Findex"} ***!
+  \*********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _index = _interopRequireDefault(__webpack_require__(/*! ./pages/his/index.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/index.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_index.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2FinspectionResult\"}":
+/*!********************************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2FinspectionResult"} ***!
+  \********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _inspectionResult = _interopRequireDefault(__webpack_require__(/*! ./pages/his/inspectionResult.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/inspectionResult.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_inspectionResult.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Flogin\"}":
+/*!*********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Flogin"} ***!
+  \*********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _login = _interopRequireDefault(__webpack_require__(/*! ./pages/his/login.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/login.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_login.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Frecord\"}":
+/*!**********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Frecord"} ***!
+  \**********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _record = _interopRequireDefault(__webpack_require__(/*! ./pages/his/record.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/record.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_record.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2FregistrationRecord\"}":
+/*!**********************************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2FregistrationRecord"} ***!
+  \**********************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _registrationRecord = _interopRequireDefault(__webpack_require__(/*! ./pages/his/registrationRecord.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/registrationRecord.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_registrationRecord.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/main.js?{\"page\":\"pages%2Fhis%2Freserve\"}":
+/*!***********************************************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/main.js?{"page":"pages%2Fhis%2Freserve"} ***!
+  \***********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json");
+
+var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _reserve = _interopRequireDefault(__webpack_require__(/*! ./pages/his/reserve.vue */ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages/his/reserve.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+createPage(_reserve.default);
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/pages.json":
+/*!*****************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/pages.json ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/store/http.js":
+/*!********************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/store/http.js ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var baseUrl = 'http://localhost:8020';
+
+
+//带Token请求
+var httpTokenRequest = function httpTokenRequest(opts, data) {
+  var token = uni.getStorageSync('token');
+  var httpDefaultOpts = {
+    url: baseUrl + opts.url,
+    data: data,
+    method: opts.method,
+    header: {
+      'Authorization': token,
+      "Accept": "application/json",
+      "Content-Type": "application/json; charset=UTF-8" },
+
+    dataType: 'json' };
+
+
+  var promise = new Promise(function (resolve, reject) {
+    uni.request(httpDefaultOpts).then(
+    function (res) {
+      resolve(res[1]);
+    }).
+    catch(
+    function (response) {
+      reject(response);
+    });
+
+  });
+  return promise;
+};var _default =
+
+
+{
+  baseUrl: baseUrl,
+  httpTokenRequest: httpTokenRequest };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
+
+/***/ }),
+
+/***/ "../../../../java_project/CloudHospitalAssistant/HIS-APP/store/index.js":
+/*!*********************************************************************!*\
+  !*** F:/java_project/CloudHospitalAssistant/HIS-APP/store/index.js ***!
+  \*********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"));var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
+var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
+
+_vue.default.use(_vuex.default);
+
+var store = new _vuex.default.Store({
+  state: {
+    hasLogin: false,
+    loginProvider: "",
+    openid: null,
+    token: uni.getStorageSync('token') },
+
+  mutations: {
+    login: function login(state, provider) {
+      state.hasLogin = true;
+      state.loginProvider = provider;
+    },
+    logout: function logout(state) {
+      state.hasLogin = false;
+      state.openid = nulls;
+    },
+    setOpenid: function setOpenid(state, openid) {
+      state.openid = openid;
+    } },
+
+  actions: {
+    // lazy loading openid
+    getUserOpenId: function () {var _getUserOpenId = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(_ref) {var commit, state;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
+                commit = _ref.commit,
+                state = _ref.state;_context.next = 3;return (
+
+                  new Promise(function (resolve, reject) {
+                    if (state.openid) {
+                      resolve(state.openid);
+                    } else {
+                      uni.login({
+                        success: function success(data) {
+                          commit('login');
+                          setTimeout(function () {//模拟异步请求服务器获取 openid
+                            var openid = '123456789';
+                            console.log('uni.request mock openid[' + openid + ']');
+                            commit('setOpenid', openid);
+                            resolve(openid);
+                          }, 1000);
+                        },
+                        fail: function fail(err) {
+                          console.log('uni.login 接口调用失败，将无法正常使用开放接口等服务', err);
+                          reject(err);
+                        } });
+
+                    }
+                  }));case 3:return _context.abrupt("return", _context.sent);case 4:case "end":return _context.stop();}}}, _callee, this);}));function getUserOpenId(_x) {return _getUserOpenId.apply(this, arguments);}return getUserOpenId;}() } });var _default =
+
+
+
+
+
+
+
+store;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
+
+/***/ }),
+
 /***/ "./node_modules/@babel/runtime/regenerator/index.js":
 /*!**********************************************************!*\
   !*** ./node_modules/@babel/runtime/regenerator/index.js ***!
@@ -8998,331 +9324,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js":
-/*!*******************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js ***!
-  \*******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createApp) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ "C:\\Users\\PC\\Desktop\\HIS-APP\\App.vue"));
-
-
-
-
-var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ "C:\\Users\\PC\\Desktop\\HIS-APP\\store\\index.js"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};var ownKeys = Object.keys(source);if (typeof Object.getOwnPropertySymbols === 'function') {ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {return Object.getOwnPropertyDescriptor(source, sym).enumerable;}));}ownKeys.forEach(function (key) {_defineProperty(target, key, source[key]);});}return target;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var pageHead = function pageHead() {return __webpack_require__.e(/*! import() | components/page-head */ "components/page-head").then(__webpack_require__.bind(null, /*! ./components/page-head.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\components\\page-head.vue"));};var pageFoot = function pageFoot() {return __webpack_require__.e(/*! import() | components/page-foot */ "components/page-foot").then(__webpack_require__.bind(null, /*! ./components/page-foot.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\components\\page-foot.vue"));};var uLink = function uLink() {return __webpack_require__.e(/*! import() | components/uLink */ "components/uLink").then(__webpack_require__.bind(null, /*! @/components/uLink.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\components\\uLink.vue"));};
-
-_vue.default.config.productionTip = false;
-
-_vue.default.prototype.$store = _store.default;
-_vue.default.prototype.$backgroundAudioData = {
-  playing: false,
-  playTime: 0,
-  formatedPlayTime: '00:00:00' };
-
-
-_vue.default.component('page-head', pageHead);
-_vue.default.component('page-foot', pageFoot);
-_vue.default.component('uLink', uLink);
-
-_App.default.mpType = 'app';
-
-var app = new _vue.default(_objectSpread({
-  store: _store.default },
-_App.default));
-
-createApp(app).$mount();
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createApp"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Fdetail\"}":
-/*!***************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdetail"} ***!
-  \***************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _detail = _interopRequireDefault(__webpack_require__(/*! ./pages/his/detail.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\detail.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_detail.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Fdoctordetail\"}":
-/*!*********************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdoctordetail"} ***!
-  \*********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _doctordetail = _interopRequireDefault(__webpack_require__(/*! ./pages/his/doctordetail.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\doctordetail.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_doctordetail.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Fdoctors\"}":
-/*!****************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Fdoctors"} ***!
-  \****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _doctors = _interopRequireDefault(__webpack_require__(/*! ./pages/his/doctors.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\doctors.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_doctors.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Findex\"}":
-/*!**************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Findex"} ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _index = _interopRequireDefault(__webpack_require__(/*! ./pages/his/index.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\index.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_index.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2FinspectionResult\"}":
-/*!*************************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2FinspectionResult"} ***!
-  \*************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _inspectionResult = _interopRequireDefault(__webpack_require__(/*! ./pages/his/inspectionResult.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\inspectionResult.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_inspectionResult.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Flogin\"}":
-/*!**************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Flogin"} ***!
-  \**************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _login = _interopRequireDefault(__webpack_require__(/*! ./pages/his/login.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\login.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_login.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Frecord\"}":
-/*!***************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Frecord"} ***!
-  \***************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _record = _interopRequireDefault(__webpack_require__(/*! ./pages/his/record.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\record.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_record.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2FregistrationRecord\"}":
-/*!***************************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2FregistrationRecord"} ***!
-  \***************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _registrationRecord = _interopRequireDefault(__webpack_require__(/*! ./pages/his/registrationRecord.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\registrationRecord.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_registrationRecord.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\main.js?{\"page\":\"pages%2Fhis%2Freserve\"}":
-/*!****************************************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/main.js?{"page":"pages%2Fhis%2Freserve"} ***!
-  \****************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(createPage) {__webpack_require__(/*! uni-pages */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json");
-
-var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _reserve = _interopRequireDefault(__webpack_require__(/*! ./pages/his/reserve.vue */ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages\\his\\reserve.vue"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
-createPage(_reserve.default);
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["createPage"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\pages.json":
-/*!**********************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/pages.json ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\store\\http.js":
-/*!*************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/store/http.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var baseUrl = 'http://localhost:8078';
-
-
-//带Token请求
-var httpTokenRequest = function httpTokenRequest(opts, data) {
-  var token = uni.getStorageSync('token');
-  var httpDefaultOpts = {
-    url: baseUrl + opts.url,
-    data: data,
-    method: opts.method,
-    header: {
-      'Authorization': token,
-      "Accept": "application/json",
-      "Content-Type": "application/json; charset=UTF-8" },
-
-    dataType: 'json' };
-
-
-  var promise = new Promise(function (resolve, reject) {
-    uni.request(httpDefaultOpts).then(
-    function (res) {
-      resolve(res[1]);
-    }).
-    catch(
-    function (response) {
-      reject(response);
-    });
-
-  });
-  return promise;
-};var _default =
-
-
-{
-  baseUrl: baseUrl,
-  httpTokenRequest: httpTokenRequest };exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
-
-/***/ }),
-
-/***/ "C:\\Users\\PC\\Desktop\\HIS-APP\\store\\index.js":
-/*!**************************************************!*\
-  !*** C:/Users/PC/Desktop/HIS-APP/store/index.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _regenerator = _interopRequireDefault(__webpack_require__(/*! ./node_modules/@babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"));var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ "./node_modules/@dcloudio/vue-cli-plugin-uni/packages/mp-vue/dist/mp.runtime.esm.js"));
-var _vuex = _interopRequireDefault(__webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js"));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {try {var info = gen[key](arg);var value = info.value;} catch (error) {reject(error);return;}if (info.done) {resolve(value);} else {Promise.resolve(value).then(_next, _throw);}}function _asyncToGenerator(fn) {return function () {var self = this,args = arguments;return new Promise(function (resolve, reject) {var gen = fn.apply(self, args);function _next(value) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);}function _throw(err) {asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);}_next(undefined);});};}
-
-_vue.default.use(_vuex.default);
-
-var store = new _vuex.default.Store({
-  state: {
-    hasLogin: false,
-    loginProvider: "",
-    openid: null },
-
-  mutations: {
-    login: function login(state, provider) {
-      state.hasLogin = true;
-      state.loginProvider = provider;
-    },
-    logout: function logout(state) {
-      state.hasLogin = false;
-      state.openid = nulls;
-    },
-    setOpenid: function setOpenid(state, openid) {
-      state.openid = openid;
-    } },
-
-  actions: {
-    // lazy loading openid
-    getUserOpenId: function () {var _getUserOpenId = _asyncToGenerator( /*#__PURE__*/_regenerator.default.mark(function _callee(_ref) {var commit, state;return _regenerator.default.wrap(function _callee$(_context) {while (1) {switch (_context.prev = _context.next) {case 0:
-                commit = _ref.commit,
-                state = _ref.state;_context.next = 3;return (
-
-                  new Promise(function (resolve, reject) {
-                    if (state.openid) {
-                      resolve(state.openid);
-                    } else {
-                      uni.login({
-                        success: function success(data) {
-                          commit('login');
-                          setTimeout(function () {//模拟异步请求服务器获取 openid
-                            var openid = '123456789';
-                            console.log('uni.request mock openid[' + openid + ']');
-                            commit('setOpenid', openid);
-                            resolve(openid);
-                          }, 1000);
-                        },
-                        fail: function fail(err) {
-                          console.log('uni.login 接口调用失败，将无法正常使用开放接口等服务', err);
-                          reject(err);
-                        } });
-
-                    }
-                  }));case 3:return _context.abrupt("return", _context.sent);case 4:case "end":return _context.stop();}}}, _callee, this);}));function getUserOpenId(_x) {return _getUserOpenId.apply(this, arguments);}return getUserOpenId;}() } });var _default =
-
-
-
-
-
-
-
-store;exports.default = _default;
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ "./node_modules/@dcloudio/uni-mp-weixin/dist/index.js")["default"]))
 
 /***/ })
 

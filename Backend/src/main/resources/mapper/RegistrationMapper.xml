@@ -16,6 +16,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="sequence" jdbcType="INTEGER" property="sequence"/>
         <result column="serial_number" jdbcType="VARCHAR" property="serialNumber"/>
+        <association property="scheduleTime" javaType="java.util.Date" select="getScheduleTime" column="id"/>
         <association property="stateName" javaType="String" select="getStateName" column="{id=state}"/>
         <association property="period" javaType="String" select="getPeriod" column="{id=schedule_id}"/>
         <association property="doctorName" javaType="String" select="getDoctorName" column="{id=schedule_id}"/>
@@ -26,6 +27,10 @@
         from registration r
         where patient_id = #{id}
         ORDER BY r.create_time DESC
+    </select>
+
+    <select id="getScheduleTime" resultType="java.util.Date">
+        select job_schedule.date from job_schedule where job_schedule.id=#{id}
     </select>
 
     <select id="getStateName" resultType="String">

@@ -206,7 +206,7 @@
                  LEFT JOIN payment ON prescription.id = payment.item_id #查询处方的药物
         WHERE prescription.is_template = 0
           AND payment.payment_type_id in (SELECT id from payment_type WHERE type = 2)
-          AND mr.id = 22
+          AND mr.id = #{id}
         GROUP BY prId
     </select>
 </mapper>

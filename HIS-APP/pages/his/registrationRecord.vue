@@ -4,20 +4,25 @@
 			<radio-group >
 				<uni-card 
 				 is-full="true"
-				 style="width: 100%;margin-top: 10upx;"
+				 style="width: 100%;margin-top: 10upx;white-space: pre-wrap;"
 				 v-for="(item, index) in registrations" :key="index"
-				 :title="item.createTime | formatDate" 
+				 :title="item.title" 
 				 thumbnail="../../static/img/time.png" 
 				 >
-					<view class="uni-flex uni-row" style="width: 100%;margin-top: 10upx;" >
-						<view style="width:25%;">
+				 <view class="uni-column" style="width: 100%;margin-top: 10upx;">
+					<view class="uni-flex uni-row" style="width: 100%;" >
+						<view style="width:33%;">
 							<text>号码 :  </text>
-							{{item.serialNumber}}</view>
-						<view style="width:25%;">医生 :  {{item.doctorName}}</view>
-						<view style="width:25%;">时段 :  {{item.period}}</view>
-						<view style="width:25%;">
+							{{item.sequence}}</view>
+						<view style="width:33%;">医生 :  {{item.doctorName}}</view>
+						<view style="width:33%;">时段 :  {{item.period}}</view>						
+					</view>
+					<view style="width: 100%;" class="uni-flex uni-row">
+						<view style="width: 50%;">{{item.createTime}}</view>
+						<view style="width:50%;">
 							 <uni-tag size="small" :type="getTag(item.state)" inverted="true" :text="item.stateName" > </uni-tag>
 						</view>
+					</view>
 					</view>
 				</uni-card>
 			</radio-group>
@@ -45,19 +50,18 @@
 			return {
 				registrations:[],
 			}
-		},filters: {
-            formatDate: function (value) {
-                let date = new Date(value);
-                let y = date.getFullYear();
-                let MM = date.getMonth() + 1;
-                MM = MM < 10 ? ('0' + MM) : MM;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                return y + '-' + MM + '-' + d;
-            }
-        },onLoad() {
+		},onLoad() {
 			this.getRegistration()
 		},methods: {
+			formatDate (value) {
+			    let date = new Date(value);
+			    let y = date.getFullYear();
+			    let MM = date.getMonth() + 1;
+			    MM = MM < 10 ? ('0' + MM) : MM;
+			    let d = date.getDate();
+			    d = d < 10 ? ('0' + d) : d;
+			    return y + '-' + MM + '-' + d;
+			},
 			getTag(state){
 				if(state==807 || state==809)
 					return 'default'
@@ -75,8 +79,13 @@
 	             };
 	             
 		    	http.httpTokenRequest(opts, null).then(res => {
-					console.log(res.data.data)
 					this.registrations=res.data.data
+					this.registrations.forEach(item =>{
+						item.title='看诊日期： '+   this.formatDate(item.scheduleTime)
+						item.createTime='挂号日期：'+this.formatDate(item.createTime)
+						item.stateName='诊断状态：'+item.stateName
+					})
+					console.log(this.registrations[0].title)
 	            },error => {
 					uni.showToast({
 						title: '网络错误，请稍后重试',

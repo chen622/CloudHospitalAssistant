@@ -44,6 +44,9 @@ public class Registration {
     @Column(name = "serial_number")
     private Integer serialNumber;
 
+    @Transient
+    private  Date scheduleTime;
+
     private Integer age;
 
     private Patient patient;
@@ -68,6 +71,14 @@ public class Registration {
     private String period;
     @Transient
     private String doctorName;
+
+    public Date getScheduleTime() {
+        return scheduleTime;
+    }
+
+    public void setScheduleTime(Date scheduleTime) {
+        this.scheduleTime = scheduleTime;
+    }
 
     public String getDoctorName() {
         return doctorName;

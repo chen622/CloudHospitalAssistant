@@ -372,7 +372,7 @@ public class MedicalRecordController {
                 });
             });
             drugJsonArray.forEach(drugObject -> {
-                if (!((JSONObject) drugObject).containsKey("returnNum")) {
+                if (!((JSONObject) drugObject).containsKey("returnNum") ||((JSONObject) drugObject).get("returnNum").equals("") ) {
                     ((JSONObject) drugObject).put("returnNum",0);
                 }
             });

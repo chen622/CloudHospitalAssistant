@@ -34,9 +34,9 @@
 				 title="检查项目" 
 				 thumbnail="http://img-cdn-qiniu.dcloud.net.cn/new-page/uni.png" 
 				 >
-					<view class="uni-flex uni-row" >
-						<uni-list>
-							<uni-list-item @click="checkResult(item)" tyle="width: 100%;" :key="index"  v-for="(item,index) in inspections"  :title="item.nonDrugName" :note="'数量: '+item.nonDrugQuantity+'           单价: '+item.nonDrugPrice"  />
+					<view class="uni-flex uni-row"  style="width: 100%;">
+						<uni-list  style="width: 100%;">
+							<uni-list-item @click="checkResult(item)" tyle="width: 100%;" :key="index"  v-for="(item,index) in inspections"  :title="item.nonDrugName" :note="item.note"  />
 						</uni-list>
 					</view>
 				</uni-card>		
@@ -48,9 +48,9 @@
 				 title="处方" 
 				 thumbnail="http://img-cdn-qiniu.dcloud.net.cn/new-page/uni.png" 
 				 >
-					<view class="uni-flex uni-row" >
+					<view class="uni-flex uni-row"  style="width: 100%;">
 						<uni-list>
-							<uni-list-item tyle="width: 100%;"  :key="index"  v-for="(item,index) in prescriptions" :show-arrow="false" :title="item.drugName" :note="'总数量:'+item.drugQuantity+'            已退数量:'+item.returnNum+'            单价:'+item.drugPrice" />
+							<uni-list-item style="width: 100%;"  :key="index"  v-for="(item,index) in prescriptions" :show-arrow="false" :title="item.drugName" :note="item.note" />
 						</uni-list>
 					</view>
 				</uni-card>		
@@ -116,7 +116,13 @@
 					let result=res.data.data
 					console.log(result)
 					this.prescriptions=result[1]
+					this.prescriptions.forEach(item =>{
+						item.note='总数量:'+item.drugQuantity+'      	      已退数量:'+item.returnNum+'        	    单价:'+item.drugPrice
+					})
 					this.inspections=result[0]
+					this.inspections.forEach(item => {
+						item.note='数量: '+item.nonDrugQuantity+'     	      单价: '+item.nonDrugPrice
+					})
 
 	            },error => {
 					uni.showToast({
