@@ -351,10 +351,18 @@
                     console.log(info.file, info.fileList);
                 }
                 if (info.file.status === 'done') {
-                    this.$message.success(`${info.file.name} file uploaded successfully`);
-                    this.$message.success(`${info.file.response.data.success} file uploaded successfully` )
-                    this.getNonDrug()
-                    this.portNonDrug = 0
+                    var state = false;
+                    if (info.file.response.data.success !== 0){
+                        this.$message.success(`${info.file.response.data.success} file uploaded successfully` )
+                        this.state = true;
+                    }
+                    if (info.file.response.data.error !== 0){
+                        this.$message.error(`${info.file.response.data.error} 错误`)
+                    }
+                    if (this.state) {
+                        this.portNonDrug = 0
+                        this.getNonDrug()
+                    }
                 } else if (info.file.status === 'error') {
                     this.$message.error(`${info.file.name} file upload failed.`);
                     this.$message.error(`${info.file.response.data.error} file upload failed`)

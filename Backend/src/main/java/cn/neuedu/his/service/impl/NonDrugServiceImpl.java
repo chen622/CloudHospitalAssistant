@@ -61,7 +61,7 @@ public class NonDrugServiceImpl extends AbstractService<NonDrug> implements NonD
             throw new RuntimeException("608");
 
         if (nonDrugMapper.findByNameAccurately(nonDrug.getName()) != null)
-            throw new RuntimeException();
+            throw new RuntimeException("642");
         //检查执行部门是否存在
         Integer excutiveDepartmentId = nonDrug.getExecutiveDepartment();
         if (excutiveDepartmentId != null) {
