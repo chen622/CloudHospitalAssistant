@@ -85,7 +85,7 @@ public class InspectionApplicationServiceImpl extends AbstractService<Inspection
     @Override
     public void entryApplicationResult(InspectionResult inspectionResult) throws RuntimeException{
         InspectionApplication inspectionApplication = inspectionApplicationMapper.getDepartmentId(inspectionResult.getInspectionApplicationId());
-        if (inspectionApplication.getCanceled() == true)
+        if (inspectionApplication.getCanceled())
             throw new RuntimeException("641");
         inspectionResult.setDepartmentId(inspectionApplication.getNonDrug().getExecutiveDepartment());
         inspectionResultService.save(inspectionResult);

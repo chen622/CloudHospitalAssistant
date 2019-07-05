@@ -145,6 +145,43 @@ public class DepartmentKindController {
     }
 
     /**
+     * 获得类型及其分类信息
+     * @param authentication
+     * @return
+     */
+    @GetMapping("/getDepartmentKindListNotDelete")
+    public JSONObject getDepartmentKindListNotDelete(Authentication authentication){
+
+        try {
+            //获得部门大类
+            List<ConstantVariable> constantVariables = constantVariableService.getConstantByType(1);
+            JSONObject returnJSON = new JSONObject();
+            JSONObject departmentKinds = new JSONObject();
+
+            if (constantVariables != null) {
+                returnJSON.put("type", constantVariables);
+
+                constantVariables.forEach(kind -> {
+                    List<DepartmentKind> departmentKindList = departmentKindService.getDepartmentKindByClassificationId(kind.getId());
+                    departmentKindList.forEach(departmentKind -> {
+                        if (departmentKind.getDelete())
+                            departmentKindList.remove(departmentKind);
+                    });
+                    departmentKinds.put(kind.getId().toString(),departmentKindList);
+                });
+
+                returnJSON.put("departmentKinds", departmentKinds);
+            } else {
+                returnJSON.put("type", departmentKinds);
+                returnJSON.put("departmentKinds", departmentKinds);
+            }
+            return CommonUtil.successJson(returnJSON);
+        }catch (Exception e){
+            return CommonUtil.errorJson(ErrorEnum.E_501.addErrorParamName("数据库连接"));
+        }
+    }
+
+    /**
      * 获得部门小类及其部门信息
      * @return
      */
