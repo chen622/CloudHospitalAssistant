@@ -123,6 +123,7 @@
         delete
         from job_schedule
         where datediff(date, #{date}) = 0
+          and exists(select * from user where department_id = #{departmentId} and user.id = job_schedule.doctor_id)
     </delete>
 </mapper>
 

@@ -45,7 +45,7 @@ public class ScheduleRuleServiceImpl extends AbstractService<ScheduleRule> imple
     @Override
     @Transactional
     public List<JobSchedule> useRuleToGenerateSchedule(Integer departmentId, Calendar current) {
-        jobScheduleService.removeByDate(current.getTime());
+        jobScheduleService.removeByDate(departmentId,current.getTime());
         List<ScheduleRule> scheduleRules = scheduleRuleMapper.getFullByDepartmentIdAndDay(departmentId, StringUtils.castSundayToMonday(current.get(Calendar.DAY_OF_WEEK)));
         List<JobSchedule> jobSchedules = new ArrayList<>();
         scheduleRules.forEach(scheduleRule -> {
