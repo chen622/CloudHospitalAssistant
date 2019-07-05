@@ -168,12 +168,12 @@ public class MedicalRecordController {
     @PostMapping("/comein/{registrationId}")
     public JSONObject comein(@PathVariable("registrationId") Integer registrationId) {
         Registration registration = registrationService.findById(registrationId);
-        if (registration == null || !registration.getState().equals(Constants.WAITING_FOR_TREATMENT) || !registration.getState().equals(Constants.RESERVATION)) {
-            return CommonUtil.errorJson(ErrorEnum.E_710);
-        } else {
+        if(registration !=null && (registration.getState().equals(Constants.RESERVATION) || registration.getState().equals(Constants.WAITING_FOR_TREATMENT))){
             registration.setState(Constants.INSIDE_DOCTOR);
             registrationService.update(registration);
             return CommonUtil.successJson();
+        }else {
+            return CommonUtil.errorJson(ErrorEnum.E_710);
         }
     }
 
