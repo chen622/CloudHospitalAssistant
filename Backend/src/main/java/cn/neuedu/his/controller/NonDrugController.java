@@ -287,6 +287,8 @@ public class NonDrugController {
             return CommonUtil.successJson(returnJSON);
         } catch (IOException e) {
             return CommonUtil.errorJson(ErrorEnum.E_501);
+        } catch (NumberFormatException e){
+            return CommonUtil.errorJson(ErrorEnum.E_902);
         }
 
     }
