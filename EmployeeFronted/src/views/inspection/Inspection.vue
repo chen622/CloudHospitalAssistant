@@ -178,7 +178,6 @@
                 })
             },
             uploading (event, record) {
-                console.log(event)
                 if (event.file.response) {
                     if (event.file.response.code === '100') {
                         let data = {
