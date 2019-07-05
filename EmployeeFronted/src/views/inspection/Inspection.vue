@@ -33,7 +33,7 @@
                     <template slot="check" slot-scope="text,record">{{record.application.done?'已完成':(text?'已缴费':'未缴费')}}
                     </template>
                     <span slot="action" slot-scope="text, record">
-                       <a-upload v-if="!record.application.done" name="pic" :multiple="true" accept="image/*"
+                       <a-upload v-if="!record.application.done" name="pic" :multiple="true" :beforeUpload="beforeUpload"
                                  :action="$url+'/inspection_application/upload'"
                                  :headers="header"
                                  @change="uploading($event,record)">
@@ -155,8 +155,19 @@
                     }, () => {
                     })
             },
+            beforeUpload(file) {
+                let that = this
+                return new Promise((resolve, reject) => {
+                    const type = file.type
+                    if (type !== "image/jpeg") {
+                        that.$message.error("上传文件格式必须为图片")
+                        return reject(false)
+                    } else {
+                        return resolve(true)
+                    }
+                })
+            },
             uploading(event, record) {
-                console.log(event)
                 if (event.file.response && event.file.response.code === '100') {
                     let data = {
                         picture: event.file.response.data,
