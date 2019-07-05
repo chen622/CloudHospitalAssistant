@@ -32,7 +32,7 @@ public interface NonDrugRemote {
     Response excelOut();
 
     @PostMapping("/non_drug/excelIn")
-    public JSONObject excelIn(@RequestPart("file") MultipartFile excelFile);
+    JSONObject excelIn(@RequestPart("file") MultipartFile excelFile);
 
     @GetMapping("/non_drug/getNonDrugByType")
     JSONObject getNonDrugByType();
