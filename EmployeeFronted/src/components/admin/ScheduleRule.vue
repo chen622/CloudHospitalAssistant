@@ -68,7 +68,7 @@
             <a-form>
                 <a-form-item label="生成日期" :labelCol="{span:5,offset: 5}" :wrapperCol="{span:14}">
                     <a-range-picker v-model="timeRange"
-                                    format="YYYY-MM-DD HH:mm:ss"></a-range-picker>
+                                    format="YYYY-MM-DD"></a-range-picker>
                 </a-form-item>
             </a-form>
         </a-modal>

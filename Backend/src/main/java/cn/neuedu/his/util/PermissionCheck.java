@@ -163,7 +163,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static boolean isChiefDoctor(Integer titleId) throws Exception {
+    public static boolean isChiefDoctor(Integer titleId) throws AuthenticationServiceException {
         try {
             Map<String, Integer> map = redisService.getMapAll("title");
             if (titleId.equals(map.get("主任医师"))) {
@@ -172,7 +172,7 @@ public class PermissionCheck {
                 throw new AuthenticationServiceException("ChiefDoctor");
             }
         } catch (Exception e) {
-            throw new Exception();
+            throw new AuthenticationServiceException(e.getMessage());
         }
 
     }
@@ -185,7 +185,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static boolean aboveDeputyChiefDoctor(Integer titleId) throws Exception {
+    public static boolean aboveDeputyChiefDoctor(Integer titleId) throws AuthenticationServiceException {
         try {
             Map<String, Integer> map = redisService.getMapAll("title");
 
@@ -195,7 +195,7 @@ public class PermissionCheck {
                 throw new AuthenticationServiceException("DeputyChiefDocto");
             }
         } catch (Exception e) {
-            throw new Exception(e.getMessage());
+            throw new AuthenticationServiceException(e.getMessage());
         }
     }
 
@@ -207,7 +207,7 @@ public class PermissionCheck {
      * @return
      * @throws AuthenticationServiceException
      */
-    public static boolean aboveATTENDING_DOCTOR(Integer titleId) throws Exception {
+    public static boolean aboveATTENDING_DOCTOR(Integer titleId) throws AuthenticationServiceException {
         try {
             Map<String, Integer> map = redisService.getMapAll("title");
 
@@ -217,7 +217,7 @@ public class PermissionCheck {
                 throw new AuthenticationServiceException("ATTENDING_DOCTOR");
             }
         } catch (Exception e) {
-            throw new Exception();
+            throw new AuthenticationServiceException(e.getMessage());
         }
     }
 

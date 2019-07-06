@@ -8,7 +8,8 @@
                 <a-button type="primary" style="width: 80%" @click="showAddPrescription = true">增加</a-button>
             </a-col>
         </a-row>
-        <a-table :dataSource="prescriptions" :rowKey="record=>{return record.drug.id}" :columns="prescriptionColumns" :pagination="false">
+        <a-table :dataSource="prescriptions" :rowKey="record=>{return record.drug.id}" :columns="prescriptionColumns"
+                 :pagination="false">
             <template slot="temp" slot-scope="text,record">
                 {{record.temp?'暂存':'开立'}}
             </template>
@@ -122,14 +123,14 @@
             savePrescriptions (record, index) {
                 let that = this
                 let data = {
-                    isDisposal: false,
+                    isDisposal: !this.isInspection,
                     registrationId: this.registrationId,
                     template: {
                         prescriptions: [record]
                     }
                 }
                 let i = 0
-                    this.prescriptions.forEach(
+                this.prescriptions.forEach(
                     p => {
                         if (!p.temp) {
                             i++

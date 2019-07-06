@@ -10,7 +10,7 @@
                 </template>
                 <a-form layout="inline" style="margin-left: 20px">
                     <a-form-item label="范围选择">
-                        <a-range-picker v-model="timeRange" showTime format="YYYY-MM-DD HH:mm:ss"/>
+                        <a-range-picker v-model="timeRange" showTime format="YYYY-MM-DD"/>
                     </a-form-item>
                     <a-form-item>
                         <a-button @click="search" type="primary">搜索</a-button>
@@ -53,8 +53,8 @@
                 let data = null
                 if (this.timeRange) {
                     data = {
-                        start: this.timeRange[0].utc().valueOf(),
-                        end: this.timeRange[1].utc().valueOf(),
+                        start: this.timeRange[0].valueOf(),
+                        end: this.timeRange[1].valueOf(),
                         patientId: this.patient.id
                     }
                 } else {

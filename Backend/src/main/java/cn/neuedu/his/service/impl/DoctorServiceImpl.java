@@ -325,11 +325,11 @@ public class DoctorServiceImpl extends AbstractService<Doctor> implements Doctor
 
         Integer registrationId = Integer.parseInt(object.get("registrationId").toString());
         MedicalRecord record = medicalRecordService.getByRegistrationId(registrationId);
-        Integer medicalRecordId = record.getId();
         //是否有初诊
         if (record.getFirstDiagnose() == null || record.getFirstDiagnose().size() == 0) {
             return CommonUtil.errorJson(ErrorEnum.E_616.addErrorParamName("firstDiagnose"));
         }
+        Integer medicalRecordId = record.getId();
 
         //是否能找到 挂号
         Registration registration = registrationService.findById(registrationId);

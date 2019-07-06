@@ -13,6 +13,7 @@ import cn.neuedu.his.util.constants.Constants;
 import cn.neuedu.his.util.constants.ErrorEnum;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/MRT")
 public class MedicalRecordTemplateController {
+    private Logger logger = Logger.getLogger(MedicalRecordTemplateController.class);
 
     @Autowired
     MedicalRecordTemplateService medicalRecordTemplateService;
@@ -94,8 +96,6 @@ public class MedicalRecordTemplateController {
             }
         } catch (AuthenticationServiceException a) {
             return CommonUtil.errorJson(ErrorEnum.E_502.addErrorParamName(a.getMessage()));
-        } catch (Exception e) {
-            return CommonUtil.errorJson(ErrorEnum.E_802);
         }
         String name = (String) object.get("name");
         if (name == null || name.equals(""))

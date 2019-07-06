@@ -169,7 +169,7 @@
                     <a-tab-pane tab="药物处方" key="5">
                         <a-divider>处方内容</a-divider>
                         <prescription v-if="currentPatient!=null" :registrationId="currentPatient.id"
-                                      :isInspection="true" @refresh="refreshMR"></prescription>
+                                      :isInspection="false" @refresh="refreshMR"></prescription>
                         <h1 v-else>请选择患者</h1>
                     </a-tab-pane>
                     <a-tab-pane tab="费用查询" key="6">
